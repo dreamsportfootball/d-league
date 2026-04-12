@@ -75,11 +75,11 @@ export const MATCHES: Match[] = [
   { id: 'm38', round: 8, homeTeamId: 't_pingtung', awayTeamId: 't_crazydog', homeScore: 3, awayScore: 1, status: MatchStatus.FINISHED, timestamp: createDate('2026/03/22', '15:00'), venue: VENUE, league: 'L2' },
 
   // Round 9 - 2026/04/12
-  { id: 'm39', round: 9, homeTeamId: 't_luzhu', awayTeamId: 't_crazydog', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/12', '10:00'), venue: VENUE, league: 'L2' },
-  { id: 'm40', round: 8, homeTeamId: 't_jiuhao', awayTeamId: 't_tongque', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/12', '11:00'), venue: VENUE, league: 'L1' },
-  { id: 'm41', round: 8, homeTeamId: 't_chiayi', awayTeamId: 't_chen', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/12', '13:00'), venue: VENUE, league: 'L1' },
-  { id: 'm42', round: 9, homeTeamId: 't_ppi', awayTeamId: 't_pingtung', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/12', '14:00'), venue: VENUE, league: 'L2' },
-  { id: 'm43', round: 9, homeTeamId: 't_canglong', awayTeamId: 't_niaoshi', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/12', '15:00'), venue: VENUE, league: 'L2' },
+  { id: 'm39', round: 9, homeTeamId: 't_luzhu', awayTeamId: 't_crazydog', homeScore: 1, awayScore: 6, status: MatchStatus.FINISHED, timestamp: createDate('2026/04/12', '10:00'), venue: VENUE, league: 'L2' },
+  { id: 'm40', round: 8, homeTeamId: 't_jiuhao', awayTeamId: 't_tongque', homeScore: 2, awayScore: 2, status: MatchStatus.FINISHED, timestamp: createDate('2026/04/12', '11:00'), venue: VENUE, league: 'L1' },
+  { id: 'm41', round: 8, homeTeamId: 't_chiayi', awayTeamId: 't_chen', homeScore: 0, awayScore: 1, status: MatchStatus.FINISHED, timestamp: createDate('2026/04/12', '13:00'), venue: VENUE, league: 'L1' },
+  { id: 'm42', round: 9, homeTeamId: 't_ppi', awayTeamId: 't_pingtung', homeScore: 2, awayScore: 2, status: MatchStatus.FINISHED, timestamp: createDate('2026/04/12', '14:00'), venue: VENUE, league: 'L2' },
+  { id: 'm43', round: 9, homeTeamId: 't_canglong', awayTeamId: 't_niaoshi', homeScore: 1, awayScore: 1, status: MatchStatus.FINISHED, timestamp: createDate('2026/04/12', '15:00'), venue: VENUE, league: 'L2' },
 
   // Round 10 - 2026/04/26
   { id: 'm44', round: 10, homeTeamId: 't_ppi', awayTeamId: 't_crazydog', homeScore: null, awayScore: null, status: MatchStatus.SCHEDULED, timestamp: createDate('2026/04/26', '10:00'), venue: VENUE, league: 'L2' },
@@ -95,27 +95,27 @@ export const MATCHES: Match[] = [
 export const MOCK_VIDEOS: Video[] = [
   { 
     id: 'v1', 
-    title: '角度刁鑽🚀', 
+    title: '💥', 
     duration: 'Reels',
     thumbnail: '/d-league/assets/reels/reels_03.png', 
-    date: '2026.03.31',
+    date: '2026.02.15',
     link: 'https://www.instagram.com/d.league_tw/reel/DUxX_iIkyQK/'
   },
   { 
     id: 'v2', 
-    title: '💫Dribble and Assist', 
+    title: '側掛金鈎🤩', 
     duration: 'Reels', 
     thumbnail: '/d-league/assets/reels/reels_02.png', 
-    date: '2026.03.31',
-    link: 'https://www.instagram.com/d.league_tw/reel/DWi9M2fExcU/'
+    date: '2026.02.15',
+    link: 'https://www.instagram.com/d.league_tw/reel/DUxBjJckyGj/'
   },
   { 
     id: 'v3', 
-    title: '精彩反擊⚽️👺',
+    title: '一氣呵成 💥',
     duration: 'Reels', 
     thumbnail: '/d-league/assets/reels/reels_01.png', 
-    date: '2026.03.30',
-    link: 'https://www.instagram.com/d.league_tw/reel/DWgUsXhky1m/'
+    date: '2026.01.14',
+    link: 'https://www.instagram.com/d.league_tw/reel/DTfEnAMk0nb/'
   },
 ];
 
@@ -434,5 +434,44 @@ export const MATCH_EVENTS: Record<string, MatchEvent[]> = {
         { id: 'm38-2', minute: 19, player: '王亦瑋', type: 'GOAL', team: 'AWAY' },
         { id: 'm38-3', minute: 31, player: '連哲緯', type: 'GOAL', team: 'HOME' },
         { id: 'm38-4', minute: 33, player: '黃浩程', type: 'GOAL', team: 'HOME' },
+    ],
+
+    // ============================================
+    // Round 9 (2026/04/12) 比賽紀錄
+    // ============================================
+    
+    // M39: 鹿逐 (1) vs 瘋Dog (6)
+    'm39': [
+        { id: 'm39-1', minute: 2, player: '吳亦民', type: 'GOAL', team: 'AWAY' },
+        { id: 'm39-2', minute: 12, player: '張博宇', type: 'GOAL', team: 'AWAY' },
+        { id: 'm39-3', minute: 13, player: '劉力瑋', type: 'GOAL', team: 'AWAY' },
+        { id: 'm39-4', minute: 17, player: '陳泰盛', type: 'GOAL', team: 'HOME' },
+        { id: 'm39-5', minute: 24, player: '劉力瑋', type: 'GOAL', team: 'AWAY' },
+        { id: 'm39-6', minute: 35, player: '劉力瑋', type: 'GOAL', team: 'AWAY' },
+        { id: 'm39-7', minute: 36, player: '吳亦民', type: 'GOAL', team: 'AWAY' },
+    ],
+    // M40: 酒號 (2) vs 銅雀 (2)
+    'm40': [
+        { id: 'm40-1', minute: 24, player: '鄭詠翰', type: 'GOAL', team: 'HOME' },
+        { id: 'm40-2', minute: 29, player: '林鈺閔', type: 'GOAL', team: 'HOME' },
+        { id: 'm40-3', minute: 35, player: '趙南聰', type: 'GOAL', team: 'AWAY' },
+        { id: 'm40-4', minute: 39, player: '趙學克', type: 'GOAL', team: 'AWAY' },
+    ],
+    // M41: 嘉義 (0) vs 陳公舘 (1)
+    'm41': [
+        { id: 'm41-1', minute: 26, player: '倪天銘', type: 'GOAL', team: 'AWAY' },
+    ],
+    // M42: PPI (2) vs 屏東 (2)
+    'm42': [
+        { id: 'm42-1', minute: 19, player: 'YEHUDA GAGAH WICAKSONO', type: 'GOAL', team: 'HOME' },
+        { id: 'm42-2', minute: 24, player: '林韋堯', type: 'GOAL', team: 'AWAY' },
+        { id: 'm42-3', minute: 28, player: '林韋堯', type: 'GOAL', team: 'AWAY' },
+        { id: 'm42-4', minute: 31, player: '伊拉曼', type: 'GOAL', team: 'HOME' },
+        { id: 'm42-5', minute: 33, player: '牙提', type: 'YELLOW_CARD', team: 'HOME' },
+    ],
+    // M43: 蒼龍 (1) vs 鳥仕 (1)
+    'm43': [
+        { id: 'm43-1', minute: 12, player: '蘇智龍', type: 'GOAL', team: 'AWAY' },
+        { id: 'm43-2', minute: 37, player: '潘晨維', type: 'GOAL', team: 'HOME' },
     ],
 };

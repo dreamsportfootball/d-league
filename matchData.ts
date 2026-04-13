@@ -463,10 +463,10 @@ export const MATCH_EVENTS: Record<string, MatchEvent[]> = {
     ],
     // M42: PPI (2) vs 屏東 (2)
     'm42': [
-        { id: 'm42-1', minute: 19, player: 'YEHUDA GAGAH WICAKSONO', type: 'GOAL', team: 'HOME' },
-        { id: 'm42-2', minute: 24, player: '林韋堯', type: 'GOAL', team: 'AWAY' },
+        { id: 'm42-1', minute: 4, player: '林韋堯', type: 'GOAL', team: 'AWAY' },
+        { id: 'm42-2', minute: 19, player: 'YEHUDA GAGAH WICAKSONO', type: 'GOAL', team: 'HOME' },
         { id: 'm42-3', minute: 28, player: '林韋堯', type: 'GOAL', team: 'AWAY' },
-        { id: 'm42-4', minute: 31, player: '伊拉曼', type: 'GOAL', team: 'HOME' },
+        { id: 'm42-4', minute: 31, player: '布丹', type: 'GOAL', team: 'HOME' },
         { id: 'm42-5', minute: 33, player: '牙提', type: 'YELLOW_CARD', team: 'HOME' },
     ],
     // M43: 蒼龍 (1) vs 鳥仕 (1)

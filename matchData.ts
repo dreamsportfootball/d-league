@@ -493,7 +493,7 @@ export const MATCH_EVENTS: Record<string, MatchEvent[]> = {
     // M46: 嘉義諸羅山FC (5) vs 銅雀足球俱樂部 (0)
     'm46': [
         { id: 'm46-1', minute: 4, player: '溫立丞', type: 'GOAL', team: 'HOME' },
-        { id: 'm46-2', minute: 10, player: '林柏辰', type: 'GOAL', team: 'HOME' },
+        { id: 'm46-2', minute: 10, player: '林柏辰', type: 'GOAL', team: 'HOME', isPK: true },
         { id: 'm46-3', minute: 28, player: '鄭州偉', type: 'GOAL', team: 'HOME' },
         { id: 'm46-4', minute: 31, player: '鄭州偉', type: 'GOAL', team: 'HOME' },
         { id: 'm46-5', minute: 40, player: '鄭州偉', type: 'GOAL', team: 'HOME' },

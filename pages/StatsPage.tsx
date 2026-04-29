@@ -50,21 +50,21 @@ const ProStatRow: React.FC<{
     player: PlayerStats; 
     rank: number; 
     activeTab: 'SCORERS' | 'CARDS';
-}> = ({ player, rank, activeTab }) => {
+    isHeroModeAllowed: boolean;
+}> = ({ player, rank, activeTab, isHeroModeAllowed }) => {
     const team = TEAMS[player.teamId];
     const playerImage = PLAYER_IMAGES[player.name];
-    const isHero = rank === 1 && activeTab === 'SCORERS';
+    
+    // 判斷是否顯示大版面：必須是第一名 + 射手榜 + 允許顯示大版面
+    const isHero = rank === 1 && activeTab === 'SCORERS' && isHeroModeAllowed;
 
-    // 根據名字長度動態調整字體大小
     const getNameSizeClass = (name: string, hero: boolean) => {
         const len = name.length;
         if (hero) {
-            // 第一名 (Hero Mode)
-            if (len > 20) return 'text-lg md:text-xl leading-tight'; // 超長名字
-            if (len > 10) return 'text-xl md:text-2xl'; // 稍長名字
-            return 'text-2xl md:text-3xl'; // 正常名字
+            if (len > 20) return 'text-lg md:text-xl leading-tight'; 
+            if (len > 10) return 'text-xl md:text-2xl'; 
+            return 'text-2xl md:text-3xl'; 
         } else {
-            // 普通列表模式
             if (len > 20) return 'text-[10px] md:text-xs leading-tight font-bold';
             if (len > 10) return 'text-xs md:text-sm font-bold';
             return 'text-sm md:text-base font-bold';
@@ -77,7 +77,7 @@ const ProStatRow: React.FC<{
             ${isHero ? 'py-6 bg-white z-10' : 'py-3.5 hover:bg-neutral-50'} 
         `}>
             <div className="shrink-0 mr-2 md:mr-4">
-                <ProRank rank={rank} isHeroMode={activeTab === 'SCORERS'} />
+                <ProRank rank={rank} isHeroMode={activeTab === 'SCORERS' && isHeroModeAllowed} />
             </div>
 
             <div className="flex-1 flex items-center min-w-0">
@@ -215,7 +215,6 @@ const StatsPage: React.FC = () => {
                     stats[playerKey].teamId = displayTeamId;
                 }
                 
-                // 這裡就是修改的地方：如果是進球 (GOAL)，而且不是烏龍球 (!event.isOwnGoal)，而且名字裡面沒有包含「(烏龍球)」的字眼，才會算進射手榜
                 if (event.type === 'GOAL' && !event.isOwnGoal && !event.player.includes('(烏龍球)')) {
                     stats[playerKey].goals += 1;
                 }
@@ -240,6 +239,37 @@ const StatsPage: React.FC = () => {
             });
         }
     }, [statsData, activeTab]);
+
+    // 處理排名數字
+    const rankedListWithTiebreaker = useMemo(() => {
+        let currentRank = 1;
+        return sortedList.map((player, index) => {
+            if (index > 0) {
+                const prevPlayer = sortedList[index - 1];
+                let isTie = false;
+                
+                // 只有射手榜會檢查係咪數據一樣，如果一樣就並列
+                if (activeTab === 'SCORERS') {
+                    isTie = player.goals === prevPlayer.goals;
+                } else {
+                    // 紅黃牌永遠當作唔一樣，唔會並列
+                    isTie = false;
+                }
+
+                // 如果唔係並列，名次就順住去下一個數字
+                if (!isTie) {
+                    currentRank = index + 1;
+                }
+            }
+            return { ...player, displayRank: currentRank };
+        });
+    }, [sortedList, activeTab]);
+
+    // 檢查射手榜係咪有多個人並列第一名
+    const hasTieForFirst = useMemo(() => {
+        if (activeTab !== 'SCORERS') return false;
+        return rankedListWithTiebreaker.filter(p => p.displayRank === 1).length > 1;
+    }, [rankedListWithTiebreaker, activeTab]);
 
     const leagueFilterContent = (
         <div className="flex space-x-4 text-xs font-bold">
@@ -284,9 +314,15 @@ const StatsPage: React.FC = () => {
                 </div>
                 <div className="w-full">
                     <div className="flex flex-col">
-                        {sortedList.length > 0 ? (
-                            sortedList.map((player, index) => (
-                                <ProStatRow key={`${player.name}-${player.teamId}`} player={player} rank={index + 1} activeTab={activeTab} />
+                        {rankedListWithTiebreaker.length > 0 ? (
+                            rankedListWithTiebreaker.map((player) => (
+                                <ProStatRow 
+                                    key={`${player.name}-${player.teamId}`} 
+                                    player={player} 
+                                    rank={player.displayRank} 
+                                    activeTab={activeTab}
+                                    isHeroModeAllowed={!hasTieForFirst} 
+                                />
                             ))
                         ) : (
                             <div className="py-32 text-center opacity-40">

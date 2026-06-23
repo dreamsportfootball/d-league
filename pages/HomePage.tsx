@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import BrandStory from '../components/BrandStory';
+import ClubGrid from '../components/ClubGrid';
 import Hero from '../components/Hero';
 import MatchCenter from '../components/MatchCenter';
-import Standings from '../components/Standings';
-import VideoHub from '../components/VideoHub';
-import ClubGrid from '../components/ClubGrid';
-import BrandStory from '../components/BrandStory';
 import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
+import PreviousSeasonHighlight from '../components/PreviousSeasonHighlight';
 import RegistrationOverview from '../components/RegistrationOverview';
+import Standings from '../components/Standings';
+import VideoHub from '../components/VideoHub';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
@@ -28,6 +29,13 @@ const HomePage: React.FC = () => {
       <div className="w-full overflow-x-hidden">
         <Hero />
         <RegistrationOverview />
+
+        <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
+          <NewsSection />
+        </section>
+
+        <PreviousSeasonHighlight />
+
         <div id="teams">
           <ClubGrid />
         </div>
@@ -91,7 +99,7 @@ const HomePage: React.FC = () => {
                     // Session storage may be unavailable.
                   }
                 }}
-                className="group flex items-center justify-center text-xs font-bold uppercase tracking-widest text-brand-blue transition-colors hover:text-brand-black"
+                className="group flex min-h-11 items-center justify-center text-xs font-bold uppercase tracking-widest text-brand-blue transition-colors hover:text-brand-black"
               >
                 查看完整積分榜
                 <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
@@ -12,9 +12,10 @@ interface NavItem {
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
   const { activeSeason } = useSeason();
+  const headerRef = useRef<HTMLElement>(null);
 
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [{ name: '首頁', href: '/' }];
@@ -39,6 +40,49 @@ const Header: React.FC = () => {
     return items;
   }, [activeSeason.status]);
 
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setOpenDropdown(null);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null);
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  const isPathActive = (href: string) => {
+    if (href === '/') return location.pathname === '/';
+    return location.pathname === href || location.pathname.startsWith(`${href}/`);
+  };
+
+  const isItemActive = (item: NavItem) =>
+    item.children?.some((child) => isPathActive(child.href)) ?? isPathActive(item.href);
+
   const handleHomeScroll = (href: string) => {
     if (href === '/' && location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -47,15 +91,14 @@ const Header: React.FC = () => {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
-    setMobileDropdownOpen(null);
-  };
-
-  const toggleMobileDropdown = (name: string) => {
-    setMobileDropdownOpen((current) => (current === name ? null : name));
+    setOpenDropdown(null);
   };
 
   return (
-    <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
+    <header
+      ref={headerRef}
+      className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm"
+    >
       <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">
           <Link
@@ -82,55 +125,87 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 top-0 hidden h-16 -translate-x-1/2 items-center space-x-5 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
-          {navItems.map((item) => (
-            <div key={item.name} className="group relative flex h-16 items-center">
-              {item.children ? (
-                <>
-                  <button
-                    type="button"
-                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7">
+          {navItems.map((item) => {
+            const active = isItemActive(item);
+            const expanded = openDropdown === item.name;
+
+            return (
+              <div key={item.name} className="relative flex h-16 items-center">
+                {item.children ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setOpenDropdown(expanded ? null : item.name)}
+                      aria-haspopup="menu"
+                      aria-expanded={expanded}
+                      className={`relative flex h-full items-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue/30 ${
+                        active ? 'text-brand-blue' : 'hover:text-brand-blue'
+                      }`}
+                    >
+                      {item.name}
+                      <ChevronDown
+                        className={`ml-1 h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                      />
+                      {active && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />}
+                    </button>
+
+                    {expanded && (
+                      <div
+                        role="menu"
+                        className="absolute left-0 top-16 w-56 overflow-hidden rounded-b-lg border border-neutral-100 bg-white shadow-xl"
+                      >
+                        {item.children.map((child) => {
+                          const childActive = isPathActive(child.href);
+                          return (
+                            <Link
+                              key={child.name}
+                              to={child.href}
+                              role="menuitem"
+                              aria-current={childActive ? 'page' : undefined}
+                              className={`block border-b border-neutral-50 px-6 py-4 text-sm transition-colors last:border-none ${
+                                childActive
+                                  ? 'bg-brand-blue/5 text-brand-blue'
+                                  : 'text-neutral-600 hover:bg-neutral-50 hover:text-brand-blue'
+                              }`}
+                            >
+                              {child.name}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                ) : item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-full items-center transition-colors hover:text-brand-blue"
                   >
                     {item.name}
-                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
-                  </button>
-                  <div className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.name}
-                        to={child.href}
-                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue"
-                      >
-                        {child.name}
-                      </Link>
-                    ))}
-                  </div>
-                </>
-              ) : item.external ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center transition-colors hover:text-brand-blue"
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  to={item.href}
-                  className="flex items-center transition-colors hover:text-brand-blue"
-                  onClick={() => handleHomeScroll(item.href)}
-                >
-                  {item.name}
-                </Link>
-              )}
-            </div>
-          ))}
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    aria-current={active ? 'page' : undefined}
+                    className={`relative flex h-full items-center transition-colors ${
+                      active ? 'text-brand-blue' : 'hover:text-brand-blue'
+                    }`}
+                    onClick={() => handleHomeScroll(item.href)}
+                  >
+                    {item.name}
+                    {active && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         <button
           type="button"
-          className="ml-auto p-1 xl:hidden"
+          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg xl:hidden"
           onClick={() => setMobileMenuOpen((open) => !open)}
           aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
           aria-expanded={mobileMenuOpen}
@@ -142,51 +217,70 @@ const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div className="fixed inset-0 left-0 top-16 z-[1000] flex h-[calc(100vh-4rem)] w-full flex-col overflow-y-auto border-t border-neutral-100 bg-white p-6 shadow-xl xl:hidden">
           <div className="flex flex-col space-y-2">
-            {navItems.map((item) => (
-              <div key={item.name} className="border-b border-neutral-100 pb-2">
-                {item.children ? (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => toggleMobileDropdown(item.name)}
-                      className="flex w-full items-center justify-between py-2 font-display text-xl font-bold uppercase text-brand-black"
-                    >
-                      {item.name}
-                      <ChevronDown
-                        className={`h-5 w-5 transition-transform ${
-                          mobileDropdownOpen === item.name ? 'rotate-180' : ''
+            {navItems.map((item) => {
+              const active = isItemActive(item);
+              const expanded = openDropdown === item.name;
+
+              return (
+                <div key={item.name} className="border-b border-neutral-100 pb-2">
+                  {item.children ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenDropdown(expanded ? null : item.name)}
+                        aria-expanded={expanded}
+                        className={`flex min-h-11 w-full items-center justify-between py-2 font-display text-xl font-bold uppercase ${
+                          active ? 'text-brand-blue' : 'text-brand-black'
                         }`}
-                      />
-                    </button>
-                    {mobileDropdownOpen === item.name && (
-                      <div className="mt-1 flex flex-col space-y-2 rounded-lg bg-neutral-50/70 pb-2 pl-4">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.name}
-                            to={child.href}
-                            className="py-2 text-base font-medium text-neutral-600 hover:text-brand-blue"
-                            onClick={closeMobileMenu}
-                          >
-                            {child.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    to={item.href}
-                    className="flex items-center justify-between py-2 font-display text-xl font-bold uppercase text-brand-black hover:text-brand-blue"
-                    onClick={() => {
-                      closeMobileMenu();
-                      handleHomeScroll(item.href);
-                    }}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
-            ))}
+                      >
+                        {item.name}
+                        <ChevronDown
+                          className={`h-5 w-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+
+                      {expanded && (
+                        <div className="mt-1 flex flex-col space-y-1 rounded-lg bg-neutral-50/70 p-2">
+                          {item.children.map((child) => {
+                            const childActive = isPathActive(child.href);
+                            return (
+                              <Link
+                                key={child.name}
+                                to={child.href}
+                                aria-current={childActive ? 'page' : undefined}
+                                className={`min-h-11 rounded-md px-3 py-3 text-base font-medium ${
+                                  childActive ? 'bg-white text-brand-blue' : 'text-neutral-600 hover:text-brand-blue'
+                                }`}
+                                onClick={closeMobileMenu}
+                              >
+                                {child.name}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={`flex min-h-11 items-center justify-between py-2 font-display text-xl font-bold uppercase ${
+                        active ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
+                      }`}
+                      onClick={() => {
+                        closeMobileMenu();
+                        handleHomeScroll(item.href);
+                      }}
+                    >
+                      <span className="flex items-center">
+                        {active && <span className="mr-3 h-0.5 w-5 bg-brand-blue" />}
+                        {item.name}
+                      </span>
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

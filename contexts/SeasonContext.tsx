@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DEFAULT_SEASON_ID, getSeasonConfig, isSeasonId, SEASONS } from '../config/seasons';
+import { getSeasonData, type SeasonData } from '../services/seasonData';
 import type { SeasonConfig, SeasonId } from '../types/season';
 
 const STORAGE_KEY = 'dleague-active-season';
@@ -8,6 +9,7 @@ const STORAGE_KEY = 'dleague-active-season';
 interface SeasonContextValue {
   activeSeasonId: SeasonId;
   activeSeason: SeasonConfig;
+  seasonData: SeasonData;
   availableSeasons: SeasonConfig[];
   setActiveSeason: (seasonId: SeasonId) => void;
 }
@@ -65,6 +67,7 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     () => ({
       activeSeasonId,
       activeSeason: getSeasonConfig(activeSeasonId),
+      seasonData: getSeasonData(activeSeasonId),
       availableSeasons: Object.values(SEASONS),
       setActiveSeason,
     }),

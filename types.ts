@@ -1,5 +1,7 @@
 // Shared legacy-compatible types. New season-aware types live under /types.
 
+import type { SeasonId } from './types/season';
+
 export interface Team {
   id: string;
   name: string;
@@ -45,6 +47,7 @@ export interface Standing {
 
 export interface NewsArticle {
   id: string;
+  seasonId?: SeasonId;
   title: string;
   summary: string;
   content: string;

@@ -56,8 +56,8 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
-      <div className="container mx-auto grid h-full max-w-full grid-cols-[1fr_auto] items-center px-4 md:px-6 xl:grid-cols-[245px_minmax(0,1fr)_245px]">
-        <div className="flex min-w-0 items-center xl:w-full">
+      <div className="container mx-auto flex h-full max-w-full items-center px-4 md:px-6">
+        <div className="flex shrink-0 items-center">
           <Link
             to="/"
             className="group flex items-center"
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="hidden items-center justify-self-center space-x-5 text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
+        <nav className="ml-auto hidden items-center space-x-5 text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
           {navItems.map((item) => (
             <div key={item.name} className="group relative flex h-16 items-center">
               {item.children ? (
@@ -128,17 +128,15 @@ const Header: React.FC = () => {
           ))}
         </nav>
 
-        <div className="flex justify-self-end xl:w-full xl:justify-end">
-          <button
-            type="button"
-            className="p-1 xl:hidden"
-            onClick={() => setMobileMenuOpen((open) => !open)}
-            aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+        <button
+          type="button"
+          className="ml-auto p-1 xl:hidden"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
 
       {mobileMenuOpen && (

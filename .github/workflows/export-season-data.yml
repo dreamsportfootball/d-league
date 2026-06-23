@@ -32,7 +32,9 @@ jobs:
         run: npm ci --silent
 
       - name: Generate season files
-        run: node scripts/export-legacy-data.mjs season-export
+        run: |
+          node scripts/export-legacy-data.mjs season-export
+          node scripts/export-player-images.mjs season-export
 
       - name: Copy generated files
         run: cp -R season-export/data/seasons/2025-26/. data/seasons/2025-26/
@@ -43,6 +45,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/seasons/2025-26/players.json
+          git add data/seasons/2025-26/playerImages.json
           git add data/seasons/2025-26/matchEvents.json
           git add data/seasons/2025-26/media.json
           git add data/seasons/2025-26/news.json

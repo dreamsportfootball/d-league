@@ -6,6 +6,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import { SeasonProvider } from './contexts/SeasonContext';
 
 // Lazy load pages for better performance
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
@@ -15,7 +16,6 @@ const StatsPage = lazy(() => import('./pages/StatsPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
-// 👇 新增這裡：引入 CupPage
 const CupPage = lazy(() => import('./pages/CupPage'));
 
 const ScrollMemory: React.FC = () => {
@@ -66,35 +66,36 @@ const ScrollMemory: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-neutral-50 text-brand-black w-full overflow-x-hidden">
-      <Header />
-      <ScrollMemory />
+    <SeasonProvider>
+      <div className="min-h-screen flex flex-col font-sans bg-neutral-50 text-brand-black w-full overflow-x-hidden">
+        <Header />
+        <ScrollMemory />
 
-      <main className="flex-grow pt-16 w-full">
-        <Suspense
-          fallback={
-            <div className="text-center p-20 text-xl font-bold text-brand-blue">
-              正在加載頁面中...
-            </div>
-          }
-        >
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/standings" element={<StandingsPage />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/stats" element={<StatsPage />} />
-            <Route path="/news/:id" element={<ArticleDetailPage />} />
-            <Route path="/media" element={<MediaPage />} />
-            <Route path="/about" element={<AboutPage />} /> 
-            {/* 👇 新增這裡：加入盃賽的路徑 */}
-            <Route path="/cup" element={<CupPage />} />
-          </Routes>
-        </Suspense>
-      </main>
+        <main className="flex-grow pt-16 w-full">
+          <Suspense
+            fallback={
+              <div className="text-center p-20 text-xl font-bold text-brand-blue">
+                正在加載頁面中...
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/schedule" element={<SchedulePage />} />
+              <Route path="/standings" element={<StandingsPage />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/news/:id" element={<ArticleDetailPage />} />
+              <Route path="/media" element={<MediaPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/cup" element={<CupPage />} />
+            </Routes>
+          </Suspense>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </SeasonProvider>
   );
 };
 

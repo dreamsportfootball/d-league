@@ -28,6 +28,9 @@ const HomePage: React.FC = () => {
       <div className="w-full overflow-x-hidden">
         <Hero />
         <RegistrationOverview />
+        <div id="teams">
+          <ClubGrid />
+        </div>
         <BrandStory />
       </div>
     );

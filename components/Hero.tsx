@@ -40,8 +40,71 @@ const Hero: React.FC = () => {
   ]);
 
   const isRegistration = activeSeason.status === 'registration';
+  const showRegistrationPoster =
+    isRegistration && Boolean(activeSeason.heroImageDesktop) && !imageFailed;
   const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
   const leagueCount = activeSeason.enabledLeagues.length;
+
+  if (showRegistrationPoster) {
+    return (
+      <section className="bg-brand-black" aria-labelledby="registration-hero-title">
+        <h1 id="registration-hero-title" className="sr-only">
+          {activeSeason.registrationMessage ?? `${activeSeason.displayName} 正式開放報名`}
+        </h1>
+
+        <picture
+          className={`block w-full transition-opacity duration-700 ${
+            loaded ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {activeSeason.heroImageMobile && (
+            <source media="(max-width: 767px)" srcSet={heroImages.mobile} />
+          )}
+          <img
+            src={heroImages.desktop}
+            onError={() => setImageFailed(true)}
+            alt={`${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
+            className="block h-auto w-full"
+          />
+        </picture>
+
+        <div className="border-t border-white/10 bg-brand-black">
+          <div className="container mx-auto grid grid-cols-1 gap-3 px-4 py-4 sm:flex sm:items-center sm:justify-center md:px-6 md:py-5">
+            {activeSeason.registrationFormUrl && (
+              <a
+                href={activeSeason.registrationFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
+              >
+                立即報名
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
+            )}
+
+            <Link
+              to="/registration"
+              className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
+            >
+              報名詳情
+            </Link>
+
+            {activeSeason.regulationsUrl && (
+              <a
+                href={activeSeason.regulationsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 w-full items-center justify-center px-5 py-3 text-sm font-bold uppercase tracking-widest text-white/80 transition-colors hover:text-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                競賽規程
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative flex min-h-[58vh] items-center justify-center overflow-hidden bg-brand-black md:min-h-[68vh]">

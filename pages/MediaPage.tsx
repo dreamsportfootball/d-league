@@ -70,7 +70,11 @@ const MediaPage: React.FC = () => {
           <EmptyState
             title="新賽季媒體內容尚未發布"
             description="相簿及比賽影片將於新賽季開始後陸續更新"
-            showRegistrationLink={activeSeason.status === 'registration'}
+            showRegistrationLink={false}
+            primaryAction={{
+              label: '查看 2025/26 賽事媒體',
+              to: '/media?season=2025-26',
+            }}
           />
         ) : (
           <>

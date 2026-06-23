@@ -1,14 +1,10 @@
-// 檔案路徑：App.tsx
-
-import React, { useEffect, lazy, Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-
-import Header from './components/Header';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Footer from './components/Footer';
-import HomePage from './pages/HomePage';
+import Header from './components/Header';
 import { SeasonProvider } from './contexts/SeasonContext';
+import HomePage from './pages/HomePage';
 
-// Lazy load pages for better performance
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
 const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
@@ -65,40 +61,39 @@ const ScrollMemory: React.FC = () => {
   return null;
 };
 
-const App: React.FC = () => {
-  return (
-    <SeasonProvider>
-      <div className="min-h-screen flex flex-col font-sans bg-neutral-50 text-brand-black w-full overflow-x-hidden">
-        <Header />
-        <ScrollMemory />
+const App: React.FC = () => (
+  <SeasonProvider>
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
+      <Header />
+      <ScrollMemory />
 
-        <main className="flex-grow pt-16 w-full">
-          <Suspense
-            fallback={
-              <div className="text-center p-20 text-xl font-bold text-brand-blue">
-                正在加載頁面中...
-              </div>
-            }
-          >
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/registration" element={<RegistrationPage />} />
-              <Route path="/schedule" element={<SchedulePage />} />
-              <Route path="/standings" element={<StandingsPage />} />
-              <Route path="/news" element={<NewsPage />} />
-              <Route path="/stats" element={<StatsPage />} />
-              <Route path="/news/:id" element={<ArticleDetailPage />} />
-              <Route path="/media" element={<MediaPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/cup" element={<CupPage />} />
-            </Routes>
-          </Suspense>
-        </main>
+      <main className="w-full flex-grow pt-16">
+        <Suspense
+          fallback={
+            <div className="p-20 text-center text-xl font-bold text-brand-blue">
+              正在加載頁面中...
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/registration" element={<RegistrationPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/standings" element={<StandingsPage />} />
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/news/:id" element={<ArticleDetailPage />} />
+            <Route path="/media" element={<MediaPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/cup" element={<CupPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </main>
 
-        <Footer />
-      </div>
-    </SeasonProvider>
-  );
-};
+      <Footer />
+    </div>
+  </SeasonProvider>
+);
 
 export default App;

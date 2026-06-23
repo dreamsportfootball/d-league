@@ -1,0 +1,54 @@
+name: Deploy 2026-27 preview
+
+on:
+  push:
+    branches:
+      - season/2026-27
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: season-2026-27-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --silent
+
+      - name: Validate source and season data
+        run: |
+          npm run typecheck
+          npm run validate:data
+
+      - name: Build isolated preview
+        env:
+          VITE_ROUTER_MODE: hash
+        run: npx vite build --base=/d-league/preview/season-2026-27/
+
+      - name: Publish preview without replacing production
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          destination_dir: preview/season-2026-27
+          keep_files: true
+          force_orphan: false
+          commit_message: "preview: deploy 2026-27 season site"

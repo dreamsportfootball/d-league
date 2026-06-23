@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, BookOpen, Trophy } from 'lucide-react';
+import { AlertCircle, BookOpen } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
-import SeasonSelector from '../components/SeasonSelector';
+import LeagueTabs from '../components/LeagueTabs';
+import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
@@ -54,49 +55,23 @@ const StandingsPage: React.FC = () => {
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-6 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
-          <div>
-            <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
-              積分 <span className="text-brand-blue">榜</span>
-            </h1>
-            <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
-              {activeSeason.displayName} {activeLeague} 即時排名與數據
-            </p>
-          </div>
+        <SeasonPageHeader
+          title="積分"
+          accent="榜"
+          description={`${activeSeason.displayName} ${activeLeague} 即時排名與數據`}
+        />
 
-          <div className="flex w-full justify-end md:w-auto">
-            <SeasonSelector />
-          </div>
-        </div>
-
-        <div className="mb-8 flex items-center justify-between">
-          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
-            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
-            選擇聯賽
-          </h3>
-          <div className="flex space-x-4 text-xs font-bold">
-            {activeSeason.enabledLeagues.map((league) => (
-              <button
-                key={league}
-                type="button"
-                onClick={() => handleLeagueChange(league)}
-                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
-                  activeLeague === league
-                    ? 'border-brand-blue font-bold text-brand-black'
-                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
-                }`}
-              >
-                <span className="font-display md:hidden">{league}</span>
-                <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <LeagueTabs
+          options={activeSeason.enabledLeagues}
+          active={activeLeague}
+          onChange={handleLeagueChange}
+          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
+        />
 
         {shouldShowEmptyState ? (
           <EmptyState
             title="新賽季尚未開始"
-            description="新賽季尚未開始，積分榜將於首輪比賽後更新"
+            description="積分榜將於首輪比賽完成後更新"
             showRegistrationLink={activeSeason.status === 'registration'}
           />
         ) : (

@@ -1,7 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
-import SeasonSelector from '../components/SeasonSelector';
+import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { MediaAlbum } from '../types/media';
 
@@ -25,7 +25,7 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
         href={album.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="mb-2 inline-flex items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors hover:text-blue-800"
+        className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors hover:text-blue-800"
       >
         <span className="border-b border-transparent pb-0.5 transition-all hover:border-blue-800">查看相簿</span>
         <ArrowUpRight className="h-3 w-3" />
@@ -59,22 +59,12 @@ const MediaPage: React.FC = () => {
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-8 border-b border-neutral-100 pb-8 md:mb-16">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
-                賽事 <span className="text-brand-blue">媒體</span>
-              </h1>
-              <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
-                {activeSeason.displayName} 精彩瞬間與比賽影片
-              </p>
-            </div>
-
-            <div className="flex w-full justify-end md:w-auto">
-              <SeasonSelector />
-            </div>
-          </div>
-        </div>
+        <SeasonPageHeader
+          title="賽事"
+          accent="媒體"
+          description={`${activeSeason.displayName} 精彩瞬間與比賽影片`}
+          bordered
+        />
 
         {!hasMedia ? (
           <EmptyState
@@ -98,7 +88,7 @@ const MediaPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollGallery('left')}
-                      className="flex h-8 w-8 items-center justify-center rounded border border-neutral-300 transition-colors hover:bg-neutral-100"
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100"
                       aria-label="上一組相簿"
                     >
                       <span className="text-lg leading-none">‹</span>
@@ -106,7 +96,7 @@ const MediaPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollGallery('right')}
-                      className="flex h-8 w-8 items-center justify-center rounded border border-neutral-300 transition-colors hover:bg-neutral-100"
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100"
                       aria-label="下一組相簿"
                     >
                       <span className="text-lg leading-none">›</span>
@@ -170,7 +160,7 @@ const MediaPage: React.FC = () => {
                 href="https://www.youtube.com/@DreamSportFootball"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-red-600"
+                className="group flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-red-600"
               >
                 <Youtube className="mr-2 h-4 w-4" />
                 <span className="translate-y-[1px] border-b border-transparent transition-all group-hover:border-red-600">YouTube</span>
@@ -180,7 +170,7 @@ const MediaPage: React.FC = () => {
                 href="https://www.instagram.com/d.league_tw/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-pink-600"
+                className="group flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-pink-600"
               >
                 <Instagram className="mr-2 h-4 w-4" />
                 <span className="translate-y-[1px] border-b border-transparent transition-all group-hover:border-pink-600">Instagram</span>

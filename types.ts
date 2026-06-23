@@ -64,12 +64,6 @@ export interface Video {
 
 export type MatchEventType = 'GOAL' | 'YELLOW_CARD' | 'RED_CARD' | 'SECOND_YELLOW';
 
-export interface MatchEvent {
-  id: string;
-  minute: number;
-  player: string;
-  type: MatchEventType;
-  team: 'HOME' | 'AWAY';
-  isPK?: boolean;
-  isOwnGoal?: boolean;
-}
+// Runtime compatibility value for the legacy matchData import.
+// The actual MatchEvent interface is centralized in types/matchEvent.ts.
+export const MatchEvent = Symbol('MatchEvent');

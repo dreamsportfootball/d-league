@@ -1,4 +1,4 @@
-// 檔案路徑：d-league web/types.ts
+// Shared legacy-compatible types. New season-aware types live under /types.
 
 export interface Team {
   id: string;
@@ -15,6 +15,8 @@ export enum MatchStatus {
   FINISHED = 'FINISHED'
 }
 
+export type LeagueCode = 'L1' | 'L2' | 'L3' | 'CUP';
+
 export interface Match {
   id: string;
   homeTeamId: string;
@@ -24,9 +26,8 @@ export interface Match {
   status: MatchStatus;
   timestamp: string;
   venue: string;
-  // 👇 修改這裡：增加了 'CUP'
-  league: 'L1' | 'L2' | 'CUP'; 
-  round: number | string; // 👇 修改這裡：允許 round 是文字 (例如 "決賽")
+  league: LeagueCode;
+  round: number | string;
 }
 
 export interface Standing {
@@ -57,5 +58,18 @@ export interface Video {
   title: string;
   duration: string;
   thumbnail: string;
-  date: string; 
+  date: string;
+  link?: string;
+}
+
+export type MatchEventType = 'GOAL' | 'YELLOW_CARD' | 'RED_CARD' | 'SECOND_YELLOW';
+
+export interface MatchEvent {
+  id: string;
+  minute: number;
+  player: string;
+  type: MatchEventType;
+  team: 'HOME' | 'AWAY';
+  isPK?: boolean;
+  isOwnGoal?: boolean;
 }

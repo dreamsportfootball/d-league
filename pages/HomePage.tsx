@@ -1,6 +1,6 @@
-// 檔案路徑：d-league web/pages/HomePage.tsx
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, Trophy } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import MatchCenter from '../components/MatchCenter';
 import Standings from '../components/Standings';
@@ -9,106 +9,107 @@ import ClubGrid from '../components/ClubGrid';
 import BrandStory from '../components/BrandStory';
 import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
-import { ArrowRight, Trophy } from 'lucide-react'; 
-import { Link } from 'react-router-dom';
+import RegistrationOverview from '../components/RegistrationOverview';
+import { useSeason } from '../hooks/useSeason';
+import type { LeagueId } from '../types/season';
 
 const HomePage: React.FC = () => {
-    // 首頁獨立的聯賽狀態 (用於積分榜小工具)
-    const [activeLeague, setActiveLeague] = useState<'L1' | 'L2'>('L1');
+  const { activeSeason } = useSeason();
+  const [activeLeague, setActiveLeague] = useState<LeagueId>(activeSeason.enabledLeagues[0]);
 
+  useEffect(() => {
+    if (!activeSeason.enabledLeagues.includes(activeLeague)) {
+      setActiveLeague(activeSeason.enabledLeagues[0]);
+    }
+  }, [activeLeague, activeSeason.enabledLeagues]);
+
+  if (activeSeason.status === 'registration') {
     return (
-        <div className="w-full overflow-x-hidden"> 
-            {/* 1. 主視覺 Hero */}
-            <Hero />
-            
-            {/* 2. 賽事中心 (比分) */}
-            <div id="match-center" className="relative z-20 container mx-auto px-0 md:px-6 pb-12 -mt-5">
-                <div className="bg-white rounded-t-xl shadow-2xl overflow-hidden md:border border-neutral-100 ring-1 ring-black/5">
-                    <MatchCenter />
-                </div>
-            </div>
-
-            {/* 3. 積分榜與最新消息區 (這是唯一的最新消息區) */}
-            <section id="standings-and-news" className="container mx-auto px-4 md:px-6 py-4 mb-16">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:items-start">
-                    
-                    {/* 左側：積分榜 (首頁版) */}
-                    <div className="lg:col-span-4 order-2 lg:order-1">
-                        
-                        <div className="flex items-end justify-between mb-4 pb-2 border-b border-neutral-100">
-                            <div>
-                                <span className="block text-[10px] font-bold tracking-[0.25em] text-neutral-400 uppercase mb-1 font-sans">
-                                    RANKING
-                                </span>
-                                <h3 className="font-display font-bold text-3xl text-brand-black tracking-wide flex items-center">
-                                    <Trophy className="w-6 h-6 mr-2 text-brand-blue translate-y-[2px]" />
-                                    戰績排名
-                                </h3>
-                            </div>
-                            
-                            <div className="flex space-x-1 bg-neutral-100 p-1 rounded-full">
-                                {(['L1', 'L2'] as const).map((league) => (
-                                    <button
-                                        key={league}
-                                        onClick={() => setActiveLeague(league)}
-                                        className={`
-                                            px-4 py-1 text-xs font-bold rounded-full transition-all uppercase
-                                            ${activeLeague === league 
-                                                ? 'bg-white text-brand-black shadow-sm' 
-                                                : 'text-neutral-400 hover:text-neutral-600'}
-                                        `}
-                                    >
-                                        <span className="md:hidden">{league}</span>
-                                        <span className="hidden md:inline">
-                                            {league === 'L1' ? 'LEAGUE 1' : 'LEAGUE 2'}
-                                        </span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <Standings league={activeLeague} variant="widget" />
-
-                        <div className="mt-4 text-center">
-                            {/* 🎯 修改這裡：點擊連結時，把當前的選擇存入 Session Storage */}
-                            <Link 
-                                to="/standings" 
-                                onClick={() => {
-                                    try {
-                                        window.sessionStorage.setItem('standingsActiveLeague', activeLeague);
-                                    } catch (e) {
-                                        // 忽略錯誤
-                                    }
-                                }}
-                                className="text-xs font-bold text-brand-blue hover:text-brand-black uppercase tracking-widest flex items-center justify-center group transition-colors"
-                            >
-                                查看完整積分榜 <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* 右側：最新消息 (這是正確的位置) */}
-                    <div className="lg:col-span-8 order-1 lg:order-2">
-                        <NewsSection />
-                    </div>
-                </div>
-            </section>
-
-            {/* 4. 賽事媒體中心 (VideoHub) */}
-            <VideoHub /> 
-            
-            {/* 5. 賽事精選圖集 (PhotoCarousel) */}
-            <PhotoCarousel />
-            
-            {/* 6. 參賽球隊 */}
-            <div id="teams">
-                <ClubGrid />
-            </div>
-            
-            {/* 7. 品牌故事 */}
-            <BrandStory />
-        </div>
+      <div className="w-full overflow-x-hidden">
+        <Hero />
+        <RegistrationOverview />
+        <BrandStory />
+      </div>
     );
+  }
+
+  return (
+    <div className="w-full overflow-x-hidden">
+      <Hero />
+
+      <div id="match-center" className="container relative z-20 mx-auto -mt-5 px-0 pb-12 md:px-6">
+        <div className="overflow-hidden rounded-t-xl border-neutral-100 bg-white shadow-2xl ring-1 ring-black/5 md:border">
+          <MatchCenter />
+        </div>
+      </div>
+
+      <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-4 md:px-6">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
+          <div className="order-2 lg:order-1 lg:col-span-4">
+            <div className="mb-4 flex items-end justify-between border-b border-neutral-100 pb-2">
+              <div>
+                <span className="mb-1 block font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400">
+                  Ranking
+                </span>
+                <h3 className="flex items-center font-display text-3xl font-bold tracking-wide text-brand-black">
+                  <Trophy className="mr-2 h-6 w-6 translate-y-[2px] text-brand-blue" />
+                  戰績排名
+                </h3>
+              </div>
+
+              <div className="flex space-x-1 rounded-full bg-neutral-100 p-1">
+                {activeSeason.enabledLeagues.map((league) => (
+                  <button
+                    key={league}
+                    type="button"
+                    onClick={() => setActiveLeague(league)}
+                    className={`rounded-full px-4 py-1 text-xs font-bold uppercase transition-all ${
+                      activeLeague === league
+                        ? 'bg-white text-brand-black shadow-sm'
+                        : 'text-neutral-400 hover:text-neutral-600'
+                    }`}
+                  >
+                    <span className="md:hidden">{league}</span>
+                    <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Standings league={activeLeague === 'L3' ? 'L2' : activeLeague} variant="widget" />
+
+            <div className="mt-4 text-center">
+              <Link
+                to="/standings"
+                onClick={() => {
+                  try {
+                    window.sessionStorage.setItem('standingsActiveLeague', activeLeague);
+                  } catch {
+                    // Session storage may be unavailable.
+                  }
+                }}
+                className="group flex items-center justify-center text-xs font-bold uppercase tracking-widest text-brand-blue transition-colors hover:text-brand-black"
+              >
+                查看完整積分榜
+                <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="order-1 lg:order-2 lg:col-span-8">
+            <NewsSection />
+          </div>
+        </div>
+      </section>
+
+      <VideoHub />
+      <PhotoCarousel />
+      <div id="teams">
+        <ClubGrid />
+      </div>
+      <BrandStory />
+    </div>
+  );
 };
 
 export default HomePage;

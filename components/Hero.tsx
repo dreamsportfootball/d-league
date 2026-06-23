@@ -41,6 +41,7 @@ const Hero: React.FC = () => {
 
   const isRegistration = activeSeason.status === 'registration';
   const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
+  const leagueCount = activeSeason.enabledLeagues.length;
 
   return (
     <section className="relative flex min-h-[58vh] items-center justify-center overflow-hidden bg-brand-black md:min-h-[68vh]">
@@ -78,7 +79,7 @@ const Hero: React.FC = () => {
 
           {isRegistration && (
             <p className="mt-6 max-w-2xl text-sm font-semibold leading-7 text-white/85 md:text-base">
-              {activeSeason.shortName} 賽季設置 {activeSeason.enabledLeagues.join('、')} 三個級別，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，正式實施升降級制度
+              {activeSeason.shortName} 賽季設置 {activeSeason.enabledLeagues.join('、')}，共 {leagueCount} 個級別，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，正式實施升降級制度
             </p>
           )}
 

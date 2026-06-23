@@ -1,19 +1,24 @@
 import React from 'react';
-import { ArrowLeft, ClipboardList } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface EmptyStateProps {
   title: string;
   description: string;
   showRegistrationLink?: boolean;
+  primaryAction?: {
+    label: string;
+    to: string;
+  };
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
   showRegistrationLink = true,
+  primaryAction,
 }) => (
-  <div className="flex min-h-[360px] w-full flex-col items-center justify-center border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
+  <div className="flex min-h-[360px] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-neutral-200">
       <ClipboardList className="h-6 w-6 text-brand-blue" aria-hidden="true" />
     </div>
@@ -26,15 +31,26 @@ const EmptyState: React.FC<EmptyStateProps> = ({
     <div className="mt-8 flex flex-col gap-3 sm:flex-row">
       <Link
         to="/"
-        className="inline-flex min-h-11 items-center justify-center border border-neutral-300 bg-white px-5 py-2.5 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
+        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-2.5 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
       >
         <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
         返回首頁
       </Link>
-      {showRegistrationLink && (
+
+      {primaryAction && (
+        <Link
+          to={primaryAction.to}
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-blue px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
+        >
+          {primaryAction.label}
+          <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+        </Link>
+      )}
+
+      {showRegistrationLink && !primaryAction && (
         <Link
           to="/registration"
-          className="inline-flex min-h-11 items-center justify-center bg-brand-black px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-black px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
         >
           查看報名詳情
         </Link>

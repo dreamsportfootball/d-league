@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-            <Standings league={activeLeague === 'L3' ? 'L2' : activeLeague} variant="widget" />
+            <Standings league={activeLeague} variant="widget" />
 
             <div className="mt-4 text-center">
               <Link

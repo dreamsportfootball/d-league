@@ -52,11 +52,11 @@ const StandingsPage: React.FC = () => {
   const shouldShowEmptyState = leagueTeams.length === 0 || !hasFinishedMatches;
 
   return (
-    <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-20">
-      <div className="container mx-auto max-w-7xl px-6 md:px-12">
+    <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
+      <div className="container mx-auto max-w-7xl px-4 md:px-12">
         <div className="mb-6 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
           <div>
-            <h1 className="mb-4 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:[-webkit-text-stroke:0px]">
+            <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
               積分 <span className="text-brand-blue">榜</span>
             </h1>
             <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">

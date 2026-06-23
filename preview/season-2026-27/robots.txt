@@ -1,0 +1,8 @@
+# D LEAGUE Robots.txt
+# 允許所有搜尋引擎爬取所有內容
+User-agent: *
+Allow: /
+
+# 如果未來有不希望被搜尋到的管理頁面，可以這樣加：
+# Disallow: /admin/
+# Disallow: /private/

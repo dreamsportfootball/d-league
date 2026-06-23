@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // 1. 抓取當前路徑 (例如 /d-league/stats)
+    var path = window.location.pathname;
+    var base = '/d-league/';
+
+    // 2. 移除 base (剩下 stats)
+    if (path.startsWith(base)) {
+        path = path.substring(base.length);
+    }
+
+    // 3. 【關鍵修正】把路徑存到 Session Storage，而不是放在網址上的 #
+    sessionStorage.setItem('redirect_path', path);
+
+    // 4. 跳轉回首頁 (乾淨的 URL)
+    window.location.replace(base);
+  </script>
+</head>
+<body>
+</body>
+</html>

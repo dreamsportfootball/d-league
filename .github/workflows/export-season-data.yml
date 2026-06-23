@@ -1,6 +1,9 @@
 name: Export season data
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - season/2026-27

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { User } from 'lucide-react';
+import { Trophy, User } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
-import LeagueTabs from '../components/LeagueTabs';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
@@ -135,22 +134,36 @@ const StatsPage: React.FC = () => {
           description={`${activeSeason.displayName} ${activeLeague} 球員數據`}
         />
 
-        <LeagueTabs
-          options={activeSeason.enabledLeagues}
-          active={activeLeague}
-          onChange={handleLeagueChange}
-          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
-        />
+        <div className="mb-10 flex items-center justify-between border-b border-neutral-100 pb-4">
+          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
+            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
+            選擇聯賽
+          </h3>
+          <div className="flex space-x-4 text-xs font-bold">
+            {activeSeason.enabledLeagues.map((league) => (
+              <button
+                key={league}
+                type="button"
+                onClick={() => handleLeagueChange(league)}
+                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
+                  activeLeague === league
+                    ? 'border-brand-blue font-bold text-brand-black'
+                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
+                }`}
+              >
+                <span className="font-display md:hidden">{league}</span>
+                <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="mb-6 flex space-x-10 px-2">
           <button
             type="button"
             onClick={() => setActiveTab('SCORERS')}
-            aria-pressed={activeTab === 'SCORERS'}
             className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'SCORERS'
-                ? 'text-brand-black'
-                : 'text-neutral-300 hover:text-neutral-500'
+              activeTab === 'SCORERS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
             }`}
           >
             射手榜
@@ -158,11 +171,8 @@ const StatsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('CARDS')}
-            aria-pressed={activeTab === 'CARDS'}
             className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'CARDS'
-                ? 'text-brand-black'
-                : 'text-neutral-300 hover:text-neutral-500'
+              activeTab === 'CARDS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
             }`}
           >
             紅黃牌

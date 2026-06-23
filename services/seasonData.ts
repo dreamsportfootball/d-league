@@ -1,4 +1,5 @@
 import teams2025Json from '../data/seasons/2025-26/teams.json';
+import matches2025Json from '../data/seasons/2025-26/matches.json';
 import teams2026Json from '../data/seasons/2026-27/teams.json';
 import players2026Json from '../data/seasons/2026-27/players.json';
 import matches2026Json from '../data/seasons/2026-27/matches.json';
@@ -6,7 +7,7 @@ import matchEvents2026Json from '../data/seasons/2026-27/matchEvents.json';
 import media2026Json from '../data/seasons/2026-27/media.json';
 import { PLAYER_IMAGES } from '../staticData';
 import { ALL_PLAYERS, type PlayerProfile } from '../playerData';
-import { MATCHES, MATCH_EVENTS, MOCK_VIDEOS, type MatchEvent } from '../matchData';
+import { MATCH_EVENTS, MOCK_VIDEOS, type MatchEvent } from '../matchData';
 import type { Match, Video } from '../types';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
@@ -41,7 +42,7 @@ const seasonData: Record<SeasonId, SeasonData> = {
     teams: teams2025,
     teamMap: toTeamMap(teams2025),
     players: ALL_PLAYERS,
-    matches: MATCHES.filter((match) => match.league !== 'CUP'),
+    matches: matches2025Json as Match[],
     matchEvents: MATCH_EVENTS,
     playerImages: Object.fromEntries(
       Object.entries(PLAYER_IMAGES).map(([name, path]) => [name, assetUrl(path)]),

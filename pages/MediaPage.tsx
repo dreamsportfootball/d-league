@@ -1,6 +1,7 @@
 import React, { useMemo, useRef } from 'react';
 import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
+import SeasonSelector from '../components/SeasonSelector';
 import { useSeason } from '../hooks/useSeason';
 import type { MediaAlbum } from '../types/media';
 
@@ -59,7 +60,7 @@ const MediaPage: React.FC = () => {
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
         <div className="mb-8 border-b border-neutral-100 pb-8 md:mb-16">
-          <div className="flex flex-col justify-between md:flex-row md:items-end">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
                 賽事 <span className="text-brand-blue">媒體</span>
@@ -67,6 +68,13 @@ const MediaPage: React.FC = () => {
               <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
                 {activeSeason.displayName} 精彩瞬間與比賽影片
               </p>
+            </div>
+
+            <div className="w-full md:w-60">
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+                瀏覽賽季
+              </p>
+              <SeasonSelector />
             </div>
           </div>
         </div>

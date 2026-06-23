@@ -68,9 +68,6 @@ const Header: React.FC = () => {
     return location.pathname === href || location.pathname.startsWith(`${href}/`);
   };
 
-  const isItemActive = (item: NavItem) =>
-    item.children?.some((child) => isPathActive(child.href)) ?? isPathActive(item.href);
-
   const handleHomeScroll = (href: string) => {
     if (href === '/' && location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -111,74 +108,55 @@ const Header: React.FC = () => {
         </div>
 
         <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7">
-          {navItems.map((item) => {
-            const active = isItemActive(item);
-
-            return (
-              <div key={item.name} className="group relative flex h-16 items-center">
-                {item.children ? (
-                  <>
-                    <button
-                      type="button"
-                      aria-haspopup="menu"
-                      className={`relative flex h-full items-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue/30 ${
-                        active ? 'text-brand-blue' : 'hover:text-brand-blue'
-                      }`}
-                    >
-                      {item.name}
-                      <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
-                      {active && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />}
-                    </button>
-
-                    <div
-                      role="menu"
-                      className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
-                    >
-                      {item.children.map((child) => {
-                        const childActive = isPathActive(child.href);
-                        return (
-                          <Link
-                            key={child.name}
-                            to={child.href}
-                            role="menuitem"
-                            aria-current={childActive ? 'page' : undefined}
-                            className={`block border-b border-neutral-50 px-6 py-4 text-sm transition-colors last:border-none ${
-                              childActive
-                                ? 'bg-brand-blue/5 text-brand-blue'
-                                : 'text-neutral-600 hover:bg-neutral-50 hover:text-brand-blue'
-                            }`}
-                          >
-                            {child.name}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </>
-                ) : item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-full items-center transition-colors hover:text-brand-blue"
+          {navItems.map((item) => (
+            <div key={item.name} className="group relative flex h-16 items-center">
+              {item.children ? (
+                <>
+                  <button
+                    type="button"
+                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
                   >
                     {item.name}
-                  </a>
-                ) : (
-                  <Link
-                    to={item.href}
-                    aria-current={active ? 'page' : undefined}
-                    className={`relative flex h-full items-center transition-colors ${
-                      active ? 'text-brand-blue' : 'hover:text-brand-blue'
-                    }`}
-                    onClick={() => handleHomeScroll(item.href)}
-                  >
-                    {item.name}
-                    {active && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />}
-                  </Link>
-                )}
-              </div>
-            );
-          })}
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
+                  </button>
+                  <div className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        to={child.href}
+                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue"
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              ) : item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center transition-colors hover:text-brand-blue"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  to={item.href}
+                  aria-current={isPathActive(item.href) ? 'page' : undefined}
+                  className={`relative flex h-full items-center transition-colors ${
+                    isPathActive(item.href) ? 'text-brand-blue' : 'hover:text-brand-blue'
+                  }`}
+                  onClick={() => handleHomeScroll(item.href)}
+                >
+                  {item.name}
+                  {isPathActive(item.href) && (
+                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />
+                  )}
+                </Link>
+              )}
+            </div>
+          ))}
         </nav>
 
         <button
@@ -196,7 +174,9 @@ const Header: React.FC = () => {
         <div className="fixed inset-0 left-0 top-16 z-[1000] flex h-[calc(100vh-4rem)] w-full flex-col overflow-y-auto border-t border-neutral-100 bg-white p-6 shadow-xl xl:hidden">
           <div className="flex flex-col space-y-2">
             {navItems.map((item) => {
-              const active = isItemActive(item);
+              const active = item.children
+                ? item.children.some((child) => isPathActive(child.href))
+                : isPathActive(item.href);
               const expanded = mobileDropdownOpen === item.name;
 
               return (

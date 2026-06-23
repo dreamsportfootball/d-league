@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Trophy, User } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
+import SeasonSelector from '../components/SeasonSelector';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
@@ -127,7 +128,7 @@ const StatsPage: React.FC = () => {
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-4 flex flex-col justify-between md:mb-12 md:flex-row md:items-end">
+        <div className="mb-6 flex flex-col justify-between gap-6 md:mb-12 md:flex-row md:items-end">
           <div>
             <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
               數據 <span className="text-brand-blue">中心</span>
@@ -135,6 +136,13 @@ const StatsPage: React.FC = () => {
             <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
               {activeSeason.displayName} {activeLeague} 球員數據
             </p>
+          </div>
+
+          <div className="w-full md:w-60">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+              瀏覽賽季
+            </p>
+            <SeasonSelector />
           </div>
         </div>
 

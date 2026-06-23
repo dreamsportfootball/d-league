@@ -100,8 +100,6 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     venue: '台南市立仁德文賢國中人工草皮足球場',
     registrationFormUrl: 'https://forms.gle/juLDiY73TdJGvWCj9',
     regulationsUrl: 'https://drive.google.com/file/d/1MIe3p4ielXLnJSnr_V8YNCFpvonlxxS4/view?usp=drive_link',
-    heroImageDesktop: 'assets/seasons/2026-27/registration-poster-desktop.jpg',
-    heroImageMobile: 'assets/seasons/2026-27/registration-poster-mobile.jpg',
     heroFallbackImage: 'banner.png',
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式開放報名',

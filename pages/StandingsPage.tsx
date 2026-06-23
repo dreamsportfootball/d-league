@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen, Trophy } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
+import SeasonSelector from '../components/SeasonSelector';
 import Standings from '../components/Standings';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
@@ -53,7 +54,7 @@ const StandingsPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-20">
       <div className="container mx-auto max-w-7xl px-6 md:px-12">
-        <div className="mb-5 flex flex-col justify-between md:mb-12 md:flex-row md:items-end">
+        <div className="mb-6 flex flex-col justify-between gap-6 md:mb-12 md:flex-row md:items-end">
           <div>
             <h1 className="mb-4 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:[-webkit-text-stroke:0px]">
               積分 <span className="text-brand-blue">榜</span>
@@ -61,6 +62,13 @@ const StandingsPage: React.FC = () => {
             <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
               {activeSeason.displayName} {activeLeague} 即時排名與數據
             </p>
+          </div>
+
+          <div className="w-full md:w-60">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+              瀏覽賽季
+            </p>
+            <SeasonSelector />
           </div>
         </div>
 

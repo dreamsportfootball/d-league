@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
@@ -12,10 +12,9 @@ interface NavItem {
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const location = useLocation();
   const { activeSeason } = useSeason();
-  const headerRef = useRef<HTMLElement>(null);
 
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [{ name: '首頁', href: '/' }];
@@ -42,7 +41,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     setMobileMenuOpen(false);
-    setOpenDropdown(null);
+    setMobileDropdownOpen(null);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -53,26 +52,15 @@ const Header: React.FC = () => {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) {
-        setOpenDropdown(null);
-      }
-    };
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setOpenDropdown(null);
+        setMobileDropdownOpen(null);
         setMobileMenuOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   const isPathActive = (href: string) => {
@@ -91,14 +79,11 @@ const Header: React.FC = () => {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
-    setOpenDropdown(null);
+    setMobileDropdownOpen(null);
   };
 
   return (
-    <header
-      ref={headerRef}
-      className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm"
-    >
+    <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
       <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">
           <Link
@@ -128,53 +113,46 @@ const Header: React.FC = () => {
         <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7">
           {navItems.map((item) => {
             const active = isItemActive(item);
-            const expanded = openDropdown === item.name;
 
             return (
-              <div key={item.name} className="relative flex h-16 items-center">
+              <div key={item.name} className="group relative flex h-16 items-center">
                 {item.children ? (
                   <>
                     <button
                       type="button"
-                      onClick={() => setOpenDropdown(expanded ? null : item.name)}
                       aria-haspopup="menu"
-                      aria-expanded={expanded}
                       className={`relative flex h-full items-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-blue/30 ${
                         active ? 'text-brand-blue' : 'hover:text-brand-blue'
                       }`}
                     >
                       {item.name}
-                      <ChevronDown
-                        className={`ml-1 h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
-                      />
+                      <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
                       {active && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />}
                     </button>
 
-                    {expanded && (
-                      <div
-                        role="menu"
-                        className="absolute left-0 top-16 w-56 overflow-hidden rounded-b-lg border border-neutral-100 bg-white shadow-xl"
-                      >
-                        {item.children.map((child) => {
-                          const childActive = isPathActive(child.href);
-                          return (
-                            <Link
-                              key={child.name}
-                              to={child.href}
-                              role="menuitem"
-                              aria-current={childActive ? 'page' : undefined}
-                              className={`block border-b border-neutral-50 px-6 py-4 text-sm transition-colors last:border-none ${
-                                childActive
-                                  ? 'bg-brand-blue/5 text-brand-blue'
-                                  : 'text-neutral-600 hover:bg-neutral-50 hover:text-brand-blue'
-                              }`}
-                            >
-                              {child.name}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
+                    <div
+                      role="menu"
+                      className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                    >
+                      {item.children.map((child) => {
+                        const childActive = isPathActive(child.href);
+                        return (
+                          <Link
+                            key={child.name}
+                            to={child.href}
+                            role="menuitem"
+                            aria-current={childActive ? 'page' : undefined}
+                            className={`block border-b border-neutral-50 px-6 py-4 text-sm transition-colors last:border-none ${
+                              childActive
+                                ? 'bg-brand-blue/5 text-brand-blue'
+                                : 'text-neutral-600 hover:bg-neutral-50 hover:text-brand-blue'
+                            }`}
+                          >
+                            {child.name}
+                          </Link>
+                        );
+                      })}
+                    </div>
                   </>
                 ) : item.external ? (
                   <a
@@ -219,7 +197,7 @@ const Header: React.FC = () => {
           <div className="flex flex-col space-y-2">
             {navItems.map((item) => {
               const active = isItemActive(item);
-              const expanded = openDropdown === item.name;
+              const expanded = mobileDropdownOpen === item.name;
 
               return (
                 <div key={item.name} className="border-b border-neutral-100 pb-2">
@@ -227,7 +205,7 @@ const Header: React.FC = () => {
                     <div>
                       <button
                         type="button"
-                        onClick={() => setOpenDropdown(expanded ? null : item.name)}
+                        onClick={() => setMobileDropdownOpen(expanded ? null : item.name)}
                         aria-expanded={expanded}
                         className={`flex min-h-11 w-full items-center justify-between py-2 font-display text-xl font-bold uppercase ${
                           active ? 'text-brand-blue' : 'text-brand-black'

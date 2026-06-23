@@ -26,14 +26,14 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const querySeason = searchParams.get('season');
   const seasonAware = isSeasonAwarePath(location.pathname);
 
-  const [activeSeasonId, setActiveSeasonId] = useState<SeasonId>(() =>
+  const [selectedSeasonId, setSelectedSeasonId] = useState<SeasonId>(() =>
     seasonAware && isSeasonId(querySeason) ? querySeason : CURRENT_SEASON_ID,
   );
 
   useEffect(() => {
     if (!seasonAware) {
-      if (activeSeasonId !== CURRENT_SEASON_ID) {
-        setActiveSeasonId(CURRENT_SEASON_ID);
+      if (selectedSeasonId !== CURRENT_SEASON_ID) {
+        setSelectedSeasonId(CURRENT_SEASON_ID);
       }
 
       if (searchParams.has('season')) {
@@ -45,29 +45,31 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     }
 
     if (isSeasonId(querySeason)) {
-      if (querySeason !== activeSeasonId) setActiveSeasonId(querySeason);
+      if (querySeason !== selectedSeasonId) setSelectedSeasonId(querySeason);
       return;
     }
 
-    const fallbackSeason = querySeason === null ? activeSeasonId : CURRENT_SEASON_ID;
-    if (fallbackSeason !== activeSeasonId) setActiveSeasonId(fallbackSeason);
+    const fallbackSeason = querySeason === null ? selectedSeasonId : CURRENT_SEASON_ID;
+    if (fallbackSeason !== selectedSeasonId) setSelectedSeasonId(fallbackSeason);
 
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set('season', fallbackSeason);
     setSearchParams(nextParams, { replace: true });
-  }, [activeSeasonId, querySeason, searchParams, seasonAware, setSearchParams]);
+  }, [querySeason, searchParams, seasonAware, selectedSeasonId, setSearchParams]);
 
   const setActiveSeason = useCallback(
     (seasonId: SeasonId) => {
       if (!seasonAware) return;
 
-      setActiveSeasonId(seasonId);
+      setSelectedSeasonId(seasonId);
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set('season', seasonId);
       setSearchParams(nextParams, { replace: true });
     },
     [searchParams, seasonAware, setSearchParams],
   );
+
+  const activeSeasonId = seasonAware ? selectedSeasonId : CURRENT_SEASON_ID;
 
   const value = useMemo<SeasonContextValue>(
     () => ({

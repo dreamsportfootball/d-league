@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
 
   const openPastSeason = () => {
     setActiveSeason('2025-26');
-    navigate('/');
+    navigate('/?season=2025-26');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

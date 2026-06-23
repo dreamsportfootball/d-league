@@ -1,19 +1,16 @@
 import React, { useMemo } from 'react';
-import { MATCHES, TEAMS } from '../constants';
-import { MatchStatus, Standing } from '../types';
+import { useSeason } from '../hooks/useSeason';
+import { MatchStatus, type Standing } from '../types';
+import type { LeagueId } from '../types/season';
 
-// 排名計算：積分 → 得失球差 → 進球
-const calculateStandings = (league: 'L1' | 'L2'): Standing[] => {
-  const leagueTeamIds = Object.keys(TEAMS).filter(id => {
-    const playsInLeague = MATCHES.some(
-      m => m.league === league && (m.homeTeamId === id || m.awayTeamId === id)
-    );
-    return playsInLeague;
-  });
-
+const calculateStandings = (
+  league: LeagueId,
+  teamIds: string[],
+  matches: ReturnType<typeof useSeason>['seasonData']['matches'],
+): Standing[] => {
   const standingsMap: Record<string, Standing> = {};
 
-  leagueTeamIds.forEach(teamId => {
+  teamIds.forEach((teamId) => {
     standingsMap[teamId] = {
       teamId,
       played: 0,
@@ -28,48 +25,47 @@ const calculateStandings = (league: 'L1' | 'L2'): Standing[] => {
     };
   });
 
-  MATCHES
+  matches
     .filter(
-      m =>
-        m.league === league &&
-        (m.status === MatchStatus.FINISHED ||
-          (m.homeScore !== null && m.awayScore !== null))
+      (match) =>
+        match.league === league &&
+        (match.status === MatchStatus.FINISHED ||
+          (match.homeScore !== null && match.awayScore !== null)),
     )
-    .forEach(match => {
+    .forEach((match) => {
       const home = standingsMap[match.homeTeamId];
       const away = standingsMap[match.awayTeamId];
       if (!home || !away) return;
 
-      const h = match.homeScore ?? 0;
-      const a = match.awayScore ?? 0;
+      const homeScore = match.homeScore ?? 0;
+      const awayScore = match.awayScore ?? 0;
 
-      home.played++;
-      away.played++;
-      home.gf += h;
-      home.ga += a;
-      away.gf += a;
-      away.ga += h;
-
+      home.played += 1;
+      away.played += 1;
+      home.gf += homeScore;
+      home.ga += awayScore;
+      away.gf += awayScore;
+      away.ga += homeScore;
       home.gd = home.gf - home.ga;
       away.gd = away.gf - away.ga;
 
-      if (h > a) {
-        home.won++;
+      if (homeScore > awayScore) {
+        home.won += 1;
         home.points += 3;
-        away.lost++;
+        away.lost += 1;
         home.form.unshift('W');
         away.form.unshift('L');
-      } else if (h < a) {
-        away.won++;
+      } else if (homeScore < awayScore) {
+        away.won += 1;
         away.points += 3;
-        home.lost++;
+        home.lost += 1;
         away.form.unshift('W');
         home.form.unshift('L');
       } else {
-        home.drawn++;
-        away.drawn++;
-        home.points++;
-        away.points++;
+        home.drawn += 1;
+        away.drawn += 1;
+        home.points += 1;
+        away.points += 1;
         home.form.unshift('D');
         away.form.unshift('D');
       }
@@ -82,66 +78,61 @@ const calculateStandings = (league: 'L1' | 'L2'): Standing[] => {
   });
 };
 
-// 近況小點 (優化：明確設定尺寸 w-2 h-2)
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
-  let colorClass = 'bg-neutral-300';
-  if (result === 'W') colorClass = 'bg-green-500';
-  if (result === 'D') colorClass = 'bg-neutral-400';
-  if (result === 'L') colorClass = 'bg-red-500';
-
-  // ✅ 變更：明確設定 w-2 h-2
-  return <div className={`rounded-full w-2 h-2 mx-0.5 ${colorClass}`} title={result} />;
+  const colorClass =
+    result === 'W' ? 'bg-green-500' : result === 'D' ? 'bg-neutral-400' : 'bg-red-500';
+  return <div className={`mx-0.5 h-2 w-2 rounded-full ${colorClass}`} title={result} />;
 };
 
-// 冠軍左側藍條
 const rankBar = (index: number) => (index === 0 ? 'bg-brand-blue' : 'bg-transparent');
 
 interface StandingsProps {
-  league: 'L1' | 'L2';
+  league: LeagueId;
   variant?: 'widget' | 'page';
 }
 
 const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
-  const standings = useMemo(() => calculateStandings(league), [league]);
+  const { seasonData } = useSeason();
+  const leagueTeamIds = useMemo(
+    () => seasonData.teams.filter((team) => team.leagueId === league).map((team) => team.id),
+    [league, seasonData.teams],
+  );
+
+  const standings = useMemo(
+    () => calculateStandings(league, leagueTeamIds, seasonData.matches),
+    [league, leagueTeamIds, seasonData.matches],
+  );
 
   const isWidget = variant === 'widget';
-  const limit = isWidget ? (league === 'L2' ? 6 : 5) : standings.length;
-  const displayed = standings.slice(0, limit);
+  const displayed = standings.slice(0, isWidget ? 6 : standings.length);
 
-  // ─────────────────────────────
-  // Widget 模式（首頁小榜）
-  // ─────────────────────────────
   if (isWidget) {
     return (
       <div className="w-full text-xs">
-        <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 py-2 border-b border-neutral-100 text-neutral-500 font-bold tracking-wider text-[10px]">
+        <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 border-b border-neutral-100 py-2 text-[10px] font-bold tracking-wider text-neutral-500">
           <span>#</span>
           <span>球隊</span>
           <span className="text-center">場次</span>
           <span className="text-center">積分</span>
         </div>
-        {displayed.map((row, i) => {
-          const team = TEAMS[row.teamId];
+        {displayed.map((row, index) => {
+          const team = seasonData.teamMap[row.teamId];
+          if (!team) return null;
           return (
             <div
               key={row.teamId}
-              className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 py-3 border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors items-center"
+              className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-3 transition-colors hover:bg-neutral-50/50"
             >
-              {/* 排名指示 */}
-              <div className="flex items-center relative pl-1">
-                <div className={`absolute left-0 w-0.5 h-3 rounded-full ${rankBar(i)}`} />
-                <span className="font-medium text-brand-black tabular-nums ml-2">{i + 1}</span>
+              <div className="relative flex items-center pl-1">
+                <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(index)}`} />
+                <span className="ml-2 font-medium tabular-nums text-brand-black">{index + 1}</span>
               </div>
-
-              <div className="flex items-center space-x-2 min-w-0">
-                <img src={team.logo} className="w-5 h-5 object-contain" />
-                <span className="font-bold text-brand-black truncate">{team.name}</span>
+              <div className="flex min-w-0 items-center space-x-2">
+                <img src={team.logo} alt={team.name} className="h-5 w-5 object-contain" />
+                <span className="truncate font-bold text-brand-black">{team.name}</span>
               </div>
-
-              <span className="text-center text-brand-black tabular-nums">{row.played}</span>
-              <span className="text-center font-semibold text-brand-black tabular-nums">
-                {row.points}
-              </span>
+              <span className="text-center tabular-nums text-brand-black">{row.played}</span>
+              <span className="text-center font-semibold tabular-nums text-brand-black">{row.points}</span>
             </div>
           );
         })}
@@ -149,119 +140,60 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
     );
   }
 
-  // ─────────────────────────────
-  // Page 模式：完整表格（手機優先 名次 / 球隊 / 場次 / 勝 / 和）
-  // ─────────────────────────────
   return (
     <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-[740px] md:min-w-0 border-collapse">
-        <thead className="text-[10px] md:text-[11px] font-bold tracking-widest text-neutral-500 border-b border-neutral-200">
+      <table className="w-full min-w-[740px] border-collapse md:min-w-0">
+        <thead className="border-b border-neutral-200 text-[10px] font-bold tracking-widest text-neutral-500 md:text-[11px]">
           <tr>
-            <th className="px-1 py-3 text-left w-8 md:w-10">名次</th>
-
-            <th className="pl-2 pr-2 md:px-4 py-3 text-left w-[140px] md:w-[220px]">
-              球隊
-            </th>
-
-            <th className="px-1 py-3 text-center w-10 md:w-12">場次</th>
-            <th className="px-1 py-3 text-center w-10 md:w-12">勝</th>
-            <th className="px-1 py-3 text-center w-10 md:w-12">和</th>
-
-            <th className="px-1 py-3 text-center w-10 md:w-12">敗</th>
-            <th className="px-1 py-3 text-center w-10 md:w-12">進球</th>
-            <th className="px-1 py-3 text-center w-10 md:w-12">失球</th>
-
-            <th className="px-1 py-3 text-center w-12 md:w-14">淨勝</th>
-
-            <th className="px-1 py-3 text-center w-12 md:w-14 text-brand-blue">
-              積分
-            </th>
-
-            <th className="px-1 py-3 text-left w-[50px] md:w-[60px]">近況</th>
+            <th className="w-8 px-1 py-3 text-left md:w-10">名次</th>
+            <th className="w-[140px] py-3 pl-2 pr-2 text-left md:w-[220px] md:px-4">球隊</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">場次</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">勝</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">和</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">敗</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">進球</th>
+            <th className="w-10 px-1 py-3 text-center md:w-12">失球</th>
+            <th className="w-12 px-1 py-3 text-center md:w-14">淨勝</th>
+            <th className="w-12 px-1 py-3 text-center text-brand-blue md:w-14">積分</th>
+            <th className="w-[50px] px-1 py-3 text-left md:w-[60px]">近況</th>
           </tr>
         </thead>
-
         <tbody>
-          {displayed.map((row, i) => {
-            const team = TEAMS[row.teamId];
-            const isChampion = i === 0;
-
+          {displayed.map((row, index) => {
+            const team = seasonData.teamMap[row.teamId];
+            if (!team) return null;
             return (
               <tr
                 key={row.teamId}
-                className="group hover:bg-neutral-50/50 transition-colors border-b border-neutral-100 last:border-0"
+                className="border-b border-neutral-100 transition-colors last:border-0 hover:bg-neutral-50/50"
               >
-                {/* 名次 + 左側藍條 */}
-                <td className="px-1 py-3 w-8 md:w-10">
-                  <div className="flex items-center relative pl-1">
-                    {/* ✅ 變更：將 w-2 縮回 w-1，維持 h-6 高度 */}
-                    <div className={`absolute left-0 w-1 h-6 rounded-full ${rankBar(i)}`} />
-                    <span
-                      className={`font-mono text-xs md:text-sm ml-3 tabular-nums font-bold text-brand-black`}
-                    >
-                      {i + 1}
+                <td className="w-8 px-1 py-3 md:w-10">
+                  <div className="relative flex items-center pl-1">
+                    <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(index)}`} />
+                    <span className="ml-3 font-mono text-xs font-bold tabular-nums text-brand-black md:text-sm">
+                      {index + 1}
                     </span>
                   </div>
                 </td>
-
-                {/* 球隊 */}
-                <td className="pl-2 pr-2 md:px-4 py-3 w-[140px] md:w-[220px] whitespace-nowrap">
+                <td className="w-[140px] whitespace-nowrap py-3 pl-2 pr-2 md:w-[220px] md:px-4">
                   <div className="flex items-center space-x-3">
-                    <img
-                      src={team.logo}
-                      className="w-7 h-7 md:w-8 md:h-8 object-contain shrink-0"
-                    />
-                    <span className="font-bold text-xs md:text-sm text-brand-black">
-                      {team.name}
-                    </span>
+                    <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" />
+                    <span className="text-xs font-bold text-brand-black md:text-sm">{team.name}</span>
                   </div>
                 </td>
-
-                {/* 場次 / 勝 / 和 */}
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.played}
-                </td>
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.won}
-                </td>
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.drawn}
-                </td>
-
-                {/* 敗 / 進球 / 失球 */}
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.lost}
-                </td>
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.gf}
-                </td>
-                <td className="px-1 py-3 text-center text-xs md:text-sm text-brand-black tabular-nums w-10 md:w-12">
-                  {row.ga}
-                </td>
-
-                {/* 淨勝 */}
-                <td className="px-1 py-3 text-center w-12 md:w-14">
-                  <span className="text-xs md:text-sm text-brand-black tabular-nums">
-                    {row.gd > 0 ? `+${row.gd}` : row.gd}
-                  </span>
-                </td>
-
-                {/* 積分 */}
-                <td className="px-1 py-3 text-center w-12 md:w-14">
-                  <span className="text-xs md:text-sm font-semibold text-brand-black tabular-nums">
-                    {row.points}
-                  </span>
-                </td>
-
-                {/* 近況：欄寬固定 */}
-                <td className="px-1 py-3 text-left w-[50px] md:w-[60px]">
-                  <div className="flex items-center h-full">
-                    {row.form.slice(0, 3).map((r, j) => (
-                      <FormBadge key={j} result={r as any} />
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.played}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.won}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.drawn}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.lost}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.gf}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.ga}</td>
+                <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.gd > 0 ? `+${row.gd}` : row.gd}</td>
+                <td className="px-1 py-3 text-center text-xs font-semibold tabular-nums text-brand-black md:text-sm">{row.points}</td>
+                <td className="px-1 py-3 text-left">
+                  <div className="flex items-center">
+                    {row.form.slice(0, 3).map((result, formIndex) => (
+                      <FormBadge key={`${row.teamId}-${formIndex}`} result={result} />
                     ))}
-                    {row.form.length === 0 && (
-                      <span className="text-neutral-300 text-xs">-</span>
-                    )}
                   </div>
                 </td>
               </tr>

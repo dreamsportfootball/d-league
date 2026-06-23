@@ -7,8 +7,9 @@ import matchEvents2026Json from '../data/seasons/2026-27/matchEvents.json';
 import media2026Json from '../data/seasons/2026-27/media.json';
 import { PLAYER_IMAGES } from '../staticData';
 import { ALL_PLAYERS, type PlayerProfile } from '../playerData';
-import { MATCH_EVENTS, MOCK_VIDEOS, type MatchEvent } from '../matchData';
+import { MATCH_EVENTS, MOCK_VIDEOS } from '../matchData';
 import type { Match, Video } from '../types';
+import type { MatchEvent } from '../types/matchEvent';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 

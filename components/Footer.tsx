@@ -1,6 +1,6 @@
 import React from 'react';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { ExternalLink, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 
 const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: string }> = ({
@@ -13,7 +13,7 @@ const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: strin
     target="_blank"
     rel="noopener noreferrer"
     aria-label={label}
-    className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all duration-300 hover:-translate-y-1 hover:border-brand-accent hover:bg-brand-accent hover:text-brand-black"
+    className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all duration-300 hover:-translate-y-1 hover:border-brand-accent hover:bg-brand-accent hover:text-brand-black"
   >
     {icon}
   </a>
@@ -31,23 +31,15 @@ const PartnerLogo: React.FC<{ src: string; className?: string }> = ({ src, class
 );
 
 const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, children }) => (
-  <Link to={to} className="group flex items-center transition-colors hover:text-brand-accent">
+  <Link to={to} className="group flex min-h-11 items-center transition-colors hover:text-brand-accent">
     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
     {children}
   </Link>
 );
 
 const Footer: React.FC = () => {
-  const { activeSeason, activeSeasonId, setActiveSeason } = useSeason();
-  const navigate = useNavigate();
-
+  const { activeSeason, activeSeasonId } = useSeason();
   const showPastSeason = activeSeasonId !== '2025-26';
-
-  const openPastSeason = () => {
-    setActiveSeason('2025-26');
-    navigate('/?season=2025-26');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-2 pt-12 text-white md:pb-5 md:pt-20">
@@ -78,10 +70,10 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="md:col-span-3">
-            <h4 className="mb-8 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white">
+            <h4 className="mb-5 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-8">
               聯賽資訊
             </h4>
-            <ul className="space-y-4 text-sm font-medium text-neutral-500">
+            <ul className="space-y-1 text-sm font-medium text-neutral-500 md:space-y-2">
               <li><FooterLink to="/about">關於 D LEAGUE</FooterLink></li>
               <li><FooterLink to="/#teams">參賽球隊</FooterLink></li>
               <li><FooterLink to="/schedule">賽程與結果</FooterLink></li>
@@ -94,30 +86,24 @@ const Footer: React.FC = () => {
                     href={activeSeason.regulationsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center transition-colors hover:text-brand-accent"
+                    className="group flex min-h-11 items-center transition-colors hover:text-brand-accent"
                   >
                     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
                     {activeSeason.shortName} 競賽規程
+                    <ExternalLink className="ml-2 h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 </li>
               )}
               {showPastSeason && (
                 <li>
-                  <button
-                    type="button"
-                    onClick={openPastSeason}
-                    className="group flex items-center text-left transition-colors hover:text-brand-accent"
-                  >
-                    <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
-                    2025/26 過往賽事
-                  </button>
+                  <FooterLink to="/standings?season=2025-26">2025/26 過往賽事</FooterLink>
                 </li>
               )}
             </ul>
           </div>
 
           <div className="md:col-span-4">
-            <h4 className="mb-8 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white">
+            <h4 className="mb-5 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-8">
               官方合作夥伴
             </h4>
             <div className="flex max-w-sm flex-wrap items-center justify-start gap-8">

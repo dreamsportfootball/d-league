@@ -1,0 +1,71 @@
+import t25 from '../data/seasons/2025-26/teams.json';
+import p25 from '../data/seasons/2025-26/players.json';
+import pi25 from '../data/seasons/2025-26/playerImages.json';
+import m25 from '../data/seasons/2025-26/matches.json';
+import e25 from '../data/seasons/2025-26/matchEvents.json';
+import n25 from '../data/seasons/2025-26/news.json';
+import v25 from '../data/seasons/2025-26/media.json';
+import a25 from '../data/seasons/2025-26/albums.json';
+import t26 from '../data/seasons/2026-27/teams.json';
+import p26 from '../data/seasons/2026-27/players.json';
+import pi26 from '../data/seasons/2026-27/playerImages.json';
+import m26 from '../data/seasons/2026-27/matches.json';
+import e26 from '../data/seasons/2026-27/matchEvents.json';
+import n26 from '../data/seasons/2026-27/news.json';
+import v26 from '../data/seasons/2026-27/media.json';
+import a26 from '../data/seasons/2026-27/albums.json';
+import type { Match, NewsArticle, Video } from '../types';
+import type { MatchEvent } from '../types/matchEvent';
+import type { MediaAlbum } from '../types/media';
+import type { PlayerProfile } from '../types/player';
+import type { SeasonId } from '../types/season';
+import type { SeasonTeam } from '../types/team';
+
+export interface SeasonData {
+  teams: SeasonTeam[];
+  teamMap: Record<string, SeasonTeam>;
+  players: PlayerProfile[];
+  playerImages: Record<string, string>;
+  matches: Match[];
+  matchEvents: Record<string, MatchEvent[]>;
+  news: NewsArticle[];
+  media: Video[];
+  albums: MediaAlbum[];
+}
+
+export const assetUrl = (path: string): string => {
+  if (/^https?:\/\//.test(path)) return path;
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '').replace(/^d-league\//, '')}`;
+};
+
+const makeData = (
+  id: SeasonId,
+  teamsInput: SeasonTeam[],
+  players: PlayerProfile[],
+  imagesInput: Record<string, string>,
+  matches: Match[],
+  matchEvents: Record<string, MatchEvent[]>,
+  newsInput: NewsArticle[],
+  mediaInput: Video[],
+  albumsInput: MediaAlbum[],
+): SeasonData => {
+  const teams = teamsInput.map((team) => ({ ...team, logo: assetUrl(team.logo) }));
+  return {
+    teams,
+    teamMap: Object.fromEntries(teams.map((team) => [team.id, team])),
+    players,
+    playerImages: Object.fromEntries(Object.entries(imagesInput).map(([name, path]) => [name, assetUrl(path)])),
+    matches,
+    matchEvents,
+    news: newsInput.map((article) => ({ ...article, seasonId: id, imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '' })),
+    media: mediaInput.map((item) => ({ ...item, thumbnail: assetUrl(item.thumbnail) })),
+    albums: albumsInput.map((album) => ({ ...album, cover: assetUrl(album.cover) })),
+  };
+};
+
+const DATA: Record<SeasonId, SeasonData> = {
+  '2025-26': makeData('2025-26', t25 as SeasonTeam[], p25 as PlayerProfile[], pi25 as Record<string, string>, m25 as Match[], e25 as Record<string, MatchEvent[]>, n25 as NewsArticle[], v25 as Video[], a25 as MediaAlbum[]),
+  '2026-27': makeData('2026-27', t26 as SeasonTeam[], p26 as PlayerProfile[], pi26 as Record<string, string>, m26 as Match[], e26 as Record<string, MatchEvent[]>, n26 as NewsArticle[], v26 as Video[], a26 as MediaAlbum[]),
+};
+
+export const getSeasonData = (seasonId: SeasonId): SeasonData => DATA[seasonId];

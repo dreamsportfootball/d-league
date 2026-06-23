@@ -142,15 +142,15 @@ const StatsPage: React.FC = () => {
           getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
         />
 
-        <div className="mb-6 flex gap-3 rounded-xl bg-neutral-100 p-1.5 sm:w-fit">
+        <div className="mb-6 flex space-x-10 px-2">
           <button
             type="button"
             onClick={() => setActiveTab('SCORERS')}
             aria-pressed={activeTab === 'SCORERS'}
-            className={`flex-1 rounded-lg px-5 py-2.5 text-sm font-bold transition-all sm:flex-none ${
+            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
               activeTab === 'SCORERS'
-                ? 'bg-white text-brand-black shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-600'
+                ? 'text-brand-black'
+                : 'text-neutral-300 hover:text-neutral-500'
             }`}
           >
             射手榜
@@ -159,10 +159,10 @@ const StatsPage: React.FC = () => {
             type="button"
             onClick={() => setActiveTab('CARDS')}
             aria-pressed={activeTab === 'CARDS'}
-            className={`flex-1 rounded-lg px-5 py-2.5 text-sm font-bold transition-all sm:flex-none ${
+            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
               activeTab === 'CARDS'
-                ? 'bg-white text-brand-black shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-600'
+                ? 'text-brand-black'
+                : 'text-neutral-300 hover:text-neutral-500'
             }`}
           >
             紅黃牌

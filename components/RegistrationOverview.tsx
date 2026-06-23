@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowRight, CalendarDays, FileText, MapPin, Trophy, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
@@ -11,6 +11,16 @@ const formatDate = (value?: string): string => {
 const RegistrationOverview: React.FC = () => {
   const { activeSeason } = useSeason();
 
+  const leagueConfigs = useMemo(
+    () =>
+      activeSeason.enabledLeagues
+        .map((leagueId) => activeSeason.leagues[leagueId])
+        .filter((league): league is NonNullable<typeof league> => Boolean(league)),
+    [activeSeason.enabledLeagues, activeSeason.leagues],
+  );
+
+  const expectedTeamCount = leagueConfigs[0]?.expectedTeamCount;
+
   return (
     <section className="bg-white py-14 md:py-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
@@ -20,11 +30,11 @@ const RegistrationOverview: React.FC = () => {
               Registration Open
             </span>
             <h2 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-6xl">
-              2026/27
+              {activeSeason.shortName}
               <span className="block text-brand-blue">正式開放報名</span>
             </h2>
             <p className="mt-6 max-w-xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
-              L1、L2、L3 三個級別同步開放報名，各級別預計錄取 6 支球隊，並正式實施升降級制度
+              {activeSeason.enabledLeagues.join('、')} 三個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -75,7 +85,9 @@ const RegistrationOverview: React.FC = () => {
             <div className="bg-white p-6 md:p-8">
               <Users className="mb-5 h-6 w-6 text-brand-blue" aria-hidden="true" />
               <p className="text-xs font-black uppercase tracking-widest text-neutral-400">預計隊數</p>
-              <p className="mt-2 font-display text-2xl font-black text-brand-black">每級別 6 隊</p>
+              <p className="mt-2 font-display text-2xl font-black text-brand-black">
+                每級別 {expectedTeamCount ?? 0} 隊
+              </p>
             </div>
           </div>
         </div>

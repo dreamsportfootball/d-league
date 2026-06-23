@@ -7,22 +7,32 @@ import Hero from '../components/Hero';
 import MatchCenter from '../components/MatchCenter';
 import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
-import PreviousSeasonHighlight from '../components/PreviousSeasonHighlight';
 import RegistrationOverview from '../components/RegistrationOverview';
 import Standings from '../components/Standings';
 import VideoHub from '../components/VideoHub';
+import { DEFAULT_SEASON_ID } from '../config/seasons';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
 const HomePage: React.FC = () => {
-  const { activeSeason } = useSeason();
+  const { activeSeasonId, activeSeason, setActiveSeason } = useSeason();
   const [activeLeague, setActiveLeague] = useState<LeagueId>(activeSeason.enabledLeagues[0]);
+
+  useEffect(() => {
+    if (activeSeasonId !== DEFAULT_SEASON_ID) {
+      setActiveSeason(DEFAULT_SEASON_ID);
+    }
+  }, [activeSeasonId, setActiveSeason]);
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
       setActiveLeague(activeSeason.enabledLeagues[0]);
     }
   }, [activeLeague, activeSeason.enabledLeagues]);
+
+  if (activeSeasonId !== DEFAULT_SEASON_ID) {
+    return <div className="min-h-screen bg-white" aria-hidden="true" />;
+  }
 
   if (activeSeason.status === 'registration') {
     return (
@@ -33,8 +43,6 @@ const HomePage: React.FC = () => {
         <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
           <NewsSection />
         </section>
-
-        <PreviousSeasonHighlight />
 
         <div id="teams">
           <ClubGrid />

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowRight, CheckCircle2, FileText, ShieldCheck, Trophy } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 
 const formatDate = (value?: string): string => {
@@ -8,7 +9,36 @@ const formatDate = (value?: string): string => {
 };
 
 const RegistrationPage: React.FC = () => {
-  const { activeSeason } = useSeason();
+  const { activeSeason, activeSeasonId } = useSeason();
+
+  const leagueConfigs = useMemo(
+    () =>
+      activeSeason.enabledLeagues
+        .map((leagueId) => activeSeason.leagues[leagueId])
+        .filter((league): league is NonNullable<typeof league> => Boolean(league)),
+    [activeSeason.enabledLeagues, activeSeason.leagues],
+  );
+
+  if (activeSeason.status !== 'registration') {
+    return <Navigate to={`/?season=${activeSeasonId}`} replace />;
+  }
+
+  const expectedTeamCounts = new Set(leagueConfigs.map((league) => league.expectedTeamCount));
+  const matchCounts = new Set(leagueConfigs.map((league) => league.matchesPerTeam));
+  const formats = new Set(leagueConfigs.map((league) => league.format));
+
+  const teamCountLabel =
+    expectedTeamCounts.size === 1
+      ? `各級別 ${leagueConfigs[0]?.expectedTeamCount ?? 0} 隊`
+      : '依各級別公告';
+  const matchCountLabel =
+    matchCounts.size === 1 ? `${leagueConfigs[0]?.matchesPerTeam ?? 0} 場` : '依各級別公告';
+  const formatLabel =
+    formats.size === 1 && leagueConfigs[0]?.format === 'double-round-robin'
+      ? '雙循環'
+      : formats.size === 1 && leagueConfigs[0]?.format === 'triple-round-robin'
+        ? '三循環'
+        : '依各級別公告';
 
   return (
     <div className="min-h-[80vh] bg-white pb-24 pt-8 md:pt-20">
@@ -18,7 +48,7 @@ const RegistrationPage: React.FC = () => {
             Registration
           </span>
           <h1 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-7xl">
-            D LEAGUE 2026/27
+            {activeSeason.displayName}
             <span className="block text-brand-blue">賽季報名</span>
           </h1>
           <p className="mt-6 max-w-3xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
@@ -31,10 +61,10 @@ const RegistrationPage: React.FC = () => {
             <div className="grid grid-cols-1 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-2">
               <InfoBlock label="報名期間" value={`${formatDate(activeSeason.registrationStart)}－${formatDate(activeSeason.registrationEnd)}`} />
               <InfoBlock label="比賽地點" value={activeSeason.venue} />
-              <InfoBlock label="賽事級別" value="L1／L2／L3" />
-              <InfoBlock label="預計隊數" value="各級別 6 隊" />
-              <InfoBlock label="賽制" value="雙循環" />
-              <InfoBlock label="每隊場數" value="10 場" />
+              <InfoBlock label="賽事級別" value={activeSeason.enabledLeagues.join('／')} />
+              <InfoBlock label="預計隊數" value={teamCountLabel} />
+              <InfoBlock label="賽制" value={formatLabel} />
+              <InfoBlock label="每隊場數" value={matchCountLabel} />
             </div>
 
             <section className="mt-12">
@@ -46,24 +76,19 @@ const RegistrationPage: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                {activeSeason.enabledLeagues.map((leagueId) => {
-                  const league = activeSeason.leagues[leagueId];
-                  if (!league) return null;
-
-                  return (
-                    <div key={leagueId} className="border border-neutral-200 bg-neutral-50 p-5 md:p-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="font-display text-2xl font-black text-brand-black">{league.displayName}</p>
-                          <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">{league.description}</p>
-                        </div>
-                        <span className="shrink-0 bg-brand-black px-3 py-1 text-xs font-black tracking-widest text-white">
-                          {league.shortName}
-                        </span>
+                {leagueConfigs.map((league) => (
+                  <div key={league.id} className="border border-neutral-200 bg-neutral-50 p-5 md:p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="font-display text-2xl font-black text-brand-black">{league.displayName}</p>
+                        <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">{league.description}</p>
                       </div>
+                      <span className="shrink-0 bg-brand-black px-3 py-1 text-xs font-black tracking-widest text-white">
+                        {league.shortName}
+                      </span>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </section>
           </div>
@@ -81,7 +106,7 @@ const RegistrationPage: React.FC = () => {
 
               <div className="mt-8 space-y-3">
                 <Feature text="可依球隊目前實力選擇希望參加的級別" />
-                <Feature text="各級別預計錄取 6 支球隊" />
+                <Feature text={`各級別預計錄取 ${leagueConfigs[0]?.expectedTeamCount ?? 0} 支球隊`} />
                 <Feature text="正式實施升降級制度" />
                 <Feature text="不設升降級附加賽" />
               </div>

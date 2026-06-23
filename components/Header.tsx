@@ -56,8 +56,8 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
-      <div className="container mx-auto flex h-full max-w-full items-center px-4 md:px-6">
-        <div className="flex shrink-0 items-center">
+      <div className="container mx-auto grid h-full max-w-full grid-cols-[1fr_auto] items-center px-4 md:px-6 xl:grid-cols-[245px_minmax(0,1fr)_245px]">
+        <div className="flex min-w-0 items-center xl:w-full">
           <Link
             to="/"
             className="group flex items-center"
@@ -82,56 +82,56 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <div className="ml-auto flex h-full items-center">
-          <nav className="hidden items-center space-x-5 text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
-            {navItems.map((item) => (
-              <div key={item.name} className="group relative flex h-16 items-center">
-                {item.children ? (
-                  <>
-                    <button
-                      type="button"
-                      className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
-                    >
-                      {item.name}
-                      <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
-                    </button>
-                    <div className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          to={child.href}
-                          className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue"
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center transition-colors hover:text-brand-blue"
+        <nav className="hidden items-center justify-self-center space-x-5 text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
+          {navItems.map((item) => (
+            <div key={item.name} className="group relative flex h-16 items-center">
+              {item.children ? (
+                <>
+                  <button
+                    type="button"
+                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
                   >
                     {item.name}
-                  </a>
-                ) : (
-                  <Link
-                    to={item.href}
-                    className="flex items-center transition-colors hover:text-brand-blue"
-                    onClick={() => handleHomeScroll(item.href)}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </nav>
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
+                  </button>
+                  <div className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        to={child.href}
+                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue"
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              ) : item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center transition-colors hover:text-brand-blue"
+                >
+                  {item.name}
+                </a>
+              ) : (
+                <Link
+                  to={item.href}
+                  className="flex items-center transition-colors hover:text-brand-blue"
+                  onClick={() => handleHomeScroll(item.href)}
+                >
+                  {item.name}
+                </Link>
+              )}
+            </div>
+          ))}
+        </nav>
 
+        <div className="flex justify-self-end xl:w-full xl:justify-end">
           <button
             type="button"
-            className="ml-3 p-1 xl:hidden"
+            className="p-1 xl:hidden"
             onClick={() => setMobileMenuOpen((open) => !open)}
             aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
             aria-expanded={mobileMenuOpen}

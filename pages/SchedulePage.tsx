@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { MousePointerClick, Trophy, X } from 'lucide-react';
+import { MousePointerClick, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import LeagueTabs from '../components/LeagueTabs';
 import MatchEvents from '../components/MatchEvents';
-import SeasonSelector from '../components/SeasonSelector';
+import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
@@ -81,52 +82,30 @@ const SchedulePage: React.FC = () => {
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-6 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
-          <div>
-            <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
-              完整 <span className="text-brand-blue">賽程</span>
-            </h1>
-            <div className="flex flex-col space-y-2 text-sm font-medium tracking-wide text-neutral-400 md:flex-row md:items-center md:space-y-0 md:text-base">
+        <SeasonPageHeader
+          title="賽程與"
+          accent="結果"
+          description={
+            <div className="flex flex-col gap-2 md:flex-row md:items-center">
               <span>{activeSeason.displayName} 比賽、結果與事件詳情</span>
               {seasonData.matches.length > 0 && (
-                <div className="ml-0 flex items-center text-xs font-bold text-brand-blue md:ml-4">
+                <span className="flex items-center text-xs font-bold text-brand-blue md:ml-3">
                   <MousePointerClick className="mr-1.5 h-3 w-3 opacity-70" aria-hidden="true" />
-                  <span className="border-b border-brand-blue/50">點擊賽果看詳情</span>
-                </div>
+                  點擊賽果查看詳情
+                </span>
               )}
             </div>
-          </div>
+          }
+        />
 
-          <div className="flex w-full justify-end md:w-auto">
-            <SeasonSelector />
-          </div>
-        </div>
-
-        <div className="mb-8 flex items-center justify-between">
-          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
-            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
-            選擇聯賽
-          </h3>
-          <div className="flex space-x-4 text-xs font-bold">
-            {filterOptions.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => handleLeagueChange(tab)}
-                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
-                  leagueTab === tab
-                    ? 'border-brand-blue font-bold text-brand-black'
-                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
-                }`}
-              >
-                <span className="font-display md:hidden">{tab}</span>
-                <span className="hidden md:inline">
-                  {tab === 'ALL' ? 'ALL' : activeSeason.leagues[tab]?.displayName ?? tab}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <LeagueTabs
+          options={filterOptions}
+          active={leagueTab}
+          onChange={handleLeagueChange}
+          getLabel={(tab) =>
+            tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab
+          }
+        />
 
         <div className="mb-20">
           {seasonData.matches.length === 0 ? (
@@ -166,7 +145,7 @@ const SchedulePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedMatchId(null)}
-                className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-neutral-400 shadow-sm transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white text-neutral-400 shadow-sm transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
                 aria-label="關閉"
               >
                 <X className="h-5 w-5" />

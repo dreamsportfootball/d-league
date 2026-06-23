@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Trophy } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import BrandStory from '../components/BrandStory';
 import ClubGrid from '../components/ClubGrid';
 import Hero from '../components/Hero';
@@ -15,14 +15,8 @@ import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
 const HomePage: React.FC = () => {
-  const { activeSeasonId, activeSeason, setActiveSeason } = useSeason();
+  const { activeSeasonId, activeSeason } = useSeason();
   const [activeLeague, setActiveLeague] = useState<LeagueId>(activeSeason.enabledLeagues[0]);
-
-  useEffect(() => {
-    if (activeSeasonId !== DEFAULT_SEASON_ID) {
-      setActiveSeason(DEFAULT_SEASON_ID);
-    }
-  }, [activeSeasonId, setActiveSeason]);
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
@@ -30,8 +24,10 @@ const HomePage: React.FC = () => {
     }
   }, [activeLeague, activeSeason.enabledLeagues]);
 
+  // The homepage always represents the current/default season.
+  // Historical seasons remain available only on season-aware data pages.
   if (activeSeasonId !== DEFAULT_SEASON_ID) {
-    return <div className="min-h-screen bg-white" aria-hidden="true" />;
+    return <Navigate to={`/?season=${DEFAULT_SEASON_ID}`} replace />;
   }
 
   if (activeSeason.status === 'registration') {

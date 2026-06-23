@@ -1,34 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="robots" content="index, follow" />
     <title>D LEAGUE | Dream It, Play It</title>
-    
+
     <script>
-      (function() {
-        // 1. 檢查是否有從 404.html 傳來的重導向路徑
+      (function () {
         var redirectPath = sessionStorage.getItem('redirect_path');
-        
-        if (redirectPath !== null) {
-          // 2. 清除儲存，避免下次重刷又觸發
-          sessionStorage.removeItem('redirect_path');
-          
-          // 3. 組合正確的網址 (例如 /d-league/ + stats)
-          var base = '/d-league/';
-          var newUrl = base + redirectPath;
-          
-          // 4. 立即更新網址 (這一步非常快，React Router 啟動時就會看到正確的網址)
-          window.history.replaceState(null, null, newUrl);
-        }
+        if (redirectPath === null) return;
+
+        sessionStorage.removeItem('redirect_path');
+
+        var isPreview = window.location.pathname.indexOf('/d-league/preview/season-2026-27/') === 0;
+        if (isPreview) return;
+
+        window.history.replaceState(null, '', '/d-league/' + redirectPath);
       })();
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet" />
     <script>
       tailwind.config = {
         theme: {
@@ -41,44 +36,41 @@
               brand: {
                 black: '#0a0a0a',
                 dark: '#171717',
-                gray: '#f5f5f5', 
+                gray: '#f5f5f5',
                 white: '#ffffff',
-                accent: '#ccff00', 
+                accent: '#ccff00',
                 blue: '#0047AB',
-                text: '#0a0a0a', 
-                muted: '#737373', 
-              }
-            }
-          }
-        }
-      }
+                text: '#0a0a0a',
+                muted: '#737373',
+              },
+            },
+          },
+        },
+      };
     </script>
     <style>
       .no-scrollbar::-webkit-scrollbar {
-          display: none;
+        display: none;
       }
       .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
       }
-
-      html, body {
+      html,
+      body {
         width: 100%;
         max-width: 100%;
-        overflow-x: hidden; 
-        position: relative; 
+        overflow-x: hidden;
+        position: relative;
         margin: 0;
         padding: 0;
       }
-      
       #root {
         width: 100%;
         max-width: 100%;
         overflow-x: hidden;
       }
     </style>
-
-    <link rel="stylesheet" href="/index.css"> 
   </head>
   <body class="bg-brand-white text-brand-text font-sans antialiased selection:bg-brand-black selection:text-brand-accent">
     <div id="root"></div>

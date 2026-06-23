@@ -1,0 +1,101 @@
+[
+  {
+    "id": "t_chiayi",
+    "seasonId": "2025-26",
+    "leagueId": "L1",
+    "name": "嘉義諸羅山FC",
+    "shortName": "嘉義諸羅山FC",
+    "logo": "assets/teams/chiayi.png",
+    "primaryColor": "#90d1d2",
+    "secondaryColor": "#0e3679"
+  },
+  {
+    "id": "t_jiuhao",
+    "seasonId": "2025-26",
+    "leagueId": "L1",
+    "name": "酒號矯正署",
+    "shortName": "酒號矯正署",
+    "logo": "assets/teams/jiuhao.png",
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_tongque",
+    "seasonId": "2025-26",
+    "leagueId": "L1",
+    "name": "銅雀足球俱樂部",
+    "shortName": "銅雀足球俱樂部",
+    "logo": "assets/teams/tongque.png",
+    "primaryColor": "#2a2b30",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_chen",
+    "seasonId": "2025-26",
+    "leagueId": "L1",
+    "name": "陳公舘",
+    "shortName": "陳公舘",
+    "logo": "assets/teams/chen.png",
+    "primaryColor": "#000000",
+    "secondaryColor": "#8ac4e1"
+  },
+  {
+    "id": "t_luzhu",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "鹿逐俱樂部",
+    "shortName": "鹿逐俱樂部",
+    "logo": "assets/teams/luzhu.png",
+    "primaryColor": "#385984",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_pingtung",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "屏東野猿足球俱樂部",
+    "shortName": "屏東野猿足球俱樂部",
+    "logo": "assets/teams/pingtung.png",
+    "primaryColor": "#563e92",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_crazydog",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "瘋Dog",
+    "shortName": "瘋Dog",
+    "logo": "assets/teams/crazydog.png",
+    "primaryColor": "#ed8992",
+    "secondaryColor": "#000000"
+  },
+  {
+    "id": "t_canglong",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "蒼龍FC",
+    "shortName": "蒼龍FC",
+    "logo": "assets/teams/canglong.png",
+    "primaryColor": "#0c2450",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_ppi",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "PPI TAINAN",
+    "shortName": "PPI TAINAN",
+    "logo": "assets/teams/ppi.png",
+    "primaryColor": "#004026",
+    "secondaryColor": "#ffffff"
+  },
+  {
+    "id": "t_niaoshi",
+    "seasonId": "2025-26",
+    "leagueId": "L2",
+    "name": "鳥仕足球俱樂部",
+    "shortName": "鳥仕足球俱樂部",
+    "logo": "assets/teams/niaoshi.png",
+    "primaryColor": "#be1920"
+  }
+]

@@ -44,24 +44,24 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         aria-expanded={open}
         className={`group flex items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
           compact
-            ? 'h-9 min-w-[138px] rounded-full px-3 text-xs'
-            : 'h-12 w-full rounded-xl px-4 text-sm'
+            ? 'h-9 min-w-[112px] rounded-full px-3'
+            : 'h-10 w-full rounded-lg px-3'
         }`}
       >
         <span className="flex min-w-0 items-center">
-          <span className="mr-2.5 h-2 w-2 shrink-0 rounded-full bg-brand-blue shadow-[0_0_0_3px_rgba(0,71,171,0.12)]" />
-          <span className="flex min-w-0 items-baseline gap-1.5">
-            <span className="truncate font-display text-sm font-black tracking-wide">
+          <span className="mr-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-blue shadow-[0_0_0_3px_rgba(0,71,171,0.10)]" />
+          <span className="flex min-w-0 flex-col items-start leading-none">
+            <span className="truncate font-display text-[13px] font-black tracking-wide">
               {activeSeason.shortName}
             </span>
-            <span className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-400">
-              Season
+            <span className="mt-1 text-[9px] font-bold tracking-[0.14em] text-neutral-400">
+              賽季
             </span>
           </span>
         </span>
 
         <ChevronDown
-          className={`ml-2 h-4 w-4 shrink-0 text-neutral-400 transition-transform duration-200 group-hover:text-brand-blue ${
+          className={`ml-2 h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform duration-200 group-hover:text-brand-blue ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden="true"
@@ -72,16 +72,16 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         <div
           role="listbox"
           aria-label="選擇賽季"
-          className={`absolute right-0 z-[1200] mt-2 overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-2xl ring-1 ring-black/5 ${
-            compact ? 'w-60' : 'left-0 w-full'
+          className={`absolute right-0 z-[1200] mt-2 overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5 ${
+            compact ? 'w-48' : 'left-0 w-full'
           }`}
         >
-          <div className="flex items-center justify-between px-3 pb-2 pt-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-400">
-              Season Archive
+          <div className="flex items-center justify-between px-2.5 pb-1.5 pt-1.5">
+            <span className="text-[9px] font-black tracking-[0.18em] text-neutral-400">
+              選擇賽季
             </span>
-            <span className="text-[10px] font-bold text-neutral-300">
-              {availableSeasons.length} Seasons
+            <span className="text-[9px] font-bold text-neutral-300">
+              共 {availableSeasons.length} 季
             </span>
           </div>
 
@@ -97,7 +97,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                   role="option"
                   aria-selected={isActive}
                   onClick={() => selectSeason(season.id)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-all ${
+                  className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition-all ${
                     isActive
                       ? 'bg-brand-blue text-white shadow-sm'
                       : 'text-brand-black hover:bg-neutral-100'
@@ -105,16 +105,16 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                 >
                   <span className="flex min-w-0 items-center">
                     <span
-                      className={`mr-3 h-2 w-2 shrink-0 rounded-full ${
+                      className={`mr-2.5 h-1.5 w-1.5 shrink-0 rounded-full ${
                         isActive ? 'bg-brand-accent' : 'bg-neutral-300'
                       }`}
                     />
                     <span className="min-w-0">
-                      <span className="block font-display text-base font-black tracking-wide">
+                      <span className="block font-display text-sm font-black tracking-wide">
                         {season.shortName}
                       </span>
                       <span
-                        className={`mt-0.5 block text-[10px] font-bold uppercase tracking-[0.15em] ${
+                        className={`mt-0.5 block text-[9px] font-bold tracking-[0.12em] ${
                           isActive ? 'text-white/70' : 'text-neutral-400'
                         }`}
                       >
@@ -123,11 +123,11 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                     </span>
                   </span>
 
-                  <span className="ml-3 flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
+                  <span className="ml-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     {isActive ? (
-                      <Check className="h-4 w-4" aria-hidden="true" />
+                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
                     ) : (
-                      <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-neutral-300" aria-hidden="true" />
+                      <ChevronDown className="h-3 w-3 -rotate-90 text-neutral-300" aria-hidden="true" />
                     )}
                   </span>
                 </button>

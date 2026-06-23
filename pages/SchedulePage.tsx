@@ -3,6 +3,7 @@ import { MousePointerClick, Trophy, X } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchEvents from '../components/MatchEvents';
+import SeasonSelector from '../components/SeasonSelector';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
@@ -80,7 +81,7 @@ const SchedulePage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-4 flex flex-col justify-between md:mb-12 md:flex-row md:items-end">
+        <div className="mb-6 flex flex-col justify-between gap-6 md:mb-12 md:flex-row md:items-end">
           <div>
             <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
               完整 <span className="text-brand-blue">賽程</span>
@@ -94,6 +95,13 @@ const SchedulePage: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="w-full md:w-60">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+              瀏覽賽季
+            </p>
+            <SeasonSelector />
           </div>
         </div>
 
@@ -126,8 +134,8 @@ const SchedulePage: React.FC = () => {
         <div className="mb-20">
           {seasonData.matches.length === 0 ? (
             <EmptyState
-              title="2026/27 賽程尚未公布"
-              description="2026/27 賽程將於球隊錄取及分級完成後公布"
+              title={`${activeSeason.shortName} 賽程尚未公布`}
+              description={`${activeSeason.shortName} 賽程將於球隊錄取及分級完成後公布`}
               showRegistrationLink={activeSeason.status === 'registration'}
             />
           ) : filteredMatches.length === 0 ? (

@@ -15,7 +15,7 @@ function LeagueTabs<T extends string>({
   getLabel,
 }: LeagueTabsProps<T>) {
   return (
-    <div className="sticky top-16 z-30 -mx-4 mb-8 flex items-center justify-between gap-4 border-y border-neutral-100 bg-white/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:border-x-0 md:border-t-0 md:px-0 md:pb-4 md:pt-0">
+    <div className="mb-8 flex items-center justify-between gap-4 border-b border-neutral-100 pb-4">
       <h2 className="flex shrink-0 items-center font-display text-sm font-bold uppercase tracking-wider text-neutral-900 md:text-base">
         <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
         選擇聯賽

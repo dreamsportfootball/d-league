@@ -4,8 +4,6 @@ import { DEFAULT_SEASON_ID, getSeasonConfig, isSeasonId, SEASONS } from '../conf
 import { getSeasonData, type SeasonData } from '../services/seasonDataJson';
 import type { SeasonConfig, SeasonId } from '../types/season';
 
-const STORAGE_KEY = 'dleague-active-season';
-
 interface SeasonContextValue {
   activeSeasonId: SeasonId;
   activeSeason: SeasonConfig;
@@ -16,23 +14,13 @@ interface SeasonContextValue {
 
 export const SeasonContext = createContext<SeasonContextValue | null>(null);
 
-const getStoredSeason = (): SeasonId | null => {
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return isSeasonId(stored) ? stored : null;
-  } catch {
-    return null;
-  }
-};
-
 export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const querySeason = searchParams.get('season');
 
-  const [activeSeasonId, setActiveSeasonId] = useState<SeasonId>(() => {
-    if (isSeasonId(querySeason)) return querySeason;
-    return getStoredSeason() ?? DEFAULT_SEASON_ID;
-  });
+  const [activeSeasonId, setActiveSeasonId] = useState<SeasonId>(() =>
+    isSeasonId(querySeason) ? querySeason : DEFAULT_SEASON_ID,
+  );
 
   useEffect(() => {
     if (isSeasonId(querySeason)) {
@@ -40,18 +28,14 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       return;
     }
 
+    if (activeSeasonId !== DEFAULT_SEASON_ID) {
+      setActiveSeasonId(DEFAULT_SEASON_ID);
+    }
+
     const nextParams = new URLSearchParams(searchParams);
-    nextParams.set('season', activeSeasonId);
+    nextParams.set('season', DEFAULT_SEASON_ID);
     setSearchParams(nextParams, { replace: true });
   }, [activeSeasonId, querySeason, searchParams, setSearchParams]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, activeSeasonId);
-    } catch {
-      // Storage may be unavailable in privacy-restricted browsers.
-    }
-  }, [activeSeasonId]);
 
   const setActiveSeason = useCallback(
     (seasonId: SeasonId) => {

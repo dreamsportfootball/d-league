@@ -11,6 +11,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   const { activeSeasonId, activeSeason, availableSeasons, setActiveSeason } = useSeason();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const sortedSeasons = [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id));
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
@@ -72,14 +73,13 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
               選擇賽季
             </span>
             <span className="text-[9px] font-bold text-neutral-300">
-              共 {availableSeasons.length} 季
+              共 {sortedSeasons.length} 季
             </span>
           </div>
 
           <div className="space-y-1">
-            {availableSeasons.map((season) => {
+            {sortedSeasons.map((season) => {
               const isActive = season.id === activeSeasonId;
-              const isCurrent = season.isDefault;
 
               return (
                 <button
@@ -88,32 +88,17 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                   role="option"
                   aria-selected={isActive}
                   onClick={() => selectSeason(season.id)}
-                  className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left transition-all ${
+                  className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2.5 text-left transition-all ${
                     isActive
                       ? 'bg-brand-blue text-white shadow-sm'
                       : 'text-brand-black hover:bg-neutral-100'
                   }`}
                 >
-                  <span className="min-w-0">
-                    <span className="block font-display text-sm font-black tracking-wide">
-                      {season.shortName}
-                    </span>
-                    <span
-                      className={`mt-0.5 block text-[9px] font-bold tracking-[0.12em] ${
-                        isActive ? 'text-white/70' : 'text-neutral-400'
-                      }`}
-                    >
-                      {isCurrent ? '目前賽季' : '過往賽季'}
-                    </span>
+                  <span className="font-display text-sm font-black tracking-wide">
+                    {season.shortName}
                   </span>
 
-                  <span className="ml-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    {isActive ? (
-                      <Check className="h-3.5 w-3.5" aria-hidden="true" />
-                    ) : (
-                      <ChevronDown className="h-3 w-3 -rotate-90 text-neutral-300" aria-hidden="true" />
-                    )}
-                  </span>
+                  {isActive && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
                 </button>
               );
             })}

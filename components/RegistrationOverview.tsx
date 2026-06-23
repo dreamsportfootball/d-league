@@ -20,6 +20,7 @@ const RegistrationOverview: React.FC = () => {
   );
 
   const expectedTeamCount = leagueConfigs[0]?.expectedTeamCount;
+  const leagueCount = activeSeason.enabledLeagues.length;
 
   return (
     <section className="bg-white py-14 md:py-20">
@@ -34,7 +35,7 @@ const RegistrationOverview: React.FC = () => {
               <span className="block text-brand-blue">正式開放報名</span>
             </h2>
             <p className="mt-6 max-w-xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
-              {activeSeason.enabledLeagues.join('、')} 三個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
+              {activeSeason.enabledLeagues.join('、')} 共 {leagueCount} 個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">

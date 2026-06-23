@@ -84,6 +84,8 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     isDefault: false,
     venue: '台南市立仁德文賢國中人工草皮足球場',
     heroFallbackImage: 'banner.png',
+    youtubePlaylistEmbedUrl: 'https://www.youtube.com/embed/videoseries?list=PLly5Ox2OW8PCiK_sny6DzH9EdA73qK7Hw',
+    youtubePlaylistLabel: '2025/26 賽季完整賽事',
     enabledLeagues: ['L1', 'L2'],
     leagues: season2025Leagues,
   },

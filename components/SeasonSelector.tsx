@@ -44,14 +44,22 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         aria-expanded={open}
         className={`group flex items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
           compact
-            ? 'h-9 min-w-[112px] rounded-full px-3 text-xs'
-            : 'h-11 w-full rounded-lg px-4 text-sm'
+            ? 'h-9 min-w-[138px] rounded-full px-3 text-xs'
+            : 'h-12 w-full rounded-xl px-4 text-sm'
         }`}
       >
         <span className="flex min-w-0 items-center">
-          <span className="mr-2 h-2 w-2 shrink-0 rounded-full bg-brand-blue shadow-[0_0_0_3px_rgba(0,71,171,0.12)]" />
-          <span className="truncate font-display tracking-wide">{activeSeason.shortName}</span>
+          <span className="mr-2.5 h-2 w-2 shrink-0 rounded-full bg-brand-blue shadow-[0_0_0_3px_rgba(0,71,171,0.12)]" />
+          <span className="flex min-w-0 items-baseline gap-1.5">
+            <span className="truncate font-display text-sm font-black tracking-wide">
+              {activeSeason.shortName}
+            </span>
+            <span className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-400">
+              Season
+            </span>
+          </span>
         </span>
+
         <ChevronDown
           className={`ml-2 h-4 w-4 shrink-0 text-neutral-400 transition-transform duration-200 group-hover:text-brand-blue ${
             open ? 'rotate-180' : ''
@@ -64,54 +72,68 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         <div
           role="listbox"
           aria-label="選擇賽季"
-          className={`absolute right-0 z-[1200] mt-2 overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-2xl ring-1 ring-black/5 ${
-            compact ? 'w-52' : 'left-0 w-full'
+          className={`absolute right-0 z-[1200] mt-2 overflow-hidden rounded-2xl border border-neutral-200 bg-white p-2 shadow-2xl ring-1 ring-black/5 ${
+            compact ? 'w-60' : 'left-0 w-full'
           }`}
         >
-          <div className="px-3 pb-2 pt-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
-            選擇賽季
+          <div className="flex items-center justify-between px-3 pb-2 pt-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-400">
+              Season Archive
+            </span>
+            <span className="text-[10px] font-bold text-neutral-300">
+              {availableSeasons.length} Seasons
+            </span>
           </div>
 
-          {availableSeasons.map((season) => {
-            const isActive = season.id === activeSeasonId;
-            const isCurrent = season.isDefault;
+          <div className="space-y-1">
+            {availableSeasons.map((season) => {
+              const isActive = season.id === activeSeasonId;
+              const isCurrent = season.isDefault;
 
-            return (
-              <button
-                key={season.id}
-                type="button"
-                role="option"
-                aria-selected={isActive}
-                onClick={() => selectSeason(season.id)}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left transition-colors ${
-                  isActive
-                    ? 'bg-brand-blue text-white'
-                    : 'text-brand-black hover:bg-neutral-100'
-                }`}
-              >
-                <span className="min-w-0">
-                  <span className="block font-display text-sm font-bold tracking-wide">
-                    {season.shortName}
+              return (
+                <button
+                  key={season.id}
+                  type="button"
+                  role="option"
+                  aria-selected={isActive}
+                  onClick={() => selectSeason(season.id)}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-all ${
+                    isActive
+                      ? 'bg-brand-blue text-white shadow-sm'
+                      : 'text-brand-black hover:bg-neutral-100'
+                  }`}
+                >
+                  <span className="flex min-w-0 items-center">
+                    <span
+                      className={`mr-3 h-2 w-2 shrink-0 rounded-full ${
+                        isActive ? 'bg-brand-accent' : 'bg-neutral-300'
+                      }`}
+                    />
+                    <span className="min-w-0">
+                      <span className="block font-display text-base font-black tracking-wide">
+                        {season.shortName}
+                      </span>
+                      <span
+                        className={`mt-0.5 block text-[10px] font-bold uppercase tracking-[0.15em] ${
+                          isActive ? 'text-white/70' : 'text-neutral-400'
+                        }`}
+                      >
+                        {isCurrent ? '目前賽季' : '過往賽季'}
+                      </span>
+                    </span>
                   </span>
-                  <span
-                    className={`mt-0.5 block text-[10px] font-bold uppercase tracking-wider ${
-                      isActive ? 'text-white/70' : 'text-neutral-400'
-                    }`}
-                  >
-                    {isCurrent ? '目前賽季' : '過往賽季'}
-                  </span>
-                </span>
 
-                <span className="ml-3 flex h-6 w-6 shrink-0 items-center justify-center">
-                  {isActive ? (
-                    <Check className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <span className="h-2 w-2 rounded-full bg-neutral-300" />
-                  )}
-                </span>
-              </button>
-            );
-          })}
+                  <span className="ml-3 flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
+                    {isActive ? (
+                      <Check className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-neutral-300" aria-hidden="true" />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

@@ -36,7 +36,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   };
 
   return (
-    <div ref={rootRef} className={`relative ${compact ? 'inline-flex' : 'w-full'}`}>
+    <div ref={rootRef} className={`relative ${compact ? 'inline-flex' : 'w-full md:w-44'}`}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}

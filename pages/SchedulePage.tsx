@@ -1,234 +1,228 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { MousePointerClick, Trophy, X } from 'lucide-react';
+import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchEvents from '../components/MatchEvents';
-import { MATCHES, TEAMS } from '../constants';
-import { X, MousePointerClick, Trophy } from 'lucide-react'; // 🚀 導入 Trophy
+import { useSeason } from '../hooks/useSeason';
+import type { LeagueId } from '../types/season';
 
-type LeagueFilter = 'L1' | 'L2' | 'ALL';
+type LeagueFilter = LeagueId | 'ALL';
 
-// 格式化日期時間 helper
 const formatMatchDateTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const datePart = date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit', weekday: 'short' });
-    const timePart = date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
-    return `${datePart} ${timePart}`;
+  const date = new Date(timestamp);
+  const datePart = date.toLocaleDateString('zh-TW', {
+    month: '2-digit',
+    day: '2-digit',
+    weekday: 'short',
+  });
+  const timePart = date.toLocaleTimeString('zh-TW', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  return `${datePart} ${timePart}`;
 };
 
-// 🎌 UI 元件：MinimalFilter 已移除，樣式直接在 filterContent 中實現
+const isValidFilter = (value: string | null, enabledLeagues: LeagueId[]): value is LeagueFilter =>
+  value === 'ALL' || enabledLeagues.includes(value as LeagueId);
 
 const SchedulePage: React.FC = () => {
-    
-    // ✅ 修正 1: 使用 useState 的函數式更新，在初始化時同步讀取 Session Storage
-    const [leagueTab, setLeagueTab] = useState<LeagueFilter>(() => {
-        try {
-            const saved = window.sessionStorage.getItem('scheduleActiveLeague');
-            if (saved === 'L1' || saved === 'L2' || saved === 'ALL') {
-                return saved as LeagueFilter;
-            }
-        } catch (e) {
-            // ignore
-        }
-        return 'ALL'; // 預設值
-    });
+  const { activeSeason, seasonData } = useSeason();
+  const [leagueTab, setLeagueTab] = useState<LeagueFilter>(() => {
+    try {
+      const saved = window.sessionStorage.getItem('scheduleActiveLeague');
+      return saved === 'ALL' || saved === 'L1' || saved === 'L2' || saved === 'L3' ? saved : 'ALL';
+    } catch {
+      return 'ALL';
+    }
+  });
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
 
-    const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isValidFilter(leagueTab, activeSeason.enabledLeagues)) {
+      setLeagueTab('ALL');
+    }
+    setSelectedMatchId(null);
+  }, [activeSeason.enabledLeagues, activeSeason.id, leagueTab]);
 
-    // ✅ 修正 2: 處理聯賽切換並保存狀態
-    const handleLeagueChange = (league: LeagueFilter) => {
-        setLeagueTab(league);
-        setSelectedMatchId(null);
-        try {
-            // 每次切換時將新狀態保存到 sessionStorage
-            window.sessionStorage.setItem('scheduleActiveLeague', league);
-        } catch (e) {
-            // ignore
-        }
+  useEffect(() => {
+    document.body.style.overflow = selectedMatchId ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
     };
+  }, [selectedMatchId]);
 
+  const selectedMatch = useMemo(
+    () => seasonData.matches.find((match) => match.id === selectedMatchId),
+    [seasonData.matches, selectedMatchId],
+  );
 
-    const handleMatchClick = (matchId: string) => {
-        setSelectedMatchId(prevId => prevId === matchId ? null : matchId);
-    };
+  const filteredMatches = useMemo(
+    () =>
+      leagueTab === 'ALL'
+        ? seasonData.matches
+        : seasonData.matches.filter((match) => match.league === leagueTab),
+    [leagueTab, seasonData.matches],
+  );
 
-    const selectedMatch = useMemo(() => 
-        MATCHES.find(m => m.id === selectedMatchId), 
-    [selectedMatchId]);
+  const handleLeagueChange = (league: LeagueFilter) => {
+    setLeagueTab(league);
+    setSelectedMatchId(null);
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+  };
 
-    React.useEffect(() => {
-        if (selectedMatchId) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [selectedMatchId]);
+  const filterOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
 
-
-    // 篩選器渲染邏輯 (極簡線條風格)
-    const filterContent = (
-        <div className="flex space-x-4 text-xs font-bold">
-            {([ 'ALL', 'L1', 'L2' ] as LeagueFilter[]).map((tab) => {
-                
-                let labelText: string;
-                if (tab === 'ALL') {
-                    // 手機版使用中文 "全部"
-                    labelText = '全部';
-                } else {
-                    // 電腦版使用自然大小寫 "League 1"
-                    labelText = tab === 'L1' ? 'LEAGUE 1' : 'LEAGUE 2';
-                }
-                
-                // 處理手機版顯示 L1/L2，電腦版顯示 League 1/League 2
-                const responsiveLabel = (
-                    <>
-                        {/* 手機 L1/L2/ALL */}
-                        <span className="inline md:hidden font-display">{tab === 'ALL' ? 'ALL' : tab}</span>
-                        {/* 電腦 League 1 / League 2 / 全部 */}
-                        <span className="hidden md:inline">{labelText}</span>
-                    </>
-                );
-
-                return (
-                    <button
-                        key={tab}
-                        // ✅ 使用新的處理函式
-                        onClick={() => { handleLeagueChange(tab); }}
-                        // 樣式：極簡線條，無背景，無圓角
-                        className={`px-1 pb-1 transition-all whitespace-nowrap
-                            border-b-2 
-                            ${leagueTab === tab
-                                ? 'border-brand-blue text-brand-black font-bold' // 選中：藍線，深黑文字
-                                : 'border-transparent text-neutral-400 font-medium hover:text-neutral-600'} // 未選中：透明線，淺灰文字
-                        `}
-                    >
-                        {responsiveLabel}
-                    </button>
-                );
-            })}
-        </div>
-    );
-    // 結束篩選器渲染邏輯
-
-    return (
-        <div className="pt-6 md:pt-24 min-h-[80vh] bg-white pb-24">
-            <div className="container mx-auto px-4 md:px-12 max-w-7xl">
-                
-                {/* Header 區塊 - 移除篩選器和底線 */}
-                {/* 🚀 移除 border-b 和 pb-4 md:pb-6 */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-12">
-                    <div>
-                        {/* 手機版文字描邊，模擬加粗效果，電腦版移除描邊 */}
-                        <h1 className="font-display font-black md:font-extrabold text-4xl md:text-6xl uppercase text-brand-black mb-2 md:mb-4 tracking-tight [-webkit-text-stroke:.25px_currentColor] md:[-webkit-text-stroke:0px]">
-                             完整 <span className="text-brand-blue">賽程</span>
-                        </h1>
-                        <div className="flex flex-col md:flex-row md:items-center text-neutral-400 text-sm md:text-base font-medium tracking-wide space-y-2 md:space-y-0">
-                            <span>所有賽季比賽、結果與事件詳情</span>
-                            
-                            {/* 提示文字 - 極簡風格 */}
-                            <div className="flex items-center ml-0 md:ml-4 text-xs font-bold text-brand-blue hover:text-brand-black transition-colors">
-                                <MousePointerClick className="w-3 h-3 mr-1.5 opacity-70" />
-                                <span className="border-b border-brand-blue/50 hover:border-brand-black transition-colors">點擊賽果看詳情</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* 篩選器已移動到獨立區塊 */}
+  return (
+    <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
+      <div className="container mx-auto max-w-7xl px-4 md:px-12">
+        <div className="mb-4 flex flex-col justify-between md:mb-12 md:flex-row md:items-end">
+          <div>
+            <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
+              完整 <span className="text-brand-blue">賽程</span>
+            </h1>
+            <div className="flex flex-col space-y-2 text-sm font-medium tracking-wide text-neutral-400 md:flex-row md:items-center md:space-y-0 md:text-base">
+              <span>{activeSeason.displayName} 比賽、結果與事件詳情</span>
+              {seasonData.matches.length > 0 && (
+                <div className="ml-0 flex items-center text-xs font-bold text-brand-blue md:ml-4">
+                  <MousePointerClick className="mr-1.5 h-3 w-3 opacity-70" aria-hidden="true" />
+                  <span className="border-b border-brand-blue/50">點擊賽果看詳情</span>
                 </div>
-                
-                {/* 🚀 獨立聯賽選擇區塊 (手機隱藏，PC 顯示) */}
-                {/* ✅ 變更：移除 border-b pb-4 border-neutral-200 */}
-                <div className="hidden md:flex justify-between items-center mb-8">
-                    {/* 標題靠左 */}
-                    <h3 className="font-bold text-base text-neutral-900 font-display uppercase tracking-wider flex items-center">
-                        <Trophy className="w-5 h-5 mr-2 text-brand-blue" />
-                        選擇聯賽
-                    </h3>
-
-                    {/* 篩選器內容：靠右對齊 */}
-                    {filterContent}
-                </div>
-                {/* 結束獨立聯賽選擇區塊 */}
-
-                <div className="mb-20">
-                    <FullSchedule 
-                        onMatchClick={handleMatchClick} 
-                        selectedMatchId={selectedMatchId} 
-                        leagueFilter={leagueTab}
-                    /> 
-                 </div>
+              )}
             </div>
-            
-            {/* Match Detail Modal (保持不變) */}
-            {selectedMatchId && selectedMatch && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6">
-                    <div 
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-                        onClick={() => setSelectedMatchId(null)}
-                    ></div>
-
-                    <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
-                        <div className="bg-neutral-50 border-b border-neutral-100 p-6 relative">
-                            <button 
-                                onClick={() => setSelectedMatchId(null)}
-                                className="absolute top-4 right-4 p-2 bg-white hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-brand-black transition-colors shadow-sm z-10"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-
-                            <div className="text-center mb-4">
-                                <span className="text-xs font-bold text-brand-blue bg-brand-blue/10 px-3 py-1 rounded-full uppercase tracking-widest">
-                                    {selectedMatch.league} • 第 {selectedMatch.round} 輪
-                                </span>
-                                <p className="text-xs font-medium text-neutral-500 mt-2">
-                                    {formatMatchDateTime(selectedMatch.timestamp)}
-                                </p>
-                            </div>
-
-                            <div className="flex justify-between items-center px-2 sm:px-8">
-                                <div className="flex flex-col items-center w-1/3 min-w-0">
-                                    <img src={TEAMS[selectedMatch.homeTeamId].logo} className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-black text-center leading-tight text-xs sm:text-lg tracking-tighter whitespace-nowrap min-w-0">
-                                        {TEAMS[selectedMatch.homeTeamId].shortName}
-                                    </h3>
-                                </div>
-
-                                <div className="flex flex-col items-center w-1/3">
-                                    <div className="text-4xl sm:text-6xl font-display font-black text-brand-black tracking-tight">
-                                        {selectedMatch.homeScore ?? '-'} - {selectedMatch.awayScore ?? '-'}
-                                    </div>
-                                    <div className="text-xs font-bold text-neutral-400 mt-2 uppercase tracking-wider">Full Time</div>
-                                </div>
-
-                                <div className="flex flex-col items-center w-1/3 min-w-0">
-                                    <img src={TEAMS[selectedMatch.awayTeamId].logo} className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-black text-center leading-tight text-xs sm:text-lg tracking-tighter whitespace-nowrap min-w-0">
-                                        {TEAMS[selectedMatch.awayTeamId].shortName}
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex-grow overflow-y-auto p-0 bg-white">
-                            <div className="sticky top-0 bg-white/95 backdrop-blur z-10 py-3 border-b border-neutral-100 text-center">
-                                <span className="text-xs font-black text-neutral-400 uppercase tracking-[0.2em]">Match Events</span>
-                            </div>
-                            <div className="px-4 pb-8">
-                                <MatchEvents matchId={selectedMatchId} />
-                            </div>
-                        </div>
-
-                        <div className="p-4 border-t border-neutral-100 bg-neutral-50 text-center">
-                            <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest">
-                                D LEAGUE 官方賽事記錄
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            )}
+          </div>
         </div>
-    );
+
+        <div className="mb-8 flex items-center justify-between">
+          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
+            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
+            選擇聯賽
+          </h3>
+          <div className="flex space-x-4 text-xs font-bold">
+            {filterOptions.map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => handleLeagueChange(tab)}
+                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
+                  leagueTab === tab
+                    ? 'border-brand-blue font-bold text-brand-black'
+                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
+                }`}
+              >
+                <span className="font-display md:hidden">{tab}</span>
+                <span className="hidden md:inline">
+                  {tab === 'ALL' ? 'ALL' : activeSeason.leagues[tab]?.displayName ?? tab}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-20">
+          {seasonData.matches.length === 0 ? (
+            <EmptyState
+              title="2026/27 賽程尚未公布"
+              description="2026/27 賽程將於球隊錄取及分級完成後公布"
+              showRegistrationLink={activeSeason.status === 'registration'}
+            />
+          ) : filteredMatches.length === 0 ? (
+            <EmptyState
+              title="此級別尚無賽程"
+              description={`${leagueTab} 賽程目前尚未公布`}
+              showRegistrationLink={activeSeason.status === 'registration'}
+            />
+          ) : (
+            <FullSchedule
+              matches={seasonData.matches}
+              teamMap={seasonData.teamMap}
+              onMatchClick={(matchId) => setSelectedMatchId(matchId)}
+              leagueFilter={leagueTab}
+            />
+          )}
+        </div>
+      </div>
+
+      {selectedMatchId && selectedMatch && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6">
+          <button
+            type="button"
+            aria-label="關閉比賽詳情"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedMatchId(null)}
+          />
+
+          <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="relative border-b border-neutral-100 bg-neutral-50 p-6">
+              <button
+                type="button"
+                onClick={() => setSelectedMatchId(null)}
+                className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 text-neutral-400 shadow-sm transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                aria-label="關閉"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="mb-4 text-center">
+                <span className="rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-blue">
+                  {selectedMatch.league} • 第 {selectedMatch.round} 輪
+                </span>
+                <p className="mt-2 text-xs font-medium text-neutral-500">
+                  {formatMatchDateTime(selectedMatch.timestamp)}
+                </p>
+              </div>
+
+              {seasonData.teamMap[selectedMatch.homeTeamId] && seasonData.teamMap[selectedMatch.awayTeamId] && (
+                <div className="flex items-center justify-between px-2 sm:px-8">
+                  <div className="flex w-1/3 min-w-0 flex-col items-center">
+                    <img
+                      src={seasonData.teamMap[selectedMatch.homeTeamId].logo}
+                      alt={seasonData.teamMap[selectedMatch.homeTeamId].name}
+                      className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20"
+                    />
+                    <h3 className="whitespace-nowrap text-center text-xs font-bold leading-tight tracking-tighter text-brand-black sm:text-lg">
+                      {seasonData.teamMap[selectedMatch.homeTeamId].shortName}
+                    </h3>
+                  </div>
+
+                  <div className="flex w-1/3 flex-col items-center">
+                    <div className="font-display text-4xl font-black tracking-tight text-brand-black sm:text-6xl">
+                      {selectedMatch.homeScore ?? '-'} - {selectedMatch.awayScore ?? '-'}
+                    </div>
+                    <div className="mt-2 text-xs font-bold uppercase tracking-wider text-neutral-400">Full Time</div>
+                  </div>
+
+                  <div className="flex w-1/3 min-w-0 flex-col items-center">
+                    <img
+                      src={seasonData.teamMap[selectedMatch.awayTeamId].logo}
+                      alt={seasonData.teamMap[selectedMatch.awayTeamId].name}
+                      className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20"
+                    />
+                    <h3 className="whitespace-nowrap text-center text-xs font-bold leading-tight tracking-tighter text-brand-black sm:text-lg">
+                      {seasonData.teamMap[selectedMatch.awayTeamId].shortName}
+                    </h3>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-grow overflow-y-auto bg-white">
+              <div className="sticky top-0 z-10 border-b border-neutral-100 bg-white/95 py-3 text-center backdrop-blur">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400">Match Events</span>
+              </div>
+              <div className="px-4 pb-8">
+                <MatchEvents matchId={selectedMatchId} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default SchedulePage;

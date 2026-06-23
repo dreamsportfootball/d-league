@@ -17,6 +17,7 @@ const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CupPage = lazy(() => import('./pages/CupPage'));
+const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
 
 const ScrollMemory: React.FC = () => {
   const { pathname, hash } = useLocation();
@@ -81,6 +82,7 @@ const App: React.FC = () => {
           >
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/registration" element={<RegistrationPage />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/news" element={<NewsPage />} />

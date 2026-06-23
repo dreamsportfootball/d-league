@@ -11,11 +11,17 @@ interface NavItem {
   children?: { name: string; href: string }[];
 }
 
+const SEASON_SCOPED_PATHS = ['/schedule', '/standings', '/stats', '/media'];
+
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const location = useLocation();
   const { activeSeason } = useSeason();
+
+  const showSeasonSelector = SEASON_SCOPED_PATHS.some(
+    (path) => location.pathname === path || location.pathname.startsWith(`${path}/`),
+  );
 
   const navItems = useMemo<NavItem[]>(() => {
     const items: NavItem[] = [{ name: '首頁', href: '/' }];
@@ -61,7 +67,7 @@ const Header: React.FC = () => {
         <div className="flex shrink-0 items-center">
           <Link
             to="/"
-            className="flex items-center group"
+            className="group flex items-center"
             onClick={() => {
               closeMobileMenu();
               handleHomeScroll('/');
@@ -130,9 +136,11 @@ const Header: React.FC = () => {
         </nav>
 
         <div className="flex shrink-0 items-center space-x-3">
-          <div className="hidden sm:block">
-            <SeasonSelector compact />
-          </div>
+          {showSeasonSelector && (
+            <div className="hidden sm:block">
+              <SeasonSelector compact />
+            </div>
+          )}
           <button
             type="button"
             className="p-1 xl:hidden"
@@ -147,10 +155,14 @@ const Header: React.FC = () => {
 
       {mobileMenuOpen && (
         <div className="fixed inset-0 left-0 top-16 z-[1000] flex h-[calc(100vh-4rem)] w-full flex-col overflow-y-auto border-t border-neutral-100 bg-white p-6 shadow-xl xl:hidden">
-          <div className="mb-5 sm:hidden">
-            <p className="mb-2 text-xs font-black uppercase tracking-widest text-neutral-400">選擇賽季</p>
-            <SeasonSelector />
-          </div>
+          {showSeasonSelector && (
+            <div className="mb-5 sm:hidden">
+              <p className="mb-2 text-xs font-black uppercase tracking-widest text-neutral-400">
+                選擇賽季
+              </p>
+              <SeasonSelector />
+            </div>
+          )}
 
           <div className="flex flex-col space-y-2">
             {navItems.map((item) => (

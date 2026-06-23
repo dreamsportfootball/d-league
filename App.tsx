@@ -15,6 +15,26 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CupPage = lazy(() => import('./pages/CupPage'));
 const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
 
+const PageSkeleton: React.FC = () => (
+  <div className="min-h-[70vh] animate-pulse bg-white px-4 pb-24 pt-10 md:px-12 md:pt-24">
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-12 flex items-end justify-between gap-6">
+        <div className="w-full max-w-xl">
+          <div className="mb-4 h-12 w-3/5 rounded bg-neutral-200 md:h-16" />
+          <div className="h-5 w-4/5 rounded bg-neutral-100" />
+        </div>
+        <div className="hidden h-9 w-[148px] rounded-lg bg-neutral-100 md:block" />
+      </div>
+      <div className="mb-8 h-12 rounded-xl bg-neutral-100" />
+      <div className="space-y-4">
+        <div className="h-24 rounded-xl bg-neutral-100" />
+        <div className="h-24 rounded-xl bg-neutral-100" />
+        <div className="h-24 rounded-xl bg-neutral-100" />
+      </div>
+    </div>
+  </div>
+);
+
 const ScrollMemory: React.FC = () => {
   const { pathname, hash } = useLocation();
 
@@ -68,13 +88,7 @@ const App: React.FC = () => (
       <ScrollMemory />
 
       <main className="w-full flex-grow pt-16">
-        <Suspense
-          fallback={
-            <div className="p-20 text-center text-xl font-bold text-brand-blue">
-              正在加載頁面中...
-            </div>
-          }
-        >
+        <Suspense fallback={<PageSkeleton />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/registration" element={<RegistrationPage />} />

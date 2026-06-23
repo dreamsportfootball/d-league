@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DEFAULT_SEASON_ID, getSeasonConfig, isSeasonId, SEASONS } from '../config/seasons';
-import { getSeasonData, type SeasonData } from '../services/seasonData';
+import { getSeasonData, type SeasonData } from '../services/seasonDataJson';
 import type { SeasonConfig, SeasonId } from '../types/season';
 
 const STORAGE_KEY = 'dleague-active-season';

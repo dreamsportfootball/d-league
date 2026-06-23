@@ -32,7 +32,10 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   }, []);
 
   const selectSeason = (seasonId: SeasonId) => {
-    setActiveSeason(seasonId);
+    if (seasonId !== activeSeasonId) {
+      setActiveSeason(seasonId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     setOpen(false);
   };
 
@@ -68,15 +71,6 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
           aria-label="選擇賽季"
           className="absolute right-0 z-[1200] mt-2 w-[148px] overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
         >
-          <div className="flex items-center justify-between px-2.5 pb-1.5 pt-1.5">
-            <span className="text-[9px] font-black tracking-[0.18em] text-neutral-400">
-              選擇賽季
-            </span>
-            <span className="text-[9px] font-bold text-neutral-300">
-              共 {sortedSeasons.length} 季
-            </span>
-          </div>
-
           <div className="space-y-1">
             {sortedSeasons.map((season) => {
               const isActive = season.id === activeSeasonId;

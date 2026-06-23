@@ -1,6 +1,5 @@
 import React from 'react';
 import { MapPin, Navigation } from 'lucide-react';
-import { useSeason } from '../hooks/useSeason';
 import { assetUrl } from '../services/seasonData';
 
 const OriginVisionSection: React.FC = () => (
@@ -61,7 +60,6 @@ const OriginVisionSection: React.FC = () => (
 );
 
 const VenueSection: React.FC = () => {
-  const { activeSeason } = useSeason();
   const venueImage = assetUrl('assets/aboutpage/Venue.jpg');
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -105,7 +103,7 @@ const VenueSection: React.FC = () => {
             </h2>
             <div className="mb-10 max-w-md space-y-4">
               <p className="text-sm font-medium leading-relaxed text-neutral-400 md:text-base">
-                {activeSeason.displayName} 比賽場地<br />人工草皮足球場
+                D LEAGUE 比賽場地<br />人工草皮足球場
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">

@@ -28,12 +28,11 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       return;
     }
 
-    if (activeSeasonId !== DEFAULT_SEASON_ID) {
-      setActiveSeasonId(DEFAULT_SEASON_ID);
-    }
+    const fallbackSeason = querySeason === null ? activeSeasonId : DEFAULT_SEASON_ID;
+    if (fallbackSeason !== activeSeasonId) setActiveSeasonId(fallbackSeason);
 
     const nextParams = new URLSearchParams(searchParams);
-    nextParams.set('season', DEFAULT_SEASON_ID);
+    nextParams.set('season', fallbackSeason);
     setSearchParams(nextParams, { replace: true });
   }, [activeSeasonId, querySeason, searchParams, setSearchParams]);
 

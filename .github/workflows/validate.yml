@@ -28,7 +28,20 @@ jobs:
         run: npm ci --silent
 
       - name: Type-check
-        run: npm run typecheck -- --pretty false
+        id: typecheck
+        continue-on-error: true
+        run: node scripts/run-typecheck.mjs
+
+      - name: Upload typecheck report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-report
+          path: typecheck.log
+
+      - name: Fail when typecheck fails
+        if: steps.typecheck.outcome == 'failure'
+        run: exit 1
 
   build:
     runs-on: ubuntu-latest

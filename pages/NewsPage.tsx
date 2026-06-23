@@ -1,21 +1,19 @@
-// 檔案路徑：NewsPage.tsx
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ArrowRight, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { fetchLeagueNews } from '../services/geminiService';
-import { NewsArticle } from '../types';
-import { ArrowRight } from 'lucide-react'; 
+import { useSeason } from '../hooks/useSeason';
+import type { NewsArticle } from '../types';
 
-// 分類中文對照
-const CATEGORY_MAP: Record<string, string> = {
+type NewsFilter = 'ALL' | 'Match Report' | 'Official';
+
+const CATEGORY_MAP: Record<NewsArticle['category'], string> = {
   'Match Report': '賽事戰報',
   Official: '官方公告',
 };
 
-// Tag 顏色設定
-const TAG_COLOR_MAP: Record<string, { bg: string; text: string }> = {
-  'Match Report': { bg: 'bg-brand-accent', text: 'text-brand-black' },
-  Official: { bg: 'bg-brand-blue', text: 'text-white' },
-  default: { bg: 'bg-neutral-100', text: 'text-neutral-600' },
+const TAG_COLOR_MAP: Record<NewsArticle['category'], string> = {
+  'Match Report': 'bg-brand-accent text-brand-black',
+  Official: 'bg-brand-blue text-white',
 };
 
 const formatDate = (isoString: string) => {
@@ -26,239 +24,147 @@ const formatDate = (isoString: string) => {
   return `${year}/${month}/${day}`;
 };
 
-const getTagClasses = (category: string) => {
-  const map = TAG_COLOR_MAP[category] || TAG_COLOR_MAP.default;
-  return `${map.bg} ${map.text}`;
-};
-
-// 單張新聞卡片
-const MinimalNewsCard: React.FC<{
-  article: NewsArticle;
-  onImageLoaded: () => void;
-}> = ({ article, onImageLoaded }) => (
-  <Link
-    to={`/news/${article.id}`}
-    className="group flex flex-col h-full cursor-pointer"
-  >
-    {/* 圖片區 */}
-    <div className="relative overflow-hidden rounded-lg aspect-[16/10] mb-5 bg-neutral-100">
-      <img
-        src={
-          (article as any).imageUrl ||
-          (article as any).coverImage ||
-          '/images/news-placeholder.jpg'
-        }
-        alt={article.title}
-        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-        onLoad={onImageLoaded}
-        onError={onImageLoaded}
-      />
-      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300" />
+const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => (
+  <Link to={`/news/${article.id}`} className="group flex h-full cursor-pointer flex-col">
+    <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
+      {article.imageUrl ? (
+        <img
+          src={article.imageUrl}
+          alt={article.title}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center bg-neutral-100">
+          <Newspaper className="h-10 w-10 text-neutral-300" aria-hidden="true" />
+        </div>
+      )}
+      <div className="absolute inset-0 bg-white/0 transition-colors duration-300 group-hover:bg-white/10" />
     </div>
 
-    {/* 內容區 */}
-    <div className="flex flex-col flex-1">
-      {/* Tag + 日期 */}
-      <div className="flex items-center justify-between mb-3">
+    <div className="flex flex-1 flex-col">
+      <div className="mb-3 flex items-center justify-between">
         <span
-          className={`
-            inline-flex items-center justify-center px-2 py-1 rounded-sm
-            text-[10px] font-bold tracking-[0.15em] uppercase leading-none
-            ${getTagClasses(article.category)}
-          `}
+          className={`inline-flex items-center justify-center rounded-sm px-2 py-1 text-[10px] font-bold uppercase leading-none tracking-[0.15em] ${TAG_COLOR_MAP[article.category]}`}
         >
-          {/* 🚀 修正細節：
-             1. justify-center: 水平置中
-             2. leading-none: 去除行高，讓 py-1 能精準控制垂直空間
-             3. 由於 tracking 會在右側留白，這裡不需額外做 padding 補償，
-                因為中文字寬度較方正，視覺上通常能接受微小偏差。
-          */}
-          {CATEGORY_MAP[article.category] || '最新消息'}
+          {CATEGORY_MAP[article.category]}
         </span>
-        <span className="text-[11px] text-neutral-400 font-mono">
+        <span className="font-mono text-[11px] text-neutral-400">
           {formatDate(article.timestamp)}
         </span>
       </div>
 
-      {/* 標題 */}
-      <h3 className="font-display font-bold text-lg leading-snug text-neutral-900 mb-2 group-hover:text-brand-blue transition-colors line-clamp-2">
+      <h3 className="mb-2 line-clamp-2 font-display text-lg font-bold leading-snug text-neutral-900 transition-colors group-hover:text-brand-blue">
         {article.title}
       </h3>
 
-      {/* 摘要 */}
-      <p className="text-neutral-500 text-xs leading-normal line-clamp-2 mb-4"> 
+      <p className="mb-4 line-clamp-2 text-xs leading-normal text-neutral-500">
         {article.summary}
       </p>
 
-      {/* Read more */}
-      <div className="mt-auto pt-2 flex items-center text-brand-blue font-bold text-xs tracking-widest uppercase group/btn">
-        <span className="mr-2 group-hover/btn:underline decoration-2 underline-offset-4">
-          Read More
-        </span>
-        <ArrowRight className="w-3 h-3 transform transition-transform duration-300 group-hover/btn:translate-x-1" />
+      <div className="group/btn mt-auto flex items-center pt-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
+        <span className="mr-2 decoration-2 underline-offset-4 group-hover/btn:underline">Read More</span>
+        <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover/btn:translate-x-1" />
       </div>
     </div>
   </Link>
 );
 
 const NewsPage: React.FC = () => {
-  const [news, setNews] = useState<NewsArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  // 使用 useState 的函數式更新
-  const [activeFilter, setActiveFilter] = useState<
-    'ALL' | 'Match Report' | 'Official'
-  >(() => {
+  const { activeSeason, seasonData } = useSeason();
+  const [activeFilter, setActiveFilter] = useState<NewsFilter>(() => {
     try {
-        const saved = window.sessionStorage.getItem('newsActiveFilter');
-        if (saved === 'ALL' || saved === 'Match Report' || saved === 'Official') {
-            return saved as 'ALL' | 'Match Report' | 'Official';
-        }
-    } catch (e) {
-        // ignore
+      const saved = window.sessionStorage.getItem('newsActiveFilter');
+      return saved === 'ALL' || saved === 'Match Report' || saved === 'Official'
+        ? saved
+        : 'ALL';
+    } catch {
+      return 'ALL';
     }
-    return 'ALL'; 
   });
 
-  const [loadedImageCount, setLoadedImageCount] = useState(0);
-  const [imagesAreLoaded, setImagesAreLoaded] = useState(false);
+  const sortedNews = useMemo(
+    () =>
+      seasonData.news
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        ),
+    [seasonData.news],
+  );
 
-  const handleImageLoaded = useCallback(() => {
-    setLoadedImageCount((prev) => prev + 1);
-  }, []);
+  const filteredNews = useMemo(
+    () =>
+      activeFilter === 'ALL'
+        ? sortedNews
+        : sortedNews.filter((article) => article.category === activeFilter),
+    [activeFilter, sortedNews],
+  );
 
-  useEffect(() => {
-    try {
-      if (window.sessionStorage.getItem('lastNewsAnchorId')) {
-        window.sessionStorage.setItem('isNewsImagesLoading', 'true');
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const updateFilter = (filter: 'ALL' | 'Match Report' | 'Official') => {
+  const updateFilter = (filter: NewsFilter) => {
     setActiveFilter(filter);
     try {
       window.sessionStorage.setItem('newsActiveFilter', filter);
     } catch {
-      // ignore
+      // Session storage may be unavailable.
     }
   };
 
-  useEffect(() => {
-    const loadNews = async () => {
-      try {
-        const articles = await fetchLeagueNews();
-        setNews(articles);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadNews();
-  }, []);
-
-  const sortedNews = useMemo(() => {
-    return [...news].sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
-  }, [news]);
-
-  const filteredNews = useMemo(() => {
-    if (activeFilter === 'ALL') return sortedNews;
-    return sortedNews.filter((item) => {
-      if (activeFilter === 'Match Report') {
-        return item.category === 'Match Report' || item.category === '戰報';
-      }
-      if (activeFilter === 'Official') {
-        return item.category === 'Official';
-      }
-      return false;
-    });
-  }, [news, activeFilter]);
-
-  useEffect(() => {
-    if (loading || filteredNews.length === 0) return;
-    const totalImages = filteredNews.length;
-    if (loadedImageCount >= totalImages && !imagesAreLoaded) {
-      setImagesAreLoaded(true);
-      window.sessionStorage.removeItem('isNewsImagesLoading');
-    }
-  }, [loadedImageCount, filteredNews.length, loading, imagesAreLoaded]);
-  
-  const newsFilters: { key: 'ALL' | 'Match Report' | 'Official', label: string }[] = [
+  const newsFilters: { key: NewsFilter; label: string }[] = [
     { key: 'ALL', label: '全部消息' },
     { key: 'Match Report', label: '賽事戰報' },
     { key: 'Official', label: '官方公告' },
   ];
 
   return (
-    <div className="pt-6 md:pt-24 min-h-[80vh] bg-white pb-24">
-      <div className="container mx-auto px-4 md:px-12 max-w-7xl">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-16 border-b border-neutral-100 pb-8">
+    <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
+      <div className="container mx-auto max-w-7xl px-4 md:px-12">
+        <div className="mb-8 flex flex-col justify-between border-b border-neutral-100 pb-8 md:mb-16 md:flex-row md:items-end">
           <div>
-            <h1 className="font-display font-black md:font-extrabold text-4xl md:text-6xl uppercase text-brand-black mb-3 tracking-tight [-webkit-text-stroke:.25px_currentColor] md:[-webkit-text-stroke:0px]">
-                最新 <span className="text-brand-blue">消息</span>
+            <h1 className="mb-3 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
+              最新 <span className="text-brand-blue">消息</span>
             </h1>
-            <p className="text-neutral-400 text-sm md:text-base font-medium tracking-[0.18em] uppercase">
-              最新賽事戰報、官方公告
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-neutral-400 md:text-base">
+              {activeSeason.displayName} 賽事戰報與官方公告
             </p>
           </div>
 
-          <div className="mt-6 md:mt-0 flex space-x-6">
-            {newsFilters.map(filter => (
-                <button
-                    key={filter.key}
-                    onClick={() => updateFilter(filter.key)}
-                    className={`
-                        text-sm font-bold uppercase transition-all duration-300 tracking-widest relative
-                        border-b-2 pb-1
-                        ${activeFilter === filter.key 
-                            ? 'border-brand-blue text-brand-black' 
-                            : 'border-transparent text-neutral-400 hover:text-neutral-600'}
-                    `}
-                >
-                    {filter.label}
-                </button>
+          <div className="mt-6 flex space-x-6 md:mt-0">
+            {newsFilters.map((filter) => (
+              <button
+                key={filter.key}
+                type="button"
+                onClick={() => updateFilter(filter.key)}
+                className={`relative border-b-2 pb-1 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+                  activeFilter === filter.key
+                    ? 'border-brand-blue text-brand-black'
+                    : 'border-transparent text-neutral-400 hover:text-neutral-600'
+                }`}
+              >
+                {filter.label}
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="w-full">
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-neutral-100 h-56 rounded-lg mb-4" />
-                  <div className="h-4 bg-neutral-100 w-1/3 mb-3 rounded" />
-                  <div className="h-6 bg-neutral-100 w-3/4 mb-2 rounded" />
-                  <div className="h-4 bg-neutral-100 w-full rounded" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {filteredNews.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-                  {filteredNews.map((article) => (
-                    <MinimalNewsCard
-                      key={article.id}
-                      article={article}
-                      onImageLoaded={handleImageLoaded}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20 text-neutral-400">
-                  目前尚無相關消息。
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        {filteredNews.length > 0 ? (
+          <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
+            {filteredNews.map((article) => (
+              <MinimalNewsCard key={article.id} article={article} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-[360px] flex-col items-center justify-center border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
+            <Newspaper className="mb-4 h-10 w-10 text-neutral-300" aria-hidden="true" />
+            <h2 className="font-display text-2xl font-black uppercase tracking-wide text-brand-black">
+              目前尚無相關消息
+            </h2>
+            <p className="mt-3 text-sm font-medium text-neutral-500">
+              {activeSeason.shortName} 的消息將於主辦單位公布後更新
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

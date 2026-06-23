@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Trophy, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
-import SeasonSelector from '../components/SeasonSelector';
+import LeagueTabs from '../components/LeagueTabs';
+import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { LeagueId } from '../types/season';
 
@@ -128,51 +129,28 @@ const StatsPage: React.FC = () => {
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-6 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
-          <div>
-            <h1 className="mb-2 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
-              數據 <span className="text-brand-blue">中心</span>
-            </h1>
-            <p className="text-sm font-medium tracking-wide text-neutral-400 md:text-base">
-              {activeSeason.displayName} {activeLeague} 球員數據
-            </p>
-          </div>
+        <SeasonPageHeader
+          title="數據"
+          accent="中心"
+          description={`${activeSeason.displayName} ${activeLeague} 球員數據`}
+        />
 
-          <div className="flex w-full justify-end md:w-auto">
-            <SeasonSelector />
-          </div>
-        </div>
+        <LeagueTabs
+          options={activeSeason.enabledLeagues}
+          active={activeLeague}
+          onChange={handleLeagueChange}
+          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
+        />
 
-        <div className="mb-10 flex items-center justify-between border-b border-neutral-100 pb-4">
-          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
-            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
-            選擇聯賽
-          </h3>
-          <div className="flex space-x-4 text-xs font-bold">
-            {activeSeason.enabledLeagues.map((league) => (
-              <button
-                key={league}
-                type="button"
-                onClick={() => handleLeagueChange(league)}
-                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
-                  activeLeague === league
-                    ? 'border-brand-blue font-bold text-brand-black'
-                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
-                }`}
-              >
-                <span className="font-display md:hidden">{league}</span>
-                <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-6 flex space-x-10 px-2">
+        <div className="mb-6 flex gap-3 rounded-xl bg-neutral-100 p-1.5 sm:w-fit">
           <button
             type="button"
             onClick={() => setActiveTab('SCORERS')}
-            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'SCORERS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
+            aria-pressed={activeTab === 'SCORERS'}
+            className={`flex-1 rounded-lg px-5 py-2.5 text-sm font-bold transition-all sm:flex-none ${
+              activeTab === 'SCORERS'
+                ? 'bg-white text-brand-black shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-600'
             }`}
           >
             射手榜
@@ -180,8 +158,11 @@ const StatsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('CARDS')}
-            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'CARDS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
+            aria-pressed={activeTab === 'CARDS'}
+            className={`flex-1 rounded-lg px-5 py-2.5 text-sm font-bold transition-all sm:flex-none ${
+              activeTab === 'CARDS'
+                ? 'bg-white text-brand-black shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-600'
             }`}
           >
             紅黃牌
@@ -191,7 +172,7 @@ const StatsPage: React.FC = () => {
         {!hasData ? (
           <EmptyState
             title="新賽季尚未開始"
-            description="新賽季尚未開始，射手榜及紅黃牌紀錄將於比賽開始後更新"
+            description="射手榜及紅黃牌紀錄將於首輪比賽後更新"
             showRegistrationLink={activeSeason.status === 'registration'}
           />
         ) : (

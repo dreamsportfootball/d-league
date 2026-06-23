@@ -56,7 +56,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
-      <div className="container mx-auto flex h-full max-w-full items-center px-4 md:px-6">
+      <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">
           <Link
             to="/"
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="ml-auto hidden items-center space-x-5 text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
+        <nav className="absolute left-1/2 top-0 hidden h-16 -translate-x-1/2 items-center space-x-5 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:space-x-7">
           {navItems.map((item) => (
             <div key={item.name} className="group relative flex h-16 items-center">
               {item.children ? (

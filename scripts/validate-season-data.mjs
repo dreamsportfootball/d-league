@@ -69,10 +69,15 @@ if (read('2025-26', 'matches.json').length !== 48) fail('2025-26: expected 48 ma
 if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-26: expected events for 48 matches');
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
 
-for (const file of ['teams.json', 'players.json', 'matches.json', 'matchEvents.json', 'media.json', 'albums.json']) {
+for (const file of ['teams.json', 'players.json', 'playerImages.json', 'matches.json', 'matchEvents.json', 'media.json', 'albums.json']) {
   const value = read('2026-27', file);
   const count = Array.isArray(value) ? value.length : Object.keys(value).length;
   if (count !== 0) fail(`2026-27 ${file}: must stay empty until official data is confirmed`);
+}
+
+const registrationNews = read('2026-27', 'news.json');
+if (registrationNews.length !== 1 || registrationNews[0].id !== '2026-27-registration-open') {
+  fail('2026-27: registration announcement is missing or duplicated');
 }
 
 console.log('Season data validation passed');

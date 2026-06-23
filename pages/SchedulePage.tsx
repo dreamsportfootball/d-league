@@ -79,7 +79,7 @@ const SchedulePage: React.FC = () => {
   const filterOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
 
   return (
-    <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
+    <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
         <div className="mb-6 flex flex-col justify-between gap-4 md:mb-12 md:flex-row md:items-end">
           <div>

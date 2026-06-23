@@ -49,7 +49,7 @@ const Hero: React.FC = () => {
           loaded ? 'scale-105' : 'scale-100'
         }`}
       >
-        <picture>
+        <picture className="block h-full w-full">
           {!imageFailed && activeSeason.heroImageMobile && (
             <source media="(max-width: 767px)" srcSet={heroImages.mobile} />
           )}

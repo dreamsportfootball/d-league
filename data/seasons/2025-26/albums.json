@@ -1,0 +1,74 @@
+[
+  {
+    "id": "album-r1",
+    "seasonId": "2025-26",
+    "title": "比賽日 1 (Match Day 1)",
+    "date": "2025/10/19",
+    "cover": "assets/media/1019.jpg",
+    "link": "https://drive.google.com/drive/folders/1R__mtXu96oK1l4kAMQYLJiZxTG-dhRgP?usp=drive_link"
+  },
+  {
+    "id": "album-r2",
+    "seasonId": "2025-26",
+    "title": "比賽日 2 (Match Day 2)",
+    "date": "2025/11/02",
+    "cover": "assets/media/1102.jpg",
+    "link": "https://drive.google.com/drive/folders/1S80w0QsX1B_C-ms93hOsYeWrgtMQzsZI?usp=drive_link"
+  },
+  {
+    "id": "album-r3",
+    "seasonId": "2025-26",
+    "title": "比賽日 3 (Match Day 3)",
+    "date": "2025/11/16",
+    "cover": "assets/media/1116.jpg",
+    "link": "https://drive.google.com/drive/folders/1LlPJ3m_4VotEkJr30j01WhHL_TKTsxqS?usp=drive_link"
+  },
+  {
+    "id": "album-r4",
+    "seasonId": "2025-26",
+    "title": "比賽日 4 (Match Day 4)",
+    "date": "2025/12/07",
+    "cover": "assets/media/1207.jpg",
+    "link": "https://drive.google.com/drive/folders/185Xan_z1EdZanEelYuIiN1X06T7ZTSj9?usp=drive_link"
+  },
+  {
+    "id": "album-r5",
+    "seasonId": "2025-26",
+    "title": "比賽日 5 (Match Day 5)",
+    "date": "2026/01/11",
+    "cover": "assets/media/111.jpg",
+    "link": "https://drive.google.com/drive/folders/1H-hLEKt2-I4D6I2GzeUvn3QWKGxVZ1fN?usp=drive_link"
+  },
+  {
+    "id": "album-r6",
+    "seasonId": "2025-26",
+    "title": "比賽日 6 (Match Day 6)",
+    "date": "2026/02/08",
+    "cover": "assets/media/0208.jpg",
+    "link": "https://drive.google.com/drive/folders/1GGDWDcBm5O7okh_6mXMMMOuMcTj4zNmz"
+  },
+  {
+    "id": "album-r7",
+    "seasonId": "2025-26",
+    "title": "比賽日 7 (Match Day 7)",
+    "date": "2026/03/08",
+    "cover": "assets/media/0308.jpg",
+    "link": "https://drive.google.com/drive/folders/1JZJoP3-R1dPT7oR5RGsNj9YKb2yGB7rM"
+  },
+  {
+    "id": "album-r8",
+    "seasonId": "2025-26",
+    "title": "比賽日 8 (Match Day 8)",
+    "date": "2026/03/22",
+    "cover": "assets/media/0322.jpg",
+    "link": "https://drive.google.com/drive/folders/1hn5eNN3ktdPIXZX5ry9PW7iZXmwnWEX_?usp=sharing"
+  },
+  {
+    "id": "album-r10",
+    "seasonId": "2025-26",
+    "title": "比賽日 10 (Match Day 10)",
+    "date": "2026/04/26",
+    "cover": "assets/media/0426.jpg",
+    "link": "https://drive.google.com/drive/folders/1g2LHlvyjrRyIbj6v5YUeOo2ArJNJjtPI?usp=drive_link"
+  }
+]

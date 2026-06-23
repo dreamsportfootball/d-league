@@ -1,7 +1,8 @@
 import React from 'react';
 import { ExternalLink, Facebook, Instagram, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useSeason } from '../hooks/useSeason';
+import { getSeasonConfig } from '../config/seasons';
+import { CURRENT_SEASON_ID, SHOW_REGISTRATION_NAV } from '../config/siteConfig';
 
 const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: string }> = ({
   icon,
@@ -38,8 +39,7 @@ const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, chi
 );
 
 const Footer: React.FC = () => {
-  const { activeSeason, activeSeasonId } = useSeason();
-  const showPastSeason = activeSeasonId !== '2025-26';
+  const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
 
   return (
     <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-2 pt-12 text-white md:pb-5 md:pt-20">
@@ -77,28 +77,26 @@ const Footer: React.FC = () => {
               <li><FooterLink to="/about">關於 D LEAGUE</FooterLink></li>
               <li><FooterLink to="/#teams">參賽球隊</FooterLink></li>
               <li><FooterLink to="/schedule">賽程與結果</FooterLink></li>
-              {activeSeason.status === 'registration' && (
+              {SHOW_REGISTRATION_NAV && (
                 <li><FooterLink to="/registration">賽季報名</FooterLink></li>
               )}
-              {activeSeason.regulationsUrl && (
+              {currentSeason.regulationsUrl && (
                 <li>
                   <a
-                    href={activeSeason.regulationsUrl}
+                    href={currentSeason.regulationsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group flex min-h-11 items-center transition-colors hover:text-brand-accent"
                   >
                     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
-                    {activeSeason.shortName} 競賽規程
+                    {currentSeason.shortName} 競賽規程
                     <ExternalLink className="ml-2 h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 </li>
               )}
-              {showPastSeason && (
-                <li>
-                  <FooterLink to="/standings?season=2025-26">2025/26 過往賽事</FooterLink>
-                </li>
-              )}
+              <li>
+                <FooterLink to="/standings?season=2025-26">2025/26 過往賽事</FooterLink>
+              </li>
             </ul>
           </div>
 

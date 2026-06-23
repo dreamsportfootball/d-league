@@ -39,6 +39,8 @@ export interface SeasonConfig {
   heroImageDesktop?: string;
   heroImageMobile?: string;
   heroFallbackImage: string;
+  youtubePlaylistEmbedUrl?: string;
+  youtubePlaylistLabel?: string;
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
   leagues: Record<LeagueId, LeagueConfig | null>;

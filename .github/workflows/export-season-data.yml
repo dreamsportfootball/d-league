@@ -8,6 +8,9 @@ on:
     branches:
       - season/2026-27
 
+permissions:
+  contents: write
+
 jobs:
   export:
     runs-on: ubuntu-latest
@@ -17,6 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           show-progress: false
+          ref: ${{ github.event_name == 'push' && github.ref_name || github.head_ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -29,6 +33,25 @@ jobs:
 
       - name: Generate season files
         run: node scripts/export-legacy-data.mjs season-export
+
+      - name: Copy generated files
+        run: cp -R season-export/data/seasons/2025-26/. data/seasons/2025-26/
+
+      - name: Commit generated season files
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seasons/2025-26/players.json
+          git add data/seasons/2025-26/matchEvents.json
+          git add data/seasons/2025-26/media.json
+          git add data/seasons/2025-26/news.json
+          if git diff --cached --quiet; then
+            echo "Season data is already current"
+          else
+            git commit -m "data: migrate 2025-26 legacy season records"
+            git push origin HEAD:season/2026-27
+          fi
 
       - name: Upload generated files
         uses: actions/upload-artifact@v4

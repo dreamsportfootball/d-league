@@ -17,12 +17,30 @@ const Hero: React.FC = () => {
     setImageFailed(false);
   }, [activeSeason.id]);
 
-  const heroImage = useMemo(() => {
-    if (imageFailed) return assetUrl(activeSeason.heroFallbackImage);
-    return assetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage);
-  }, [activeSeason.heroFallbackImage, activeSeason.heroImageDesktop, imageFailed]);
+  const heroImages = useMemo(() => {
+    const fallback = assetUrl(activeSeason.heroFallbackImage);
+    return {
+      fallback,
+      desktop: imageFailed
+        ? fallback
+        : assetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
+      mobile: imageFailed
+        ? fallback
+        : assetUrl(
+            activeSeason.heroImageMobile ??
+              activeSeason.heroImageDesktop ??
+              activeSeason.heroFallbackImage,
+          ),
+    };
+  }, [
+    activeSeason.heroFallbackImage,
+    activeSeason.heroImageDesktop,
+    activeSeason.heroImageMobile,
+    imageFailed,
+  ]);
 
   const isRegistration = activeSeason.status === 'registration';
+  const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
 
   return (
     <section className="relative flex min-h-[58vh] items-center justify-center overflow-hidden bg-brand-black md:min-h-[68vh]">
@@ -31,12 +49,17 @@ const Hero: React.FC = () => {
           loaded ? 'scale-105' : 'scale-100'
         }`}
       >
-        <img
-          src={heroImage}
-          onError={() => setImageFailed(true)}
-          alt={`${activeSeason.displayName} 主視覺`}
-          className="h-full w-full object-cover object-center opacity-90 md:object-center"
-        />
+        <picture>
+          {!imageFailed && activeSeason.heroImageMobile && (
+            <source media="(max-width: 767px)" srcSet={heroImages.mobile} />
+          )}
+          <img
+            src={heroImages.desktop}
+            onError={() => setImageFailed(true)}
+            alt={`${activeSeason.displayName} 主視覺`}
+            className="h-full w-full object-cover object-center opacity-90 md:object-center"
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-r from-brand-black/75 via-brand-black/35 to-brand-black/10" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-brand-black/55" />
       </div>
@@ -55,7 +78,7 @@ const Hero: React.FC = () => {
 
           {isRegistration && (
             <p className="mt-6 max-w-2xl text-sm font-semibold leading-7 text-white/85 md:text-base">
-              2026/27 賽季設置 L1、L2、L3 三個級別，各級別預計錄取 6 支球隊，正式實施升降級制度
+              {activeSeason.shortName} 賽季設置 {activeSeason.enabledLeagues.join('、')} 三個級別，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，正式實施升降級制度
             </p>
           )}
 

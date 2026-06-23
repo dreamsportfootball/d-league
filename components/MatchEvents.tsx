@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSeason } from '../hooks/useSeason';
-import type { MatchEvent, MatchEventType } from '../types';
+import type { MatchEvent, MatchEventType } from '../types/matchEvent';
 
 const ICON_URLS = {
   GOAL: 'https://www.gstatic.com/onebox/sports/game_feed/goal_icon.svg',

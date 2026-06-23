@@ -66,7 +66,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         <div
           role="listbox"
           aria-label="選擇賽季"
-          className="absolute inset-x-0 z-[1200] mt-2 w-full overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
+          className="absolute right-0 z-[1200] mt-2 w-[148px] overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
         >
           <div className="flex items-center justify-between px-2.5 pb-1.5 pt-1.5">
             <span className="text-[9px] font-black tracking-[0.18em] text-neutral-400">

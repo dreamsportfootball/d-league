@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Check, Filter, MousePointerClick, RotateCcw, X } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Filter,
+  MousePointerClick,
+  RotateCcw,
+  X,
+} from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
@@ -163,7 +171,8 @@ const SchedulePage: React.FC = () => {
     [dateFilter, leagueTab, roundFilter, seasonData.matches, statusFilter, teamFilter],
   );
 
-  const activeFilterCount = [teamFilter, roundFilter, dateFilter, statusFilter].filter((value) => value !== 'ALL').length;
+  const activeMobileFilterCount = [leagueTab, teamFilter, roundFilter, dateFilter, statusFilter]
+    .filter((value) => value !== 'ALL').length;
 
   const handleLeagueChange = (league: LeagueFilter) => {
     setLeagueTab(league);
@@ -196,6 +205,11 @@ const SchedulePage: React.FC = () => {
     setStatusFilter('ALL');
   };
 
+  const resetMobileFilters = () => {
+    handleLeagueChange('ALL');
+    setStatusFilter('ALL');
+  };
+
   const filterOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
   const filterFieldProps: FilterFieldsProps = {
     availableTeams,
@@ -210,6 +224,7 @@ const SchedulePage: React.FC = () => {
     setDateFilter,
     setStatusFilter,
   };
+  const leagueSummary = leagueTab === 'ALL' ? '全部級別' : leagueTab;
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -230,26 +245,35 @@ const SchedulePage: React.FC = () => {
           }
         />
 
-        <LeagueTabs
-          options={filterOptions}
-          active={leagueTab}
-          onChange={handleLeagueChange}
-          getLabel={(tab) => tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab}
-        />
+        <div className="hidden md:block">
+          <LeagueTabs
+            options={filterOptions}
+            active={leagueTab}
+            onChange={handleLeagueChange}
+            getLabel={(tab) => tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab}
+          />
+        </div>
 
         {seasonData.matches.length > 0 && (
           <>
             <button
               type="button"
               onClick={() => setMobileFiltersOpen(true)}
-              className="mb-6 flex min-h-12 w-full items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 text-sm font-black text-brand-black md:hidden"
+              className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
+              aria-label={`開啟賽程篩選，目前顯示${leagueSummary}，共 ${filteredMatches.length} 場`}
             >
-              <span className="flex items-center">
-                <Filter className="mr-2 h-4 w-4 text-brand-blue" />
-                篩選賽程
+              <span className="flex items-center text-[13px] font-black text-brand-black">
+                <Filter className="mr-2 h-3.5 w-3.5 text-brand-blue" aria-hidden="true" />
+                篩選
+                {activeMobileFilterCount > 0 && (
+                  <span className="ml-1.5 text-[11px] font-black text-brand-blue">
+                    {activeMobileFilterCount}
+                  </span>
+                )}
               </span>
-              <span className="text-xs font-bold text-neutral-400">
-                {activeFilterCount > 0 ? `${activeFilterCount} 個條件` : `${filteredMatches.length} 場`}
+              <span className="flex items-center text-[11px] font-bold text-neutral-400">
+                {leagueSummary} · {filteredMatches.length} 場
+                <ChevronRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
               </span>
             </button>
 
@@ -289,25 +313,152 @@ const SchedulePage: React.FC = () => {
 
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-[1200] flex items-end md:hidden" role="dialog" aria-modal="true" aria-label="篩選賽程">
-          <button type="button" className="absolute inset-0 bg-black/60" onClick={() => setMobileFiltersOpen(false)} aria-label="關閉篩選" />
-          <div className="relative w-full rounded-t-2xl bg-white px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 shadow-2xl">
-            <div className="mb-5 flex items-center justify-between border-b border-neutral-100 pb-4">
-              <div>
-                <p className="font-display text-xl font-black text-brand-black">篩選賽程</p>
-                <p className="mt-1 text-xs text-neutral-400">目前顯示 {filteredMatches.length} 場比賽</p>
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            onClick={() => setMobileFiltersOpen(false)}
+            aria-label="關閉篩選"
+          />
+
+          <div className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl">
+            <div className="shrink-0 border-b border-neutral-100 px-5 pb-4 pt-3">
+              <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-neutral-200" aria-hidden="true" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-display text-xl font-black text-brand-black">篩選賽程</p>
+                  <p className="mt-1 text-[11px] font-medium text-neutral-400">選擇要查看的比賽範圍</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-400 transition-colors active:bg-neutral-100 active:text-brand-black"
+                  aria-label="關閉"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <button type="button" onClick={() => setMobileFiltersOpen(false)} className="flex h-11 w-11 items-center justify-center rounded-full bg-neutral-100" aria-label="關閉">
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
-            <FilterFields {...filterFieldProps} />
+            <div className="flex-1 overflow-y-auto overscroll-contain px-5">
+              <section className="border-b border-neutral-100 py-5">
+                <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">聯賽級別</h3>
+                <div className="grid grid-cols-4" role="radiogroup" aria-label="聯賽級別">
+                  {filterOptions.map((league) => {
+                    const selected = leagueTab === league;
+                    return (
+                      <button
+                        key={league}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => handleLeagueChange(league)}
+                        className={`relative min-h-11 px-1 text-sm font-bold transition-colors ${
+                          selected ? 'text-brand-blue' : 'text-neutral-400'
+                        }`}
+                      >
+                        {league === 'ALL' ? '全部' : league}
+                        <span
+                          className={`absolute inset-x-3 bottom-0 h-0.5 ${selected ? 'bg-brand-blue' : 'bg-transparent'}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
 
-            <div className="mt-5 grid grid-cols-[auto_1fr] gap-3">
-              <button type="button" onClick={resetFilters} className="inline-flex min-h-12 items-center justify-center rounded-lg border border-neutral-300 px-5 text-sm font-black text-neutral-500">
+              <section className="border-b border-neutral-100 py-5">
+                <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">比賽狀態</h3>
+                <div className="grid grid-cols-3" role="radiogroup" aria-label="比賽狀態">
+                  {([
+                    ['ALL', '全部'],
+                    ['FINISHED', '已完賽'],
+                    ['UPCOMING', '即將開賽'],
+                  ] as const).map(([value, label]) => {
+                    const selected = statusFilter === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => setStatusFilter(value)}
+                        className={`relative min-h-11 px-1 text-sm font-bold transition-colors ${
+                          selected ? 'text-brand-blue' : 'text-neutral-400'
+                        }`}
+                      >
+                        {label}
+                        <span
+                          className={`absolute inset-x-4 bottom-0 h-0.5 ${selected ? 'bg-brand-blue' : 'bg-transparent'}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section className="py-2">
+                {[
+                  {
+                    label: '球隊',
+                    value: teamFilter,
+                    onChange: setTeamFilter,
+                    options: [
+                      { value: 'ALL', label: '全部球隊' },
+                      ...availableTeams.map((team) => ({ value: team.id, label: team.name })),
+                    ],
+                  },
+                  {
+                    label: '日期',
+                    value: dateFilter,
+                    onChange: setDateFilter,
+                    options: [
+                      { value: 'ALL', label: '全部日期' },
+                      ...availableDates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+                    ],
+                  },
+                  {
+                    label: '輪次',
+                    value: roundFilter,
+                    onChange: setRoundFilter,
+                    options: [
+                      { value: 'ALL', label: '全部輪次' },
+                      ...availableRounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                    ],
+                  },
+                ].map((field) => (
+                  <label key={field.label} className="relative flex min-h-[58px] items-center border-b border-neutral-100 last:border-b-0">
+                    <span className="w-16 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                    <select
+                      value={field.value}
+                      onChange={(event) => field.onChange(event.target.value)}
+                      className="h-11 min-w-0 flex-1 appearance-none border-0 bg-transparent pr-8 text-right text-sm font-bold text-brand-black outline-none"
+                    >
+                      {field.options.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-0 h-4 w-4 text-neutral-300" aria-hidden="true" />
+                  </label>
+                ))}
+              </section>
+            </div>
+
+            <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4">
+              <button
+                type="button"
+                onClick={resetMobileFilters}
+                disabled={activeMobileFilterCount === 0}
+                className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 disabled:opacity-30"
+              >
                 <RotateCcw className="mr-2 h-4 w-4" /> 清除
               </button>
-              <button type="button" onClick={() => setMobileFiltersOpen(false)} className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white">
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(false)}
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white active:bg-blue-800"
+              >
                 <Check className="mr-2 h-4 w-4" /> 顯示 {filteredMatches.length} 場
               </button>
             </div>

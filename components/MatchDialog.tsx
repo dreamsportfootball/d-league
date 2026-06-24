@@ -158,16 +158,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
     : undefined;
   const { date, displayDate, time } = formatDateTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
-  const statusLabel = isFinished
-    ? '完賽'
-    : match.status === MatchStatus.LIVE
-      ? '進行中'
-      : '即將開賽';
-  const displayStatusLabel = isFinished
-    ? '比賽結束'
-    : match.status === MatchStatus.LIVE
-      ? '比賽進行中'
-      : '尚未開賽';
+  const statusLabel = isFinished ? '完賽' : '即將開賽';
+  const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
   const resultLine = isFinished
     ? `結果：${homeTeam.name} ${match.homeScore ?? '-'}－${match.awayScore ?? '-'} ${awayTeam.name}`
     : `對賽：${homeTeam.name} vs ${awayTeam.name}`;

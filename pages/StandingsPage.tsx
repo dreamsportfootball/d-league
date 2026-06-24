@@ -7,18 +7,7 @@ import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
-import type { LeagueId, RankingCriterion, SeasonId } from '../types/season';
-
-const rankingCriterionLabels: Record<RankingCriterion, string> = {
-  GOAL_DIFFERENCE: '總得失球差',
-  GOALS_FOR: '總進球數',
-  HEAD_TO_HEAD_POINTS: '相關球隊間對戰積分',
-  HEAD_TO_HEAD_GOAL_DIFFERENCE: '相關球隊間對戰得失球差',
-  HEAD_TO_HEAD_GOALS_FOR: '相關球隊間對戰進球數',
-  FEWEST_DIRECT_RED: '直接紅牌較少',
-  FEWEST_SECOND_YELLOW: '雙黃退場較少',
-  FEWEST_YELLOW: '黃牌較少',
-};
+import type { LeagueId, SeasonId } from '../types/season';
 
 const StandingsPage: React.FC = () => {
   const {
@@ -133,8 +122,7 @@ const StandingsPage: React.FC = () => {
         />
 
         <DataFilterToolbar
-          primaryText={`${leagueTeams.length} 支球隊`}
-          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          primaryText={`${activeSeason.shortName} · ${activeLeague}`}
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
           ariaLabel="開啟積分榜篩選"
@@ -200,19 +188,19 @@ const StandingsPage: React.FC = () => {
                   <h3 className="text-xs font-bold uppercase tracking-widest">排名規則</h3>
                 </div>
                 <div className="text-xs leading-relaxed text-neutral-700">
-                  <p className="mb-2 text-neutral-500">
-                    勝 {activeSeason.rules.winPoints} 分、和 {activeSeason.rules.drawPoints} 分、負 {activeSeason.rules.lossPoints} 分
-                  </p>
+                  {activeSeason.standingsDisplay.showPointsSummary && (
+                    <p className="mb-2 text-neutral-500">
+                      勝 {activeSeason.rules.winPoints} 分、和 {activeSeason.rules.drawPoints} 分、負 {activeSeason.rules.lossPoints} 分
+                    </p>
+                  )}
                   <p className="mb-2 text-neutral-500">積分相同時，依序比較：</p>
                   <ol className="ml-1 list-inside list-decimal space-y-1">
-                    {activeSeason.rules.rankingCriteria.map((criterion) => (
-                      <li key={criterion}>{rankingCriterionLabels[criterion]}</li>
+                    {activeSeason.standingsDisplay.rankingRules.map((rule) => (
+                      <li key={rule}>{rule}</li>
                     ))}
                   </ol>
-                  {activeSeason.id === '2026-27' && (
-                    <p className="mt-3 text-neutral-500">
-                      全部相同且影響冠軍、升降級或遞補順位時，以公開抽籤決定；其他情況得並列
-                    </p>
+                  {activeSeason.standingsDisplay.footerNote && (
+                    <p className="mt-3 text-neutral-500">{activeSeason.standingsDisplay.footerNote}</p>
                   )}
                 </div>
               </div>

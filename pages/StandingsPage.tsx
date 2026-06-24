@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
-import DesktopFilterPopover from '../components/DesktopFilterPopover';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
@@ -37,8 +36,7 @@ const StandingsPage: React.FC = () => {
       return 'L1';
     }
   });
-  const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
 
@@ -106,19 +104,10 @@ const StandingsPage: React.FC = () => {
     },
   ];
 
-  const prepareDraft = () => {
+  const openFilters = () => {
     setDraftSeasonId(activeSeasonId);
     setDraftLeague(activeLeague);
-  };
-
-  const openDesktopFilters = () => {
-    prepareDraft();
-    setDesktopFiltersOpen(true);
-  };
-
-  const openMobileFilters = () => {
-    prepareDraft();
-    setMobileFiltersOpen(true);
+    setFiltersOpen(true);
   };
 
   const applyFilters = () => {
@@ -129,8 +118,7 @@ const StandingsPage: React.FC = () => {
     } catch {
       // Session storage may be unavailable.
     }
-    setDesktopFiltersOpen(false);
-    setMobileFiltersOpen(false);
+    setFiltersOpen(false);
   };
 
   return (
@@ -144,34 +132,13 @@ const StandingsPage: React.FC = () => {
           showDesktopSeasonSelector={false}
         />
 
-        <div className="relative">
-          <DataFilterToolbar
-            primaryText={`${leagueTeams.length} 支球隊`}
-            secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
-            onOpenDesktop={() => {
-              if (desktopFiltersOpen) {
-                setDesktopFiltersOpen(false);
-              } else {
-                openDesktopFilters();
-              }
-            }}
-            onOpenMobile={openMobileFilters}
-            activeFilterCount={activeFilterCount}
-            ariaLabel="開啟積分榜篩選"
-          />
-
-          <DesktopFilterPopover
-            open={desktopFiltersOpen}
-            fields={filterFields}
-            onClose={() => setDesktopFiltersOpen(false)}
-            onClear={() => setDraftLeague(defaultDraftLeague)}
-            clearDisabled={draftLeague === defaultDraftLeague}
-            onApply={applyFilters}
-            applyLabel="查看積分榜"
-            title="篩選積分榜"
-            subtitle="選擇賽季與聯賽級別"
-          />
-        </div>
+        <DataFilterToolbar
+          primaryText={`${leagueTeams.length} 支球隊`}
+          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openFilters}
+          activeFilterCount={activeFilterCount}
+          ariaLabel="開啟積分榜篩選"
+        />
 
         {shouldShowEmptyState ? (
           <EmptyState
@@ -255,9 +222,9 @@ const StandingsPage: React.FC = () => {
       </div>
 
       <ResponsiveFilterDrawer
-        open={mobileFiltersOpen}
+        open={filtersOpen}
         fields={filterFields}
-        onClose={() => setMobileFiltersOpen(false)}
+        onClose={() => setFiltersOpen(false)}
         onClear={() => setDraftLeague(defaultDraftLeague)}
         clearDisabled={draftLeague === defaultDraftLeague}
         onApply={applyFilters}

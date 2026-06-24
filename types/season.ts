@@ -11,6 +11,29 @@ export type SeasonStatus =
 
 export type CompetitionFormat = 'double-round-robin' | 'triple-round-robin';
 
+export type RankingCriterion =
+  | 'GOAL_DIFFERENCE'
+  | 'GOALS_FOR'
+  | 'HEAD_TO_HEAD_POINTS'
+  | 'HEAD_TO_HEAD_GOAL_DIFFERENCE'
+  | 'HEAD_TO_HEAD_GOALS_FOR'
+  | 'FEWEST_DIRECT_RED'
+  | 'FEWEST_SECOND_YELLOW'
+  | 'FEWEST_YELLOW';
+
+export interface CompetitionRules {
+  winPoints: number;
+  drawPoints: number;
+  lossPoints: number;
+  rankingCriteria: RankingCriterion[];
+  yellowCardSuspensionThreshold: number;
+  automaticSuspensionMatches: number;
+  yellowCardFine: number;
+  secondYellowFine: number;
+  directRedFine: number;
+  resetCrossMatchYellowsAfterAnySuspension: boolean;
+}
+
 export interface LeagueConfig {
   id: LeagueId;
   displayName: string;
@@ -43,5 +66,6 @@ export interface SeasonConfig {
   youtubePlaylistLabel?: string;
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
+  rules: CompetitionRules;
   leagues: Record<LeagueId, LeagueConfig | null>;
 }

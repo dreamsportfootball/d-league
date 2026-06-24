@@ -1,82 +1,8 @@
 import React, { useMemo } from 'react';
+import { calculateLeagueTable } from '../services/competitionEngine';
 import { useSeason } from '../hooks/useSeason';
-import { MatchStatus, type Standing } from '../types';
+import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
-
-const calculateStandings = (
-  league: LeagueId,
-  teamIds: string[],
-  matches: ReturnType<typeof useSeason>['seasonData']['matches'],
-): Standing[] => {
-  const standingsMap: Record<string, Standing> = {};
-
-  teamIds.forEach((teamId) => {
-    standingsMap[teamId] = {
-      teamId,
-      played: 0,
-      won: 0,
-      drawn: 0,
-      lost: 0,
-      gf: 0,
-      ga: 0,
-      gd: 0,
-      points: 0,
-      form: [],
-    };
-  });
-
-  matches
-    .filter(
-      (match) =>
-        match.league === league &&
-        (match.status === MatchStatus.FINISHED ||
-          (match.homeScore !== null && match.awayScore !== null)),
-    )
-    .forEach((match) => {
-      const home = standingsMap[match.homeTeamId];
-      const away = standingsMap[match.awayTeamId];
-      if (!home || !away) return;
-
-      const homeScore = match.homeScore ?? 0;
-      const awayScore = match.awayScore ?? 0;
-
-      home.played += 1;
-      away.played += 1;
-      home.gf += homeScore;
-      home.ga += awayScore;
-      away.gf += awayScore;
-      away.ga += homeScore;
-      home.gd = home.gf - home.ga;
-      away.gd = away.gf - away.ga;
-
-      if (homeScore > awayScore) {
-        home.won += 1;
-        home.points += 3;
-        away.lost += 1;
-        home.form.unshift('W');
-        away.form.unshift('L');
-      } else if (homeScore < awayScore) {
-        away.won += 1;
-        away.points += 3;
-        home.lost += 1;
-        away.form.unshift('W');
-        home.form.unshift('L');
-      } else {
-        home.drawn += 1;
-        away.drawn += 1;
-        home.points += 1;
-        away.points += 1;
-        home.form.unshift('D');
-        away.form.unshift('D');
-      }
-    });
-
-  return Object.values(standingsMap).sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points;
-    if (b.gd !== a.gd) return b.gd - a.gd;
-    return b.gf - a.gf;
-  });
-};
 
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   const colorClass =
@@ -84,27 +10,56 @@ const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   return <div className={`mx-0.5 h-2 w-2 rounded-full ${colorClass}`} title={result} />;
 };
 
-const rankBar = (index: number) => (index === 0 ? 'bg-brand-blue' : 'bg-transparent');
-
 interface StandingsProps {
   league: LeagueId;
   variant?: 'widget' | 'page';
 }
 
-const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
-  const { seasonData } = useSeason();
-  const leagueTeamIds = useMemo(
-    () => seasonData.teams.filter((team) => team.leagueId === league).map((team) => team.id),
-    [league, seasonData.teams],
+const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact = false }) => {
+  if (row.tieStatus === 'NONE') return null;
+  return (
+    <span
+      className={`ml-1 whitespace-nowrap font-bold ${
+        row.tieStatus === 'DRAW_REQUIRED' ? 'text-amber-600' : 'text-neutral-400'
+      } ${compact ? 'text-[8px]' : 'text-[9px]'}`}
+    >
+      {row.tieStatus === 'DRAW_REQUIRED' ? '待抽籤' : '並列'}
+    </span>
   );
+};
 
+const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
+  const { activeSeason, seasonData } = useSeason();
+  const leagueConfig = activeSeason.leagues[league];
   const standings = useMemo(
-    () => calculateStandings(league, leagueTeamIds, seasonData.matches),
-    [league, leagueTeamIds, seasonData.matches],
+    () =>
+      calculateLeagueTable({
+        league,
+        teams: seasonData.teams,
+        matches: seasonData.matches,
+        matchEvents: seasonData.matchEvents,
+        rules: activeSeason.rules,
+        leagueConfig,
+      }),
+    [activeSeason.rules, league, leagueConfig, seasonData.matchEvents, seasonData.matches, seasonData.teams],
   );
 
   const isWidget = variant === 'widget';
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
+  const relegationStart =
+    leagueConfig && leagueConfig.relegationPlaces > 0
+      ? standings.length - leagueConfig.relegationPlaces + 1
+      : Number.POSITIVE_INFINITY;
+
+  const rankBar = (row: Standing) => {
+    if (row.tieStatus === 'DRAW_REQUIRED') return 'bg-amber-400';
+    if (row.rank === 1) return 'bg-brand-blue';
+    if (leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces) {
+      return 'bg-green-500';
+    }
+    if (row.rank >= relegationStart) return 'bg-red-500';
+    return 'bg-transparent';
+  };
 
   if (isWidget) {
     return (
@@ -115,7 +70,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           <span className="text-center">場次</span>
           <span className="text-center">積分</span>
         </div>
-        {displayed.map((row, index) => {
+        {displayed.map((row) => {
           const team = seasonData.teamMap[row.teamId];
           if (!team) return null;
           return (
@@ -124,12 +79,13 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
               className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-3 transition-colors hover:bg-neutral-50/50"
             >
               <div className="relative flex items-center pl-1">
-                <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(index)}`} />
-                <span className="ml-2 font-medium tabular-nums text-brand-black">{index + 1}</span>
+                <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(row)}`} />
+                <span className="ml-2 font-medium tabular-nums text-brand-black">{row.rank}</span>
               </div>
               <div className="flex min-w-0 items-center space-x-2">
                 <img src={team.logo} alt={team.name} className="h-5 w-5 object-contain" />
                 <span className="truncate font-bold text-brand-black">{team.name}</span>
+                <TieLabel row={row} compact />
               </div>
               <span className="text-center tabular-nums text-brand-black">{row.played}</span>
               <span className="text-center font-semibold tabular-nums text-brand-black">{row.points}</span>
@@ -159,7 +115,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           </tr>
         </thead>
         <tbody>
-          {displayed.map((row, index) => {
+          {displayed.map((row) => {
             const team = seasonData.teamMap[row.teamId];
             if (!team) return null;
             return (
@@ -169,9 +125,9 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
               >
                 <td className="w-8 px-1 py-3 md:w-10">
                   <div className="relative flex items-center pl-1">
-                    <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(index)}`} />
+                    <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
                     <span className="ml-3 font-mono text-xs font-bold tabular-nums text-brand-black md:text-sm">
-                      {index + 1}
+                      {row.rank}
                     </span>
                   </div>
                 </td>
@@ -179,6 +135,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
                   <div className="flex items-center space-x-3">
                     <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" />
                     <span className="text-xs font-bold text-brand-black md:text-sm">{team.name}</span>
+                    <TieLabel row={row} />
                   </div>
                 </td>
                 <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.played}</td>

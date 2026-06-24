@@ -17,8 +17,13 @@ function LeagueTabs<T extends string>({
   getLabel,
   getMobileLabel,
 }: LeagueTabsProps<T>) {
+  const resolveMobileLabel = (option: T) => {
+    if (getMobileLabel) return getMobileLabel(option);
+    return /^L\d+$/.test(option) ? option : getLabel(option);
+  };
+
   return (
-    <div className="mb-6 flex items-end justify-between gap-3 border-b border-neutral-100 md:mb-8 md:items-center md:gap-4 md:pb-2">
+    <div className="mb-6 flex items-end justify-between gap-3 border-b border-neutral-100 md:mb-8 md:items-center md:gap-4 md:pb-2 [&+button]:mb-5 [&+button]:min-h-11 [&+button]:rounded-lg [&+button]:bg-white [&+button]:px-3.5 [&+button]:text-[13px] [&+button]:shadow-none [&+button>span:last-child]:text-[11px] [&+button_svg]:h-3.5 [&+button_svg]:w-3.5">
       <h2 className="flex shrink-0 items-center pb-2 font-display text-xs font-bold uppercase tracking-wider text-neutral-900 md:pb-0 md:text-base">
         <Trophy className="mr-1.5 h-4 w-4 text-brand-blue md:mr-2 md:h-5 md:w-5" aria-hidden="true" />
         選擇聯賽
@@ -38,7 +43,7 @@ function LeagueTabs<T extends string>({
                 isActive ? 'text-brand-black' : 'font-medium text-neutral-400'
               }`}
             >
-              {getMobileLabel ? getMobileLabel(option) : getLabel(option)}
+              {resolveMobileLabel(option)}
               <span
                 className={`absolute inset-x-2 bottom-0 h-0.5 transition-colors ${
                   isActive ? 'bg-brand-blue' : 'bg-transparent'

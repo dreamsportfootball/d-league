@@ -6,7 +6,18 @@ import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
-import type { LeagueId } from '../types/season';
+import type { LeagueId, RankingCriterion } from '../types/season';
+
+const rankingCriterionLabels: Record<RankingCriterion, string> = {
+  GOAL_DIFFERENCE: '總得失球差',
+  GOALS_FOR: '總進球數',
+  HEAD_TO_HEAD_POINTS: '相關球隊間對戰積分',
+  HEAD_TO_HEAD_GOAL_DIFFERENCE: '相關球隊間對戰得失球差',
+  HEAD_TO_HEAD_GOALS_FOR: '相關球隊間對戰進球數',
+  FEWEST_DIRECT_RED: '直接紅牌較少',
+  FEWEST_SECOND_YELLOW: '雙黃退場較少',
+  FEWEST_YELLOW: '黃牌較少',
+};
 
 const StandingsPage: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
@@ -36,7 +47,10 @@ const StandingsPage: React.FC = () => {
 
   const leagueConfig = activeSeason.leagues[activeLeague];
   const leagueTeams = useMemo(
-    () => seasonData.teams.filter((team) => team.leagueId === activeLeague),
+    () =>
+      seasonData.teams.filter(
+        (team) => team.leagueId === activeLeague && team.competitionStatus !== 'WITHDRAWN',
+      ),
     [activeLeague, seasonData.teams],
   );
   const hasFinishedMatches = useMemo(
@@ -44,6 +58,8 @@ const StandingsPage: React.FC = () => {
       seasonData.matches.some(
         (match) =>
           match.league === activeLeague &&
+          match.resultType !== 'VOID' &&
+          match.countsForStandings !== false &&
           (match.status === MatchStatus.FINISHED ||
             (match.homeScore !== null && match.awayScore !== null)),
       ),
@@ -78,9 +94,27 @@ const StandingsPage: React.FC = () => {
           <div className="grid grid-cols-1 items-start gap-12 xl:grid-cols-12">
             <div className="xl:col-span-8">
               <Standings league={activeLeague} variant="page" />
-              <div className="mt-6 flex items-center text-[10px] font-bold uppercase tracking-widest text-neutral-400">
-                <div className="mr-2 h-1.5 w-1.5 rounded-full bg-brand-blue" />
-                League Champion
+              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                <span className="flex items-center">
+                  <span className="mr-2 h-1.5 w-1.5 rounded-full bg-brand-blue" />
+                  冠軍
+                </span>
+                {leagueConfig && leagueConfig.promotionPlaces > 0 && (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-green-500" />
+                    升級區
+                  </span>
+                )}
+                {leagueConfig && leagueConfig.relegationPlaces > 0 && (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-red-500" />
+                    降級區
+                  </span>
+                )}
+                <span className="flex items-center">
+                  <span className="mr-2 h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  待公開抽籤
+                </span>
               </div>
             </div>
 
@@ -110,14 +144,20 @@ const StandingsPage: React.FC = () => {
                   <h3 className="text-xs font-bold uppercase tracking-widest">排名規則</h3>
                 </div>
                 <div className="text-xs leading-relaxed text-neutral-700">
+                  <p className="mb-2 text-neutral-500">
+                    勝 {activeSeason.rules.winPoints} 分、和 {activeSeason.rules.drawPoints} 分、負 {activeSeason.rules.lossPoints} 分
+                  </p>
                   <p className="mb-2 text-neutral-500">積分相同時，依序比較：</p>
                   <ol className="ml-1 list-inside list-decimal space-y-1">
-                    <li>得失球差</li>
-                    <li>進球數</li>
-                    <li>相關隊伍間對戰成績</li>
-                    <li>黃紅牌</li>
-                    <li>並列</li>
+                    {activeSeason.rules.rankingCriteria.map((criterion) => (
+                      <li key={criterion}>{rankingCriterionLabels[criterion]}</li>
+                    ))}
                   </ol>
+                  {activeSeason.id === '2026-27' && (
+                    <p className="mt-3 text-neutral-500">
+                      全部相同且影響冠軍、升降級或遞補順位時，以公開抽籤決定；其他情況得並列
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

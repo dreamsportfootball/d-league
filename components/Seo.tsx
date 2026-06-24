@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 
 const SITE_NAME = 'D LEAGUE｜台南夢達七人足球聯賽';
@@ -25,16 +25,16 @@ const absoluteAssetUrl = (value?: string): string => {
 
 const Seo: React.FC = () => {
   const location = useLocation();
-  const params = useParams();
   const { activeSeason, seasonData } = useSeason();
 
   const metadata = useMemo(() => {
     const pathname = location.pathname;
+    const routeId = decodeURIComponent(pathname.split('/').filter(Boolean)[1] ?? '');
     const article = pathname.startsWith('/news/')
-      ? seasonData.news.find((item) => item.id === params.id)
+      ? seasonData.news.find((item) => item.id === routeId)
       : undefined;
     const team = pathname.startsWith('/teams/')
-      ? seasonData.teamMap[params.id ?? '']
+      ? seasonData.teamMap[routeId]
       : undefined;
     const matchId = new URLSearchParams(location.search).get('match');
     const match = matchId ? seasonData.matches.find((item) => item.id === matchId) : undefined;
@@ -82,7 +82,7 @@ const Seo: React.FC = () => {
       description: page.description,
       image: absoluteAssetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
     };
-  }, [activeSeason, location.pathname, location.search, params.id, seasonData.matches, seasonData.news, seasonData.teamMap]);
+  }, [activeSeason, location.pathname, location.search, seasonData.matches, seasonData.news, seasonData.teamMap]);
 
   useEffect(() => {
     document.title = metadata.title;

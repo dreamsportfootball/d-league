@@ -3,6 +3,7 @@ import type { Match } from '../types';
 import { MatchStatus } from '../types';
 import type { LeagueId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
+import AutoFitText from './AutoFitText';
 
 type LeagueFilter = LeagueId | 'ALL';
 
@@ -46,12 +47,6 @@ const renderScore = (match: Match) => {
       VS
     </span>
   );
-};
-
-const getMobileNameClass = (name: string) => {
-  if (name.length >= 10) return 'text-[10px] tracking-tighter';
-  if (name.length >= 8) return 'text-[11px] tracking-tight';
-  return 'text-xs';
 };
 
 const FullSchedule: React.FC<FullScheduleProps> = ({
@@ -101,6 +96,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
             <button
               type="button"
               onClick={() => onMatchClick(match.id)}
+              data-analytics-event="match_open"
+              data-analytics-label={match.id}
               className="group relative flex w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex-row md:hover:bg-neutral-50"
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
@@ -115,14 +112,16 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   </span>
                 </div>
 
-                <div className="grid w-full flex-1 grid-cols-[1fr_auto_1fr] items-center gap-2 px-2 md:gap-6">
+                <div className="grid w-full flex-1 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-2 md:gap-6">
                   <div className="flex min-w-0 items-center justify-end space-x-2 md:space-x-4">
-                    <span className="block truncate text-right font-bold text-brand-black md:text-base">
-                      <span className={`whitespace-nowrap md:hidden ${getMobileNameClass(homeTeam.name)}`}>
-                        {homeTeam.name}
-                      </span>
-                      <span className="hidden md:inline">{homeTeam.name}</span>
-                    </span>
+                    <div className="min-w-0 flex-1 text-right">
+                      <AutoFitText
+                        text={homeTeam.name}
+                        maxFontSize={16}
+                        minFontSize={7}
+                        className="font-bold text-brand-black md:text-base"
+                      />
+                    </div>
                     <img
                       src={homeTeam.logo}
                       alt={homeTeam.name}
@@ -144,12 +143,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       decoding="async"
                       className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
                     />
-                    <span className="block truncate text-left font-bold text-brand-black md:text-base">
-                      <span className={`whitespace-nowrap md:hidden ${getMobileNameClass(awayTeam.name)}`}>
-                        {awayTeam.name}
-                      </span>
-                      <span className="hidden md:inline">{awayTeam.name}</span>
-                    </span>
+                    <div className="min-w-0 flex-1 text-left">
+                      <AutoFitText
+                        text={awayTeam.name}
+                        maxFontSize={16}
+                        minFontSize={7}
+                        className="font-bold text-brand-black md:text-base"
+                      />
+                    </div>
                   </div>
                 </div>
 

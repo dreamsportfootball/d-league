@@ -5,6 +5,7 @@ import { useMatchQuery } from '../hooks/useMatchQuery';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
+import AutoFitText from './AutoFitText';
 import MatchDialog from './MatchDialog';
 import Tabs from './Tabs';
 
@@ -65,13 +66,18 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onClick }) => {
       <div className="flex flex-grow flex-col justify-center p-5">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex min-w-0 flex-1 items-center space-x-3 overflow-hidden">
+            <div className="flex min-w-0 flex-1 items-center space-x-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                 <img src={homeTeam.logo} alt={homeTeam.name} className="h-8 w-8 object-contain drop-shadow-sm" />
               </div>
-              <span className="whitespace-nowrap text-sm font-bold leading-tight tracking-tight text-brand-black md:text-lg">
-                {homeTeam.shortName}
-              </span>
+              <div className="min-w-0 flex-1">
+                <AutoFitText
+                  text={homeTeam.name}
+                  maxFontSize={18}
+                  minFontSize={8}
+                  className="font-bold tracking-tight text-brand-black"
+                />
+              </div>
             </div>
             <div className={`ml-2 shrink-0 font-display text-xl font-bold tabular-nums md:text-2xl ${isFinished ? 'text-brand-black' : 'text-neutral-300'}`}>
               {isFinished ? match.homeScore ?? '-' : '-'}
@@ -79,13 +85,18 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onClick }) => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex min-w-0 flex-1 items-center space-x-3 overflow-hidden">
+            <div className="flex min-w-0 flex-1 items-center space-x-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                 <img src={awayTeam.logo} alt={awayTeam.name} loading="lazy" className="h-8 w-8 object-contain drop-shadow-sm" />
               </div>
-              <span className="whitespace-nowrap text-sm font-bold leading-tight tracking-tight text-brand-black md:text-lg">
-                {awayTeam.shortName}
-              </span>
+              <div className="min-w-0 flex-1">
+                <AutoFitText
+                  text={awayTeam.name}
+                  maxFontSize={18}
+                  minFontSize={8}
+                  className="font-bold tracking-tight text-brand-black"
+                />
+              </div>
             </div>
             <div className={`ml-2 shrink-0 font-display text-xl font-bold tabular-nums md:text-2xl ${isFinished ? 'text-brand-black' : 'text-neutral-300'}`}>
               {isFinished ? match.awayScore ?? '-' : '-'}

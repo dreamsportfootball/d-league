@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Newspaper } from 'lucide-react';
+import { ArrowRight, ChevronDown, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import type { NewsArticle } from '../types';
@@ -121,7 +121,7 @@ const NewsPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-8 flex flex-col justify-between border-b border-neutral-100 pb-8 md:mb-12 md:flex-row md:items-end">
+        <div className="mb-8 flex flex-col justify-between gap-6 border-b border-neutral-100 pb-8 md:mb-12 md:flex-row md:items-end">
           <div>
             <h1 className="mb-3 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
               最新 <span className="text-brand-blue">消息</span>
@@ -131,22 +131,28 @@ const NewsPage: React.FC = () => {
             </p>
           </div>
 
-          <label className="mt-6 block md:mt-0">
-            <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
-              查看賽季
+          <label className="block w-full md:w-56">
+            <span className="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-neutral-400">
+              賽季
             </span>
-            <select
-              value={activeSeasonId}
-              onChange={(event) => setActiveSeason(event.target.value as SeasonId)}
-              data-analytics-event="season_switch"
-              className="min-h-11 min-w-44 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-black text-brand-black focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
-            >
-              {availableSeasons.map((season) => (
-                <option key={season.id} value={season.id}>
-                  {season.displayName}
-                </option>
-              ))}
-            </select>
+            <span className="relative block">
+              <select
+                value={activeSeasonId}
+                onChange={(event) => setActiveSeason(event.target.value as SeasonId)}
+                data-analytics-event="season_switch"
+                className="min-h-11 w-full appearance-none rounded-lg border border-neutral-200 bg-white py-2 pl-3 pr-10 text-sm font-bold text-brand-black shadow-sm transition-colors hover:border-neutral-300 focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/10"
+              >
+                {availableSeasons.map((season) => (
+                  <option key={season.id} value={season.id}>
+                    {season.displayName}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400"
+                aria-hidden="true"
+              />
+            </span>
           </label>
         </div>
 

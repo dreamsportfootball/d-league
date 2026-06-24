@@ -24,6 +24,7 @@ import type { SeasonTeam } from '../types/team';
 type LeagueFilter = LeagueId | 'ALL';
 type StatusFilter = 'ALL' | 'UPCOMING' | 'FINISHED';
 type MobileFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
+type DesktopFilterView = 'ROOT' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
 type FacetKey = 'league' | 'team' | 'round' | 'date' | 'status';
 
 interface ScheduleFilters {
@@ -47,30 +48,15 @@ interface MobileFilterDraft {
   filters: ScheduleFilters;
 }
 
-interface FilterFieldsProps {
-  availableTeams: SeasonTeam[];
-  availableRounds: string[];
-  availableDates: string[];
-  availableStatuses: StatusFilter[];
-  teamFilter: string;
-  roundFilter: string;
-  dateFilter: string;
-  statusFilter: StatusFilter;
-  setTeamFilter: (value: string) => void;
-  setRoundFilter: (value: string) => void;
-  setDateFilter: (value: string) => void;
-  setStatusFilter: (value: StatusFilter) => void;
-}
-
-interface MobileSelectOption {
+interface FilterSelectOption {
   value: string;
   label: string;
 }
 
-interface MobileSelectorConfig {
+interface FilterSelectorConfig {
   title: string;
   selectedValue: string;
-  options: MobileSelectOption[];
+  options: FilterSelectOption[];
   onSelect: (value: string) => void;
 }
 
@@ -189,52 +175,11 @@ const reconcileFilters = (
   return nextFilters;
 };
 
-const FilterFields: React.FC<FilterFieldsProps> = ({
-  availableTeams,
-  availableRounds,
-  availableDates,
-  availableStatuses,
-  teamFilter,
-  roundFilter,
-  dateFilter,
-  statusFilter,
-  setTeamFilter,
-  setRoundFilter,
-  setDateFilter,
-  setStatusFilter,
-}) => (
-  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-    <label>
-      <span className="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-neutral-400 md:hidden">球隊</span>
-      <select value={teamFilter} onChange={(event) => setTeamFilter(event.target.value)} className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm font-bold text-brand-black">
-        <option value="ALL">全部球隊</option>
-        {availableTeams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
-      </select>
-    </label>
-    <label>
-      <span className="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-neutral-400 md:hidden">輪次</span>
-      <select value={roundFilter} onChange={(event) => setRoundFilter(event.target.value)} className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm font-bold text-brand-black">
-        <option value="ALL">全部輪次</option>
-        {availableRounds.map((round) => <option key={round} value={round}>第 {round} 輪</option>)}
-      </select>
-    </label>
-    <label>
-      <span className="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-neutral-400 md:hidden">日期</span>
-      <select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm font-bold text-brand-black">
-        <option value="ALL">全部日期</option>
-        {availableDates.map((date) => <option key={date} value={date}>{date.replaceAll('-', '/')}</option>)}
-      </select>
-    </label>
-    <label>
-      <span className="mb-1.5 block text-[10px] font-black uppercase tracking-widest text-neutral-400 md:hidden">狀態</span>
-      <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as StatusFilter)} className="min-h-11 w-full rounded-lg border border-neutral-200 bg-white px-3 text-sm font-bold text-brand-black">
-        <option value="ALL">全部狀態</option>
-        {availableStatuses.includes('UPCOMING') && <option value="UPCOMING">即將開賽</option>}
-        {availableStatuses.includes('FINISHED') && <option value="FINISHED">已完賽</option>}
-      </select>
-    </label>
-  </div>
-);
+const getStatusSummary = (status: StatusFilter): string => {
+  if (status === 'FINISHED') return '已完賽';
+  if (status === 'UPCOMING') return '即將開賽';
+  return '全部狀態';
+};
 
 const SchedulePage: React.FC = () => {
   const {
@@ -246,6 +191,7 @@ const SchedulePage: React.FC = () => {
   } = useSeason();
   const [searchParams, setSearchParams] = useSearchParams();
   const previousSeasonIdRef = useRef(activeSeasonId);
+  const desktopFilterRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<ScheduleFilters>(() => {
     let savedLeague: LeagueFilter = 'ALL';
     try {
@@ -261,6 +207,9 @@ const SchedulePage: React.FC = () => {
         : 'ALL',
     };
   });
+  const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
+  const [desktopFilterView, setDesktopFilterView] = useState<DesktopFilterView>('ROOT');
+  const [desktopDraft, setDesktopDraft] = useState<ScheduleFilters>({ ...EMPTY_FILTERS });
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [mobileFilterView, setMobileFilterView] = useState<MobileFilterView>('ROOT');
   const [mobileDraft, setMobileDraft] = useState<MobileFilterDraft>({
@@ -273,13 +222,22 @@ const SchedulePage: React.FC = () => {
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
-  const facetOptions = useMemo(
-    () => getFacetOptions(seasonData.matches, seasonData.teams, filters, activeSeason.enabledLeagues),
-    [activeSeason.enabledLeagues, filters, seasonData.matches, seasonData.teams],
-  );
   const filteredMatches = useMemo(
     () => seasonData.matches.filter((match) => matchPassesFilters(match, filters)),
     [filters, seasonData.matches],
+  );
+  const desktopDraftFacetOptions = useMemo(
+    () => getFacetOptions(
+      seasonData.matches,
+      seasonData.teams,
+      desktopDraft,
+      activeSeason.enabledLeagues,
+    ),
+    [activeSeason.enabledLeagues, desktopDraft, seasonData.matches, seasonData.teams],
+  );
+  const desktopDraftFilteredMatches = useMemo(
+    () => seasonData.matches.filter((match) => matchPassesFilters(match, desktopDraft)),
+    [desktopDraft, seasonData.matches],
   );
 
   const draftSeason = availableSeasons.find((season) => season.id === mobileDraft.seasonId) ?? activeSeason;
@@ -302,6 +260,8 @@ const SchedulePage: React.FC = () => {
     if (previousSeasonIdRef.current === activeSeasonId) return;
     previousSeasonIdRef.current = activeSeasonId;
     setFilters({ ...EMPTY_FILTERS });
+    setDesktopFiltersOpen(false);
+    setDesktopFilterView('ROOT');
     try {
       window.sessionStorage.setItem('scheduleActiveLeague', 'ALL');
     } catch {
@@ -316,6 +276,29 @@ const SchedulePage: React.FC = () => {
       setSearchParams(next, { replace: true });
     }
   }, [searchParams, seasonData.matches, selectedMatchId, setSearchParams]);
+
+  useEffect(() => {
+    if (!desktopFiltersOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Node && desktopFilterRef.current?.contains(target)) return;
+      setDesktopFilterView('ROOT');
+      setDesktopFiltersOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setDesktopFilterView('ROOT');
+      setDesktopFiltersOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [desktopFiltersOpen]);
 
   useEffect(() => {
     if (!mobileFiltersOpen) return;
@@ -336,6 +319,11 @@ const SchedulePage: React.FC = () => {
     };
   }, [mobileFilterView, mobileFiltersOpen]);
 
+  const closeDesktopFilters = () => {
+    setDesktopFilterView('ROOT');
+    setDesktopFiltersOpen(false);
+  };
+
   const updateAppliedFacet = (facet: FacetKey, value: string) => {
     if (filters[facet] === value) return;
     const proposedFilters = { ...filters, [facet]: value } as ScheduleFilters;
@@ -343,6 +331,7 @@ const SchedulePage: React.FC = () => {
     setFilters(nextFilters);
 
     if (facet === 'league') {
+      closeDesktopFilters();
       try {
         window.sessionStorage.setItem('scheduleActiveLeague', nextFilters.league);
       } catch {
@@ -351,7 +340,15 @@ const SchedulePage: React.FC = () => {
     }
   };
 
-  const updateDraftFacet = (facet: FacetKey, value: string) => {
+  const updateDesktopDraftFacet = (facet: FacetKey, value: string) => {
+    setDesktopDraft((currentDraft) => {
+      if (currentDraft[facet] === value) return currentDraft;
+      const proposedFilters = { ...currentDraft, [facet]: value } as ScheduleFilters;
+      return reconcileFilters(proposedFilters, facet, seasonData.matches);
+    });
+  };
+
+  const updateMobileDraftFacet = (facet: FacetKey, value: string) => {
     setMobileDraft((currentDraft) => {
       if (currentDraft.filters[facet] === value) return currentDraft;
       const currentData = getSeasonData(currentDraft.seasonId);
@@ -363,14 +360,23 @@ const SchedulePage: React.FC = () => {
     });
   };
 
-  const resetFilters = () => {
-    setFilters((currentFilters) => ({
-      ...currentFilters,
-      team: 'ALL',
-      round: 'ALL',
-      date: 'ALL',
-      status: 'ALL',
-    }));
+  const openDesktopFilters = () => {
+    setDesktopDraft({ ...filters });
+    setDesktopFilterView('ROOT');
+    setDesktopFiltersOpen(true);
+  };
+
+  const toggleDesktopFilters = () => {
+    if (desktopFiltersOpen) {
+      closeDesktopFilters();
+      return;
+    }
+    openDesktopFilters();
+  };
+
+  const applyDesktopFilters = () => {
+    setFilters(desktopDraft);
+    closeDesktopFilters();
   };
 
   const openMobileFilters = () => {
@@ -411,29 +417,31 @@ const SchedulePage: React.FC = () => {
   };
 
   const desktopLeagueOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
-  const filterFieldProps: FilterFieldsProps = {
-    availableTeams: facetOptions.teams,
-    availableRounds: facetOptions.rounds,
-    availableDates: facetOptions.dates,
-    availableStatuses: facetOptions.statuses,
-    teamFilter: filters.team,
-    roundFilter: filters.round,
-    dateFilter: filters.date,
-    statusFilter: filters.status,
-    setTeamFilter: (value) => updateAppliedFacet('team', value),
-    setRoundFilter: (value) => updateAppliedFacet('round', value),
-    setDateFilter: (value) => updateAppliedFacet('date', value),
-    setStatusFilter: (value) => updateAppliedFacet('status', value),
-  };
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
+  const desktopActiveFilterCount = [filters.team, filters.round, filters.date, filters.status]
+    .filter((value) => value !== 'ALL').length;
+  const desktopDraftFilterCount = [
+    desktopDraft.team,
+    desktopDraft.round,
+    desktopDraft.date,
+    desktopDraft.status,
+  ].filter((value) => value !== 'ALL').length;
   const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
   const draftFilterCount = Object.values(mobileDraft.filters).filter((value) => value !== 'ALL').length;
+
+  const desktopDraftStatusSummary = getStatusSummary(desktopDraft.status);
+  const desktopDraftTeamSummary = desktopDraft.team === 'ALL'
+    ? '全部球隊'
+    : seasonData.teamMap[desktopDraft.team]?.name ?? '全部球隊';
+  const desktopDraftDateSummary = desktopDraft.date === 'ALL'
+    ? '全部日期'
+    : desktopDraft.date.replaceAll('-', '/');
+  const desktopDraftRoundSummary = desktopDraft.round === 'ALL'
+    ? '全部輪次'
+    : `第 ${desktopDraft.round} 輪`;
+
   const draftLeagueSummary = mobileDraft.filters.league === 'ALL' ? '全部級別' : mobileDraft.filters.league;
-  const draftStatusSummary = mobileDraft.filters.status === 'FINISHED'
-    ? '已完賽'
-    : mobileDraft.filters.status === 'UPCOMING'
-      ? '即將開賽'
-      : '全部狀態';
+  const draftStatusSummary = getStatusSummary(mobileDraft.filters.status);
   const draftTeamSummary = mobileDraft.filters.team === 'ALL'
     ? '全部球隊'
     : draftSeasonData.teamMap[mobileDraft.filters.team]?.name ?? '全部球隊';
@@ -444,7 +452,49 @@ const SchedulePage: React.FC = () => {
     ? '全部輪次'
     : `第 ${mobileDraft.filters.round} 輪`;
 
-  const mobileSelectorConfig: MobileSelectorConfig | null = mobileFilterView === 'SEASON'
+  const desktopSelectorConfig: FilterSelectorConfig | null = desktopFilterView === 'STATUS'
+    ? {
+        title: '選擇比賽狀態',
+        selectedValue: desktopDraft.status,
+        options: desktopDraftFacetOptions.statuses.map((status) => ({
+          value: status,
+          label: getStatusSummary(status),
+        })),
+        onSelect: (value) => updateDesktopDraftFacet('status', value),
+      }
+    : desktopFilterView === 'TEAM'
+      ? {
+          title: '選擇球隊',
+          selectedValue: desktopDraft.team,
+          options: [
+            { value: 'ALL', label: '全部球隊' },
+            ...desktopDraftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
+          ],
+          onSelect: (value) => updateDesktopDraftFacet('team', value),
+        }
+      : desktopFilterView === 'DATE'
+        ? {
+            title: '選擇日期',
+            selectedValue: desktopDraft.date,
+            options: [
+              { value: 'ALL', label: '全部日期' },
+              ...desktopDraftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+            ],
+            onSelect: (value) => updateDesktopDraftFacet('date', value),
+          }
+        : desktopFilterView === 'ROUND'
+          ? {
+              title: '選擇輪次',
+              selectedValue: desktopDraft.round,
+              options: [
+                { value: 'ALL', label: '全部輪次' },
+                ...desktopDraftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+              ],
+              onSelect: (value) => updateDesktopDraftFacet('round', value),
+            }
+          : null;
+
+  const mobileSelectorConfig: FilterSelectorConfig | null = mobileFilterView === 'SEASON'
     ? {
         title: '選擇賽季',
         selectedValue: mobileDraft.seasonId,
@@ -463,7 +513,7 @@ const SchedulePage: React.FC = () => {
             value: league,
             label: league === 'ALL' ? '全部級別' : league,
           })),
-          onSelect: (value) => updateDraftFacet('league', value),
+          onSelect: (value) => updateMobileDraftFacet('league', value),
         }
       : mobileFilterView === 'STATUS'
         ? {
@@ -471,9 +521,9 @@ const SchedulePage: React.FC = () => {
             selectedValue: mobileDraft.filters.status,
             options: draftFacetOptions.statuses.map((status) => ({
               value: status,
-              label: status === 'FINISHED' ? '已完賽' : status === 'UPCOMING' ? '即將開賽' : '全部狀態',
+              label: getStatusSummary(status),
             })),
-            onSelect: (value) => updateDraftFacet('status', value),
+            onSelect: (value) => updateMobileDraftFacet('status', value),
           }
         : mobileFilterView === 'TEAM'
           ? {
@@ -483,7 +533,7 @@ const SchedulePage: React.FC = () => {
                 { value: 'ALL', label: '全部球隊' },
                 ...draftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
               ],
-              onSelect: (value) => updateDraftFacet('team', value),
+              onSelect: (value) => updateMobileDraftFacet('team', value),
             }
           : mobileFilterView === 'DATE'
             ? {
@@ -493,7 +543,7 @@ const SchedulePage: React.FC = () => {
                   { value: 'ALL', label: '全部日期' },
                   ...draftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
                 ],
-                onSelect: (value) => updateDraftFacet('date', value),
+                onSelect: (value) => updateMobileDraftFacet('date', value),
               }
             : mobileFilterView === 'ROUND'
               ? {
@@ -503,7 +553,7 @@ const SchedulePage: React.FC = () => {
                     { value: 'ALL', label: '全部輪次' },
                     ...draftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
                   ],
-                  onSelect: (value) => updateDraftFacet('round', value),
+                  onSelect: (value) => updateMobileDraftFacet('round', value),
                 }
               : null;
 
@@ -558,16 +608,169 @@ const SchedulePage: React.FC = () => {
         </button>
 
         {seasonData.matches.length > 0 && (
-          <div className="mb-8 hidden rounded-xl border border-neutral-200 bg-neutral-50 p-5 md:block">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center text-xs font-black uppercase tracking-widest text-brand-black">
-                <Filter className="mr-2 h-4 w-4 text-brand-blue" /> 篩選賽程
+          <div ref={desktopFilterRef} className="relative mb-8 hidden md:block">
+            <div className="flex min-h-14 items-center justify-between border-y border-neutral-100">
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-sm font-black tracking-wide text-brand-black">
+                  {filteredMatches.length} 場比賽
+                </span>
+                <span className="text-[11px] font-bold text-neutral-400">
+                  {activeSeason.shortName} · {leagueSummary}
+                </span>
               </div>
-              <button type="button" onClick={resetFilters} className="inline-flex min-h-10 items-center text-xs font-bold text-neutral-400 hover:text-brand-black">
-                <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> 清除
+              <button
+                type="button"
+                onClick={toggleDesktopFilters}
+                aria-expanded={desktopFiltersOpen}
+                aria-controls="desktop-schedule-filters"
+                className={`inline-flex min-h-11 items-center text-sm font-black transition-colors ${
+                  desktopFiltersOpen || desktopActiveFilterCount > 0
+                    ? 'text-brand-blue'
+                    : 'text-brand-black hover:text-brand-blue'
+                }`}
+              >
+                <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
+                篩選
+                {desktopActiveFilterCount > 0 && (
+                  <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
+                )}
+                <ChevronRight
+                  className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? '-rotate-90' : 'rotate-90'}`}
+                  aria-hidden="true"
+                />
               </button>
             </div>
-            <FilterFields {...filterFieldProps} />
+
+            {desktopFiltersOpen && (
+              <div
+                id="desktop-schedule-filters"
+                role="dialog"
+                aria-label="篩選賽程"
+                className="absolute right-0 top-[calc(100%+12px)] z-50 flex max-h-[min(70vh,560px)] w-[380px] flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.16)]"
+              >
+                {desktopSelectorConfig ? (
+                  <>
+                    <div className="grid shrink-0 grid-cols-[44px_1fr_44px] items-center border-b border-neutral-100 px-2 py-2">
+                      <button
+                        type="button"
+                        onClick={() => setDesktopFilterView('ROOT')}
+                        className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black"
+                        aria-label="返回篩選"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <h2 className="text-center font-display text-base font-black text-brand-black">
+                        {desktopSelectorConfig.title}
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={closeDesktopFilters}
+                        className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                        aria-label="取消並關閉"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                      {desktopSelectorConfig.options.map((option) => {
+                        const selected = option.value === desktopSelectorConfig.selectedValue;
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            onClick={() => {
+                              desktopSelectorConfig.onSelect(option.value);
+                              setDesktopFilterView('ROOT');
+                            }}
+                            className={`flex min-h-[52px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
+                              selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
+                            }`}
+                          >
+                            <span>{option.label}</span>
+                            <span
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                                selected ? 'border-brand-blue' : 'border-neutral-300'
+                              }`}
+                              aria-hidden="true"
+                            >
+                              {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="shrink-0 border-b border-neutral-100 px-5 py-5">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-display text-lg font-black text-brand-black">篩選賽程</p>
+                          <p className="mt-1 text-[11px] font-medium text-neutral-400">選擇要查看的比賽範圍</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={closeDesktopFilters}
+                          className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                          aria-label="取消並關閉"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                      {[
+                        { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
+                        { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
+                        { label: '日期', value: desktopDraftDateSummary, view: 'DATE' as const },
+                        { label: '輪次', value: desktopDraftRoundSummary, view: 'ROUND' as const },
+                      ].map((field) => (
+                        <button
+                          key={field.label}
+                          type="button"
+                          onClick={() => setDesktopFilterView(field.view)}
+                          className="flex min-h-[58px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
+                        >
+                          <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                          <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+                            {field.value}
+                          </span>
+                          <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 py-4">
+                      <button
+                        type="button"
+                        onClick={() => setDesktopDraft((currentDraft) => ({
+                          ...currentDraft,
+                          team: 'ALL',
+                          round: 'ALL',
+                          date: 'ALL',
+                          status: 'ALL',
+                        }))}
+                        disabled={desktopDraftFilterCount === 0}
+                        className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black disabled:opacity-30 disabled:hover:text-neutral-500"
+                      >
+                        <RotateCcw className="mr-2 h-4 w-4" /> 清除
+                      </button>
+                      <button
+                        type="button"
+                        onClick={applyDesktopFilters}
+                        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800"
+                      >
+                        <Check className="mr-2 h-4 w-4" /> 顯示 {desktopDraftFilteredMatches.length} 場
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
 

@@ -1,9 +1,12 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
+import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { MediaAlbum } from '../types/media';
+import type { SeasonId } from '../types/season';
 
 const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   <div className="group block">
@@ -37,9 +40,22 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
 );
 
 const MediaPage: React.FC = () => {
-  const { activeSeason, seasonData } = useSeason();
+  const {
+    activeSeasonId,
+    activeSeason,
+    seasonData,
+    availableSeasons,
+    setActiveSeason,
+  } = useSeason();
   const galleryRef = useRef<HTMLDivElement | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
 
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
   const reversedAlbums = useMemo(
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
@@ -55,6 +71,25 @@ const MediaPage: React.FC = () => {
   };
 
   const hasMedia = reversedAlbums.length > 0 || Boolean(activeSeason.youtubePlaylistEmbedUrl);
+  const mediaItemCount = reversedAlbums.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
+  const seasonField: FilterDrawerField = {
+    id: 'season',
+    label: '賽季',
+    value: draftSeasonId,
+    displayValue: draftSeason.shortName,
+    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+    onChange: (value) => setDraftSeasonId(value as SeasonId),
+  };
+
+  const openFilters = () => {
+    setDraftSeasonId(activeSeasonId);
+    setFiltersOpen(true);
+  };
+
+  const applyFilters = () => {
+    if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
+    setFiltersOpen(false);
+  };
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -63,7 +98,15 @@ const MediaPage: React.FC = () => {
           title="賽事"
           accent="媒體"
           description={`${activeSeason.displayName} 精彩瞬間與比賽影片`}
-          bordered
+          showMobileSeasonSelector={false}
+          showDesktopSeasonSelector={false}
+        />
+
+        <DataFilterToolbar
+          primaryText={`${mediaItemCount} 項媒體`}
+          secondaryText={activeSeason.shortName}
+          onOpen={openFilters}
+          ariaLabel="開啟賽事媒體篩選"
         />
 
         {!hasMedia ? (
@@ -183,6 +226,18 @@ const MediaPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ResponsiveFilterDrawer
+        open={filtersOpen}
+        fields={[seasonField]}
+        onClose={() => setFiltersOpen(false)}
+        onClear={() => setDraftSeasonId(activeSeasonId)}
+        clearDisabled={draftSeasonId === activeSeasonId}
+        onApply={applyFilters}
+        applyLabel="查看賽事媒體"
+        title="篩選賽事媒體"
+        subtitle="目前可依賽季切換媒體內容"
+      />
     </div>
   );
 };

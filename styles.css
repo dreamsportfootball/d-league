@@ -46,3 +46,9 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@media (max-width: 767px) {
+  button[aria-label^="開啟賽程篩選"] {
+    border-top-width: 0;
+  }
+}

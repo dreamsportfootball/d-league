@@ -21,7 +21,7 @@ import type { SeasonTeam } from '../types/team';
 
 type LeagueFilter = LeagueId | 'ALL';
 type StatusFilter = 'ALL' | 'UPCOMING' | 'FINISHED';
-type MobileFilterView = 'ROOT' | 'TEAM' | 'DATE' | 'ROUND';
+type MobileFilterView = 'ROOT' | 'SEASON' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
 
 interface FilterFieldsProps {
   availableTeams: SeasonTeam[];
@@ -272,43 +272,66 @@ const SchedulePage: React.FC = () => {
     setStatusFilter,
   };
   const leagueSummary = leagueTab === 'ALL' ? '全部級別' : leagueTab;
+  const statusSummary = statusFilter === 'FINISHED'
+    ? '已完賽'
+    : statusFilter === 'UPCOMING'
+      ? '即將開賽'
+      : '全部狀態';
   const teamSummary = teamFilter === 'ALL'
     ? '全部球隊'
     : seasonData.teamMap[teamFilter]?.name ?? '全部球隊';
   const dateSummary = dateFilter === 'ALL' ? '全部日期' : dateFilter.replaceAll('-', '/');
   const roundSummary = roundFilter === 'ALL' ? '全部輪次' : `第 ${roundFilter} 輪`;
 
-  const mobileSelectorConfig: MobileSelectorConfig | null = mobileFilterView === 'TEAM'
+  const mobileSelectorConfig: MobileSelectorConfig | null = mobileFilterView === 'SEASON'
     ? {
-        title: '選擇球隊',
-        selectedValue: teamFilter,
-        options: [
-          { value: 'ALL', label: '全部球隊' },
-          ...availableTeams.map((team) => ({ value: team.id, label: team.name })),
-        ],
-        onSelect: setTeamFilter,
+        title: '選擇賽季',
+        selectedValue: activeSeasonId,
+        options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+        onSelect: (value) => handleSeasonChange(value as SeasonId),
       }
-    : mobileFilterView === 'DATE'
+    : mobileFilterView === 'STATUS'
       ? {
-          title: '選擇日期',
-          selectedValue: dateFilter,
+          title: '選擇比賽狀態',
+          selectedValue: statusFilter,
           options: [
-            { value: 'ALL', label: '全部日期' },
-            ...availableDates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+            { value: 'ALL', label: '全部狀態' },
+            { value: 'FINISHED', label: '已完賽' },
+            { value: 'UPCOMING', label: '即將開賽' },
           ],
-          onSelect: setDateFilter,
+          onSelect: (value) => setStatusFilter(value as StatusFilter),
         }
-      : mobileFilterView === 'ROUND'
+      : mobileFilterView === 'TEAM'
         ? {
-            title: '選擇輪次',
-            selectedValue: roundFilter,
+            title: '選擇球隊',
+            selectedValue: teamFilter,
             options: [
-              { value: 'ALL', label: '全部輪次' },
-              ...availableRounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+              { value: 'ALL', label: '全部球隊' },
+              ...availableTeams.map((team) => ({ value: team.id, label: team.name })),
             ],
-            onSelect: setRoundFilter,
+            onSelect: setTeamFilter,
           }
-        : null;
+        : mobileFilterView === 'DATE'
+          ? {
+              title: '選擇日期',
+              selectedValue: dateFilter,
+              options: [
+                { value: 'ALL', label: '全部日期' },
+                ...availableDates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+              ],
+              onSelect: setDateFilter,
+            }
+          : mobileFilterView === 'ROUND'
+            ? {
+                title: '選擇輪次',
+                selectedValue: roundFilter,
+                options: [
+                  { value: 'ALL', label: '全部輪次' },
+                  ...availableRounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                ],
+                onSelect: setRoundFilter,
+              }
+            : null;
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -436,7 +459,7 @@ const SchedulePage: React.FC = () => {
           <div className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl">
             {mobileSelectorConfig ? (
               <>
-                <div className="flex shrink-0 items-center border-b border-neutral-100 px-3 py-2">
+                <div className="grid shrink-0 grid-cols-[44px_1fr_44px] items-center border-b border-neutral-100 px-2 py-2">
                   <button
                     type="button"
                     onClick={() => setMobileFilterView('ROOT')}
@@ -445,9 +468,17 @@ const SchedulePage: React.FC = () => {
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </button>
-                  <h2 className="ml-1 font-display text-lg font-black text-brand-black">
+                  <h2 className="text-center font-display text-lg font-black text-brand-black">
                     {mobileSelectorConfig.title}
                   </h2>
+                  <button
+                    type="button"
+                    onClick={closeMobileFilters}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-400 active:text-brand-black"
+                    aria-label="關閉"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
@@ -457,16 +488,25 @@ const SchedulePage: React.FC = () => {
                       <button
                         key={option.value}
                         type="button"
+                        role="radio"
+                        aria-checked={selected}
                         onClick={() => {
                           mobileSelectorConfig.onSelect(option.value);
                           setMobileFilterView('ROOT');
                         }}
-                        className={`flex min-h-[52px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
+                        className={`flex min-h-[54px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
                           selected ? 'text-brand-blue' : 'text-brand-black'
                         }`}
                       >
                         <span>{option.label}</span>
-                        {selected && <Check className="h-4 w-4 shrink-0" aria-hidden="true" />}
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            selected ? 'border-brand-blue' : 'border-neutral-300'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
+                        </span>
                       </button>
                     );
                   })}
@@ -492,93 +532,27 @@ const SchedulePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto overscroll-contain px-5">
-                  <section className="border-b border-neutral-100 py-5">
-                    <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">賽季</h3>
-                    <div className="flex items-center gap-6" role="radiogroup" aria-label="選擇賽季">
-                      {sortedSeasons.map((season) => {
-                        const selected = season.id === activeSeasonId;
-                        return (
-                          <button
-                            key={season.id}
-                            type="button"
-                            role="radio"
-                            aria-checked={selected}
-                            onClick={() => handleSeasonChange(season.id)}
-                            className={`min-h-11 shrink-0 text-sm font-bold transition-colors ${
-                              selected ? 'text-brand-blue' : 'text-neutral-400'
-                            }`}
-                          >
-                            <span
-                              className={`relative inline-flex pb-1 ${
-                                selected
-                                  ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
-                                  : ''
-                              }`}
-                            >
-                              {season.shortName}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  <section className="border-b border-neutral-100 py-5">
-                    <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">比賽狀態</h3>
-                    <div className="flex items-center gap-6" role="radiogroup" aria-label="比賽狀態">
-                      {([
-                        ['ALL', '全部'],
-                        ['FINISHED', '已完賽'],
-                        ['UPCOMING', '即將開賽'],
-                      ] as const).map(([value, label]) => {
-                        const selected = statusFilter === value;
-                        return (
-                          <button
-                            key={value}
-                            type="button"
-                            role="radio"
-                            aria-checked={selected}
-                            onClick={() => setStatusFilter(value)}
-                            className={`min-h-11 shrink-0 text-sm font-bold transition-colors ${
-                              selected ? 'text-brand-blue' : 'text-neutral-400'
-                            }`}
-                          >
-                            <span
-                              className={`relative inline-flex pb-1 ${
-                                selected
-                                  ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
-                                  : ''
-                              }`}
-                            >
-                              {label}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  <section className="py-2">
-                    {[
-                      { label: '球隊', value: teamSummary, view: 'TEAM' as const },
-                      { label: '日期', value: dateSummary, view: 'DATE' as const },
-                      { label: '輪次', value: roundSummary, view: 'ROUND' as const },
-                    ].map((field) => (
-                      <button
-                        key={field.label}
-                        type="button"
-                        onClick={() => setMobileFilterView(field.view)}
-                        className="flex min-h-[58px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
-                      >
-                        <span className="w-16 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
-                        <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
-                          {field.value}
-                        </span>
-                        <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
-                      </button>
-                    ))}
-                  </section>
+                <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                  {[
+                    { label: '賽季', value: activeSeason.shortName, view: 'SEASON' as const },
+                    { label: '比賽狀態', value: statusSummary, view: 'STATUS' as const },
+                    { label: '球隊', value: teamSummary, view: 'TEAM' as const },
+                    { label: '日期', value: dateSummary, view: 'DATE' as const },
+                    { label: '輪次', value: roundSummary, view: 'ROUND' as const },
+                  ].map((field) => (
+                    <button
+                      key={field.label}
+                      type="button"
+                      onClick={() => setMobileFilterView(field.view)}
+                      className="flex min-h-[58px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
+                    >
+                      <span className="w-20 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+                        {field.value}
+                      </span>
+                      <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
+                    </button>
+                  ))}
                 </div>
 
                 <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4">

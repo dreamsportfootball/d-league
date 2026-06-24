@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ChevronRight, ShieldAlert, User } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import LeagueTabs from '../components/LeagueTabs';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
-import SeasonDropdown from '../components/SeasonDropdown';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
 import { useSeason } from '../hooks/useSeason';
@@ -62,7 +62,7 @@ const StatsPage: React.FC = () => {
     }
   });
   const [activeTab, setActiveTab] = useState<StatsTab>('SCORERS');
-  const [mobileSeasonOpen, setMobileSeasonOpen] = useState(false);
+  const [seasonFilterOpen, setSeasonFilterOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
 
   const sortedSeasons = useMemo(
@@ -70,7 +70,6 @@ const StatsPage: React.FC = () => {
     [availableSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
-  const seasonOptions = sortedSeasons.map((season) => ({ value: season.id, label: season.shortName }));
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
@@ -183,18 +182,18 @@ const StatsPage: React.FC = () => {
     label: '賽季',
     value: draftSeasonId,
     displayValue: draftSeason.shortName,
-    options: seasonOptions,
+    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
     onChange: (value) => setDraftSeasonId(value as SeasonId),
   };
 
-  const openMobileSeason = () => {
+  const openSeasonFilter = () => {
     setDraftSeasonId(activeSeasonId);
-    setMobileSeasonOpen(true);
+    setSeasonFilterOpen(true);
   };
 
-  const applyMobileSeason = () => {
+  const applySeasonFilter = () => {
     if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
-    setMobileSeasonOpen(false);
+    setSeasonFilterOpen(false);
   };
 
   return (
@@ -208,30 +207,13 @@ const StatsPage: React.FC = () => {
           showDesktopSeasonSelector={false}
         />
 
-        <div className="mb-6 flex min-h-14 items-center justify-between border-b border-neutral-100 md:mb-8">
-          <div>
-            <p className="font-display text-sm font-black tracking-wide text-brand-black md:text-base">資料賽季</p>
-            <p className="mt-1 text-[11px] font-bold text-neutral-400 md:text-xs">目前顯示 {activeSeason.shortName}</p>
-          </div>
-
-          <SeasonDropdown
-            value={activeSeasonId}
-            buttonLabel={`${activeSeason.shortName} 賽季`}
-            options={seasonOptions}
-            onChange={(value) => setActiveSeason(value as SeasonId)}
-            ariaLabel="選擇數據中心賽季"
-          />
-
-          <button
-            type="button"
-            onClick={openMobileSeason}
-            className="flex min-h-11 items-center text-sm font-black text-brand-black md:hidden"
-            aria-label="選擇數據中心賽季"
-          >
-            {activeSeason.shortName}
-            <ChevronRight className="ml-2 h-4 w-4 text-neutral-400" aria-hidden="true" />
-          </button>
-        </div>
+        <DataFilterToolbar
+          primaryText="資料賽季"
+          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openSeasonFilter}
+          buttonLabel="更改賽季"
+          ariaLabel="更改數據中心賽季"
+        />
 
         <LeagueTabs
           options={activeSeason.enabledLeagues}
@@ -400,12 +382,12 @@ const StatsPage: React.FC = () => {
       </div>
 
       <ResponsiveFilterDrawer
-        open={mobileSeasonOpen}
+        open={seasonFilterOpen}
         fields={[seasonField]}
-        onClose={() => setMobileSeasonOpen(false)}
+        onClose={() => setSeasonFilterOpen(false)}
         onClear={() => setDraftSeasonId(activeSeasonId)}
         clearDisabled={draftSeasonId === activeSeasonId}
-        onApply={applyMobileSeason}
+        onApply={applySeasonFilter}
         applyLabel="查看數據"
         title="選擇資料賽季"
         subtitle="聯賽級別仍可在頁面中直接切換"

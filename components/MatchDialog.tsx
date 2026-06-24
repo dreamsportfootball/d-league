@@ -85,10 +85,11 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         dialogRef.current.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
         ),
-      ).filter((element) => !element.hasAttribute('disabled'));
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
+      ) as HTMLElement[];
+      const enabledFocusable = focusable.filter((element) => !element.hasAttribute('disabled'));
+      if (enabledFocusable.length === 0) return;
+      const first = enabledFocusable[0];
+      const last = enabledFocusable[enabledFocusable.length - 1];
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();

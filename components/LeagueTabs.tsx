@@ -7,6 +7,7 @@ interface LeagueTabsProps<T extends string> {
   active: T;
   onChange: (value: T) => void;
   getLabel: (value: T) => string;
+  getMobileLabel?: (value: T) => string;
 }
 
 function LeagueTabs<T extends string>({
@@ -14,21 +15,50 @@ function LeagueTabs<T extends string>({
   active,
   onChange,
   getLabel,
+  getMobileLabel,
 }: LeagueTabsProps<T>) {
   return (
-    <div className="mb-8 flex items-center justify-between gap-4 border-b border-neutral-100 pb-2">
-      <h2 className="flex shrink-0 items-center font-display text-sm font-bold uppercase tracking-wider text-neutral-900 md:text-base">
-        <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
+    <div className="mb-6 flex items-end justify-between gap-3 border-b border-neutral-100 md:mb-8 md:items-center md:gap-4 md:pb-2">
+      <h2 className="flex shrink-0 items-center pb-2 font-display text-xs font-bold uppercase tracking-wider text-neutral-900 md:pb-0 md:text-base">
+        <Trophy className="mr-1.5 h-4 w-4 text-brand-blue md:mr-2 md:h-5 md:w-5" aria-hidden="true" />
         選擇聯賽
       </h2>
 
-      <Tabs
-        options={options}
-        active={active}
-        onChange={onChange}
-        getLabel={getLabel}
-        ariaLabel="選擇聯賽"
-      />
+      <div className="flex min-w-0 flex-1 items-end justify-end md:hidden" role="tablist" aria-label="選擇聯賽">
+        {options.map((option) => {
+          const isActive = active === option;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => onChange(option)}
+              className={`relative min-h-11 min-w-[42px] shrink-0 px-2 pb-2 text-xs font-bold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
+                isActive ? 'text-brand-black' : 'font-medium text-neutral-400'
+              }`}
+            >
+              {getMobileLabel ? getMobileLabel(option) : getLabel(option)}
+              <span
+                className={`absolute inset-x-2 bottom-0 h-0.5 transition-colors ${
+                  isActive ? 'bg-brand-blue' : 'bg-transparent'
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="hidden min-w-0 md:block">
+        <Tabs
+          options={options}
+          active={active}
+          onChange={onChange}
+          getLabel={getLabel}
+          ariaLabel="選擇聯賽"
+        />
+      </div>
     </div>
   );
 }

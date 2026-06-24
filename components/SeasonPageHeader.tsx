@@ -7,6 +7,7 @@ interface SeasonPageHeaderProps {
   description: React.ReactNode;
   bordered?: boolean;
   showMobileSeasonSelector?: boolean;
+  showDesktopSeasonSelector?: boolean;
 }
 
 const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
@@ -15,6 +16,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
   description,
   bordered = false,
   showMobileSeasonSelector = true,
+  showDesktopSeasonSelector = true,
 }) => (
   <section
     className={`mb-6 md:mb-12 ${
@@ -40,9 +42,11 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
         </div>
       </div>
 
-      <div className="hidden shrink-0 md:flex">
-        <SeasonSelector />
-      </div>
+      {showDesktopSeasonSelector && (
+        <div className="hidden shrink-0 md:flex">
+          <SeasonSelector />
+        </div>
+      )}
     </div>
   </section>
 );

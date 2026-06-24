@@ -15,6 +15,10 @@ const inferEventName = (element: HTMLElement): string | null => {
   if (href.includes('/teams/')) return 'team_view';
   if (href.includes('/news/')) return 'news_read';
 
+  const label = element.textContent?.trim() ?? '';
+  if (label.includes('分享比賽')) return 'match_share';
+  if (/^20\d{2}\/\d{2}$/.test(label)) return 'season_switch';
+
   return null;
 };
 
@@ -27,7 +31,7 @@ const Analytics: React.FC = () => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       if (!target) return;
-      const tracked = target.closest<HTMLElement>('[data-analytics-event], a[href]');
+      const tracked = target.closest<HTMLElement>('[data-analytics-event], a[href], button');
       if (!tracked) return;
 
       const eventName = inferEventName(tracked);

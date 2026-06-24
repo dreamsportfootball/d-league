@@ -14,6 +14,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
+import { buildMatchInfoText } from '../utils/matchInfoText';
 import AutoFitText from './AutoFitText';
 import MatchEvents from './MatchEvents';
 
@@ -28,12 +29,6 @@ type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
 const formatDateTime = (timestamp: string) => {
   const date = new Date(timestamp);
   return {
-    date: date.toLocaleDateString('zh-TW', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      weekday: 'short',
-    }),
     displayDate: date.toLocaleDateString('zh-TW', {
       month: '2-digit',
       day: '2-digit',
@@ -156,23 +151,20 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
   const report = match.reportArticleId
     ? seasonData.news.find((item) => item.id === match.reportArticleId)
     : undefined;
-  const { date, displayDate, time } = formatDateTime(match.timestamp);
+  const matchEvents = seasonData.matchEvents[match.id] ?? [];
+  const { displayDate, time } = formatDateTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
-  const statusLabel = isFinished ? '完賽' : '即將開賽';
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
-  const resultLine = isFinished
-    ? `結果：${homeTeam.name} ${match.homeScore ?? '-'}－${match.awayScore ?? '-'} ${awayTeam.name}`
-    : `對賽：${homeTeam.name} vs ${awayTeam.name}`;
-  const matchInfoText = [
-    `D LEAGUE ${activeSeason.shortName}`,
-    `${match.league} 第 ${match.round} 輪`,
-    `日期：${date}`,
-    `時間：${time}`,
-    `地點：${match.venue}`,
-    resultLine,
-    `狀態：${statusLabel}`,
-    `比賽詳情：${window.location.href}`,
-  ].join('\n');
+  const matchInfoText = buildMatchInfoText({
+    match,
+    seasonShortName: activeSeason.shortName,
+    homeTeamName: homeTeam.name,
+    homeTeamShortName: homeTeam.shortName || homeTeam.name,
+    awayTeamName: awayTeam.name,
+    awayTeamShortName: awayTeam.shortName || awayTeam.name,
+    events: matchEvents,
+    detailUrl: window.location.href,
+  });
 
   const handleShare = async () => {
     const shareData = {
@@ -304,12 +296,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 transition-colors hover:border-neutral-300 hover:bg-neutral-50 hover:text-brand-black active:bg-neutral-100 sm:min-h-9 sm:px-5 sm:text-xs"
             >
               <Copy className="mr-2 h-3.5 w-3.5" />
-              <span className="sm:hidden">
-                {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製資訊'}
-              </span>
-              <span className="hidden sm:inline">
-                {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
-              </span>
+              {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
             </button>
             <button
               type="button"

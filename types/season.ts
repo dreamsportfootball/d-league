@@ -34,6 +34,12 @@ export interface CompetitionRules {
   resetCrossMatchYellowsAfterAnySuspension: boolean;
 }
 
+export interface StandingsDisplayConfig {
+  showPointsSummary: boolean;
+  rankingRules: string[];
+  footerNote?: string;
+}
+
 export interface LeagueConfig {
   id: LeagueId;
   displayName: string;
@@ -67,5 +73,6 @@ export interface SeasonConfig {
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
   rules: CompetitionRules;
+  standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;
 }

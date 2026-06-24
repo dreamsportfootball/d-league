@@ -16,6 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
+import AutoFitText from './AutoFitText';
 import MatchEvents from './MatchEvents';
 
 interface MatchDialogProps {
@@ -23,6 +24,8 @@ interface MatchDialogProps {
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
 }
+
+type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
 
 const formatDateTime = (timestamp: string) => {
   const date = new Date(timestamp);
@@ -41,12 +44,29 @@ const formatDateTime = (timestamp: string) => {
   };
 };
 
+const copyText = async (value: string): Promise<void> => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const textarea = document.createElement('textarea');
+  textarea.value = value;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  textarea.remove();
+};
+
 const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMatch }) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  const [shareStatus, setShareStatus] = useState<'IDLE' | 'COPIED' | 'FAILED'>('IDLE');
+  const [shareStatus, setShareStatus] = useState<ActionStatus>('IDLE');
+  const [copyStatus, setCopyStatus] = useState<ActionStatus>('IDLE');
 
   const match = useMemo(
     () => seasonData.matches.find((item) => item.id === matchId) ?? null,
@@ -109,6 +129,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
 
   useEffect(() => {
     setShareStatus('IDLE');
+    setCopyStatus('IDLE');
   }, [matchId]);
 
   if (!match) return null;
@@ -135,11 +156,24 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
   const { date, time } = formatDateTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const statusLabel = isFinished ? '完賽' : '即將開賽';
+  const resultLine = isFinished
+    ? `結果：${homeTeam.name} ${match.homeScore ?? '-'}－${match.awayScore ?? '-'} ${awayTeam.name}`
+    : `對賽：${homeTeam.name} vs ${awayTeam.name}`;
+  const matchInfoText = [
+    `D LEAGUE ${activeSeason.shortName}`,
+    `${match.league} 第 ${match.round} 輪`,
+    `日期：${date}`,
+    `時間：${time}`,
+    `地點：${match.venue}`,
+    resultLine,
+    `狀態：${statusLabel}`,
+    `比賽詳情：${window.location.href}`,
+  ].join('\n');
 
   const handleShare = async () => {
     const shareData = {
       title: `${homeTeam.name} vs ${awayTeam.name}｜${activeSeason.displayName}`,
-      text: `${match.league} 第 ${match.round} 輪｜${homeTeam.name} vs ${awayTeam.name}`,
+      text: matchInfoText,
       url: window.location.href,
     };
 
@@ -148,10 +182,20 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         await navigator.share(shareData);
         return;
       }
-      await navigator.clipboard.writeText(window.location.href);
+      await copyText(window.location.href);
       setShareStatus('COPIED');
     } catch {
       setShareStatus('FAILED');
+    }
+  };
+
+  const handleCopyInfo = async () => {
+    try {
+      await copyText(matchInfoText);
+      setCopyStatus('COPIED');
+      window.setTimeout(() => setCopyStatus('IDLE'), 2200);
+    } catch {
+      setCopyStatus('FAILED');
     }
   };
 
@@ -198,16 +242,21 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
             </div>
           </div>
 
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-8">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-8">
             <Link
               to={`/teams/${homeTeam.id}?season=${activeSeason.id}`}
               onClick={onClose}
               className="group flex min-w-0 flex-col items-center"
             >
               <img src={homeTeam.logo} alt={homeTeam.name} className="mb-2 h-16 w-16 object-contain sm:h-20 sm:w-20" />
-              <h2 className="max-w-full truncate text-center text-xs font-black text-brand-black group-hover:text-brand-blue sm:text-base">
-                {homeTeam.shortName}
-              </h2>
+              <div className="w-full min-w-0 text-center">
+                <AutoFitText
+                  text={homeTeam.name}
+                  maxFontSize={16}
+                  minFontSize={7}
+                  className="font-black text-brand-black group-hover:text-brand-blue"
+                />
+              </div>
             </Link>
 
             <div className="flex min-w-[92px] flex-col items-center">
@@ -225,9 +274,14 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               className="group flex min-w-0 flex-col items-center"
             >
               <img src={awayTeam.logo} alt={awayTeam.name} className="mb-2 h-16 w-16 object-contain sm:h-20 sm:w-20" />
-              <h2 className="max-w-full truncate text-center text-xs font-black text-brand-black group-hover:text-brand-blue sm:text-base">
-                {awayTeam.shortName}
-              </h2>
+              <div className="w-full min-w-0 text-center">
+                <AutoFitText
+                  text={awayTeam.name}
+                  maxFontSize={16}
+                  minFontSize={7}
+                  className="font-black text-brand-black group-hover:text-brand-blue"
+                />
+              </div>
             </Link>
           </div>
 
@@ -240,16 +294,30 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
 
         <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
           <section className="border-b border-neutral-100 px-5 py-6 sm:px-8">
-            <div className="mb-3 flex items-center justify-between">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="text-xs font-black uppercase tracking-[0.18em] text-neutral-500">比賽事件</h3>
-              <button
-                type="button"
-                onClick={handleShare}
-                className="inline-flex min-h-10 items-center rounded-full border border-neutral-200 px-4 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
-              >
-                {shareStatus === 'COPIED' ? <Copy className="mr-2 h-4 w-4" /> : <Share2 className="mr-2 h-4 w-4" />}
-                {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
-              </button>
+              <div className="grid grid-cols-2 gap-2 sm:flex">
+                <button
+                  type="button"
+                  onClick={handleCopyInfo}
+                  data-analytics-event="match_info_copy"
+                  data-analytics-label={match.id}
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-neutral-200 px-3 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue sm:px-4"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  data-analytics-event="match_share"
+                  data-analytics-label={match.id}
+                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-neutral-200 px-3 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue sm:px-4"
+                >
+                  <Share2 className="mr-2 h-4 w-4" />
+                  {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
+                </button>
+              </div>
             </div>
             <MatchEvents matchId={match.id} />
           </section>
@@ -267,8 +335,10 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
                 ].map(({ team, players }) => (
                   <div key={team.id}>
                     <div className="mb-3 flex items-center border-b border-neutral-100 pb-2">
-                      <img src={team.logo} alt="" className="mr-2 h-6 w-6 object-contain" />
-                      <p className="text-sm font-black text-brand-black">{team.shortName}</p>
+                      <img src={team.logo} alt="" className="mr-2 h-6 w-6 shrink-0 object-contain" />
+                      <div className="min-w-0 flex-1">
+                        <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-black text-brand-black" />
+                      </div>
                     </div>
                     {players.length > 0 ? (
                       <div className="space-y-2">

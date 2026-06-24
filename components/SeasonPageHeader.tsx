@@ -6,6 +6,7 @@ interface SeasonPageHeaderProps {
   accent: string;
   description: React.ReactNode;
   bordered?: boolean;
+  showMobileSeasonSelector?: boolean;
 }
 
 const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
@@ -13,6 +14,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
   accent,
   description,
   bordered = false,
+  showMobileSeasonSelector = true,
 }) => (
   <section
     className={`mb-6 md:mb-12 ${
@@ -26,9 +28,11 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
             {title}<span className="text-brand-blue">{accent}</span>
           </h1>
 
-          <div className="shrink-0 md:hidden">
-            <SeasonSelector compact />
-          </div>
+          {showMobileSeasonSelector && (
+            <div className="shrink-0 md:hidden">
+              <SeasonSelector compact />
+            </div>
+          )}
         </div>
 
         <div className="mt-2 text-xs font-medium tracking-wide text-neutral-400 md:mt-0 md:text-base [&>div>span:nth-child(n+2)]:hidden md:[&>div>span:nth-child(n+2)]:flex">

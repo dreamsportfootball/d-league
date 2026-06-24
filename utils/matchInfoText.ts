@@ -10,6 +10,9 @@ interface BuildMatchInfoTextParams {
   homeTeamName: string;
   awayTeamName: string;
   detailUrl: string;
+  homeTeamShortName?: string;
+  awayTeamShortName?: string;
+  events?: readonly unknown[];
 }
 
 const formatMatchDateTime = (timestamp: string): string => {

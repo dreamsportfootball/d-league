@@ -11,7 +11,6 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
-import LeagueTabs from '../components/LeagueTabs';
 import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
@@ -24,7 +23,7 @@ import type { SeasonTeam } from '../types/team';
 type LeagueFilter = LeagueId | 'ALL';
 type StatusFilter = 'ALL' | 'UPCOMING' | 'FINISHED';
 type MobileFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
-type DesktopFilterView = 'ROOT' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
+type DesktopFilterView = 'ROOT' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
 type FacetKey = 'league' | 'team' | 'round' | 'date' | 'status';
 
 interface ScheduleFilters {
@@ -324,22 +323,6 @@ const SchedulePage: React.FC = () => {
     setDesktopFiltersOpen(false);
   };
 
-  const updateAppliedFacet = (facet: FacetKey, value: string) => {
-    if (filters[facet] === value) return;
-    const proposedFilters = { ...filters, [facet]: value } as ScheduleFilters;
-    const nextFilters = reconcileFilters(proposedFilters, facet, seasonData.matches);
-    setFilters(nextFilters);
-
-    if (facet === 'league') {
-      closeDesktopFilters();
-      try {
-        window.sessionStorage.setItem('scheduleActiveLeague', nextFilters.league);
-      } catch {
-        // Session storage may be unavailable.
-      }
-    }
-  };
-
   const updateDesktopDraftFacet = (facet: FacetKey, value: string) => {
     setDesktopDraft((currentDraft) => {
       if (currentDraft[facet] === value) return currentDraft;
@@ -376,6 +359,11 @@ const SchedulePage: React.FC = () => {
 
   const applyDesktopFilters = () => {
     setFilters(desktopDraft);
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', desktopDraft.league);
+    } catch {
+      // Session storage may be unavailable.
+    }
     closeDesktopFilters();
   };
 
@@ -416,19 +404,13 @@ const SchedulePage: React.FC = () => {
     setSearchParams(next, { replace: false });
   };
 
-  const desktopLeagueOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
-  const desktopActiveFilterCount = [filters.team, filters.round, filters.date, filters.status]
-    .filter((value) => value !== 'ALL').length;
-  const desktopDraftFilterCount = [
-    desktopDraft.team,
-    desktopDraft.round,
-    desktopDraft.date,
-    desktopDraft.status,
-  ].filter((value) => value !== 'ALL').length;
+  const desktopActiveFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
+  const desktopDraftFilterCount = Object.values(desktopDraft).filter((value) => value !== 'ALL').length;
   const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
   const draftFilterCount = Object.values(mobileDraft.filters).filter((value) => value !== 'ALL').length;
 
+  const desktopDraftLeagueSummary = desktopDraft.league === 'ALL' ? '全部級別' : desktopDraft.league;
   const desktopDraftStatusSummary = getStatusSummary(desktopDraft.status);
   const desktopDraftTeamSummary = desktopDraft.team === 'ALL'
     ? '全部球隊'
@@ -452,47 +434,57 @@ const SchedulePage: React.FC = () => {
     ? '全部輪次'
     : `第 ${mobileDraft.filters.round} 輪`;
 
-  const desktopSelectorConfig: FilterSelectorConfig | null = desktopFilterView === 'STATUS'
+  const desktopSelectorConfig: FilterSelectorConfig | null = desktopFilterView === 'LEAGUE'
     ? {
-        title: '選擇比賽狀態',
-        selectedValue: desktopDraft.status,
-        options: desktopDraftFacetOptions.statuses.map((status) => ({
-          value: status,
-          label: getStatusSummary(status),
+        title: '選擇聯賽級別',
+        selectedValue: desktopDraft.league,
+        options: (['ALL', ...activeSeason.enabledLeagues] as LeagueFilter[]).map((league) => ({
+          value: league,
+          label: league === 'ALL' ? '全部級別' : league,
         })),
-        onSelect: (value) => updateDesktopDraftFacet('status', value),
+        onSelect: (value) => updateDesktopDraftFacet('league', value),
       }
-    : desktopFilterView === 'TEAM'
+    : desktopFilterView === 'STATUS'
       ? {
-          title: '選擇球隊',
-          selectedValue: desktopDraft.team,
-          options: [
-            { value: 'ALL', label: '全部球隊' },
-            ...desktopDraftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
-          ],
-          onSelect: (value) => updateDesktopDraftFacet('team', value),
+          title: '選擇比賽狀態',
+          selectedValue: desktopDraft.status,
+          options: desktopDraftFacetOptions.statuses.map((status) => ({
+            value: status,
+            label: getStatusSummary(status),
+          })),
+          onSelect: (value) => updateDesktopDraftFacet('status', value),
         }
-      : desktopFilterView === 'DATE'
+      : desktopFilterView === 'TEAM'
         ? {
-            title: '選擇日期',
-            selectedValue: desktopDraft.date,
+            title: '選擇球隊',
+            selectedValue: desktopDraft.team,
             options: [
-              { value: 'ALL', label: '全部日期' },
-              ...desktopDraftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+              { value: 'ALL', label: '全部球隊' },
+              ...desktopDraftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
             ],
-            onSelect: (value) => updateDesktopDraftFacet('date', value),
+            onSelect: (value) => updateDesktopDraftFacet('team', value),
           }
-        : desktopFilterView === 'ROUND'
+        : desktopFilterView === 'DATE'
           ? {
-              title: '選擇輪次',
-              selectedValue: desktopDraft.round,
+              title: '選擇日期',
+              selectedValue: desktopDraft.date,
               options: [
-                { value: 'ALL', label: '全部輪次' },
-                ...desktopDraftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                { value: 'ALL', label: '全部日期' },
+                ...desktopDraftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
               ],
-              onSelect: (value) => updateDesktopDraftFacet('round', value),
+              onSelect: (value) => updateDesktopDraftFacet('date', value),
             }
-          : null;
+          : desktopFilterView === 'ROUND'
+            ? {
+                title: '選擇輪次',
+                selectedValue: desktopDraft.round,
+                options: [
+                  { value: 'ALL', label: '全部輪次' },
+                  ...desktopDraftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                ],
+                onSelect: (value) => updateDesktopDraftFacet('round', value),
+              }
+            : null;
 
   const mobileSelectorConfig: FilterSelectorConfig | null = mobileFilterView === 'SEASON'
     ? {
@@ -576,15 +568,6 @@ const SchedulePage: React.FC = () => {
             </div>
           }
         />
-
-        <div className="hidden md:block">
-          <LeagueTabs
-            options={desktopLeagueOptions}
-            active={filters.league}
-            onChange={(league) => updateAppliedFacet('league', league)}
-            getLabel={(tab) => tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab}
-          />
-        </div>
 
         <button
           type="button"
@@ -724,6 +707,7 @@ const SchedulePage: React.FC = () => {
 
                     <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
                       {[
+                        { label: '聯賽級別', value: desktopDraftLeagueSummary, view: 'LEAGUE' as const },
                         { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
                         { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
                         { label: '日期', value: desktopDraftDateSummary, view: 'DATE' as const },
@@ -747,13 +731,7 @@ const SchedulePage: React.FC = () => {
                     <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 py-4">
                       <button
                         type="button"
-                        onClick={() => setDesktopDraft((currentDraft) => ({
-                          ...currentDraft,
-                          team: 'ALL',
-                          round: 'ALL',
-                          date: 'ALL',
-                          status: 'ALL',
-                        }))}
+                        onClick={() => setDesktopDraft({ ...EMPTY_FILTERS })}
                         disabled={desktopDraftFilterCount === 0}
                         className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black disabled:opacity-30 disabled:hover:text-neutral-500"
                       >

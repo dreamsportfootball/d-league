@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ShieldAlert, Trophy, User } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
+import LeagueTabs from '../components/LeagueTabs';
 import SeasonPageHeader from '../components/SeasonPageHeader';
+import Tabs from '../components/Tabs';
 import { useSeason } from '../hooks/useSeason';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
@@ -21,6 +23,12 @@ interface RankedPlayerRow {
 
 type StatsTab = 'SCORERS' | 'CARDS' | 'SUSPENSIONS';
 
+const tabLabels: Record<StatsTab, string> = {
+  SCORERS: '射手榜',
+  CARDS: '紅黃牌',
+  SUSPENSIONS: '停賽與紀律',
+};
+
 const suspensionReasonLabel: Record<SuspensionReason, string> = {
   ACCUMULATED_YELLOW: '累積黃牌',
   SECOND_YELLOW: '單場雙黃',
@@ -28,14 +36,12 @@ const suspensionReasonLabel: Record<SuspensionReason, string> = {
   MANUAL_DECISION: '紀律處分',
 };
 
-const formatMatchLabel = (timestamp: string) => {
-  const date = new Date(timestamp);
-  return date.toLocaleDateString('zh-TW', {
+const formatMatchLabel = (timestamp: string) =>
+  new Date(timestamp).toLocaleDateString('zh-TW', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   });
-};
 
 const StatsPage: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
@@ -119,11 +125,7 @@ const StatsPage: React.FC = () => {
 
     let currentRank = 1;
     return filtered.map((player, index) => {
-      if (
-        activeTab === 'SCORERS' &&
-        index > 0 &&
-        player.goals !== filtered[index - 1].goals
-      ) {
+      if (activeTab === 'SCORERS' && index > 0 && player.goals !== filtered[index - 1].goals) {
         currentRank = index + 1;
       } else if (activeTab !== 'SCORERS') {
         currentRank = index + 1;
@@ -137,10 +139,8 @@ const StatsPage: React.FC = () => {
       discipline.suspensions
         .filter((suspension) => {
           if (suspension.remainingMatches <= 0) return false;
-          const team = seasonData.teamMap[
-            discipline.summaries.find((summary) => summary.subjectId === suspension.subjectId)?.currentTeamId ??
-              suspension.teamIdAtIssue
-          ];
+          const summary = discipline.summaries.find((item) => item.subjectId === suspension.subjectId);
+          const team = seasonData.teamMap[summary?.currentTeamId ?? suspension.teamIdAtIssue];
           return team?.leagueId === activeLeague;
         })
         .sort((a, b) => b.remainingMatches - a.remainingMatches || a.subjectName.localeCompare(b.subjectName, 'zh-TW')),
@@ -156,7 +156,10 @@ const StatsPage: React.FC = () => {
     [activeLeague, seasonData.disciplineDecisions, seasonData.teamMap],
   );
 
-  const hasData = activeTab === 'SUSPENSIONS' ? activeSuspensions.length > 0 || publicDecisions.length > 0 : rankedList.length > 0;
+  const hasData =
+    activeTab === 'SUSPENSIONS'
+      ? activeSuspensions.length > 0 || publicDecisions.length > 0
+      : rankedList.length > 0;
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -167,58 +170,21 @@ const StatsPage: React.FC = () => {
           description={`${activeSeason.displayName} ${activeLeague} 球員與紀律數據`}
         />
 
-        <div className="mb-10 flex items-center justify-between border-b border-neutral-100 pb-4">
-          <h3 className="flex items-center font-display text-base font-bold uppercase tracking-wider text-neutral-900">
-            <Trophy className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
-            選擇聯賽
-          </h3>
-          <div className="flex space-x-4 text-xs font-bold">
-            {activeSeason.enabledLeagues.map((league) => (
-              <button
-                key={league}
-                type="button"
-                onClick={() => handleLeagueChange(league)}
-                className={`whitespace-nowrap border-b-2 px-1 pb-1 transition-all ${
-                  activeLeague === league
-                    ? 'border-brand-blue font-bold text-brand-black'
-                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
-                }`}
-              >
-                <span className="font-display md:hidden">{league}</span>
-                <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <LeagueTabs
+          options={activeSeason.enabledLeagues}
+          active={activeLeague}
+          onChange={handleLeagueChange}
+          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
+        />
 
-        <div className="mb-6 flex flex-wrap gap-x-8 gap-y-3 px-2">
-          <button
-            type="button"
-            onClick={() => setActiveTab('SCORERS')}
-            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'SCORERS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
-            }`}
-          >
-            射手榜
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('CARDS')}
-            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'CARDS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
-            }`}
-          >
-            紅黃牌
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('SUSPENSIONS')}
-            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
-              activeTab === 'SUSPENSIONS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
-            }`}
-          >
-            停賽與紀律
-          </button>
+        <div className="mb-8 border-b border-neutral-100">
+          <Tabs
+            options={['SCORERS', 'CARDS', 'SUSPENSIONS'] as const}
+            active={activeTab}
+            onChange={setActiveTab}
+            getLabel={(tab) => tabLabels[tab]}
+            ariaLabel="切換數據類別"
+          />
         </div>
 
         {!hasData ? (
@@ -248,15 +214,13 @@ const StatsPage: React.FC = () => {
                       : undefined;
                     return (
                       <div key={suspension.id} className="grid gap-4 py-5 md:grid-cols-[1fr_auto] md:items-center">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-3">
-                            {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
-                            <div className="min-w-0">
-                              <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
-                              <p className="mt-1 text-xs font-bold text-neutral-400">
-                                {team?.shortName ?? suspension.teamIdAtIssue} · {suspensionReasonLabel[suspension.reason]}
-                              </p>
-                            </div>
+                        <div className="flex min-w-0 items-center gap-3">
+                          {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
+                          <div className="min-w-0">
+                            <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
+                            <p className="mt-1 text-xs font-bold text-neutral-400">
+                              {team?.shortName ?? suspension.teamIdAtIssue} · {suspensionReasonLabel[suspension.reason]}
+                            </p>
                           </div>
                         </div>
                         <div className="text-left md:text-right">

@@ -171,7 +171,7 @@ const SchedulePage: React.FC = () => {
     [dateFilter, leagueTab, roundFilter, seasonData.matches, statusFilter, teamFilter],
   );
 
-  const activeMobileFilterCount = [leagueTab, teamFilter, roundFilter, dateFilter, statusFilter]
+  const activeMobileFilterCount = [teamFilter, roundFilter, dateFilter, statusFilter]
     .filter((value) => value !== 'ALL').length;
 
   const handleLeagueChange = (league: LeagueFilter) => {
@@ -202,11 +202,6 @@ const SchedulePage: React.FC = () => {
     setTeamFilter('ALL');
     setRoundFilter('ALL');
     setDateFilter('ALL');
-    setStatusFilter('ALL');
-  };
-
-  const resetMobileFilters = () => {
-    handleLeagueChange('ALL');
     setStatusFilter('ALL');
   };
 
@@ -252,6 +247,34 @@ const SchedulePage: React.FC = () => {
             onChange={handleLeagueChange}
             getLabel={(tab) => tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab}
           />
+        </div>
+
+        <div className="mb-3 flex items-center gap-6 border-b border-neutral-100 md:hidden" role="tablist" aria-label="選擇聯賽">
+          {filterOptions.map((league) => {
+            const selected = leagueTab === league;
+            return (
+              <button
+                key={league}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => handleLeagueChange(league)}
+                className={`flex min-h-11 shrink-0 items-center text-[13px] font-bold transition-colors ${
+                  selected ? 'text-brand-black' : 'text-neutral-400'
+                }`}
+              >
+                <span
+                  className={`relative inline-flex pb-1 ${
+                    selected
+                      ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
+                      : ''
+                  }`}
+                >
+                  {league === 'ALL' ? '全部' : league}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {seasonData.matches.length > 0 && (
@@ -341,37 +364,6 @@ const SchedulePage: React.FC = () => {
 
             <div className="flex-1 overflow-y-auto overscroll-contain px-5">
               <section className="border-b border-neutral-100 py-5">
-                <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">聯賽級別</h3>
-                <div className="flex items-center gap-6" role="radiogroup" aria-label="聯賽級別">
-                  {filterOptions.map((league) => {
-                    const selected = leagueTab === league;
-                    return (
-                      <button
-                        key={league}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => handleLeagueChange(league)}
-                        className={`min-h-11 shrink-0 text-sm font-bold transition-colors ${
-                          selected ? 'text-brand-blue' : 'text-neutral-400'
-                        }`}
-                      >
-                        <span
-                          className={`relative inline-flex pb-1 ${
-                            selected
-                              ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
-                              : ''
-                          }`}
-                        >
-                          {league === 'ALL' ? '全部' : league}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-
-              <section className="border-b border-neutral-100 py-5">
                 <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">比賽狀態</h3>
                 <div className="flex items-center gap-6" role="radiogroup" aria-label="比賽狀態">
                   {([
@@ -456,7 +448,7 @@ const SchedulePage: React.FC = () => {
             <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4">
               <button
                 type="button"
-                onClick={resetMobileFilters}
+                onClick={resetFilters}
                 disabled={activeMobileFilterCount === 0}
                 className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 disabled:opacity-30"
               >

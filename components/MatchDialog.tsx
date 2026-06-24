@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Copy,
   ExternalLink,
   Image as ImageIcon,
-  MapPin,
   Newspaper,
   Share2,
   Users,
@@ -155,7 +153,16 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
     : undefined;
   const { date, time } = formatDateTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
-  const statusLabel = isFinished ? '完賽' : '即將開賽';
+  const statusLabel = isFinished
+    ? '完賽'
+    : match.status === MatchStatus.LIVE
+      ? '進行中'
+      : '即將開賽';
+  const displayStatusLabel = isFinished
+    ? '比賽結束'
+    : match.status === MatchStatus.LIVE
+      ? '比賽進行中'
+      : '尚未開賽';
   const resultLine = isFinished
     ? `結果：${homeTeam.name} ${match.homeScore ?? '-'}－${match.awayScore ?? '-'} ${awayTeam.name}`
     : `對賽：${homeTeam.name} vs ${awayTeam.name}`;
@@ -184,7 +191,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
       }
       await copyText(window.location.href);
       setShareStatus('COPIED');
-    } catch {
+      window.setTimeout(() => setShareStatus('IDLE'), 2200);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
       setShareStatus('FAILED');
     }
   };
@@ -204,7 +213,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
       <button
         type="button"
         aria-label="關閉比賽詳情"
-        className="absolute inset-0 bg-black/65 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/55 backdrop-blur-sm"
         onClick={onClose}
       />
 
@@ -213,32 +222,27 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         role="dialog"
         aria-modal="true"
         aria-labelledby="match-dialog-title"
-        className="relative flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl sm:max-h-[92dvh] sm:rounded-2xl"
+        className="relative flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-[26px] bg-white shadow-2xl ring-1 ring-black/5 sm:max-h-[92dvh] sm:rounded-[26px]"
       >
-        <div className="relative shrink-0 border-b border-neutral-100 bg-neutral-50 px-5 pb-6 pt-5 sm:px-8 sm:pt-7">
+        <div className="relative shrink-0 bg-white px-5 pb-6 pt-6 sm:px-8 sm:pb-7 sm:pt-7">
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white text-neutral-500 shadow-sm transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
+            className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-100 bg-neutral-50 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
             aria-label="關閉"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
 
-          <div className="mb-5 pr-12 text-center">
-            <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-black uppercase tracking-widest text-brand-blue">
-              {match.league} · 第 {match.round} 輪
-            </span>
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-medium text-neutral-500">
-              <span className="flex items-center">
-                <CalendarDays className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                {date} {time}
-              </span>
-              <span className="flex items-center">
-                <MapPin className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                {match.venue}
-              </span>
+          <div className="mb-5 pr-10 text-center">
+            <p className="text-sm font-black tracking-[0.08em] text-brand-blue">
+              {match.league}・第 {match.round} 輪
+            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-neutral-400 sm:text-xs">
+              <span>{date}・{time}</span>
+              <span aria-hidden="true">・</span>
+              <span>{match.venue}</span>
             </div>
           </div>
 
@@ -248,23 +252,23 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               onClick={onClose}
               className="group flex min-w-0 flex-col items-center"
             >
-              <img src={homeTeam.logo} alt={homeTeam.name} className="mb-2 h-16 w-16 object-contain sm:h-20 sm:w-20" />
+              <img src={homeTeam.logo} alt={homeTeam.name} className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20" />
               <div className="w-full min-w-0 text-center">
                 <AutoFitText
                   text={homeTeam.name}
                   maxFontSize={16}
                   minFontSize={7}
-                  className="font-black text-brand-black group-hover:text-brand-blue"
+                  className="font-black text-brand-black transition-colors group-hover:text-brand-blue"
                 />
               </div>
             </Link>
 
-            <div className="flex min-w-[92px] flex-col items-center">
-              <div id="match-dialog-title" className="font-display text-4xl font-black tabular-nums tracking-tight text-brand-black sm:text-6xl">
+            <div className="flex min-w-[96px] flex-col items-center">
+              <div id="match-dialog-title" className="font-display text-[44px] font-black leading-none tabular-nums tracking-tight text-brand-black sm:text-6xl">
                 {isFinished ? `${match.homeScore ?? '-'} - ${match.awayScore ?? '-'}` : 'VS'}
               </div>
-              <span className="mt-2 text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
-                {statusLabel}
+              <span className="mt-2 text-[10px] font-black tracking-[0.14em] text-neutral-400">
+                {displayStatusLabel}
               </span>
             </div>
 
@@ -273,16 +277,44 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               onClick={onClose}
               className="group flex min-w-0 flex-col items-center"
             >
-              <img src={awayTeam.logo} alt={awayTeam.name} className="mb-2 h-16 w-16 object-contain sm:h-20 sm:w-20" />
+              <img src={awayTeam.logo} alt={awayTeam.name} className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20" />
               <div className="w-full min-w-0 text-center">
                 <AutoFitText
                   text={awayTeam.name}
                   maxFontSize={16}
                   minFontSize={7}
-                  className="font-black text-brand-black group-hover:text-brand-blue"
+                  className="font-black text-brand-black transition-colors group-hover:text-brand-blue"
                 />
               </div>
             </Link>
+          </div>
+
+          <div className="mx-auto mt-6 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:max-w-none sm:justify-center">
+            <button
+              type="button"
+              onClick={handleCopyInfo}
+              data-analytics-event="match_info_copy"
+              data-analytics-label={match.id}
+              className="inline-flex h-10 items-center justify-center rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50 hover:text-brand-black active:scale-[0.98] sm:h-9 sm:px-5 sm:text-xs"
+            >
+              <Copy className="mr-2 h-3.5 w-3.5" />
+              <span className="sm:hidden">
+                {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製資訊'}
+              </span>
+              <span className="hidden sm:inline">
+                {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={handleShare}
+              data-analytics-event="match_share"
+              data-analytics-label={match.id}
+              className="inline-flex h-10 items-center justify-center rounded-full bg-brand-blue px-4 text-[13px] font-bold text-white shadow-sm transition-all hover:-translate-y-px hover:shadow-md active:translate-y-0 active:scale-[0.98] sm:h-9 sm:px-5 sm:text-xs"
+            >
+              <Share2 className="mr-2 h-3.5 w-3.5" />
+              {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
+            </button>
           </div>
 
           {match.administrativeNote && (
@@ -293,32 +325,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         </div>
 
         <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
-          <section className="border-b border-neutral-100 px-5 py-6 sm:px-8">
-            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h3 className="text-xs font-black uppercase tracking-[0.18em] text-neutral-500">比賽事件</h3>
-              <div className="grid grid-cols-2 gap-2 sm:flex">
-                <button
-                  type="button"
-                  onClick={handleCopyInfo}
-                  data-analytics-event="match_info_copy"
-                  data-analytics-label={match.id}
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-neutral-200 px-3 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue sm:px-4"
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  data-analytics-event="match_share"
-                  data-analytics-label={match.id}
-                  className="inline-flex min-h-10 items-center justify-center rounded-full border border-neutral-200 px-3 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue sm:px-4"
-                >
-                  <Share2 className="mr-2 h-4 w-4" />
-                  {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
-                </button>
-              </div>
-            </div>
+          <section className="border-b border-neutral-100 px-5 pb-6 pt-4 sm:px-8">
+            <h3 className="mb-4 text-center text-xs font-black tracking-[0.12em] text-neutral-400">比賽事件</h3>
             <MatchEvents matchId={match.id} />
           </section>
 
@@ -326,7 +334,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">
               <div className="mb-5 flex items-center">
                 <Users className="mr-2 h-4 w-4 text-brand-blue" aria-hidden="true" />
-                <h3 className="text-xs font-black uppercase tracking-[0.18em] text-neutral-500">出賽名單</h3>
+                <h3 className="text-xs font-black tracking-[0.12em] text-neutral-500">出賽名單</h3>
               </div>
               <div className="grid gap-8 sm:grid-cols-2">
                 {[
@@ -360,7 +368,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
 
           {(match.videoUrl || album || report) && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.18em] text-neutral-500">相關內容</h3>
+              <h3 className="mb-4 text-xs font-black tracking-[0.12em] text-neutral-500">相關內容</h3>
               <div className="grid gap-3 sm:grid-cols-3">
                 {match.videoUrl && (
                   <a

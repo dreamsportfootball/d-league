@@ -84,14 +84,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const isFinished = match.status === MatchStatus.FINISHED;
         const isLive = match.status === MatchStatus.LIVE;
         const hasScore = (isFinished || isLive) && match.homeScore !== null && match.awayScore !== null;
-        const mobileStatusLabel = isFinished ? '完賽' : isLive ? '進行中' : '未開賽';
 
         return (
           <React.Fragment key={match.id}>
             {isNewDate && (
               <>
-                <div className="mt-5 border-b border-neutral-200 pb-2 pt-1 md:hidden">
-                  <span className="font-display text-sm font-black tracking-[0.08em] text-brand-black">
+                <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
+                  <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
+                  <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
                     {mobileDateHeader}
                   </span>
                 </div>
@@ -111,40 +111,70 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               onClick={() => onMatchClick(match.id)}
               data-analytics-event="match_open"
               data-analytics-label={match.id}
-              aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${mobileStatusLabel}`}
-              className="w-full border-b border-neutral-100 py-4 text-left active:bg-neutral-50 md:hidden"
+              aria-label={`${homeTeam.name} 對 ${awayTeam.name}`}
+              className="w-full border-b border-neutral-100 px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
             >
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-black tracking-[0.1em] text-neutral-400">
-                  {match.league}・第 {match.round} 輪
-                </span>
-                <span className={`text-[10px] font-black tracking-[0.08em] ${isFinished || isLive ? 'text-brand-blue' : 'text-neutral-400'}`}>
-                  {mobileStatusLabel}
-                </span>
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
+                    {timeStr}
+                  </span>
+                  <span className="text-[9px] font-bold tracking-[0.08em] text-neutral-400">
+                    {match.league} 第{match.round}輪
+                  </span>
+                </div>
+                {isLive && (
+                  <span className="text-[9px] font-black tracking-[0.08em] text-brand-blue">進行中</span>
+                )}
               </div>
 
-              <div className="grid grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] items-center gap-2">
-                <div className="flex min-w-0 items-center justify-end gap-2">
-                  <span className="min-w-0 break-words text-right text-[13px] font-bold leading-[1.2] text-brand-black">
-                    {homeTeam.name}
-                  </span>
-                  <img src={homeTeam.logo} alt="" loading="lazy" decoding="async" className="h-9 w-9 shrink-0 object-contain" />
+              <div className="grid grid-cols-[minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1.5">
+                <div className="flex min-w-0 items-center justify-end gap-1.5">
+                  <div className="min-w-0 flex-1 text-right">
+                    <AutoFitText
+                      text={homeTeam.name}
+                      maxFontSize={12}
+                      minFontSize={7}
+                      className="font-bold text-brand-black"
+                    />
+                  </div>
+                  <img
+                    src={homeTeam.logo}
+                    alt={homeTeam.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-[30px] w-[30px] shrink-0 object-contain"
+                  />
                 </div>
 
-                <div className="flex min-w-[64px] flex-col items-center justify-center text-center">
-                  <span className={`font-display font-black tabular-nums text-brand-black ${hasScore ? 'text-2xl tracking-tight' : 'text-lg tracking-wide'}`}>
-                    {hasScore ? `${match.homeScore}－${match.awayScore}` : timeStr}
-                  </span>
-                  <span className="mt-1 text-[9px] font-bold tracking-[0.08em] text-neutral-400">
-                    {hasScore ? timeStr : isLive ? '進行中' : '開賽'}
-                  </span>
+                <div className="flex min-w-[48px] items-center justify-center text-center">
+                  {hasScore ? (
+                    <span className="font-display text-[19px] font-black tracking-tight text-brand-black tabular-nums">
+                      {match.homeScore}－{match.awayScore}
+                    </span>
+                  ) : (
+                    <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">
+                      VS
+                    </span>
+                  )}
                 </div>
 
-                <div className="flex min-w-0 items-center justify-start gap-2">
-                  <img src={awayTeam.logo} alt="" loading="lazy" decoding="async" className="h-9 w-9 shrink-0 object-contain" />
-                  <span className="min-w-0 break-words text-left text-[13px] font-bold leading-[1.2] text-brand-black">
-                    {awayTeam.name}
-                  </span>
+                <div className="flex min-w-0 items-center justify-start gap-1.5">
+                  <img
+                    src={awayTeam.logo}
+                    alt={awayTeam.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-[30px] w-[30px] shrink-0 object-contain"
+                  />
+                  <div className="min-w-0 flex-1 text-left">
+                    <AutoFitText
+                      text={awayTeam.name}
+                      maxFontSize={12}
+                      minFontSize={7}
+                      className="font-bold text-brand-black"
+                    />
+                  </div>
                 </div>
               </div>
             </button>

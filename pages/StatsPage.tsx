@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
-import LeagueTabs from '../components/LeagueTabs';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
@@ -62,8 +61,9 @@ const StatsPage: React.FC = () => {
     }
   });
   const [activeTab, setActiveTab] = useState<StatsTab>('SCORERS');
-  const [seasonFilterOpen, setSeasonFilterOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+  const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -76,15 +76,6 @@ const StatsPage: React.FC = () => {
       setActiveLeague(activeSeason.enabledLeagues[0]);
     }
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
-
-  const handleLeagueChange = (league: LeagueId) => {
-    setActiveLeague(league);
-    try {
-      window.sessionStorage.setItem('statsActiveLeague', league);
-    } catch {
-      // Session storage may be unavailable.
-    }
-  };
 
   const playerStats = useMemo(
     () =>
@@ -177,23 +168,51 @@ const StatsPage: React.FC = () => {
       ? activeSuspensions.length > 0 || publicDecisions.length > 0
       : rankedList.length > 0;
 
-  const seasonField: FilterDrawerField = {
-    id: 'season',
-    label: '賽季',
-    value: draftSeasonId,
-    displayValue: draftSeason.shortName,
-    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
-    onChange: (value) => setDraftSeasonId(value as SeasonId),
-  };
+  const defaultDraftLeague = draftSeason.enabledLeagues[0];
+  const activeFilterCount = activeLeague === activeSeason.enabledLeagues[0] ? 0 : 1;
+  const filterFields: FilterDrawerField[] = [
+    {
+      id: 'season',
+      label: '賽季',
+      value: draftSeasonId,
+      displayValue: draftSeason.shortName,
+      options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+      onChange: (value) => {
+        const seasonId = value as SeasonId;
+        const nextSeason = availableSeasons.find((season) => season.id === seasonId);
+        if (!nextSeason) return;
+        setDraftSeasonId(seasonId);
+        setDraftLeague(nextSeason.enabledLeagues[0]);
+      },
+    },
+    {
+      id: 'league',
+      label: '聯賽級別',
+      value: draftLeague,
+      displayValue: draftLeague,
+      options: draftSeason.enabledLeagues.map((league) => ({
+        value: league,
+        label: draftSeason.leagues[league]?.displayName ?? league,
+      })),
+      onChange: (value) => setDraftLeague(value as LeagueId),
+    },
+  ];
 
-  const openSeasonFilter = () => {
+  const openFilters = () => {
     setDraftSeasonId(activeSeasonId);
-    setSeasonFilterOpen(true);
+    setDraftLeague(activeLeague);
+    setFiltersOpen(true);
   };
 
-  const applySeasonFilter = () => {
+  const applyFilters = () => {
     if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
-    setSeasonFilterOpen(false);
+    setActiveLeague(draftLeague);
+    try {
+      window.sessionStorage.setItem('statsActiveLeague', draftLeague);
+    } catch {
+      // Session storage may be unavailable.
+    }
+    setFiltersOpen(false);
   };
 
   return (
@@ -208,18 +227,10 @@ const StatsPage: React.FC = () => {
         />
 
         <DataFilterToolbar
-          primaryText="資料賽季"
-          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
-          onOpen={openSeasonFilter}
-          buttonLabel="更改賽季"
-          ariaLabel="更改數據中心賽季"
-        />
-
-        <LeagueTabs
-          options={activeSeason.enabledLeagues}
-          active={activeLeague}
-          onChange={handleLeagueChange}
-          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
+          primaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openFilters}
+          activeFilterCount={activeFilterCount}
+          ariaLabel="開啟數據中心篩選"
         />
 
         <div className="mb-8 border-b border-neutral-100">
@@ -382,15 +393,18 @@ const StatsPage: React.FC = () => {
       </div>
 
       <ResponsiveFilterDrawer
-        open={seasonFilterOpen}
-        fields={[seasonField]}
-        onClose={() => setSeasonFilterOpen(false)}
-        onClear={() => setDraftSeasonId(activeSeasonId)}
-        clearDisabled={draftSeasonId === activeSeasonId}
-        onApply={applySeasonFilter}
+        open={filtersOpen}
+        fields={filterFields}
+        onClose={() => setFiltersOpen(false)}
+        onClear={() => {
+          setDraftSeasonId(activeSeasonId);
+          setDraftLeague(activeSeason.enabledLeagues[0]);
+        }}
+        clearDisabled={draftSeasonId === activeSeasonId && draftLeague === activeSeason.enabledLeagues[0]}
+        onApply={applyFilters}
         applyLabel="查看數據"
-        title="選擇資料賽季"
-        subtitle="聯賽級別仍可在頁面中直接切換"
+        title="篩選數據中心"
+        subtitle="選擇賽季與聯賽級別"
       />
     </div>
   );

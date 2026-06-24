@@ -14,6 +14,8 @@ interface FullScheduleProps {
   leagueFilter: LeagueFilter;
 }
 
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const;
+
 const formatDateTime = (isoString: string) => {
   const date = new Date(isoString);
   const fullDateHeader = date.toLocaleDateString('zh-TW', {
@@ -21,12 +23,13 @@ const formatDateTime = (isoString: string) => {
     month: '2-digit',
     day: '2-digit',
   });
+  const mobileDateHeader = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}（${WEEKDAYS[date.getDay()]}）`;
   const timeStr = date.toLocaleTimeString('zh-TW', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
   });
-  return { fullDateHeader, timeStr };
+  return { fullDateHeader, mobileDateHeader, timeStr };
 };
 
 const renderScore = (match: Match) => {
@@ -75,22 +78,32 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const awayTeam = teamMap[match.awayTeamId];
         if (!homeTeam || !awayTeam) return null;
 
-        const { fullDateHeader, timeStr } = formatDateTime(match.timestamp);
+        const { fullDateHeader, mobileDateHeader, timeStr } = formatDateTime(match.timestamp);
         const isNewDate = fullDateHeader !== lastDateHeader;
         if (isNewDate) lastDateHeader = fullDateHeader;
         const isFinished = match.status === MatchStatus.FINISHED;
+        const isLive = match.status === MatchStatus.LIVE;
+        const hasScore = (isFinished || isLive) && match.homeScore !== null && match.awayScore !== null;
+        const mobileStatusLabel = isFinished ? '完賽' : isLive ? '進行中' : '未開賽';
 
         return (
           <React.Fragment key={match.id}>
             {isNewDate && (
-              <div className="sticky top-16 z-30 mb-2 mt-4 border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:mt-8">
-                <div className="flex items-center">
-                  <div className="mr-3 h-4 w-1 bg-brand-accent" />
-                  <span className="font-display text-sm font-black uppercase tracking-[0.15em] text-brand-black">
-                    {fullDateHeader}
+              <>
+                <div className="mt-5 border-b border-neutral-200 pb-2 pt-1 md:hidden">
+                  <span className="font-display text-sm font-black tracking-[0.08em] text-brand-black">
+                    {mobileDateHeader}
                   </span>
                 </div>
-              </div>
+                <div className="sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block">
+                  <div className="flex items-center">
+                    <div className="mr-3 h-4 w-1 bg-brand-accent" />
+                    <span className="font-display text-sm font-black uppercase tracking-[0.15em] text-brand-black">
+                      {fullDateHeader}
+                    </span>
+                  </div>
+                </div>
+              </>
             )}
 
             <button
@@ -98,7 +111,50 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               onClick={() => onMatchClick(match.id)}
               data-analytics-event="match_open"
               data-analytics-label={match.id}
-              className="group relative flex w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex-row md:hover:bg-neutral-50"
+              aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${mobileStatusLabel}`}
+              className="w-full border-b border-neutral-100 py-4 text-left active:bg-neutral-50 md:hidden"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-[10px] font-black tracking-[0.1em] text-neutral-400">
+                  {match.league}・第 {match.round} 輪
+                </span>
+                <span className={`text-[10px] font-black tracking-[0.08em] ${isFinished || isLive ? 'text-brand-blue' : 'text-neutral-400'}`}>
+                  {mobileStatusLabel}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] items-center gap-2">
+                <div className="flex min-w-0 items-center justify-end gap-2">
+                  <span className="min-w-0 break-words text-right text-[13px] font-bold leading-[1.2] text-brand-black">
+                    {homeTeam.name}
+                  </span>
+                  <img src={homeTeam.logo} alt="" loading="lazy" decoding="async" className="h-9 w-9 shrink-0 object-contain" />
+                </div>
+
+                <div className="flex min-w-[64px] flex-col items-center justify-center text-center">
+                  <span className={`font-display font-black tabular-nums text-brand-black ${hasScore ? 'text-2xl tracking-tight' : 'text-lg tracking-wide'}`}>
+                    {hasScore ? `${match.homeScore}－${match.awayScore}` : timeStr}
+                  </span>
+                  <span className="mt-1 text-[9px] font-bold tracking-[0.08em] text-neutral-400">
+                    {hasScore ? timeStr : isLive ? '進行中' : '開賽'}
+                  </span>
+                </div>
+
+                <div className="flex min-w-0 items-center justify-start gap-2">
+                  <img src={awayTeam.logo} alt="" loading="lazy" decoding="async" className="h-9 w-9 shrink-0 object-contain" />
+                  <span className="min-w-0 break-words text-left text-[13px] font-bold leading-[1.2] text-brand-black">
+                    {awayTeam.name}
+                  </span>
+                </div>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onMatchClick(match.id)}
+              data-analytics-event="match_open"
+              data-analytics-label={match.id}
+              className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 

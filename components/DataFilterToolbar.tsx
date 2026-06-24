@@ -3,7 +3,7 @@ import { ChevronRight, Filter } from 'lucide-react';
 
 interface DataFilterToolbarProps {
   primaryText: string;
-  secondaryText: string;
+  secondaryText?: string;
   onOpen: () => void;
   activeFilterCount?: number;
   buttonLabel?: string;
@@ -23,9 +23,11 @@ const DataFilterToolbar: React.FC<DataFilterToolbarProps> = ({
       <span className="shrink-0 font-display text-sm font-black tracking-wide text-brand-black md:text-base">
         {primaryText}
       </span>
-      <span className="truncate text-[11px] font-bold text-neutral-400 md:text-xs">
-        {secondaryText}
-      </span>
+      {secondaryText && (
+        <span className="truncate text-[11px] font-bold text-neutral-400 md:text-xs">
+          {secondaryText}
+        </span>
+      )}
     </div>
 
     <button

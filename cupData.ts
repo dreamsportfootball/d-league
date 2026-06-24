@@ -15,7 +15,7 @@ export interface CupMatch {
     // ✅ 新增：PK 比分欄位 (可選)
     homePenalty?: number;
     awayPenalty?: number;
-    status: 'SCHEDULED' | 'LIVE' | 'FINISHED';
+    status: 'SCHEDULED' | 'FINISHED';
     venue: 'A' | 'B';
 }
 

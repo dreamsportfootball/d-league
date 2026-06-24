@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
-import LeagueTabs from '../components/LeagueTabs';
+import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
-import type { LeagueId, RankingCriterion } from '../types/season';
+import type { LeagueId, RankingCriterion, SeasonId } from '../types/season';
 
 const rankingCriterionLabels: Record<RankingCriterion, string> = {
   GOAL_DIFFERENCE: '總得失球差',
@@ -20,7 +21,13 @@ const rankingCriterionLabels: Record<RankingCriterion, string> = {
 };
 
 const StandingsPage: React.FC = () => {
-  const { activeSeason, seasonData } = useSeason();
+  const {
+    activeSeasonId,
+    activeSeason,
+    seasonData,
+    availableSeasons,
+    setActiveSeason,
+  } = useSeason();
   const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
     try {
       const saved = window.sessionStorage.getItem('standingsActiveLeague');
@@ -29,21 +36,21 @@ const StandingsPage: React.FC = () => {
       return 'L1';
     }
   });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+  const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
+
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
       setActiveLeague(activeSeason.enabledLeagues[0]);
     }
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
-
-  const handleLeagueChange = (league: LeagueId) => {
-    setActiveLeague(league);
-    try {
-      window.sessionStorage.setItem('standingsActiveLeague', league);
-    } catch {
-      // Session storage may be unavailable.
-    }
-  };
 
   const leagueConfig = activeSeason.leagues[activeLeague];
   const leagueTeams = useMemo(
@@ -67,6 +74,52 @@ const StandingsPage: React.FC = () => {
   );
 
   const shouldShowEmptyState = leagueTeams.length === 0 || !hasFinishedMatches;
+  const defaultDraftLeague = draftSeason.enabledLeagues[0];
+  const activeFilterCount = activeLeague === activeSeason.enabledLeagues[0] ? 0 : 1;
+  const filterFields: FilterDrawerField[] = [
+    {
+      id: 'season',
+      label: '賽季',
+      value: draftSeasonId,
+      displayValue: draftSeason.shortName,
+      options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+      onChange: (value) => {
+        const seasonId = value as SeasonId;
+        const nextSeason = availableSeasons.find((season) => season.id === seasonId);
+        if (!nextSeason) return;
+        setDraftSeasonId(seasonId);
+        setDraftLeague(nextSeason.enabledLeagues[0]);
+      },
+    },
+    {
+      id: 'league',
+      label: '聯賽級別',
+      value: draftLeague,
+      displayValue: draftLeague,
+      options: draftSeason.enabledLeagues.map((league) => ({
+        value: league,
+        label: draftSeason.leagues[league]?.displayName ?? league,
+      })),
+      onChange: (value) => setDraftLeague(value as LeagueId),
+    },
+  ];
+
+  const openFilters = () => {
+    setDraftSeasonId(activeSeasonId);
+    setDraftLeague(activeLeague);
+    setFiltersOpen(true);
+  };
+
+  const applyFilters = () => {
+    if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
+    setActiveLeague(draftLeague);
+    try {
+      window.sessionStorage.setItem('standingsActiveLeague', draftLeague);
+    } catch {
+      // Session storage may be unavailable.
+    }
+    setFiltersOpen(false);
+  };
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -75,13 +128,16 @@ const StandingsPage: React.FC = () => {
           title="積分"
           accent="榜"
           description={`${activeSeason.displayName} ${activeLeague} 即時排名與數據`}
+          showMobileSeasonSelector={false}
+          showDesktopSeasonSelector={false}
         />
 
-        <LeagueTabs
-          options={activeSeason.enabledLeagues}
-          active={activeLeague}
-          onChange={handleLeagueChange}
-          getLabel={(league) => activeSeason.leagues[league]?.displayName ?? league}
+        <DataFilterToolbar
+          primaryText={`${leagueTeams.length} 支球隊`}
+          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openFilters}
+          activeFilterCount={activeFilterCount}
+          ariaLabel="開啟積分榜篩選"
         />
 
         {shouldShowEmptyState ? (
@@ -164,6 +220,18 @@ const StandingsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ResponsiveFilterDrawer
+        open={filtersOpen}
+        fields={filterFields}
+        onClose={() => setFiltersOpen(false)}
+        onClear={() => setDraftLeague(defaultDraftLeague)}
+        clearDisabled={draftLeague === defaultDraftLeague}
+        onApply={applyFilters}
+        applyLabel="查看積分榜"
+        title="篩選積分榜"
+        subtitle="選擇賽季與聯賽級別"
+      />
     </div>
   );
 };

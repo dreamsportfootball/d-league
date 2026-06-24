@@ -1,8 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, ChevronRight, Instagram, Youtube } from 'lucide-react';
+import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
-import SeasonDropdown from '../components/SeasonDropdown';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import type { MediaAlbum } from '../types/media';
@@ -48,7 +48,7 @@ const MediaPage: React.FC = () => {
     setActiveSeason,
   } = useSeason();
   const galleryRef = useRef<HTMLDivElement | null>(null);
-  const [mobileSeasonOpen, setMobileSeasonOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
 
   const sortedSeasons = useMemo(
@@ -56,7 +56,6 @@ const MediaPage: React.FC = () => {
     [availableSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
-  const seasonOptions = sortedSeasons.map((season) => ({ value: season.id, label: season.shortName }));
   const reversedAlbums = useMemo(
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
@@ -78,18 +77,18 @@ const MediaPage: React.FC = () => {
     label: '賽季',
     value: draftSeasonId,
     displayValue: draftSeason.shortName,
-    options: seasonOptions,
+    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
     onChange: (value) => setDraftSeasonId(value as SeasonId),
   };
 
-  const openMobileSeason = () => {
+  const openFilters = () => {
     setDraftSeasonId(activeSeasonId);
-    setMobileSeasonOpen(true);
+    setFiltersOpen(true);
   };
 
-  const applyMobileSeason = () => {
+  const applyFilters = () => {
     if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
-    setMobileSeasonOpen(false);
+    setFiltersOpen(false);
   };
 
   return (
@@ -103,34 +102,12 @@ const MediaPage: React.FC = () => {
           showDesktopSeasonSelector={false}
         />
 
-        <div className="mb-8 flex min-h-14 items-center justify-between border-b border-neutral-100">
-          <div className="flex min-w-0 items-baseline gap-3">
-            <span className="shrink-0 font-display text-sm font-black tracking-wide text-brand-black md:text-base">
-              {mediaItemCount} 項媒體
-            </span>
-            <span className="truncate text-[11px] font-bold text-neutral-400 md:text-xs">
-              {activeSeason.shortName}
-            </span>
-          </div>
-
-          <SeasonDropdown
-            value={activeSeasonId}
-            buttonLabel={`${activeSeason.shortName} 賽季`}
-            options={seasonOptions}
-            onChange={(value) => setActiveSeason(value as SeasonId)}
-            ariaLabel="選擇賽事媒體賽季"
-          />
-
-          <button
-            type="button"
-            onClick={openMobileSeason}
-            className="flex min-h-11 items-center text-sm font-black text-brand-black md:hidden"
-            aria-label="選擇賽事媒體賽季"
-          >
-            {activeSeason.shortName}
-            <ChevronRight className="ml-2 h-4 w-4 text-neutral-400" aria-hidden="true" />
-          </button>
-        </div>
+        <DataFilterToolbar
+          primaryText={`${mediaItemCount} 項媒體`}
+          secondaryText={activeSeason.shortName}
+          onOpen={openFilters}
+          ariaLabel="開啟賽事媒體篩選"
+        />
 
         {!hasMedia ? (
           <EmptyState
@@ -251,14 +228,14 @@ const MediaPage: React.FC = () => {
       </div>
 
       <ResponsiveFilterDrawer
-        open={mobileSeasonOpen}
+        open={filtersOpen}
         fields={[seasonField]}
-        onClose={() => setMobileSeasonOpen(false)}
+        onClose={() => setFiltersOpen(false)}
         onClear={() => setDraftSeasonId(activeSeasonId)}
         clearDisabled={draftSeasonId === activeSeasonId}
-        onApply={applyMobileSeason}
+        onApply={applyFilters}
         applyLabel="查看賽事媒體"
-        title="選擇賽事媒體賽季"
+        title="篩選賽事媒體"
         subtitle="目前可依賽季切換媒體內容"
       />
     </div>

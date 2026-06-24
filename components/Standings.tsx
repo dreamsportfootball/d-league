@@ -3,6 +3,7 @@ import { calculateLeagueTable } from '../services/competitionEngine';
 import { useSeason } from '../hooks/useSeason';
 import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
+import AutoFitText from './AutoFitText';
 
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   const colorClass =
@@ -83,8 +84,10 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
                 <span className="ml-2 font-medium tabular-nums text-brand-black">{row.rank}</span>
               </div>
               <div className="flex min-w-0 items-center space-x-2">
-                <img src={team.logo} alt={team.name} className="h-5 w-5 object-contain" />
-                <span className="truncate font-bold text-brand-black">{team.name}</span>
+                <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain" />
+                <div className="min-w-0 flex-1">
+                  <AutoFitText text={team.name} maxFontSize={12} minFontSize={7} className="font-bold text-brand-black" />
+                </div>
                 <TieLabel row={row} compact />
               </div>
               <span className="text-center tabular-nums text-brand-black">{row.played}</span>
@@ -131,10 +134,12 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
                     </span>
                   </div>
                 </td>
-                <td className="w-[140px] whitespace-nowrap py-3 pl-2 pr-2 md:w-[220px] md:px-4">
-                  <div className="flex items-center space-x-3">
+                <td className="w-[140px] py-3 pl-2 pr-2 md:w-[220px] md:px-4">
+                  <div className="flex min-w-0 items-center space-x-3">
                     <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" />
-                    <span className="text-xs font-bold text-brand-black md:text-sm">{team.name}</span>
+                    <div className="min-w-0 flex-1">
+                      <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" />
+                    </div>
                     <TieLabel row={row} />
                   </div>
                 </td>

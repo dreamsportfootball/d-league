@@ -10,6 +10,7 @@ const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CupPage = lazy(() => import('./pages/CupPage'));
@@ -97,6 +98,7 @@ const App: React.FC = () => (
             <Route path="/news" element={<NewsPage />} />
             <Route path="/stats" element={<StatsPage />} />
             <Route path="/news/:id" element={<ArticleDetailPage />} />
+            <Route path="/teams/:id" element={<TeamPage />} />
             <Route path="/media" element={<MediaPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/cup" element={<CupPage />} />

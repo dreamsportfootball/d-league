@@ -82,8 +82,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const isNewDate = fullDateHeader !== lastDateHeader;
         if (isNewDate) lastDateHeader = fullDateHeader;
         const isFinished = match.status === MatchStatus.FINISHED;
-        const isLive = match.status === MatchStatus.LIVE;
-        const hasScore = (isFinished || isLive) && match.homeScore !== null && match.awayScore !== null;
+        const hasScore = isFinished && match.homeScore !== null && match.awayScore !== null;
 
         return (
           <React.Fragment key={match.id}>
@@ -123,9 +122,6 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     {match.league} 第{match.round}輪
                   </span>
                 </div>
-                {isLive && (
-                  <span className="text-[9px] font-black tracking-[0.08em] text-brand-blue">進行中</span>
-                )}
               </div>
 
               <div className="grid grid-cols-[minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1.5">

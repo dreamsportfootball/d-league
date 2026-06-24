@@ -244,11 +244,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
             <p className="text-[13px] font-black tracking-[0.08em] text-brand-blue sm:text-sm">
               {match.league}・第 {match.round} 輪
             </p>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-neutral-400 sm:text-xs">
-              <span>{displayDate}・{time}</span>
-              <span aria-hidden="true">・</span>
-              <span>{match.venue}</span>
-            </div>
+            <p className="mt-2 text-[11px] font-medium text-neutral-400 sm:text-xs">
+              {displayDate}・{time}
+            </p>
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">

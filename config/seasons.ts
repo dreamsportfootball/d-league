@@ -123,6 +123,10 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     youtubePlaylistLabel: '2025/26 賽季完整賽事',
     enabledLeagues: ['L1', 'L2'],
     rules: legacyRules,
+    standingsDisplay: {
+      showPointsSummary: false,
+      rankingRules: ['得失球差', '進球數', '相關隊伍間對戰成績', '黃紅牌', '並列'],
+    },
     leagues: season2025Leagues,
   },
   '2026-27': {
@@ -142,6 +146,20 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式開放報名',
     rules: season2026Rules,
+    standingsDisplay: {
+      showPointsSummary: true,
+      rankingRules: [
+        '總得失球差',
+        '總進球數',
+        '相關球隊間對戰積分',
+        '相關球隊間對戰得失球差',
+        '相關球隊間對戰進球數',
+        '直接紅牌較少',
+        '雙黃退場較少',
+        '黃牌較少',
+      ],
+      footerNote: '全部相同且影響冠軍、升降級或遞補順位時，以公開抽籤決定；其他情況得並列',
+    },
     leagues: season2026Leagues,
   },
 };

@@ -13,6 +13,7 @@ export interface Team {
 
 export enum MatchStatus {
   SCHEDULED = 'SCHEDULED',
+  LIVE = 'LIVE',
   FINISHED = 'FINISHED'
 }
 

@@ -14,7 +14,21 @@ interface FullScheduleProps {
   leagueFilter: LeagueFilter;
 }
 
+interface ScoreDisplayProps {
+  homeScore: number;
+  awayScore: number;
+  className: string;
+}
+
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const;
+
+const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ homeScore, awayScore, className }) => (
+  <span className={`inline-flex items-center justify-center gap-1 tabular-nums ${className}`}>
+    <span className="min-w-[1ch] text-right">{homeScore}</span>
+    <span className="relative -top-px text-[0.62em] font-bold tracking-normal">–</span>
+    <span className="min-w-[1ch] text-left">{awayScore}</span>
+  </span>
+);
 
 const formatDateTime = (isoString: string) => {
   const date = new Date(isoString);
@@ -39,9 +53,11 @@ const renderScore = (match: Match) => {
     match.awayScore !== null
   ) {
     return (
-      <span className="font-display text-xl font-black tracking-tight text-brand-black tabular-nums md:text-2xl">
-        {match.homeScore} - {match.awayScore}
-      </span>
+      <ScoreDisplay
+        homeScore={match.homeScore}
+        awayScore={match.awayScore}
+        className="font-display text-xl font-black tracking-tight text-brand-black md:text-2xl"
+      />
     );
   }
 
@@ -149,9 +165,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
                 <div className="flex min-w-[48px] items-center justify-center text-center">
                   {hasScore ? (
-                    <span className="font-display text-[19px] font-black tracking-tight text-brand-black tabular-nums">
-                      {match.homeScore}－{match.awayScore}
-                    </span>
+                    <ScoreDisplay
+                      homeScore={match.homeScore as number}
+                      awayScore={match.awayScore as number}
+                      className="font-display text-[19px] font-black tracking-tight text-brand-black"
+                    />
                   ) : (
                     <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">
                       VS

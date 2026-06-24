@@ -1,7 +1,10 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import Analytics from './components/Analytics';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import MobileRegistrationBar from './components/MobileRegistrationBar';
+import Seo from './components/Seo';
 import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
@@ -15,6 +18,7 @@ const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CupPage = lazy(() => import('./pages/CupPage'));
 const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 const PageSkeleton: React.FC = () => (
   <div className="min-h-[70vh] animate-pulse bg-white px-4 pb-24 pt-10 md:px-12 md:pt-24">
@@ -87,6 +91,8 @@ const App: React.FC = () => (
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <Header />
       <ScrollMemory />
+      <Seo />
+      <Analytics />
 
       <main className="w-full flex-grow pt-16">
         <Suspense fallback={<PageSkeleton />}>
@@ -102,12 +108,13 @@ const App: React.FC = () => (
             <Route path="/media" element={<MediaPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/cup" element={<CupPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>
 
       <Footer />
+      <MobileRegistrationBar />
     </div>
   </SeasonProvider>
 );

@@ -130,7 +130,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
               <div className="grid grid-cols-[minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1.5">
                 <div className="flex min-w-0 items-center justify-end gap-1.5">
-                  <div className="min-w-0 flex-1 text-right">
+                  <div className="min-w-0 flex-1 pr-[2px] text-right">
                     <AutoFitText
                       text={homeTeam.name}
                       maxFontSize={12}

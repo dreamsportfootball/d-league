@@ -24,8 +24,8 @@ const formatDate = (isoString: string) => {
   return `${year}/${month}/${day}`;
 };
 
-const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => (
-  <Link to={`/news/${article.id}`} className="group flex h-full cursor-pointer flex-col">
+const MinimalNewsCard: React.FC<{ article: NewsArticle; seasonId: string }> = ({ article, seasonId }) => (
+  <Link to={`/news/${article.id}?season=${seasonId}`} className="group flex h-full cursor-pointer flex-col">
     <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
       {article.imageUrl ? (
         <img
@@ -63,7 +63,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => (
       </p>
 
       <div className="group/btn mt-auto flex items-center pt-2 text-xs font-bold uppercase tracking-widest text-brand-blue">
-        <span className="mr-2 decoration-2 underline-offset-4 group-hover/btn:underline">Read More</span>
+        <span className="mr-2 decoration-2 underline-offset-4 group-hover/btn:underline">查看內容</span>
         <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover/btn:translate-x-1" />
       </div>
     </div>
@@ -71,7 +71,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => (
 );
 
 const NewsPage: React.FC = () => {
-  const { activeSeason, seasonData } = useSeason();
+  const { activeSeason, activeSeasonId, availableSeasons, seasonData, setActiveSeason } = useSeason();
   const [activeFilter, setActiveFilter] = useState<NewsFilter>(() => {
     try {
       const saved = window.sessionStorage.getItem('newsActiveFilter');
@@ -120,7 +120,7 @@ const NewsPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
-        <div className="mb-8 flex flex-col justify-between border-b border-neutral-100 pb-8 md:mb-16 md:flex-row md:items-end">
+        <div className="mb-8 flex flex-col justify-between border-b border-neutral-100 pb-8 md:mb-12 md:flex-row md:items-end">
           <div>
             <h1 className="mb-3 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
               最新 <span className="text-brand-blue">消息</span>
@@ -130,28 +130,45 @@ const NewsPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-6 flex space-x-6 md:mt-0">
-            {newsFilters.map((filter) => (
+          <div className="mt-6 flex flex-wrap gap-2 md:mt-0">
+            {availableSeasons.map((season) => (
               <button
-                key={filter.key}
+                key={season.id}
                 type="button"
-                onClick={() => updateFilter(filter.key)}
-                className={`relative border-b-2 pb-1 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
-                  activeFilter === filter.key
-                    ? 'border-brand-blue text-brand-black'
-                    : 'border-transparent text-neutral-400 hover:text-neutral-600'
+                onClick={() => setActiveSeason(season.id)}
+                className={`rounded-full border px-4 py-2 text-xs font-black transition-colors ${
+                  activeSeasonId === season.id
+                    ? 'border-brand-blue bg-brand-blue text-white'
+                    : 'border-neutral-200 text-neutral-500 hover:border-neutral-400'
                 }`}
               >
-                {filter.label}
+                {season.shortName}
               </button>
             ))}
           </div>
         </div>
 
+        <div className="mb-10 flex flex-wrap gap-x-6 gap-y-3 border-b border-neutral-100">
+          {newsFilters.map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              onClick={() => updateFilter(filter.key)}
+              className={`relative border-b-2 pb-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+                activeFilter === filter.key
+                  ? 'border-brand-blue text-brand-black'
+                  : 'border-transparent text-neutral-400 hover:text-neutral-600'
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
         {filteredNews.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
             {filteredNews.map((article) => (
-              <MinimalNewsCard key={article.id} article={article} />
+              <MinimalNewsCard key={article.id} article={article} seasonId={activeSeasonId} />
             ))}
           </div>
         ) : (

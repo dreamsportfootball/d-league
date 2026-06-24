@@ -34,6 +34,11 @@ const formatDateTime = (timestamp: string) => {
       day: '2-digit',
       weekday: 'short',
     }),
+    displayDate: date.toLocaleDateString('zh-TW', {
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'short',
+    }),
     time: date.toLocaleTimeString('zh-TW', {
       hour: '2-digit',
       minute: '2-digit',
@@ -151,7 +156,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
   const report = match.reportArticleId
     ? seasonData.news.find((item) => item.id === match.reportArticleId)
     : undefined;
-  const { date, time } = formatDateTime(match.timestamp);
+  const { date, displayDate, time } = formatDateTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const statusLabel = isFinished
     ? '完賽'
@@ -213,7 +218,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
       <button
         type="button"
         aria-label="關閉比賽詳情"
-        className="absolute inset-0 bg-black/55 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-[3px]"
         onClick={onClose}
       />
 
@@ -222,52 +227,59 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         role="dialog"
         aria-modal="true"
         aria-labelledby="match-dialog-title"
-        className="relative flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-[26px] bg-white shadow-2xl ring-1 ring-black/5 sm:max-h-[92dvh] sm:rounded-[26px]"
+        className="relative flex max-h-[100dvh] w-full max-w-[860px] flex-col overflow-hidden rounded-t-[28px] bg-white shadow-[0_28px_80px_rgba(0,0,0,0.28)] ring-1 ring-black/5 sm:max-h-[92dvh] sm:rounded-[30px]"
       >
-        <div className="relative shrink-0 bg-white px-5 pb-6 pt-6 sm:px-8 sm:pb-7 sm:pt-7">
+        <div className="relative shrink-0 bg-white px-5 pb-5 pt-6 sm:px-12 sm:pb-7 sm:pt-9">
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-neutral-100 bg-neutral-50 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue"
+            className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue sm:right-5 sm:top-5"
             aria-label="關閉"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
 
-          <div className="mb-5 pr-10 text-center">
-            <p className="text-sm font-black tracking-[0.08em] text-brand-blue">
+          <div className="mb-6 pr-10 text-center sm:mb-8 sm:pr-0">
+            <p className="text-[13px] font-black tracking-[0.08em] text-brand-blue sm:text-sm">
               {match.league}・第 {match.round} 輪
             </p>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-medium text-neutral-400 sm:text-xs">
-              <span>{date}・{time}</span>
+              <span>{displayDate}・{time}</span>
               <span aria-hidden="true">・</span>
               <span>{match.venue}</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-8">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">
             <Link
               to={`/teams/${homeTeam.id}?season=${activeSeason.id}`}
               onClick={onClose}
               className="group flex min-w-0 flex-col items-center"
             >
-              <img src={homeTeam.logo} alt={homeTeam.name} className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20" />
+              <img
+                src={homeTeam.logo}
+                alt={homeTeam.name}
+                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
+              />
               <div className="w-full min-w-0 text-center">
                 <AutoFitText
                   text={homeTeam.name}
-                  maxFontSize={16}
-                  minFontSize={7}
-                  className="font-black text-brand-black transition-colors group-hover:text-brand-blue"
+                  maxFontSize={18}
+                  minFontSize={8}
+                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
                 />
               </div>
             </Link>
 
-            <div className="flex min-w-[96px] flex-col items-center">
-              <div id="match-dialog-title" className="font-display text-[44px] font-black leading-none tabular-nums tracking-tight text-brand-black sm:text-6xl">
-                {isFinished ? `${match.homeScore ?? '-'} - ${match.awayScore ?? '-'}` : 'VS'}
+            <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
+              <div
+                id="match-dialog-title"
+                className="font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
+              >
+                {isFinished ? `${match.homeScore ?? '-'}－${match.awayScore ?? '-'}` : 'VS'}
               </div>
-              <span className="mt-2 text-[10px] font-black tracking-[0.14em] text-neutral-400">
+              <span className="mt-2 text-[10px] font-black tracking-[0.12em] text-neutral-400 sm:mt-3 sm:text-[11px]">
                 {displayStatusLabel}
               </span>
             </div>
@@ -277,25 +289,29 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               onClick={onClose}
               className="group flex min-w-0 flex-col items-center"
             >
-              <img src={awayTeam.logo} alt={awayTeam.name} className="mb-3 h-16 w-16 object-contain sm:h-20 sm:w-20" />
+              <img
+                src={awayTeam.logo}
+                alt={awayTeam.name}
+                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
+              />
               <div className="w-full min-w-0 text-center">
                 <AutoFitText
                   text={awayTeam.name}
-                  maxFontSize={16}
-                  minFontSize={7}
-                  className="font-black text-brand-black transition-colors group-hover:text-brand-blue"
+                  maxFontSize={18}
+                  minFontSize={8}
+                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
                 />
               </div>
             </Link>
           </div>
 
-          <div className="mx-auto mt-6 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:max-w-none sm:justify-center">
+          <div className="mx-auto mt-7 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:mt-8 sm:flex sm:w-auto sm:max-w-none sm:justify-center">
             <button
               type="button"
               onClick={handleCopyInfo}
               data-analytics-event="match_info_copy"
               data-analytics-label={match.id}
-              className="inline-flex h-10 items-center justify-center rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50 hover:text-brand-black active:scale-[0.98] sm:h-9 sm:px-5 sm:text-xs"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 transition-colors hover:border-neutral-300 hover:bg-neutral-50 hover:text-brand-black active:bg-neutral-100 sm:min-h-9 sm:px-5 sm:text-xs"
             >
               <Copy className="mr-2 h-3.5 w-3.5" />
               <span className="sm:hidden">
@@ -310,7 +326,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               onClick={handleShare}
               data-analytics-event="match_share"
               data-analytics-label={match.id}
-              className="inline-flex h-10 items-center justify-center rounded-full bg-brand-blue px-4 text-[13px] font-bold text-white shadow-sm transition-all hover:-translate-y-px hover:shadow-md active:translate-y-0 active:scale-[0.98] sm:h-9 sm:px-5 sm:text-xs"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-blue/20 bg-brand-blue/[0.06] px-4 text-[13px] font-bold text-brand-blue transition-colors hover:border-brand-blue/30 hover:bg-brand-blue/[0.1] active:bg-brand-blue/[0.14] sm:min-h-9 sm:px-5 sm:text-xs"
             >
               <Share2 className="mr-2 h-3.5 w-3.5" />
               {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
@@ -325,9 +341,16 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
         </div>
 
         <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
-          <section className="border-b border-neutral-100 px-5 pb-6 pt-4 sm:px-8">
-            <h3 className="mb-4 text-center text-xs font-black tracking-[0.12em] text-neutral-400">比賽事件</h3>
+          <section className="border-b border-neutral-100 px-5 pb-8 pt-2 sm:px-12 sm:pb-10 sm:pt-3">
+            <div className="flex items-center justify-center gap-4" aria-hidden="true">
+              <span className="h-px w-9 bg-neutral-200 sm:w-12" />
+              <h3 className="text-[11px] font-black tracking-[0.12em] text-neutral-400">比賽事件</h3>
+              <span className="h-px w-9 bg-neutral-200 sm:w-12" />
+            </div>
             <MatchEvents matchId={match.id} />
+            <p className="mt-8 text-center text-[10px] font-bold tracking-[0.12em] text-neutral-400 sm:mt-10">
+              D LEAGUE 官方賽事紀錄
+            </p>
           </section>
 
           {lineup && (

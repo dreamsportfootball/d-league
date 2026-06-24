@@ -342,7 +342,7 @@ const SchedulePage: React.FC = () => {
             <div className="flex-1 overflow-y-auto overscroll-contain px-5">
               <section className="border-b border-neutral-100 py-5">
                 <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">聯賽級別</h3>
-                <div className="grid grid-cols-4" role="radiogroup" aria-label="聯賽級別">
+                <div className="flex items-center gap-6" role="radiogroup" aria-label="聯賽級別">
                   {filterOptions.map((league) => {
                     const selected = leagueTab === league;
                     return (
@@ -352,15 +352,19 @@ const SchedulePage: React.FC = () => {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => handleLeagueChange(league)}
-                        className={`relative min-h-11 px-1 text-sm font-bold transition-colors ${
+                        className={`min-h-11 shrink-0 text-sm font-bold transition-colors ${
                           selected ? 'text-brand-blue' : 'text-neutral-400'
                         }`}
                       >
-                        {league === 'ALL' ? '全部' : league}
                         <span
-                          className={`absolute inset-x-3 bottom-0 h-0.5 ${selected ? 'bg-brand-blue' : 'bg-transparent'}`}
-                          aria-hidden="true"
-                        />
+                          className={`relative inline-flex pb-1 ${
+                            selected
+                              ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
+                              : ''
+                          }`}
+                        >
+                          {league === 'ALL' ? '全部' : league}
+                        </span>
                       </button>
                     );
                   })}
@@ -369,7 +373,7 @@ const SchedulePage: React.FC = () => {
 
               <section className="border-b border-neutral-100 py-5">
                 <h3 className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">比賽狀態</h3>
-                <div className="grid grid-cols-3" role="radiogroup" aria-label="比賽狀態">
+                <div className="flex items-center gap-6" role="radiogroup" aria-label="比賽狀態">
                   {([
                     ['ALL', '全部'],
                     ['FINISHED', '已完賽'],
@@ -383,15 +387,19 @@ const SchedulePage: React.FC = () => {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => setStatusFilter(value)}
-                        className={`relative min-h-11 px-1 text-sm font-bold transition-colors ${
+                        className={`min-h-11 shrink-0 text-sm font-bold transition-colors ${
                           selected ? 'text-brand-blue' : 'text-neutral-400'
                         }`}
                       >
-                        {label}
                         <span
-                          className={`absolute inset-x-4 bottom-0 h-0.5 ${selected ? 'bg-brand-blue' : 'bg-transparent'}`}
-                          aria-hidden="true"
-                        />
+                          className={`relative inline-flex pb-1 ${
+                            selected
+                              ? 'after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-brand-blue'
+                              : ''
+                          }`}
+                        >
+                          {label}
+                        </span>
                       </button>
                     );
                   })}

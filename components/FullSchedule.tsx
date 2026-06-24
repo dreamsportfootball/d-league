@@ -41,15 +41,11 @@ const renderScore = (match: Match) => {
     );
   }
 
-  if (match.status === MatchStatus.SCHEDULED) {
-    return (
-      <span className="font-display text-xs font-medium uppercase tracking-widest text-neutral-300">
-        VS
-      </span>
-    );
-  }
-
-  return <span className="text-sm font-bold text-brand-black">-</span>;
+  return (
+    <span className="font-display text-xs font-medium uppercase tracking-widest text-neutral-300">
+      VS
+    </span>
+  );
 };
 
 const getMobileNameClass = (name: string) => {
@@ -104,11 +100,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
             <button
               type="button"
-              onClick={() => isFinished && onMatchClick(match.id)}
-              disabled={!isFinished}
-              className={`group relative flex w-full flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex-row md:hover:bg-neutral-50 ${
-                isFinished ? 'cursor-pointer' : 'cursor-default'
-              }`}
+              onClick={() => onMatchClick(match.id)}
+              className="group relative flex w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex-row md:hover:bg-neutral-50"
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 
@@ -161,8 +154,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                 </div>
 
                 <div className="hidden w-32 shrink-0 flex-col items-end pr-4 text-right md:flex">
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFinished ? 'text-brand-blue' : 'text-neutral-300'}`}>
-                    {isFinished ? 'View Match →' : 'Upcoming'}
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFinished ? 'text-brand-blue' : 'text-neutral-400'}`}>
+                    {isFinished ? '查看比賽 →' : '查看賽程 →'}
                   </span>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
   ChevronLeft,
@@ -15,6 +15,7 @@ import LeagueTabs from '../components/LeagueTabs';
 import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import { getSeasonData } from '../services/seasonDataJson';
 import type { Match } from '../types';
 import { MatchStatus } from '../types';
 import type { LeagueId, SeasonId } from '../types/season';
@@ -31,6 +32,19 @@ interface ScheduleFilters {
   round: string;
   date: string;
   status: StatusFilter;
+}
+
+interface FacetOptions {
+  leagueIds: LeagueId[];
+  teams: SeasonTeam[];
+  rounds: string[];
+  dates: string[];
+  statuses: StatusFilter[];
+}
+
+interface MobileFilterDraft {
+  seasonId: SeasonId;
+  filters: ScheduleFilters;
 }
 
 interface FilterFieldsProps {
@@ -60,6 +74,14 @@ interface MobileSelectorConfig {
   onSelect: (value: string) => void;
 }
 
+const EMPTY_FILTERS: ScheduleFilters = {
+  league: 'ALL',
+  team: 'ALL',
+  round: 'ALL',
+  date: 'ALL',
+  status: 'ALL',
+};
+
 const matchPassesFilters = (
   match: Match,
   filters: ScheduleFilters,
@@ -87,6 +109,84 @@ const matchPassesFilters = (
     if (filters.status === 'FINISHED' && match.status !== MatchStatus.FINISHED) return false;
   }
   return true;
+};
+
+const getFacetOptions = (
+  matches: Match[],
+  teams: SeasonTeam[],
+  filters: ScheduleFilters,
+  enabledLeagues: LeagueId[],
+): FacetOptions => {
+  const leagueIdsWithMatches = new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'league'))
+      .map((match) => match.league),
+  );
+  const leagueIds = enabledLeagues.filter((leagueId) => leagueIdsWithMatches.has(leagueId));
+
+  const teamIds = new Set<string>();
+  matches
+    .filter((match) => matchPassesFilters(match, filters, 'team'))
+    .forEach((match) => {
+      teamIds.add(match.homeTeamId);
+      teamIds.add(match.awayTeamId);
+    });
+  const availableTeams = teams
+    .filter((team) => teamIds.has(team.id))
+    .sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
+
+  const rounds = [...new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'round'))
+      .map((match) => String(match.round)),
+  )].sort((a, b) => Number(a) - Number(b));
+
+  const dates = [...new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'date'))
+      .map((match) => match.timestamp.split('T')[0]),
+  )].sort();
+
+  const statusMatches = matches.filter((match) => matchPassesFilters(match, filters, 'status'));
+  const statuses: StatusFilter[] = ['ALL'];
+  if (statusMatches.some((match) => match.status === MatchStatus.FINISHED)) statuses.push('FINISHED');
+  if (statusMatches.some((match) => match.status === MatchStatus.SCHEDULED)) statuses.push('UPCOMING');
+
+  return { leagueIds, teams: availableTeams, rounds, dates, statuses };
+};
+
+const isFacetValueAvailable = (
+  facet: FacetKey,
+  value: string,
+  matches: Match[],
+  filters: ScheduleFilters,
+): boolean => {
+  if (value === 'ALL') return true;
+  const candidateFilters = { ...filters, [facet]: value } as ScheduleFilters;
+  return matches.some((match) => matchPassesFilters(match, candidateFilters));
+};
+
+const reconcileFilters = (
+  proposedFilters: ScheduleFilters,
+  changedFacet: FacetKey,
+  matches: Match[],
+): ScheduleFilters => {
+  const nextFilters = { ...proposedFilters };
+  const facets: FacetKey[] = ['league', 'status', 'team', 'date', 'round'];
+
+  for (let pass = 0; pass < facets.length; pass += 1) {
+    let changed = false;
+    for (const facet of facets) {
+      if (facet === changedFacet || nextFilters[facet] === 'ALL') continue;
+      if (!isFacetValueAvailable(facet, nextFilters[facet], matches, nextFilters)) {
+        nextFilters[facet] = 'ALL';
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+
+  return nextFilters;
 };
 
 const FilterFields: React.FC<FilterFieldsProps> = ({
@@ -136,9 +236,6 @@ const FilterFields: React.FC<FilterFieldsProps> = ({
   </div>
 );
 
-const isValidFilter = (value: string | null, enabledLeagues: LeagueId[]): value is LeagueFilter =>
-  value === 'ALL' || enabledLeagues.includes(value as LeagueId);
-
 const SchedulePage: React.FC = () => {
   const {
     activeSeasonId,
@@ -148,125 +245,69 @@ const SchedulePage: React.FC = () => {
     setActiveSeason,
   } = useSeason();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [leagueTab, setLeagueTab] = useState<LeagueFilter>(() => {
+  const previousSeasonIdRef = useRef(activeSeasonId);
+  const [filters, setFilters] = useState<ScheduleFilters>(() => {
+    let savedLeague: LeagueFilter = 'ALL';
     try {
       const saved = window.sessionStorage.getItem('scheduleActiveLeague');
-      return saved === 'ALL' || saved === 'L1' || saved === 'L2' || saved === 'L3' ? saved : 'ALL';
+      if (saved === 'L1' || saved === 'L2' || saved === 'L3') savedLeague = saved;
     } catch {
-      return 'ALL';
+      // Session storage may be unavailable.
     }
+    return {
+      ...EMPTY_FILTERS,
+      league: savedLeague !== 'ALL' && activeSeason.enabledLeagues.includes(savedLeague)
+        ? savedLeague
+        : 'ALL',
+    };
   });
-  const [teamFilter, setTeamFilter] = useState('ALL');
-  const [roundFilter, setRoundFilter] = useState('ALL');
-  const [dateFilter, setDateFilter] = useState('ALL');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [mobileFilterView, setMobileFilterView] = useState<MobileFilterView>('ROOT');
+  const [mobileDraft, setMobileDraft] = useState<MobileFilterDraft>({
+    seasonId: activeSeasonId,
+    filters: { ...EMPTY_FILTERS },
+  });
 
   const selectedMatchId = searchParams.get('match');
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
-  const filters = useMemo<ScheduleFilters>(
-    () => ({
-      league: leagueTab,
-      team: teamFilter,
-      round: roundFilter,
-      date: dateFilter,
-      status: statusFilter,
-    }),
-    [dateFilter, leagueTab, roundFilter, statusFilter, teamFilter],
+  const facetOptions = useMemo(
+    () => getFacetOptions(seasonData.matches, seasonData.teams, filters, activeSeason.enabledLeagues),
+    [activeSeason.enabledLeagues, filters, seasonData.matches, seasonData.teams],
   );
-
-  const availableLeagueIds = useMemo(() => {
-    const leagueIds = new Set(
-      seasonData.matches
-        .filter((match) => matchPassesFilters(match, filters, 'league'))
-        .map((match) => match.league),
-    );
-    return activeSeason.enabledLeagues.filter((leagueId) => leagueIds.has(leagueId));
-  }, [activeSeason.enabledLeagues, filters, seasonData.matches]);
-
-  const availableTeams = useMemo(() => {
-    const teamIds = new Set<string>();
-    seasonData.matches
-      .filter((match) => matchPassesFilters(match, filters, 'team'))
-      .forEach((match) => {
-        teamIds.add(match.homeTeamId);
-        teamIds.add(match.awayTeamId);
-      });
-    return seasonData.teams
-      .filter((team) => teamIds.has(team.id))
-      .sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
-  }, [filters, seasonData.matches, seasonData.teams]);
-
-  const availableRounds = useMemo(
-    () =>
-      [...new Set(
-        seasonData.matches
-          .filter((match) => matchPassesFilters(match, filters, 'round'))
-          .map((match) => String(match.round)),
-      )].sort((a, b) => Number(a) - Number(b)),
-    [filters, seasonData.matches],
-  );
-
-  const availableDates = useMemo(
-    () =>
-      [...new Set(
-        seasonData.matches
-          .filter((match) => matchPassesFilters(match, filters, 'date'))
-          .map((match) => match.timestamp.split('T')[0]),
-      )].sort(),
-    [filters, seasonData.matches],
-  );
-
-  const availableStatuses = useMemo<StatusFilter[]>(() => {
-    const matches = seasonData.matches.filter((match) => matchPassesFilters(match, filters, 'status'));
-    const values: StatusFilter[] = ['ALL'];
-    if (matches.some((match) => match.status === MatchStatus.FINISHED)) values.push('FINISHED');
-    if (matches.some((match) => match.status === MatchStatus.SCHEDULED)) values.push('UPCOMING');
-    return values;
-  }, [filters, seasonData.matches]);
-
   const filteredMatches = useMemo(
     () => seasonData.matches.filter((match) => matchPassesFilters(match, filters)),
     [filters, seasonData.matches],
   );
 
-  useEffect(() => {
-    if (!isValidFilter(leagueTab, activeSeason.enabledLeagues)) {
-      setLeagueTab('ALL');
-      return;
-    }
-    if (leagueTab !== 'ALL' && !availableLeagueIds.includes(leagueTab)) {
-      setLeagueTab('ALL');
-    }
-  }, [activeSeason.enabledLeagues, availableLeagueIds, leagueTab]);
+  const draftSeason = availableSeasons.find((season) => season.id === mobileDraft.seasonId) ?? activeSeason;
+  const draftSeasonData = getSeasonData(mobileDraft.seasonId);
+  const draftFacetOptions = useMemo(
+    () => getFacetOptions(
+      draftSeasonData.matches,
+      draftSeasonData.teams,
+      mobileDraft.filters,
+      draftSeason.enabledLeagues,
+    ),
+    [draftSeason.enabledLeagues, draftSeasonData.matches, draftSeasonData.teams, mobileDraft.filters],
+  );
+  const draftFilteredMatches = useMemo(
+    () => draftSeasonData.matches.filter((match) => matchPassesFilters(match, mobileDraft.filters)),
+    [draftSeasonData.matches, mobileDraft.filters],
+  );
 
   useEffect(() => {
-    if (teamFilter !== 'ALL' && !availableTeams.some((team) => team.id === teamFilter)) {
-      setTeamFilter('ALL');
+    if (previousSeasonIdRef.current === activeSeasonId) return;
+    previousSeasonIdRef.current = activeSeasonId;
+    setFilters({ ...EMPTY_FILTERS });
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', 'ALL');
+    } catch {
+      // Session storage may be unavailable.
     }
-  }, [availableTeams, teamFilter]);
-
-  useEffect(() => {
-    if (roundFilter !== 'ALL' && !availableRounds.includes(roundFilter)) {
-      setRoundFilter('ALL');
-    }
-  }, [availableRounds, roundFilter]);
-
-  useEffect(() => {
-    if (dateFilter !== 'ALL' && !availableDates.includes(dateFilter)) {
-      setDateFilter('ALL');
-    }
-  }, [availableDates, dateFilter]);
-
-  useEffect(() => {
-    if (statusFilter !== 'ALL' && !availableStatuses.includes(statusFilter)) {
-      setStatusFilter('ALL');
-    }
-  }, [availableStatuses, statusFilter]);
+  }, [activeSeasonId]);
 
   useEffect(() => {
     if (selectedMatchId && !seasonData.matches.some((match) => match.id === selectedMatchId)) {
@@ -295,46 +336,45 @@ const SchedulePage: React.FC = () => {
     };
   }, [mobileFilterView, mobileFiltersOpen]);
 
-  const activeMobileFilterCount = [leagueTab, teamFilter, roundFilter, dateFilter, statusFilter]
-    .filter((value) => value !== 'ALL').length;
+  const updateAppliedFacet = (facet: FacetKey, value: string) => {
+    if (filters[facet] === value) return;
+    const proposedFilters = { ...filters, [facet]: value } as ScheduleFilters;
+    const nextFilters = reconcileFilters(proposedFilters, facet, seasonData.matches);
+    setFilters(nextFilters);
 
-  const handleLeagueChange = (league: LeagueFilter) => {
-    setLeagueTab(league);
-    setTeamFilter('ALL');
-    setRoundFilter('ALL');
-    setDateFilter('ALL');
-    try {
-      window.sessionStorage.setItem('scheduleActiveLeague', league);
-    } catch {
-      // Session storage may be unavailable.
+    if (facet === 'league') {
+      try {
+        window.sessionStorage.setItem('scheduleActiveLeague', nextFilters.league);
+      } catch {
+        // Session storage may be unavailable.
+      }
     }
+  };
+
+  const updateDraftFacet = (facet: FacetKey, value: string) => {
+    setMobileDraft((currentDraft) => {
+      if (currentDraft.filters[facet] === value) return currentDraft;
+      const currentData = getSeasonData(currentDraft.seasonId);
+      const proposedFilters = { ...currentDraft.filters, [facet]: value } as ScheduleFilters;
+      return {
+        ...currentDraft,
+        filters: reconcileFilters(proposedFilters, facet, currentData.matches),
+      };
+    });
   };
 
   const resetFilters = () => {
-    setTeamFilter('ALL');
-    setRoundFilter('ALL');
-    setDateFilter('ALL');
-    setStatusFilter('ALL');
-  };
-
-  const resetMobileFilters = () => {
-    handleLeagueChange('ALL');
-    setStatusFilter('ALL');
-  };
-
-  const handleSeasonChange = (seasonId: SeasonId) => {
-    if (seasonId === activeSeasonId) return;
-    setActiveSeason(seasonId);
-    setLeagueTab('ALL');
-    resetFilters();
-    try {
-      window.sessionStorage.setItem('scheduleActiveLeague', 'ALL');
-    } catch {
-      // Session storage may be unavailable.
-    }
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      team: 'ALL',
+      round: 'ALL',
+      date: 'ALL',
+      status: 'ALL',
+    }));
   };
 
   const openMobileFilters = () => {
+    setMobileDraft({ seasonId: activeSeasonId, filters: { ...filters } });
     setMobileFilterView('ROOT');
     setMobileFiltersOpen(true);
   };
@@ -342,6 +382,20 @@ const SchedulePage: React.FC = () => {
   const closeMobileFilters = () => {
     setMobileFilterView('ROOT');
     setMobileFiltersOpen(false);
+  };
+
+  const applyMobileFilters = () => {
+    previousSeasonIdRef.current = mobileDraft.seasonId;
+    if (mobileDraft.seasonId !== activeSeasonId) {
+      setActiveSeason(mobileDraft.seasonId);
+    }
+    setFilters(mobileDraft.filters);
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', mobileDraft.filters.league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+    closeMobileFilters();
   };
 
   const selectMatch = (matchId: string) => {
@@ -357,89 +411,99 @@ const SchedulePage: React.FC = () => {
   };
 
   const desktopLeagueOptions: LeagueFilter[] = ['ALL', ...activeSeason.enabledLeagues];
-  const mobileLeagueOptions: LeagueFilter[] = ['ALL', ...availableLeagueIds];
   const filterFieldProps: FilterFieldsProps = {
-    availableTeams,
-    availableRounds,
-    availableDates,
-    availableStatuses,
-    teamFilter,
-    roundFilter,
-    dateFilter,
-    statusFilter,
-    setTeamFilter,
-    setRoundFilter,
-    setDateFilter,
-    setStatusFilter,
+    availableTeams: facetOptions.teams,
+    availableRounds: facetOptions.rounds,
+    availableDates: facetOptions.dates,
+    availableStatuses: facetOptions.statuses,
+    teamFilter: filters.team,
+    roundFilter: filters.round,
+    dateFilter: filters.date,
+    statusFilter: filters.status,
+    setTeamFilter: (value) => updateAppliedFacet('team', value),
+    setRoundFilter: (value) => updateAppliedFacet('round', value),
+    setDateFilter: (value) => updateAppliedFacet('date', value),
+    setStatusFilter: (value) => updateAppliedFacet('status', value),
   };
-  const leagueSummary = leagueTab === 'ALL' ? '全部級別' : leagueTab;
-  const statusSummary = statusFilter === 'FINISHED'
+  const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
+  const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
+  const draftFilterCount = Object.values(mobileDraft.filters).filter((value) => value !== 'ALL').length;
+  const draftLeagueSummary = mobileDraft.filters.league === 'ALL' ? '全部級別' : mobileDraft.filters.league;
+  const draftStatusSummary = mobileDraft.filters.status === 'FINISHED'
     ? '已完賽'
-    : statusFilter === 'UPCOMING'
+    : mobileDraft.filters.status === 'UPCOMING'
       ? '即將開賽'
       : '全部狀態';
-  const teamSummary = teamFilter === 'ALL'
+  const draftTeamSummary = mobileDraft.filters.team === 'ALL'
     ? '全部球隊'
-    : seasonData.teamMap[teamFilter]?.name ?? '全部球隊';
-  const dateSummary = dateFilter === 'ALL' ? '全部日期' : dateFilter.replaceAll('-', '/');
-  const roundSummary = roundFilter === 'ALL' ? '全部輪次' : `第 ${roundFilter} 輪`;
+    : draftSeasonData.teamMap[mobileDraft.filters.team]?.name ?? '全部球隊';
+  const draftDateSummary = mobileDraft.filters.date === 'ALL'
+    ? '全部日期'
+    : mobileDraft.filters.date.replaceAll('-', '/');
+  const draftRoundSummary = mobileDraft.filters.round === 'ALL'
+    ? '全部輪次'
+    : `第 ${mobileDraft.filters.round} 輪`;
 
   const mobileSelectorConfig: MobileSelectorConfig | null = mobileFilterView === 'SEASON'
     ? {
         title: '選擇賽季',
-        selectedValue: activeSeasonId,
+        selectedValue: mobileDraft.seasonId,
         options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
-        onSelect: (value) => handleSeasonChange(value as SeasonId),
+        onSelect: (value) => {
+          const seasonId = value as SeasonId;
+          if (seasonId === mobileDraft.seasonId) return;
+          setMobileDraft({ seasonId, filters: { ...EMPTY_FILTERS } });
+        },
       }
     : mobileFilterView === 'LEAGUE'
       ? {
           title: '選擇聯賽級別',
-          selectedValue: leagueTab,
-          options: mobileLeagueOptions.map((league) => ({
+          selectedValue: mobileDraft.filters.league,
+          options: (['ALL', ...draftFacetOptions.leagueIds] as LeagueFilter[]).map((league) => ({
             value: league,
             label: league === 'ALL' ? '全部級別' : league,
           })),
-          onSelect: (value) => handleLeagueChange(value as LeagueFilter),
+          onSelect: (value) => updateDraftFacet('league', value),
         }
       : mobileFilterView === 'STATUS'
         ? {
             title: '選擇比賽狀態',
-            selectedValue: statusFilter,
-            options: availableStatuses.map((status) => ({
+            selectedValue: mobileDraft.filters.status,
+            options: draftFacetOptions.statuses.map((status) => ({
               value: status,
               label: status === 'FINISHED' ? '已完賽' : status === 'UPCOMING' ? '即將開賽' : '全部狀態',
             })),
-            onSelect: (value) => setStatusFilter(value as StatusFilter),
+            onSelect: (value) => updateDraftFacet('status', value),
           }
         : mobileFilterView === 'TEAM'
           ? {
               title: '選擇球隊',
-              selectedValue: teamFilter,
+              selectedValue: mobileDraft.filters.team,
               options: [
                 { value: 'ALL', label: '全部球隊' },
-                ...availableTeams.map((team) => ({ value: team.id, label: team.name })),
+                ...draftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
               ],
-              onSelect: setTeamFilter,
+              onSelect: (value) => updateDraftFacet('team', value),
             }
           : mobileFilterView === 'DATE'
             ? {
                 title: '選擇日期',
-                selectedValue: dateFilter,
+                selectedValue: mobileDraft.filters.date,
                 options: [
                   { value: 'ALL', label: '全部日期' },
-                  ...availableDates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+                  ...draftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
                 ],
-                onSelect: setDateFilter,
+                onSelect: (value) => updateDraftFacet('date', value),
               }
             : mobileFilterView === 'ROUND'
               ? {
                   title: '選擇輪次',
-                  selectedValue: roundFilter,
+                  selectedValue: mobileDraft.filters.round,
                   options: [
                     { value: 'ALL', label: '全部輪次' },
-                    ...availableRounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                    ...draftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
                   ],
-                  onSelect: setRoundFilter,
+                  onSelect: (value) => updateDraftFacet('round', value),
                 }
               : null;
 
@@ -466,47 +530,45 @@ const SchedulePage: React.FC = () => {
         <div className="hidden md:block">
           <LeagueTabs
             options={desktopLeagueOptions}
-            active={leagueTab}
-            onChange={handleLeagueChange}
+            active={filters.league}
+            onChange={(league) => updateAppliedFacet('league', league)}
             getLabel={(tab) => tab === 'ALL' ? '全部' : activeSeason.leagues[tab]?.displayName ?? tab}
           />
         </div>
 
-        {seasonData.matches.length > 0 && (
-          <>
-            <button
-              type="button"
-              onClick={openMobileFilters}
-              className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
-              aria-label={`開啟賽程篩選，目前顯示${leagueSummary}，共 ${filteredMatches.length} 場`}
-            >
-              <span className="flex items-center text-[13px] font-black text-brand-black">
-                <Filter className="mr-2 h-3.5 w-3.5 text-brand-blue" aria-hidden="true" />
-                篩選
-                {activeMobileFilterCount > 0 && (
-                  <span className="ml-1.5 text-[11px] font-black text-brand-blue">
-                    {activeMobileFilterCount}
-                  </span>
-                )}
+        <button
+          type="button"
+          onClick={openMobileFilters}
+          className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
+          aria-label={`開啟賽程篩選，目前顯示${leagueSummary}，共 ${filteredMatches.length} 場`}
+        >
+          <span className="flex items-center text-[13px] font-black text-brand-black">
+            <Filter className="mr-2 h-3.5 w-3.5 text-brand-blue" aria-hidden="true" />
+            篩選
+            {activeMobileFilterCount > 0 && (
+              <span className="ml-1.5 text-[11px] font-black text-brand-blue">
+                {activeMobileFilterCount}
               </span>
-              <span className="flex items-center text-[11px] font-bold text-neutral-400">
-                {activeSeason.shortName} · {leagueSummary} · {filteredMatches.length} 場
-                <ChevronRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
-              </span>
-            </button>
+            )}
+          </span>
+          <span className="flex items-center text-[11px] font-bold text-neutral-400">
+            {activeSeason.shortName} · {leagueSummary} · {filteredMatches.length} 場
+            <ChevronRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </button>
 
-            <div className="mb-8 hidden rounded-xl border border-neutral-200 bg-neutral-50 p-5 md:block">
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center text-xs font-black uppercase tracking-widest text-brand-black">
-                  <Filter className="mr-2 h-4 w-4 text-brand-blue" /> 篩選賽程
-                </div>
-                <button type="button" onClick={resetFilters} className="inline-flex min-h-10 items-center text-xs font-bold text-neutral-400 hover:text-brand-black">
-                  <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> 清除
-                </button>
+        {seasonData.matches.length > 0 && (
+          <div className="mb-8 hidden rounded-xl border border-neutral-200 bg-neutral-50 p-5 md:block">
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center text-xs font-black uppercase tracking-widest text-brand-black">
+                <Filter className="mr-2 h-4 w-4 text-brand-blue" /> 篩選賽程
               </div>
-              <FilterFields {...filterFieldProps} />
+              <button type="button" onClick={resetFilters} className="inline-flex min-h-10 items-center text-xs font-bold text-neutral-400 hover:text-brand-black">
+                <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> 清除
+              </button>
             </div>
-          </>
+            <FilterFields {...filterFieldProps} />
+          </div>
         )}
 
         <div className="mb-20">
@@ -535,7 +597,7 @@ const SchedulePage: React.FC = () => {
             type="button"
             className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
             onClick={closeMobileFilters}
-            aria-label="關閉篩選"
+            aria-label="取消並關閉篩選"
           />
 
           <div className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl">
@@ -557,7 +619,7 @@ const SchedulePage: React.FC = () => {
                     type="button"
                     onClick={closeMobileFilters}
                     className="flex h-11 w-11 items-center justify-center text-neutral-400 active:text-brand-black"
-                    aria-label="關閉"
+                    aria-label="取消並關閉"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -607,7 +669,7 @@ const SchedulePage: React.FC = () => {
                       type="button"
                       onClick={closeMobileFilters}
                       className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-400 transition-colors active:bg-neutral-100 active:text-brand-black"
-                      aria-label="關閉"
+                      aria-label="取消並關閉"
                     >
                       <X className="h-5 w-5" />
                     </button>
@@ -616,12 +678,12 @@ const SchedulePage: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
                   {[
-                    { label: '賽季', value: activeSeason.shortName, view: 'SEASON' as const },
-                    { label: '聯賽級別', value: leagueSummary, view: 'LEAGUE' as const },
-                    { label: '比賽狀態', value: statusSummary, view: 'STATUS' as const },
-                    { label: '球隊', value: teamSummary, view: 'TEAM' as const },
-                    { label: '日期', value: dateSummary, view: 'DATE' as const },
-                    { label: '輪次', value: roundSummary, view: 'ROUND' as const },
+                    { label: '賽季', value: draftSeason.shortName, view: 'SEASON' as const },
+                    { label: '聯賽級別', value: draftLeagueSummary, view: 'LEAGUE' as const },
+                    { label: '比賽狀態', value: draftStatusSummary, view: 'STATUS' as const },
+                    { label: '球隊', value: draftTeamSummary, view: 'TEAM' as const },
+                    { label: '日期', value: draftDateSummary, view: 'DATE' as const },
+                    { label: '輪次', value: draftRoundSummary, view: 'ROUND' as const },
                   ].map((field) => (
                     <button
                       key={field.label}
@@ -641,18 +703,21 @@ const SchedulePage: React.FC = () => {
                 <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4">
                   <button
                     type="button"
-                    onClick={resetMobileFilters}
-                    disabled={activeMobileFilterCount === 0}
+                    onClick={() => setMobileDraft((currentDraft) => ({
+                      ...currentDraft,
+                      filters: { ...EMPTY_FILTERS },
+                    }))}
+                    disabled={draftFilterCount === 0}
                     className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 disabled:opacity-30"
                   >
                     <RotateCcw className="mr-2 h-4 w-4" /> 清除
                   </button>
                   <button
                     type="button"
-                    onClick={closeMobileFilters}
+                    onClick={applyMobileFilters}
                     className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white active:bg-blue-800"
                   >
-                    <Check className="mr-2 h-4 w-4" /> 顯示 {filteredMatches.length} 場
+                    <Check className="mr-2 h-4 w-4" /> 顯示 {draftFilteredMatches.length} 場
                   </button>
                 </div>
               </>

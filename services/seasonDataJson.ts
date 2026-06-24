@@ -73,7 +73,11 @@ const makeData = (
     matchEvents,
     disciplineDecisions,
     lineups,
-    news: newsInput.map((article) => ({ ...article, seasonId: id, imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '' })),
+    news: newsInput.map((article) => ({
+      ...article,
+      seasonId: id,
+      imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
+    })),
     media: mediaInput.map((item) => ({ ...item, thumbnail: assetUrl(item.thumbnail) })),
     albums: albumsInput.map((album) => ({ ...album, cover: assetUrl(album.cover) })),
   };
@@ -108,4 +112,11 @@ const DATA: Record<SeasonId, SeasonData> = {
   ),
 };
 
+const ALL_NEWS: NewsArticle[] = Object.values(DATA).flatMap((season) => season.news);
+
 export const getSeasonData = (seasonId: SeasonId): SeasonData => DATA[seasonId];
+
+export const getAllNews = (): NewsArticle[] => ALL_NEWS.slice();
+
+export const getNewsArticle = (articleId: string): NewsArticle | null =>
+  ALL_NEWS.find((article) => article.id === articleId) ?? null;

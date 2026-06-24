@@ -13,11 +13,12 @@ export interface Team {
 
 export enum MatchStatus {
   SCHEDULED = 'SCHEDULED',
-  LIVE = 'LIVE',
   FINISHED = 'FINISHED'
 }
 
 export type LeagueCode = 'L1' | 'L2' | 'L3' | 'CUP';
+
+export type MatchResultType = 'PLAYED' | 'FORFEIT' | 'DOUBLE_FORFEIT' | 'VOID';
 
 export interface Match {
   id: string;
@@ -30,7 +31,14 @@ export interface Match {
   venue: string;
   league: LeagueCode;
   round: number | string;
+  resultType?: MatchResultType;
+  countsForStandings?: boolean;
+  countsForPlayerStats?: boolean;
+  countsForSuspensionService?: boolean;
+  administrativeNote?: string;
 }
+
+export type StandingTieStatus = 'NONE' | 'SHARED' | 'DRAW_REQUIRED';
 
 export interface Standing {
   teamId: string;
@@ -42,6 +50,12 @@ export interface Standing {
   ga: number;
   gd: number;
   points: number;
+  pointsAdjustment: number;
+  directRedCards: number;
+  secondYellowDismissals: number;
+  yellowCards: number;
+  rank: number;
+  tieStatus: StandingTieStatus;
   form: ('W' | 'D' | 'L')[];
 }
 

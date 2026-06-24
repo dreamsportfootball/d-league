@@ -6,6 +6,7 @@ import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import MatchDialog from './MatchDialog';
+import Tabs from './Tabs';
 
 type MatchCenterFilter = 'Upcoming' | 'Results';
 
@@ -43,6 +44,8 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onClick }) => {
     <button
       type="button"
       onClick={() => onClick(match.id)}
+      data-analytics-event="match_open"
+      data-analytics-label={match.id}
       className="group relative mr-3 flex w-[85vw] shrink-0 snap-center select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-all duration-200 last:mr-0 hover:-translate-y-1 hover:shadow-lg active:scale-95 md:mr-4 md:w-80"
     >
       <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
@@ -179,29 +182,15 @@ const MatchCenter: React.FC = () => {
                   賽事 <span className="text-brand-blue">中心</span>
                 </h2>
               </div>
-              <div className="flex w-full space-x-6 border-b border-neutral-100 md:w-auto">
-                <button
-                  type="button"
-                  onClick={() => handleFilterChange('Results')}
-                  className={`border-b-2 pb-2 text-sm font-bold uppercase transition-all duration-300 ${
-                    filter === 'Results'
-                      ? 'border-brand-black text-brand-black'
-                      : 'border-transparent text-neutral-400 hover:text-neutral-600'
-                  }`}
-                >
-                  最新賽果
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleFilterChange('Upcoming')}
-                  className={`border-b-2 pb-2 text-sm font-bold uppercase transition-all duration-300 ${
-                    filter === 'Upcoming'
-                      ? 'border-brand-black text-brand-black'
-                      : 'border-transparent text-neutral-400 hover:text-neutral-600'
-                  }`}
-                >
-                  {upcomingLabel}
-                </button>
+              <div className="w-full rounded-full bg-neutral-100 p-1 md:w-auto">
+                <Tabs
+                  options={['Results', 'Upcoming'] as const}
+                  active={filter}
+                  onChange={handleFilterChange}
+                  getLabel={(value) => (value === 'Results' ? '最新賽果' : upcomingLabel)}
+                  variant="compact"
+                  ariaLabel="切換賽事中心內容"
+                />
               </div>
             </div>
 

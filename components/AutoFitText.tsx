@@ -5,6 +5,7 @@ interface AutoFitTextProps {
   className?: string;
   maxFontSize?: number;
   minFontSize?: number;
+  fitPadding?: number;
   title?: string;
 }
 
@@ -13,6 +14,7 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
   className = '',
   maxFontSize = 16,
   minFontSize = 7,
+  fitPadding = 0,
   title,
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
@@ -23,7 +25,7 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
     if (!element) return;
 
     const fit = () => {
-      const availableWidth = element.clientWidth;
+      const availableWidth = Math.max(0, element.clientWidth - fitPadding);
       if (availableWidth <= 0) return;
 
       element.style.fontSize = `${maxFontSize}px`;
@@ -32,7 +34,9 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
         requiredWidth > availableWidth
           ? Math.max(minFontSize, Math.floor((maxFontSize * availableWidth) / requiredWidth))
           : maxFontSize;
-      setFontSize(nextSize);
+
+      element.style.fontSize = `${nextSize}px`;
+      setFontSize((currentSize) => currentSize === nextSize ? currentSize : nextSize);
     };
 
     fit();
@@ -41,7 +45,7 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
     document.fonts?.ready.then(fit).catch(() => undefined);
 
     return () => observer.disconnect();
-  }, [maxFontSize, minFontSize, text]);
+  }, [fitPadding, maxFontSize, minFontSize, text]);
 
   return (
     <span

@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import LeagueTabs from '../components/LeagueTabs';
+import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
 import { useSeason } from '../hooks/useSeason';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
 import type { SuspensionReason } from '../types/discipline';
-import type { LeagueId } from '../types/season';
+import type { LeagueId, SeasonId } from '../types/season';
 
 interface RankedPlayerRow {
   subjectId: string;
@@ -44,7 +46,13 @@ const formatMatchLabel = (timestamp: string) =>
   });
 
 const StatsPage: React.FC = () => {
-  const { activeSeason, seasonData } = useSeason();
+  const {
+    activeSeasonId,
+    activeSeason,
+    seasonData,
+    availableSeasons,
+    setActiveSeason,
+  } = useSeason();
   const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
     try {
       const saved = window.sessionStorage.getItem('statsActiveLeague');
@@ -54,6 +62,14 @@ const StatsPage: React.FC = () => {
     }
   });
   const [activeTab, setActiveTab] = useState<StatsTab>('SCORERS');
+  const [seasonFilterOpen, setSeasonFilterOpen] = useState(false);
+  const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
@@ -161,6 +177,25 @@ const StatsPage: React.FC = () => {
       ? activeSuspensions.length > 0 || publicDecisions.length > 0
       : rankedList.length > 0;
 
+  const seasonField: FilterDrawerField = {
+    id: 'season',
+    label: '賽季',
+    value: draftSeasonId,
+    displayValue: draftSeason.shortName,
+    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+    onChange: (value) => setDraftSeasonId(value as SeasonId),
+  };
+
+  const openSeasonFilter = () => {
+    setDraftSeasonId(activeSeasonId);
+    setSeasonFilterOpen(true);
+  };
+
+  const applySeasonFilter = () => {
+    if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
+    setSeasonFilterOpen(false);
+  };
+
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
@@ -168,6 +203,16 @@ const StatsPage: React.FC = () => {
           title="數據"
           accent="中心"
           description={`${activeSeason.displayName} ${activeLeague} 球員與紀律數據`}
+          showMobileSeasonSelector={false}
+          showDesktopSeasonSelector={false}
+        />
+
+        <DataFilterToolbar
+          primaryText="資料賽季"
+          secondaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openSeasonFilter}
+          buttonLabel="更改賽季"
+          ariaLabel="更改數據中心賽季"
         />
 
         <LeagueTabs
@@ -335,6 +380,18 @@ const StatsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ResponsiveFilterDrawer
+        open={seasonFilterOpen}
+        fields={[seasonField]}
+        onClose={() => setSeasonFilterOpen(false)}
+        onClear={() => setDraftSeasonId(activeSeasonId)}
+        clearDisabled={draftSeasonId === activeSeasonId}
+        onApply={applySeasonFilter}
+        applyLabel="查看數據"
+        title="選擇資料賽季"
+        subtitle="聯賽級別仍可在頁面中直接切換"
+      />
     </div>
   );
 };

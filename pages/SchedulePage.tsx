@@ -189,7 +189,6 @@ const SchedulePage: React.FC = () => {
   } = useSeason();
   const [searchParams, setSearchParams] = useSearchParams();
   const previousSeasonIdRef = useRef(activeSeasonId);
-  const desktopFilterRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<ScheduleFilters>(() => {
     let savedLeague: LeagueFilter = 'ALL';
     try {
@@ -293,23 +292,17 @@ const SchedulePage: React.FC = () => {
 
   useEffect(() => {
     if (!desktopFiltersOpen) return;
+    document.body.style.overflow = 'hidden';
 
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target;
-      if (target instanceof Node && desktopFilterRef.current?.contains(target)) return;
-      setDesktopFilterView('ROOT');
-      setDesktopFiltersOpen(false);
-    };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       setDesktopFilterView('ROOT');
       setDesktopFiltersOpen(false);
     };
 
-    document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
+      document.body.style.overflow = '';
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [desktopFiltersOpen]);
@@ -619,8 +612,8 @@ const SchedulePage: React.FC = () => {
           </span>
         </button>
 
-        <div ref={desktopFilterRef} className="relative mb-8 hidden md:block">
-          <div className="flex min-h-14 items-center justify-between border-y border-neutral-100">
+        <div className="relative mb-8 hidden md:block">
+          <div className="flex min-h-14 items-center justify-between border-b border-neutral-100">
             <div className="flex items-baseline gap-3">
               <span className="font-display text-sm font-black tracking-wide text-brand-black">
                 {filteredMatches.length} 場比賽
@@ -646,141 +639,11 @@ const SchedulePage: React.FC = () => {
                 <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
               )}
               <ChevronRight
-                className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? '-rotate-90' : 'rotate-90'}`}
+                className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
                 aria-hidden="true"
               />
             </button>
           </div>
-
-          {desktopFiltersOpen && (
-            <div
-              id="desktop-schedule-filters"
-              role="dialog"
-              aria-label="篩選賽程"
-              className="absolute right-0 top-[calc(100%+12px)] z-50 flex max-h-[min(70vh,620px)] w-[380px] flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.16)]"
-            >
-              {desktopSelectorConfig ? (
-                <>
-                  <div className="grid shrink-0 grid-cols-[44px_1fr_44px] items-center border-b border-neutral-100 px-2 py-2">
-                    <button
-                      type="button"
-                      onClick={() => setDesktopFilterView('ROOT')}
-                      className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black"
-                      aria-label="返回篩選"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <h2 className="text-center font-display text-base font-black text-brand-black">
-                      {desktopSelectorConfig.title}
-                    </h2>
-                    <button
-                      type="button"
-                      onClick={closeDesktopFilters}
-                      className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
-                      aria-label="取消並關閉"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
-                    {desktopSelectorConfig.options.map((option) => {
-                      const selected = option.value === desktopSelectorConfig.selectedValue;
-                      return (
-                        <button
-                          key={option.value}
-                          type="button"
-                          role="radio"
-                          aria-checked={selected}
-                          onClick={() => {
-                            desktopSelectorConfig.onSelect(option.value);
-                            setDesktopFilterView('ROOT');
-                          }}
-                          className={`flex min-h-[52px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
-                            selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
-                          }`}
-                        >
-                          <span>{option.label}</span>
-                          <span
-                            className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
-                              selected ? 'border-brand-blue' : 'border-neutral-300'
-                            }`}
-                            aria-hidden="true"
-                          >
-                            {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="shrink-0 border-b border-neutral-100 px-5 py-5">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="font-display text-lg font-black text-brand-black">篩選賽程</p>
-                        <p className="mt-1 text-[11px] font-medium text-neutral-400">選擇要查看的比賽範圍</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={closeDesktopFilters}
-                        className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
-                        aria-label="取消並關閉"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
-                    {[
-                      { label: '賽季', value: desktopDraftSeason.shortName, view: 'SEASON' as const },
-                      { label: '聯賽級別', value: desktopDraftLeagueSummary, view: 'LEAGUE' as const },
-                      { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
-                      { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
-                      { label: '日期', value: desktopDraftDateSummary, view: 'DATE' as const },
-                      { label: '輪次', value: desktopDraftRoundSummary, view: 'ROUND' as const },
-                    ].map((field) => (
-                      <button
-                        key={field.label}
-                        type="button"
-                        onClick={() => setDesktopFilterView(field.view)}
-                        className="flex min-h-[58px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
-                      >
-                        <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
-                        <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
-                          {field.value}
-                        </span>
-                        <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 py-4">
-                    <button
-                      type="button"
-                      onClick={() => setDesktopDraft((currentDraft) => ({
-                        ...currentDraft,
-                        filters: { ...EMPTY_FILTERS },
-                      }))}
-                      disabled={desktopDraftFilterCount === 0}
-                      className="inline-flex min-h-11 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black disabled:opacity-30 disabled:hover:text-neutral-500"
-                    >
-                      <RotateCcw className="mr-2 h-4 w-4" /> 清除
-                    </button>
-                    <button
-                      type="button"
-                      onClick={applyDesktopFilters}
-                      className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800"
-                    >
-                      <Check className="mr-2 h-4 w-4" /> 顯示 {desktopDraftFilteredMatches.length} 場
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
         </div>
 
         <div className="mb-20">
@@ -802,6 +665,146 @@ const SchedulePage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {desktopFiltersOpen && (
+        <div className="fixed inset-0 z-[1200] hidden md:block">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+            onClick={closeDesktopFilters}
+            aria-label="取消並關閉篩選"
+          />
+
+          <aside
+            id="desktop-schedule-filters"
+            role="dialog"
+            aria-modal="true"
+            aria-label="篩選賽程"
+            className="absolute right-0 top-0 flex h-full w-[420px] max-w-full flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.2)]"
+          >
+            {desktopSelectorConfig ? (
+              <>
+                <div className="grid shrink-0 grid-cols-[52px_1fr_52px] items-center border-b border-neutral-100 px-3 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setDesktopFilterView('ROOT')}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black"
+                    aria-label="返回篩選"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <h2 className="text-center font-display text-lg font-black text-brand-black">
+                    {desktopSelectorConfig.title}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={closeDesktopFilters}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                    aria-label="取消並關閉"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
+                  {desktopSelectorConfig.options.map((option) => {
+                    const selected = option.value === desktopSelectorConfig.selectedValue;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => {
+                          desktopSelectorConfig.onSelect(option.value);
+                          setDesktopFilterView('ROOT');
+                        }}
+                        className={`flex min-h-[56px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
+                          selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
+                        }`}
+                      >
+                        <span>{option.label}</span>
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            selected ? 'border-brand-blue' : 'border-neutral-300'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="shrink-0 border-b border-neutral-100 px-7 py-7">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-display text-2xl font-black text-brand-black">篩選賽程</p>
+                      <p className="mt-1 text-xs font-medium text-neutral-400">選擇要查看的比賽範圍</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={closeDesktopFilters}
+                      className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                      aria-label="取消並關閉"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
+                  {[
+                    { label: '賽季', value: desktopDraftSeason.shortName, view: 'SEASON' as const },
+                    { label: '聯賽級別', value: desktopDraftLeagueSummary, view: 'LEAGUE' as const },
+                    { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
+                    { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
+                    { label: '日期', value: desktopDraftDateSummary, view: 'DATE' as const },
+                    { label: '輪次', value: desktopDraftRoundSummary, view: 'ROUND' as const },
+                  ].map((field) => (
+                    <button
+                      key={field.label}
+                      type="button"
+                      onClick={() => setDesktopFilterView(field.view)}
+                      className="flex min-h-[64px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
+                    >
+                      <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+                        {field.value}
+                      </span>
+                      <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid shrink-0 grid-cols-[auto_1fr] gap-4 border-t border-neutral-100 bg-white px-7 py-6">
+                  <button
+                    type="button"
+                    onClick={() => setDesktopDraft((currentDraft) => ({
+                      ...currentDraft,
+                      filters: { ...EMPTY_FILTERS },
+                    }))}
+                    disabled={desktopDraftFilterCount === 0}
+                    className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black disabled:opacity-30 disabled:hover:text-neutral-500"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" /> 清除
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyDesktopFilters}
+                    className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800"
+                  >
+                    <Check className="mr-2 h-4 w-4" /> 顯示 {desktopDraftFilteredMatches.length} 場
+                  </button>
+                </div>
+              </>
+            )}
+          </aside>
+        </div>
+      )}
 
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-[1200] flex items-end md:hidden" role="dialog" aria-modal="true" aria-label="篩選賽程">

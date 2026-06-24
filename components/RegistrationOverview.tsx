@@ -28,11 +28,11 @@ const RegistrationOverview: React.FC = () => {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-5">
             <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-brand-blue">
-              Registration Open
+              正式開放報名
             </span>
             <h2 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-6xl">
               {activeSeason.shortName}
-              <span className="block text-brand-blue">正式開放報名</span>
+              <span className="block text-brand-blue">賽季報名</span>
             </h2>
             <p className="mt-6 max-w-xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
               {activeSeason.enabledLeagues.join('、')} 共 {leagueCount} 個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
@@ -44,6 +44,7 @@ const RegistrationOverview: React.FC = () => {
                   href={activeSeason.registrationFormUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-analytics-event="registration_click"
                   className="inline-flex min-h-12 items-center justify-center bg-brand-accent px-6 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-brand-black hover:text-white focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
                 >
                   立即報名
@@ -53,6 +54,7 @@ const RegistrationOverview: React.FC = () => {
 
               <Link
                 to="/registration"
+                data-analytics-event="registration_details_click"
                 className="inline-flex min-h-12 items-center justify-center border border-neutral-300 px-6 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
               >
                 報名詳情
@@ -99,6 +101,7 @@ const RegistrationOverview: React.FC = () => {
               href={activeSeason.regulationsUrl}
               target="_blank"
               rel="noopener noreferrer"
+              data-analytics-event="regulations_click"
               className="inline-flex items-center text-sm font-bold text-neutral-500 transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
             >
               <FileText className="mr-2 h-4 w-4" aria-hidden="true" />

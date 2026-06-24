@@ -1,10 +1,45 @@
-import type { LeagueConfig, LeagueId, SeasonConfig, SeasonId } from '../types/season';
+import type { CompetitionRules, LeagueConfig, LeagueId, SeasonConfig, SeasonId } from '../types/season';
 
 const createUnavailableLeagueMap = (): Record<LeagueId, LeagueConfig | null> => ({
   L1: null,
   L2: null,
   L3: null,
 });
+
+const legacyRules: CompetitionRules = {
+  winPoints: 3,
+  drawPoints: 1,
+  lossPoints: 0,
+  rankingCriteria: ['GOAL_DIFFERENCE', 'GOALS_FOR'],
+  yellowCardSuspensionThreshold: 2,
+  automaticSuspensionMatches: 1,
+  yellowCardFine: 500,
+  secondYellowFine: 1000,
+  directRedFine: 1000,
+  resetCrossMatchYellowsAfterAnySuspension: true,
+};
+
+const season2026Rules: CompetitionRules = {
+  winPoints: 3,
+  drawPoints: 1,
+  lossPoints: 0,
+  rankingCriteria: [
+    'GOAL_DIFFERENCE',
+    'GOALS_FOR',
+    'HEAD_TO_HEAD_POINTS',
+    'HEAD_TO_HEAD_GOAL_DIFFERENCE',
+    'HEAD_TO_HEAD_GOALS_FOR',
+    'FEWEST_DIRECT_RED',
+    'FEWEST_SECOND_YELLOW',
+    'FEWEST_YELLOW',
+  ],
+  yellowCardSuspensionThreshold: 2,
+  automaticSuspensionMatches: 1,
+  yellowCardFine: 500,
+  secondYellowFine: 1000,
+  directRedFine: 1000,
+  resetCrossMatchYellowsAfterAnySuspension: true,
+};
 
 const season2025Leagues = createUnavailableLeagueMap();
 season2025Leagues.L1 = {
@@ -87,6 +122,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     youtubePlaylistEmbedUrl: 'https://www.youtube.com/embed/videoseries?list=PLly5Ox2OW8PCiK_sny6DzH9EdA73qK7Hw',
     youtubePlaylistLabel: '2025/26 賽季完整賽事',
     enabledLeagues: ['L1', 'L2'],
+    rules: legacyRules,
     leagues: season2025Leagues,
   },
   '2026-27': {
@@ -105,6 +141,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     heroFallbackImage: 'banner.png',
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式開放報名',
+    rules: season2026Rules,
     leagues: season2026Leagues,
   },
 };

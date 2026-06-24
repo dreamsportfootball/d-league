@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { useSeason } from '../hooks/useSeason';
+import { getSeasonConfig } from '../config/seasons';
+import { getNewsArticle } from '../services/seasonDataJson';
 
 const CATEGORY_META = {
   'Match Report': { label: '賽事戰報' },
@@ -50,20 +51,17 @@ const ArticleBody: React.FC<{ text: string }> = ({ text }) => {
 
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { activeSeason, seasonData } = useSeason();
 
   const article = useMemo(
-    () => seasonData.news.find((item) => item.id === id) ?? null,
-    [id, seasonData.news],
+    () => (id ? getNewsArticle(id) : null),
+    [id],
   );
 
   if (!article) {
     return (
       <div className="min-h-screen bg-white px-6 pt-32 text-center">
         <h1 className="mb-4 text-xl font-medium tracking-widest text-neutral-900">文章不存在</h1>
-        <p className="mb-6 text-sm text-neutral-400">
-          此文章可能不屬於目前選擇的 {activeSeason.shortName} 賽季
-        </p>
+        <p className="mb-6 text-sm text-neutral-400">此文章可能已移除或網址不正確</p>
         <Link
           to="/news"
           className="border-b border-transparent pb-1 text-xs tracking-[0.2em] text-neutral-400 transition-colors hover:border-black hover:text-black"
@@ -75,6 +73,7 @@ const ArticleDetailPage: React.FC = () => {
   }
 
   const contentText = article.content || article.summary || '';
+  const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
   return (
     <article className="min-h-screen bg-white pb-32 pt-14 md:pt-24">
@@ -101,9 +100,11 @@ const ArticleDetailPage: React.FC = () => {
             <span className="font-mono text-[11px] tracking-wider text-neutral-400">
               {formatDate(article.timestamp)}
             </span>
-            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-blue">
-              {activeSeason.shortName}
-            </span>
+            {seasonLabel && (
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-blue">
+                {seasonLabel}
+              </span>
+            )}
           </div>
 
           <h1 className="mb-4 font-display text-[26px] font-bold uppercase leading-[1.2] tracking-wider text-neutral-900 md:mb-5 md:text-[34px]">

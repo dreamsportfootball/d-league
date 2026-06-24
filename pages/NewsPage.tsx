@@ -3,6 +3,7 @@ import { ArrowRight, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import type { NewsArticle } from '../types';
+import type { SeasonId } from '../types/season';
 
 type NewsFilter = 'ALL' | 'Match Report' | 'Official';
 
@@ -130,22 +131,23 @@ const NewsPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2 md:mt-0">
-            {availableSeasons.map((season) => (
-              <button
-                key={season.id}
-                type="button"
-                onClick={() => setActiveSeason(season.id)}
-                className={`rounded-full border px-4 py-2 text-xs font-black transition-colors ${
-                  activeSeasonId === season.id
-                    ? 'border-brand-blue bg-brand-blue text-white'
-                    : 'border-neutral-200 text-neutral-500 hover:border-neutral-400'
-                }`}
-              >
-                {season.shortName}
-              </button>
-            ))}
-          </div>
+          <label className="mt-6 block md:mt-0">
+            <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
+              查看賽季
+            </span>
+            <select
+              value={activeSeasonId}
+              onChange={(event) => setActiveSeason(event.target.value as SeasonId)}
+              data-analytics-event="season_switch"
+              className="min-h-11 min-w-44 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-black text-brand-black focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20"
+            >
+              {availableSeasons.map((season) => (
+                <option key={season.id} value={season.id}>
+                  {season.displayName}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         <div className="mb-10 flex flex-wrap gap-x-6 gap-y-3 border-b border-neutral-100">

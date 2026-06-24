@@ -29,32 +29,32 @@ const getEventIcon = (type: MatchEventType) => {
 const TimelineRow: React.FC<{ event: MatchEvent }> = ({ event }) => {
   const isHome = event.team === 'HOME';
   const isLongName = event.player.length > 12;
-  const textSizeClass = isLongName ? 'text-[10px] leading-tight' : 'text-sm';
-  const extraText = event.isPK ? ' (PK)' : event.isOwnGoal ? ' (烏龍球)' : '';
+  const textSizeClass = isLongName ? 'text-[11px] leading-tight' : 'text-[13px] sm:text-sm';
+  const extraText = event.isPK ? '（十二碼）' : event.isOwnGoal ? '（烏龍球）' : '';
 
   return (
-    <div className="relative flex w-full items-center py-1">
-      <div className="flex min-w-0 flex-1 justify-end pr-2">
+    <div className="relative flex min-h-7 w-full items-center py-1.5">
+      <div className="flex min-w-0 flex-1 justify-end pr-2.5 sm:pr-3">
         {isHome && (
-          <div className="flex w-full items-center justify-end space-x-2">
-            <span className={`break-words text-right font-medium text-brand-black ${textSizeClass}`}>
+          <div className="flex w-full items-center justify-end gap-2">
+            <span className={`break-words text-right font-semibold text-brand-black ${textSizeClass}`}>
               {event.player}
-              <span className="text-xs font-normal text-neutral-500">{extraText}</span>
+              <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
             </span>
-            <span className="w-6 shrink-0 text-center text-[10px] font-bold text-neutral-500">{event.minute}'</span>
+            <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
           </div>
         )}
       </div>
 
-      <div className="z-10 flex w-8 shrink-0 flex-col items-center">{getEventIcon(event.type)}</div>
+      <div className="z-10 flex w-9 shrink-0 items-center justify-center">{getEventIcon(event.type)}</div>
 
-      <div className="flex min-w-0 flex-1 justify-start pl-2">
+      <div className="flex min-w-0 flex-1 justify-start pl-2.5 sm:pl-3">
         {!isHome && (
-          <div className="flex w-full items-center space-x-2">
-            <span className="w-6 shrink-0 text-center text-[10px] font-bold text-neutral-500">{event.minute}'</span>
-            <span className={`break-words text-left font-medium text-brand-black ${textSizeClass}`}>
+          <div className="flex w-full items-center gap-2">
+            <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
+            <span className={`break-words text-left font-semibold text-brand-black ${textSizeClass}`}>
               {event.player}
-              <span className="text-xs font-normal text-neutral-500">{extraText}</span>
+              <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
             </span>
           </div>
         )}
@@ -68,13 +68,13 @@ const MatchEvents: React.FC<{ matchId: string }> = ({ matchId }) => {
   const events = seasonData.matchEvents[matchId] ?? [];
 
   if (events.length === 0) {
-    return <p className="py-4 text-center text-sm text-neutral-400">目前沒有事件記錄</p>;
+    return <p className="py-5 text-center text-sm font-medium text-neutral-400">目前沒有比賽事件</p>;
   }
 
   const sortedEvents = events.slice().sort((a, b) => a.minute - b.minute);
 
   return (
-    <div className="relative mx-auto my-6 flex w-full max-w-xl flex-col">
+    <div className="relative mx-auto mt-5 flex w-full max-w-lg flex-col sm:mt-6">
       {sortedEvents.map((event) => (
         <TimelineRow key={event.id} event={event} />
       ))}

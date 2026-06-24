@@ -9,6 +9,7 @@ import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
 import RegistrationOverview from '../components/RegistrationOverview';
 import Standings from '../components/Standings';
+import Tabs from '../components/Tabs';
 import VideoHub from '../components/VideoHub';
 import { DEFAULT_SEASON_ID } from '../config/seasons';
 import { useSeason } from '../hooks/useSeason';
@@ -99,7 +100,7 @@ const HomePage: React.FC = () => {
       <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-4 md:px-6">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
           <div className="order-2 lg:order-1 lg:col-span-4">
-            <div className="mb-4 flex items-end justify-between border-b border-neutral-100 pb-2">
+            <div className="mb-4 flex items-end justify-between gap-4 border-b border-neutral-100 pb-2">
               <div>
                 <span className="mb-1 block font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400">
                   {activeSeason.status === 'completed' ? 'Final Ranking' : 'Ranking'}
@@ -110,22 +111,15 @@ const HomePage: React.FC = () => {
                 </h3>
               </div>
 
-              <div className="flex space-x-1 rounded-full bg-neutral-100 p-1">
-                {activeSeason.enabledLeagues.map((league) => (
-                  <button
-                    key={league}
-                    type="button"
-                    onClick={() => setActiveLeague(league)}
-                    className={`rounded-full px-4 py-1 text-xs font-bold uppercase transition-all ${
-                      activeLeague === league
-                        ? 'bg-white text-brand-black shadow-sm'
-                        : 'text-neutral-400 hover:text-neutral-600'
-                    }`}
-                  >
-                    <span className="md:hidden">{league}</span>
-                    <span className="hidden md:inline">{activeSeason.leagues[league]?.displayName ?? league}</span>
-                  </button>
-                ))}
+              <div className="rounded-full bg-neutral-100 p-1">
+                <Tabs
+                  options={activeSeason.enabledLeagues}
+                  active={activeLeague}
+                  onChange={setActiveLeague}
+                  getLabel={(league) => league}
+                  variant="compact"
+                  ariaLabel="切換積分榜級別"
+                />
               </div>
             </div>
 

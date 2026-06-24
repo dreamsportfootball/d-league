@@ -8,6 +8,7 @@ import l25 from '../data/seasons/2025-26/lineups.json';
 import n25 from '../data/seasons/2025-26/news.json';
 import v25 from '../data/seasons/2025-26/media.json';
 import a25 from '../data/seasons/2025-26/albums.json';
+import { preview2026Matches, preview2026Teams } from '../data/previews/season2026Preview';
 import t26 from '../data/seasons/2026-27/teams.json';
 import p26 from '../data/seasons/2026-27/players.json';
 import pi26 from '../data/seasons/2026-27/playerImages.json';
@@ -44,6 +45,10 @@ export const assetUrl = (path: string): string => {
   if (/^https?:\/\//.test(path)) return path;
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '').replace(/^d-league\//, '')}`;
 };
+
+const use2026PreviewData =
+  typeof window !== 'undefined' &&
+  (import.meta.env.DEV || window.location.pathname.includes('/preview/season-2026-27/'));
 
 const makeData = (
   id: SeasonId,
@@ -90,10 +95,10 @@ const DATA: Record<SeasonId, SeasonData> = {
   ),
   '2026-27': makeData(
     '2026-27',
-    t26 as SeasonTeam[],
+    use2026PreviewData ? preview2026Teams : t26 as SeasonTeam[],
     p26 as PlayerProfile[],
     pi26 as Record<string, string>,
-    m26 as Match[],
+    use2026PreviewData ? preview2026Matches : m26 as Match[],
     e26 as Record<string, MatchEvent[]>,
     d26 as DisciplineDecision[],
     l26 as Record<string, MatchLineup>,

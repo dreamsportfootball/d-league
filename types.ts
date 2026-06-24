@@ -37,6 +37,9 @@ export interface Match {
   countsForPlayerStats?: boolean;
   countsForSuspensionService?: boolean;
   administrativeNote?: string;
+  videoUrl?: string;
+  albumId?: string;
+  reportArticleId?: string;
 }
 
 export type StandingTieStatus = 'NONE' | 'SHARED' | 'DRAW_REQUIRED';

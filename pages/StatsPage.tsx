@@ -1,19 +1,41 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Trophy, User } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, Trophy, User } from 'lucide-react';
 import EmptyState from '../components/EmptyState';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
+import { calculateDiscipline } from '../services/disciplineEngine';
+import type { SuspensionReason } from '../types/discipline';
 import type { LeagueId } from '../types/season';
 
-interface PlayerStats {
+interface RankedPlayerRow {
+  subjectId: string;
   name: string;
   teamId: string;
   goals: number;
   yellowCards: number;
-  redCards: number;
+  secondYellowDismissals: number;
+  directRedCards: number;
+  rank: number;
 }
 
-type StatsTab = 'SCORERS' | 'CARDS';
+type StatsTab = 'SCORERS' | 'CARDS' | 'SUSPENSIONS';
+
+const suspensionReasonLabel: Record<SuspensionReason, string> = {
+  ACCUMULATED_YELLOW: '累積黃牌',
+  SECOND_YELLOW: '單場雙黃',
+  DIRECT_RED: '直接紅牌',
+  MANUAL_DECISION: '紀律處分',
+};
+
+const formatMatchLabel = (timestamp: string) => {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+};
 
 const StatsPage: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
@@ -42,88 +64,99 @@ const StatsPage: React.FC = () => {
     }
   };
 
-  const playerCurrentTeamMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    seasonData.players.forEach((player) => {
-      map[player.name] = player.teamId;
-    });
-    return map;
-  }, [seasonData.players]);
+  const playerStats = useMemo(
+    () =>
+      calculatePlayerCompetitionStats(
+        activeLeague,
+        seasonData.teams,
+        seasonData.players,
+        seasonData.matches,
+        seasonData.matchEvents,
+      ),
+    [activeLeague, seasonData.matchEvents, seasonData.matches, seasonData.players, seasonData.teams],
+  );
 
-  const statsData = useMemo(() => {
-    const stats: Record<string, PlayerStats> = {};
-    const matchMap = Object.fromEntries(seasonData.matches.map((match) => [match.id, match]));
+  const discipline = useMemo(
+    () =>
+      calculateDiscipline({
+        matches: seasonData.matches,
+        matchEvents: seasonData.matchEvents,
+        players: seasonData.players,
+        lineups: seasonData.lineups,
+        decisions: seasonData.disciplineDecisions,
+        rules: activeSeason.rules,
+      }),
+    [
+      activeSeason.rules,
+      seasonData.disciplineDecisions,
+      seasonData.lineups,
+      seasonData.matchEvents,
+      seasonData.matches,
+      seasonData.players,
+    ],
+  );
 
-    Object.entries(seasonData.matchEvents).forEach(([matchId, events]) => {
-      const match = matchMap[matchId];
-      if (!match || match.league !== activeLeague) return;
-
-      events.forEach((event) => {
-        const currentTeamId = playerCurrentTeamMap[event.player];
-        const currentTeam = currentTeamId ? seasonData.teamMap[currentTeamId] : undefined;
-        const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
-        const displayTeamId = currentTeam?.leagueId === activeLeague ? currentTeamId : eventTeamId;
-
-        const row = stats[event.player] ?? {
-          name: event.player,
-          teamId: displayTeamId,
-          goals: 0,
-          yellowCards: 0,
-          redCards: 0,
-        };
-
-        row.teamId = displayTeamId;
-
-        if (event.type === 'GOAL' && !event.isOwnGoal && !event.player.includes('(烏龍球)')) {
-          row.goals += 1;
-        }
-        if (event.type === 'YELLOW_CARD') row.yellowCards += 1;
-        if (event.type === 'RED_CARD') row.redCards += 1;
-        if (event.type === 'SECOND_YELLOW') {
-          row.yellowCards += 1;
-          row.redCards += 1;
-        }
-
-        stats[event.player] = row;
-      });
-    });
-
-    return Object.values(stats);
-  }, [activeLeague, playerCurrentTeamMap, seasonData.matchEvents, seasonData.matches, seasonData.teamMap]);
-
-  const sortedList = useMemo(() => {
-    if (activeTab === 'SCORERS') {
-      return statsData
-        .filter((player) => player.goals > 0)
-        .sort((a, b) => b.goals - a.goals || a.name.localeCompare(b.name, 'zh-TW'));
-    }
-
-    return statsData
-      .filter((player) => player.yellowCards > 0 || player.redCards > 0)
+  const rankedList = useMemo<RankedPlayerRow[]>(() => {
+    const filtered = playerStats
+      .filter((player) => {
+        const team = seasonData.teamMap[player.teamId];
+        if (!team || team.leagueId !== activeLeague) return false;
+        return activeTab === 'SCORERS'
+          ? player.goals > 0
+          : player.yellowCards > 0 || player.secondYellowDismissals > 0 || player.directRedCards > 0;
+      })
       .sort((a, b) => {
-        if (b.redCards !== a.redCards) return b.redCards - a.redCards;
+        if (activeTab === 'SCORERS') {
+          return b.goals - a.goals || a.name.localeCompare(b.name, 'zh-TW');
+        }
+        if (b.directRedCards !== a.directRedCards) return b.directRedCards - a.directRedCards;
+        if (b.secondYellowDismissals !== a.secondYellowDismissals) {
+          return b.secondYellowDismissals - a.secondYellowDismissals;
+        }
         if (b.yellowCards !== a.yellowCards) return b.yellowCards - a.yellowCards;
         return a.name.localeCompare(b.name, 'zh-TW');
       });
-  }, [activeTab, statsData]);
 
-  const rankedList = useMemo(() => {
     let currentRank = 1;
-    return sortedList.map((player, index) => {
+    return filtered.map((player, index) => {
       if (
         activeTab === 'SCORERS' &&
         index > 0 &&
-        player.goals !== sortedList[index - 1].goals
+        player.goals !== filtered[index - 1].goals
       ) {
         currentRank = index + 1;
-      } else if (activeTab === 'CARDS') {
+      } else if (activeTab !== 'SCORERS') {
         currentRank = index + 1;
       }
       return { ...player, rank: currentRank };
     });
-  }, [activeTab, sortedList]);
+  }, [activeLeague, activeTab, playerStats, seasonData.teamMap]);
 
-  const hasData = rankedList.length > 0;
+  const activeSuspensions = useMemo(
+    () =>
+      discipline.suspensions
+        .filter((suspension) => {
+          if (suspension.remainingMatches <= 0) return false;
+          const team = seasonData.teamMap[
+            discipline.summaries.find((summary) => summary.subjectId === suspension.subjectId)?.currentTeamId ??
+              suspension.teamIdAtIssue
+          ];
+          return team?.leagueId === activeLeague;
+        })
+        .sort((a, b) => b.remainingMatches - a.remainingMatches || a.subjectName.localeCompare(b.subjectName, 'zh-TW')),
+    [activeLeague, discipline.summaries, discipline.suspensions, seasonData.teamMap],
+  );
+
+  const publicDecisions = useMemo(
+    () =>
+      seasonData.disciplineDecisions
+        .filter((decision) => decision.status !== 'OVERTURNED' && decision.publicSummary)
+        .filter((decision) => seasonData.teamMap[decision.teamId]?.leagueId === activeLeague)
+        .sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime()),
+    [activeLeague, seasonData.disciplineDecisions, seasonData.teamMap],
+  );
+
+  const hasData = activeTab === 'SUSPENSIONS' ? activeSuspensions.length > 0 || publicDecisions.length > 0 : rankedList.length > 0;
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -131,7 +164,7 @@ const StatsPage: React.FC = () => {
         <SeasonPageHeader
           title="數據"
           accent="中心"
-          description={`${activeSeason.displayName} ${activeLeague} 球員數據`}
+          description={`${activeSeason.displayName} ${activeLeague} 球員與紀律數據`}
         />
 
         <div className="mb-10 flex items-center justify-between border-b border-neutral-100 pb-4">
@@ -158,7 +191,7 @@ const StatsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-6 flex space-x-10 px-2">
+        <div className="mb-6 flex flex-wrap gap-x-8 gap-y-3 px-2">
           <button
             type="button"
             onClick={() => setActiveTab('SCORERS')}
@@ -177,14 +210,88 @@ const StatsPage: React.FC = () => {
           >
             紅黃牌
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('SUSPENSIONS')}
+            className={`text-sm font-bold uppercase tracking-widest transition-colors md:text-base ${
+              activeTab === 'SUSPENSIONS' ? 'text-brand-black' : 'text-neutral-300 hover:text-neutral-500'
+            }`}
+          >
+            停賽與紀律
+          </button>
         </div>
 
         {!hasData ? (
           <EmptyState
-            title="新賽季尚未開始"
-            description="射手榜及紅黃牌紀錄將於首輪比賽後更新"
+            title={activeTab === 'SUSPENSIONS' ? '目前沒有執行中的停賽' : '新賽季尚未開始'}
+            description={
+              activeTab === 'SUSPENSIONS'
+                ? '停賽名單及紀律公告將依正式賽事紀錄更新'
+                : '射手榜及紅黃牌紀錄將於首輪比賽後更新'
+            }
             showRegistrationLink={activeSeason.status === 'registration'}
           />
+        ) : activeTab === 'SUSPENSIONS' ? (
+          <div className="space-y-10">
+            {activeSuspensions.length > 0 && (
+              <section>
+                <div className="mb-4 flex items-center">
+                  <ShieldAlert className="mr-2 h-5 w-5 text-brand-blue" aria-hidden="true" />
+                  <h2 className="font-display text-xl font-black uppercase tracking-wide text-brand-black">執行中停賽</h2>
+                </div>
+                <div className="divide-y divide-neutral-100 border-y border-neutral-200">
+                  {activeSuspensions.map((suspension) => {
+                    const summary = discipline.summaries.find((item) => item.subjectId === suspension.subjectId);
+                    const team = seasonData.teamMap[summary?.currentTeamId ?? suspension.teamIdAtIssue];
+                    const nextMatch = suspension.nextMatchId
+                      ? seasonData.matches.find((match) => match.id === suspension.nextMatchId)
+                      : undefined;
+                    return (
+                      <div key={suspension.id} className="grid gap-4 py-5 md:grid-cols-[1fr_auto] md:items-center">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-3">
+                            {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
+                            <div className="min-w-0">
+                              <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
+                              <p className="mt-1 text-xs font-bold text-neutral-400">
+                                {team?.shortName ?? suspension.teamIdAtIssue} · {suspensionReasonLabel[suspension.reason]}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-left md:text-right">
+                          <p className="font-display text-2xl font-black text-brand-blue">
+                            剩餘 {suspension.remainingMatches} 場
+                          </p>
+                          <p className="mt-1 text-xs font-medium text-neutral-400">
+                            {nextMatch ? `預計於 ${formatMatchLabel(nextMatch.timestamp)} 執行` : '下一場正式比賽執行'}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {publicDecisions.length > 0 && (
+              <section className="rounded-xl border border-neutral-200 bg-neutral-50 p-5 md:p-6">
+                <div className="mb-4 flex items-center">
+                  <AlertTriangle className="mr-2 h-4 w-4 text-neutral-500" aria-hidden="true" />
+                  <h2 className="text-sm font-black uppercase tracking-widest text-brand-black">紀律公告</h2>
+                </div>
+                <div className="space-y-4">
+                  {publicDecisions.map((decision) => (
+                    <div key={decision.id} className="border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
+                      <p className="text-xs font-bold text-neutral-400">{formatMatchLabel(decision.issuedAt)}</p>
+                      <p className="mt-1 text-sm font-bold text-brand-black">{decision.subjectName}</p>
+                      <p className="mt-1 text-sm leading-6 text-neutral-600">{decision.publicSummary}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
         ) : (
           <div className="flex w-full flex-col">
             {rankedList.map((player, index) => {
@@ -195,7 +302,7 @@ const StatsPage: React.FC = () => {
 
               return (
                 <div
-                  key={`${player.name}-${player.teamId}`}
+                  key={`${player.subjectId}-${activeLeague}`}
                   className={`group relative flex items-center border-b border-neutral-100 transition-colors ${
                     isTopScorer ? 'bg-white py-6' : 'py-3.5 hover:bg-neutral-50'
                   }`}
@@ -237,9 +344,17 @@ const StatsPage: React.FC = () => {
                       </span>
                     ) : (
                       <div className="flex items-center justify-end space-x-3">
-                        {player.redCards > 0 && (
+                        {player.directRedCards > 0 && (
                           <div className="flex h-8 w-6 -skew-x-12 items-center justify-center rounded-sm bg-red-600 font-display text-sm font-black text-white shadow-sm">
-                            <span className="skew-x-12">{player.redCards}</span>
+                            <span className="skew-x-12">{player.directRedCards}</span>
+                          </div>
+                        )}
+                        {player.secondYellowDismissals > 0 && (
+                          <div className="relative flex h-8 w-8 items-center justify-center" title="雙黃退場">
+                            <div className="absolute left-1 top-1 h-7 w-5 -rotate-6 rounded-sm bg-yellow-400 shadow-sm" />
+                            <div className="absolute right-1 top-0.5 flex h-7 w-5 rotate-3 items-center justify-center rounded-sm bg-red-600 font-display text-xs font-black text-white shadow-sm">
+                              {player.secondYellowDismissals}
+                            </div>
                           </div>
                         )}
                         {player.yellowCards > 0 && (

@@ -9,4 +9,8 @@ export interface SeasonTeam {
   logo: string;
   primaryColor: string;
   secondaryColor?: string;
+  competitionStatus?: 'ACTIVE' | 'WITHDRAWN';
+  pointsAdjustment?: number;
+  pointsAdjustmentReason?: string;
+  manualTiebreakOrder?: number;
 }

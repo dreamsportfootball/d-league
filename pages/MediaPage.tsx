@@ -1,21 +1,27 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowUpRight, Instagram, Play, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import type { Video } from '../types';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
 const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
-  <div className="group block">
+  <a
+    href={album.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+  >
     <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
       <img
         src={album.cover}
         alt={album.title}
         loading="lazy"
-        className="pointer-events-none h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
       />
     </div>
 
@@ -23,20 +29,43 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
       <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
         {album.date}
       </span>
-
-      <a
-        href={album.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors hover:text-blue-800"
-      >
-        <span className="border-b border-transparent pb-0.5 transition-all hover:border-blue-800">查看相簿</span>
-        <ArrowUpRight className="h-3 w-3" />
-      </a>
-
+      <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
+        <span className="border-b border-transparent pb-0.5 transition-all group-hover:border-blue-800">查看相簿</span>
+        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+      </span>
       <h3 className="font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
     </div>
-  </div>
+  </a>
+);
+
+const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
+  <a
+    href={video.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+  >
+    <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
+      <img
+        src={video.thumbnail}
+        alt={video.title || 'D LEAGUE 賽事精華'}
+        loading="lazy"
+        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+      />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
+          <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
+        </span>
+      </div>
+    </div>
+    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400">
+      <span>{video.date}</span>
+      <span>{video.duration}</span>
+    </div>
+    <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
+      {video.title || '賽事精華'}
+    </h3>
+  </a>
 );
 
 const MediaPage: React.FC = () => {
@@ -50,6 +79,8 @@ const MediaPage: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -60,6 +91,30 @@ const MediaPage: React.FC = () => {
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
   );
+  const highlights = useMemo(
+    () => seasonData.media.slice().sort((a, b) => b.date.localeCompare(a.date)),
+    [seasonData.media],
+  );
+
+  const updateGalleryControls = () => {
+    const container = galleryRef.current;
+    if (!container) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    setCanScrollLeft(container.scrollLeft > 4);
+    setCanScrollRight(container.scrollLeft + container.clientWidth < container.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(updateGalleryControls);
+    window.addEventListener('resize', updateGalleryControls);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updateGalleryControls);
+    };
+  }, [reversedAlbums]);
 
   const scrollGallery = (direction: 'left' | 'right') => {
     const container = galleryRef.current;
@@ -70,8 +125,12 @@ const MediaPage: React.FC = () => {
     });
   };
 
-  const hasMedia = reversedAlbums.length > 0 || Boolean(activeSeason.youtubePlaylistEmbedUrl);
-  const mediaItemCount = reversedAlbums.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
+  const hasMedia =
+    reversedAlbums.length > 0 ||
+    highlights.length > 0 ||
+    Boolean(activeSeason.youtubePlaylistEmbedUrl);
+  const mediaItemCount =
+    reversedAlbums.length + highlights.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
   const seasonField: FilterDrawerField = {
     id: 'season',
     label: '賽季',
@@ -135,7 +194,8 @@ const MediaPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollGallery('left')}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100"
+                      disabled={!canScrollLeft}
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
                       aria-label="上一組相簿"
                     >
                       <span className="text-lg leading-none">‹</span>
@@ -143,7 +203,8 @@ const MediaPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => scrollGallery('right')}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100"
+                      disabled={!canScrollRight}
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
                       aria-label="下一組相簿"
                     >
                       <span className="text-lg leading-none">›</span>
@@ -153,6 +214,7 @@ const MediaPage: React.FC = () => {
 
                 <div
                   ref={galleryRef}
+                  onScroll={updateGalleryControls}
                   className="no-scrollbar flex snap-x space-x-6 overflow-x-auto pb-6 pt-1"
                 >
                   {reversedAlbums.map((album) => (
@@ -162,6 +224,22 @@ const MediaPage: React.FC = () => {
                   ))}
                 </div>
               </div>
+            )}
+
+            {highlights.length > 0 && (
+              <section className="mb-12 md:mb-24">
+                <div className="mb-8 flex items-center">
+                  <div className="mr-4 h-[2px] w-8 bg-brand-black" />
+                  <h2 className="font-display text-xl font-bold uppercase tracking-widest text-brand-black">
+                    賽事精華
+                  </h2>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8">
+                  {highlights.map((video) => (
+                    <HighlightVideo key={video.id} video={video} />
+                  ))}
+                </div>
+              </section>
             )}
 
             {activeSeason.youtubePlaylistEmbedUrl && (

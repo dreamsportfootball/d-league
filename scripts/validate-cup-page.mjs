@@ -16,14 +16,14 @@ const expectedGroups = {
   ],
 };
 const expectedKnockoutMatches = {
-  13: ['台南長青俱樂部', '7–0', 'Landen United'],
-  14: ['歹命打工人', '3–1', 'KAFC'],
-  15: ['東港足球隊', '3–1', 'TNSCF Eagles'],
-  16: ['新年快快樂樂', '6–1', '東高 FC'],
-  17: ['台南長青俱樂部', '1–0', '歹命打工人'],
-  18: ['Landen United', '1–1', 'KAFC', 'PK 1–3'],
-  19: ['TNSCF Eagles', '2–0', '東高 FC'],
-  20: ['東港足球隊', '2–1', '新年快快樂樂'],
+  13: ['台南長青俱樂部', '7 - 0', 'Landen United'],
+  14: ['歹命打工人', '3 - 1', 'KAFC'],
+  15: ['東港足球隊', '3 - 1', 'TNSCF Eagles'],
+  16: ['新年快快樂樂', '6 - 1', '東高 FC'],
+  17: ['台南長青俱樂部', '1 - 0', '歹命打工人'],
+  18: ['Landen United', '1 - 1', 'KAFC', 'PK 1 - 3'],
+  19: ['TNSCF Eagles', '2 - 0', '東高 FC'],
+  20: ['東港足球隊', '2 - 1', '新年快快樂樂'],
 };
 const rankingRule = '小組排名依積分、相關球隊對戰成績、淨勝球、總進球數；全部相同以 PK 點球大戰決定';
 const pairingRule = '小組前兩名進入盃賽：A1 對 B2、B1 對 A2；小組後兩名進入盤賽：A3 對 B4、B3 對 A4';
@@ -52,7 +52,7 @@ try {
   if (!bodyText.includes('盃賽冠軍') || !bodyText.includes('東港足球隊')) {
     fail('cup champion is missing');
   }
-  if (!bodyText.includes('決賽') || !bodyText.includes('2–1')) {
+  if (!bodyText.includes('決賽') || !bodyText.includes('2 - 1')) {
     fail('cup final score is missing');
   }
   if (!bodyText.includes(rankingRule)) fail('group ranking rule does not match the regulations');

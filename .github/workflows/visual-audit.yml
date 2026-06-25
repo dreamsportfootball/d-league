@@ -40,6 +40,7 @@ jobs:
       - name: Build preview-mode site
         env:
           VITE_ROUTER_MODE: hash
+          VITE_USE_PREVIEW_DATA: "true"
         run: npx vite build --base=/
 
       - name: Start local preview server

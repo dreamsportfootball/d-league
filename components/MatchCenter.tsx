@@ -5,19 +5,12 @@ import { useMatchQuery } from '../hooks/useMatchQuery';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
+import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import AutoFitText from './AutoFitText';
 import MatchDialog from './MatchDialog';
 import Tabs from './Tabs';
 
 type MatchCenterFilter = 'Upcoming' | 'Results';
-
-const localDateKey = (timestamp: string | Date) => {
-  const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 interface MatchCardProps {
   match: Match;
@@ -30,15 +23,8 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onClick }) => {
   const awayTeam = teamMap[match.awayTeamId];
   if (!homeTeam || !awayTeam) return null;
 
-  const date = new Date(match.timestamp);
-  const timeString = date.toLocaleTimeString('zh-TW', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const dateString = `${date.getMonth() + 1}/${date.getDate()} ${date.toLocaleDateString('zh-TW', {
-    weekday: 'short',
-  })}`;
+  const timeString = formatTaipeiTime(match.timestamp);
+  const dateString = formatTaipeiMonthDayWeekday(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
 
   return (
@@ -132,7 +118,7 @@ const MatchCenter: React.FC = () => {
   const [filter, setFilter] = useState<MatchCenterFilter>('Results');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const todayKey = localDateKey(new Date());
+  const todayKey = formatTaipeiDateKey(new Date());
   const scheduledMatches = useMemo(
     () =>
       seasonData.matches
@@ -149,8 +135,8 @@ const MatchCenter: React.FC = () => {
   );
 
   useEffect(() => {
-    const hasFinishedToday = finishedMatches.some((match) => localDateKey(match.timestamp) === todayKey);
-    const hasScheduledToday = scheduledMatches.some((match) => localDateKey(match.timestamp) === todayKey);
+    const hasFinishedToday = finishedMatches.some((match) => formatTaipeiDateKey(match.timestamp) === todayKey);
+    const hasScheduledToday = scheduledMatches.some((match) => formatTaipeiDateKey(match.timestamp) === todayKey);
     if (hasFinishedToday) setFilter('Results');
     else if (hasScheduledToday || scheduledMatches.length > 0) setFilter('Upcoming');
     else setFilter('Results');
@@ -159,14 +145,14 @@ const MatchCenter: React.FC = () => {
   const filteredMatches = useMemo(() => {
     const source = filter === 'Results' ? finishedMatches : scheduledMatches;
     if (source.length === 0) return [];
-    const targetDate = localDateKey(source[0].timestamp);
+    const targetDate = formatTaipeiDateKey(source[0].timestamp);
     return source
-      .filter((match) => localDateKey(match.timestamp) === targetDate)
+      .filter((match) => formatTaipeiDateKey(match.timestamp) === targetDate)
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [filter, finishedMatches, scheduledMatches]);
 
   const upcomingLabel =
-    filteredMatches.length > 0 && filter === 'Upcoming' && localDateKey(filteredMatches[0].timestamp) === todayKey
+    filteredMatches.length > 0 && filter === 'Upcoming' && formatTaipeiDateKey(filteredMatches[0].timestamp) === todayKey
       ? '今日賽程'
       : '即將開賽';
 

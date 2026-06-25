@@ -119,26 +119,18 @@ const StandingsPage: React.FC = () => {
           showDesktopSeasonSelector={false}
         />
 
-        <div className="flex min-h-14 items-center justify-between border-b border-neutral-100">
-          <span className="font-display text-sm font-black tracking-wide text-brand-black md:text-base">
-            {activeSeason.shortName} 賽季
-          </span>
-          <button
-            type="button"
-            onClick={openFilters}
-            aria-label="選擇積分榜賽季"
-            className="ml-4 inline-flex min-h-11 shrink-0 items-center text-sm font-black text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            {seasonButtonLabel}
-            <ChevronRight className="ml-2 h-4 w-4" aria-hidden="true" />
-          </button>
-        </div>
+        <div className="mb-8 flex min-h-14 items-center border-b border-neutral-100">
+          <div className="hidden shrink-0 items-center md:flex">
+            <span className="text-sm font-bold tracking-[0.02em] text-brand-black">
+              {activeSeason.shortName} 賽季
+            </span>
+            <span className="mx-4 h-4 w-px bg-neutral-200" aria-hidden="true" />
+          </div>
 
-        <div className="mb-8 border-b border-neutral-100">
           <div
             role="tablist"
             aria-label="切換積分榜聯賽級別"
-            className="inline-flex items-center gap-1 md:gap-2"
+            className="flex min-w-0 items-center gap-0.5 md:gap-1"
           >
             {activeSeason.enabledLeagues.map((league) => {
               const selected = activeLeague === league;
@@ -149,10 +141,10 @@ const StandingsPage: React.FC = () => {
                   role="tab"
                   aria-selected={selected}
                   onClick={() => updateLeague(league)}
-                  className={`relative min-h-11 min-w-12 px-3 font-display text-[15px] tracking-[0.08em] transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:-translate-x-1/2 after:transition-[width,background-color] after:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
+                  className={`relative min-h-11 min-w-11 px-2 text-sm font-bold tracking-[0.02em] transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:-translate-x-1/2 after:transition-[width,background-color] after:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                     selected
-                      ? 'font-bold text-brand-black after:w-5 after:bg-brand-blue'
-                      : 'font-medium text-neutral-400 after:w-0 after:bg-transparent hover:text-neutral-600'
+                      ? 'text-brand-blue after:w-5 after:bg-brand-blue'
+                      : 'text-neutral-500 after:w-0 after:bg-transparent hover:text-brand-black'
                   }`}
                 >
                   {league}
@@ -160,6 +152,16 @@ const StandingsPage: React.FC = () => {
               );
             })}
           </div>
+
+          <button
+            type="button"
+            onClick={openFilters}
+            aria-label="選擇積分榜賽季"
+            className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-xs font-bold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm"
+          >
+            {seasonButtonLabel}
+            <ChevronRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
 
         {shouldShowEmptyState ? (

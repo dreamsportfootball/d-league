@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
@@ -141,9 +141,15 @@ const validateHomeHero = (result, expectedFileName) => {
 
 try {
   const mobileHome = await inspectRoute(mobileContext, '/');
-  validateHomeHero(mobileHome, 'registration-poster-mobile');
-
   const desktopHome = await inspectRoute(desktopContext, '/');
+
+  await writeFile(
+    'hero-performance-diagnostics.json',
+    JSON.stringify({ mobileHome, desktopHome }, null, 2),
+    'utf8',
+  );
+
+  validateHomeHero(mobileHome, 'registration-poster-mobile');
   validateHomeHero(desktopHome, 'registration-poster-desktop');
 
   const news = await inspectRoute(mobileContext, '/news');

@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Analytics from './components/Analytics';
+import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import MobileRegistrationBar from './components/MobileRegistrationBar';
@@ -95,22 +96,24 @@ const App: React.FC = () => (
       <Analytics />
 
       <main className="w-full flex-grow pt-16">
-        <Suspense fallback={<PageSkeleton />}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/registration" element={<RegistrationPage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/standings" element={<StandingsPage />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/stats" element={<StatsPage />} />
-            <Route path="/news/:id" element={<ArticleDetailPage />} />
-            <Route path="/teams/:id" element={<TeamPage />} />
-            <Route path="/media" element={<MediaPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/cup" element={<CupPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
+        <AppErrorBoundary>
+          <Suspense fallback={<PageSkeleton />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/registration" element={<RegistrationPage />} />
+              <Route path="/schedule" element={<SchedulePage />} />
+              <Route path="/standings" element={<StandingsPage />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/news/:id" element={<ArticleDetailPage />} />
+              <Route path="/teams/:id" element={<TeamPage />} />
+              <Route path="/media" element={<MediaPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/cup" element={<CupPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </AppErrorBoundary>
       </main>
 
       <Footer />

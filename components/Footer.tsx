@@ -40,9 +40,12 @@ const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, chi
 
 const Footer: React.FC = () => {
   const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
+  const hasMobileRegistrationBar =
+    SHOW_REGISTRATION_NAV &&
+    Boolean(currentSeason.registrationFormUrl || currentSeason.regulationsUrl);
 
   return (
-    <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-2 pt-12 text-white md:pb-5 md:pt-20">
+    <footer className={`relative border-t border-neutral-900 bg-neutral-950 pt-12 text-white md:pb-5 md:pt-20 ${hasMobileRegistrationBar ? 'pb-24' : 'pb-2'}`}>
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         <div className="mb-8 grid grid-cols-1 gap-12 md:mb-20 md:grid-cols-12 lg:gap-16">
           <div className="flex flex-col items-start md:col-span-5">

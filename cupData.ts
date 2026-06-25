@@ -59,6 +59,10 @@ export interface CupEventConfig {
   }>;
 }
 
+const useOptimizedCupImages = import.meta.env.VITE_USE_OPTIMIZED_IMAGES === 'true';
+const cupImagePath = (path: string): string =>
+  useOptimizedCupImages ? path.replace(/\.(png|jpe?g)$/i, '.webp') : path;
+
 export const CUP_EVENT: CupEventConfig = {
   name: '2026 台南夢達新春賀歲盃',
   shortName: '2026 新春賀歲盃',
@@ -77,14 +81,14 @@ export const CUP_EVENT: CupEventConfig = {
   cupThirdPlaceMatchId: 19,
   plateFinalMatchId: 17,
   plateThirdPlaceMatchId: 18,
-  heroImage: 'assets/cup/cup_award.jpg',
+  heroImage: cupImagePath('assets/cup/cup_award.jpg'),
   highlightImages: [
-    { id: 1, src: 'assets/cup/cup_01.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間一' },
-    { id: 2, src: 'assets/cup/cup_02.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間二' },
-    { id: 3, src: 'assets/cup/cup_03.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間三' },
-    { id: 4, src: 'assets/cup/cup_04.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間四' },
-    { id: 5, src: 'assets/cup/cup_05.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間五' },
-    { id: 6, src: 'assets/cup/cup_06.jpg', alt: '2026 新春賀歲盃比賽精彩瞬間六' },
+    { id: 1, src: cupImagePath('assets/cup/cup_01.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間一' },
+    { id: 2, src: cupImagePath('assets/cup/cup_02.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間二' },
+    { id: 3, src: cupImagePath('assets/cup/cup_03.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間三' },
+    { id: 4, src: cupImagePath('assets/cup/cup_04.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間四' },
+    { id: 5, src: cupImagePath('assets/cup/cup_05.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間五' },
+    { id: 6, src: cupImagePath('assets/cup/cup_06.jpg'), alt: '2026 新春賀歲盃比賽精彩瞬間六' },
   ],
 };
 

@@ -10,6 +10,7 @@ import {
   Trophy,
   UsersRound,
 } from 'lucide-react';
+import RegistrationProgress from '../components/RegistrationProgress';
 import { useSeason } from '../hooks/useSeason';
 import type { RegistrationContentConfig } from '../types/season';
 
@@ -86,6 +87,8 @@ const RegistrationPage: React.FC = () => {
             {registrationOpen ? `報名期間至 ${formatDate(activeSeason.registrationEnd)}` : '目前未開放報名'}
           </span>
         </div>
+
+        <RegistrationProgress className="mt-8" />
 
         <div className="grid grid-cols-1 gap-12 py-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">

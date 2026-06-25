@@ -5,13 +5,7 @@ import EmptyState from '../components/EmptyState';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable, calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { MatchStatus } from '../types';
-
-const formatDate = (timestamp: string) =>
-  new Date(timestamp).toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+import { formatTaipeiDate } from '../utils/dateFormat';
 
 const TeamPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -98,79 +92,55 @@ const TeamPage: React.FC = () => {
                 <img src={team.logo} alt={team.name} className="max-h-full max-w-full object-contain" />
               </div>
               <div>
-                <span className="text-xs font-black uppercase tracking-[0.25em] text-white/60">{team.leagueId}</span>
-                <h1 className="mt-2 font-display text-4xl font-black leading-none md:text-6xl">{team.shortName}</h1>
-                <p className="mt-3 text-sm font-bold text-white/70 md:text-base">{team.name}</p>
+                <p className="mb-2 text-xs font-black uppercase tracking-[0.25em] text-brand-accent">{activeSeason.shortName} · {team.leagueId}</p>
+                <h1 className="font-display text-3xl font-black uppercase leading-tight md:text-5xl">{team.name}</h1>
               </div>
             </div>
             {standing && (
-              <div className="grid grid-cols-3 gap-6 rounded-xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur">
-                <div><p className="text-[10px] uppercase tracking-widest text-white/50">排名</p><p className="mt-1 font-display text-3xl font-black">{standing.rank}</p></div>
-                <div><p className="text-[10px] uppercase tracking-widest text-white/50">場次</p><p className="mt-1 font-display text-3xl font-black">{standing.played}</p></div>
-                <div><p className="text-[10px] uppercase tracking-widest text-white/50">積分</p><p className="mt-1 font-display text-3xl font-black text-brand-accent">{standing.points}</p></div>
+              <div className="grid grid-cols-3 gap-6 border-t border-white/20 pt-6 text-center md:border-l md:border-t-0 md:pl-8 md:pt-0">
+                <div><p className="font-display text-3xl font-black">{standing.position}</p><p className="text-[10px] font-bold uppercase tracking-widest text-white/50">排名</p></div>
+                <div><p className="font-display text-3xl font-black">{standing.points}</p><p className="text-[10px] font-bold uppercase tracking-widest text-white/50">積分</p></div>
+                <div><p className="font-display text-3xl font-black">{standing.played}</p><p className="text-[10px] font-bold uppercase tracking-widest text-white/50">場次</p></div>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-12 md:px-12 lg:grid-cols-[1.35fr_.65fr]">
-        <div className="space-y-12">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-10 md:px-12 md:py-16 lg:grid-cols-12">
+        <div className="space-y-12 lg:col-span-8">
           <section>
-            <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
-              <UserRound className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-black uppercase">球員名單</h2>
-            </div>
-            {players.length > 0 ? (
-              <div className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
-                {players.map((player) => (
-                  <div key={player.id} className="grid grid-cols-[3rem_1fr] items-center border-b border-neutral-100 py-3">
-                    <span className="font-display text-xl font-black text-brand-blue">{player.number}</span>
-                    <div className="min-w-0"><p className="truncate text-sm font-bold">{player.name}</p>{player.englishName && <p className="truncate text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>}</div>
-                  </div>
-                ))}
+            <div className="mb-5 flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black uppercase">近期賽程</h2></div>
+            {nextMatch ? (
+              <div className="border-y border-neutral-200 py-6">
+                <p className="mb-2 text-xs font-bold text-neutral-400">{formatTaipeiDate(nextMatch.timestamp)}</p>
+                <p className="text-lg font-black text-brand-black">下一場正式賽事</p>
               </div>
-            ) : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
+            ) : <p className="text-sm text-neutral-400">目前沒有待進行賽事</p>}
           </section>
 
           <section>
-            <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
-              <Trophy className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-black uppercase">球隊數據</h2>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-xl bg-neutral-50 p-5"><p className="text-xs font-bold text-neutral-400">進球</p><p className="mt-2 font-display text-3xl font-black">{teamStats.reduce((sum, player) => sum + player.goals, 0)}</p></div>
-              <div className="rounded-xl bg-neutral-50 p-5"><p className="text-xs font-bold text-neutral-400">黃牌</p><p className="mt-2 font-display text-3xl font-black">{teamStats.reduce((sum, player) => sum + player.yellowCards, 0)}</p></div>
-              <div className="rounded-xl bg-neutral-50 p-5"><p className="text-xs font-bold text-neutral-400">紅牌</p><p className="mt-2 font-display text-3xl font-black">{teamStats.reduce((sum, player) => sum + player.directRedCards + player.secondYellowDismissals, 0)}</p></div>
-            </div>
+            <div className="mb-5 flex items-center"><Trophy className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black uppercase">近期戰績</h2></div>
+            {recentResults.length > 0 ? (
+              <div className="divide-y divide-neutral-100 border-y border-neutral-200">
+                {recentResults.map((match) => <div key={match.id} className="flex items-center justify-between py-4"><span className="text-xs font-bold text-neutral-400">{formatTaipeiDate(match.timestamp)}</span><span className="font-display text-xl font-black">{match.homeScore}－{match.awayScore}</span></div>)}
+              </div>
+            ) : <p className="text-sm text-neutral-400">目前沒有正式賽果</p>}
           </section>
         </div>
 
-        <aside className="space-y-8">
-          <section className="rounded-xl border border-neutral-200 p-6">
-            <div className="mb-4 flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-xl font-black">下一場比賽</h2></div>
-            {nextMatch ? (
-              <div>
-                <p className="text-xs font-bold text-neutral-400">{formatDate(nextMatch.timestamp)} · {nextMatch.league} 第{nextMatch.round}輪</p>
-                <p className="mt-3 text-base font-black">{seasonData.teamMap[nextMatch.homeTeamId]?.shortName} vs {seasonData.teamMap[nextMatch.awayTeamId]?.shortName}</p>
-                <Link to={`/schedule?season=${activeSeasonId}&match=${nextMatch.id}`} className="mt-4 inline-flex text-xs font-bold text-brand-blue">查看賽程</Link>
-              </div>
-            ) : <p className="text-sm text-neutral-400">目前沒有未來賽程</p>}
+        <aside className="space-y-10 lg:col-span-4">
+          <section>
+            <div className="mb-5 flex items-center"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-xl font-black uppercase">球員名單</h2></div>
+            {players.length > 0 ? <div className="divide-y divide-neutral-100 border-y border-neutral-200">{players.map((player) => <div key={player.id} className="grid grid-cols-[2.5rem_1fr] py-3 text-sm"><span className="font-display font-black text-brand-blue">{player.number}</span><span className="font-bold">{player.name}</span></div>)}</div> : <p className="text-sm text-neutral-400">球員名單尚未公布</p>}
           </section>
 
-          <section className="rounded-xl border border-neutral-200 p-6">
-            <div className="mb-4 flex items-center"><Shield className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-xl font-black">近期賽果</h2></div>
-            {recentResults.length > 0 ? (
-              <div className="space-y-4">
-                {recentResults.map((match) => (
-                  <Link key={match.id} to={`/schedule?season=${activeSeasonId}&match=${match.id}`} className="block border-b border-neutral-100 pb-4 last:border-0 last:pb-0">
-                    <p className="text-[10px] font-bold text-neutral-400">{formatDate(match.timestamp)}</p>
-                    <p className="mt-1 text-sm font-black">{seasonData.teamMap[match.homeTeamId]?.shortName} {match.homeScore}–{match.awayScore} {seasonData.teamMap[match.awayTeamId]?.shortName}</p>
-                  </Link>
-                ))}
-              </div>
-            ) : <p className="text-sm text-neutral-400">目前尚無完賽紀錄</p>}
-          </section>
+          {teamStats.length > 0 && (
+            <section>
+              <div className="mb-5 flex items-center"><Shield className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-xl font-black uppercase">球員數據</h2></div>
+              <div className="divide-y divide-neutral-100 border-y border-neutral-200">{teamStats.slice(0, 5).map((player) => <div key={player.subjectId} className="flex items-center justify-between py-3 text-sm"><span className="font-bold">{player.name}</span><span className="font-display font-black text-brand-blue">{player.goals}</span></div>)}</div>
+            </section>
+          )}
         </aside>
       </div>
     </div>

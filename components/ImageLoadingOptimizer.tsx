@@ -7,17 +7,18 @@ const optimizeImageElement = (image: HTMLImageElement) => {
   const rect = image.getBoundingClientRect();
   const appearsNearViewport = rect.bottom > 0 && rect.top < window.innerHeight * 1.25;
 
-  if (explicitlyPrioritized || appearsNearViewport) {
+  if (explicitlyPrioritized) {
+    image.loading = 'eager';
+    image.setAttribute('fetchpriority', 'high');
+  } else if (appearsNearViewport) {
     if (!image.hasAttribute('loading')) image.loading = 'eager';
-    if (!image.hasAttribute('fetchpriority')) {
-      image.setAttribute('fetchpriority', explicitlyPrioritized ? 'high' : 'auto');
-    }
+    if (!image.hasAttribute('fetchpriority')) image.setAttribute('fetchpriority', 'auto');
   } else {
-    if (!image.hasAttribute('loading')) image.loading = 'lazy';
-    if (!image.hasAttribute('fetchpriority')) image.setAttribute('fetchpriority', 'low');
+    image.loading = 'lazy';
+    image.setAttribute('fetchpriority', 'low');
   }
 
-  if (!image.hasAttribute('decoding')) image.decoding = 'async';
+  image.decoding = 'async';
   image.dataset.imageOptimized = 'true';
 };
 

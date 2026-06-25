@@ -137,16 +137,17 @@ const auditViewport = async (viewport) => {
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
 
       if (route.name === 'standings-2026') {
-        const expectedSeasonLabel = viewport.width < 768 ? 'D LEAGUE 2026/27' : '2026/27 賽季';
+        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · L1';
         const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
           elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
         );
+        const filterControlVisible = await page.getByRole('button', { name: '篩選積分榜' }).isVisible();
         assert(
-          'standings-shows-current-season',
-          diagnostics.bodyText.includes(expectedSeasonLabel),
-          `Expected ${expectedSeasonLabel}`,
+          'standings-shows-season-league-summary',
+          diagnostics.bodyText.includes(expectedStatusLabel),
+          `Expected ${expectedStatusLabel}`,
         );
-        assert('standings-shows-past-season-control', diagnostics.bodyText.includes('過往賽季'), 'Expected past-season control');
+        assert('standings-shows-filter-control', filterControlVisible, 'Expected visible standings filter control');
         assert(
           'standings-hides-inline-league-tabs',
           visibleLeagueTabs === 0,

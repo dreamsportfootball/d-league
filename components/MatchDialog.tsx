@@ -14,6 +14,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
+import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import AutoFitText from './AutoFitText';
 import MatchEvents from './MatchEvents';
@@ -25,22 +26,6 @@ interface MatchDialogProps {
 }
 
 type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
-
-const formatDateTime = (timestamp: string) => {
-  const date = new Date(timestamp);
-  return {
-    displayDate: date.toLocaleDateString('zh-TW', {
-      month: '2-digit',
-      day: '2-digit',
-      weekday: 'short',
-    }),
-    time: date.toLocaleTimeString('zh-TW', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }),
-  };
-};
 
 const copyText = async (value: string): Promise<void> => {
   if (navigator.clipboard?.writeText) {
@@ -152,7 +137,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
     ? seasonData.news.find((item) => item.id === match.reportArticleId)
     : undefined;
   const matchEvents = seasonData.matchEvents[match.id] ?? [];
-  const { displayDate, time } = formatDateTime(match.timestamp);
+  const displayDate = formatTaipeiMonthDayWeekday(match.timestamp);
+  const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
   const matchInfoText = buildMatchInfoText({

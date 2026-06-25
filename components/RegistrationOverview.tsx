@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowRight, CalendarDays, FileText, MapPin, Trophy, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
+import RegistrationProgress from './RegistrationProgress';
 
 const formatDate = (value?: string): string => {
   if (!value) return '尚未公布';
@@ -37,6 +38,8 @@ const RegistrationOverview: React.FC = () => {
             <p className="mt-6 max-w-xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
               {activeSeason.enabledLeagues.join('、')} 共 {leagueCount} 個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
             </p>
+
+            <RegistrationProgress variant="compact" />
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               {activeSeason.registrationFormUrl && (

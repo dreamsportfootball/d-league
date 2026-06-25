@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 const optimizeImageElement = (image: HTMLImageElement) => {
   if (image.dataset.imageOptimized === 'true') return;

@@ -32,15 +32,19 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci --silent
-          npm install --no-save playwright
+          npm install --no-save playwright sharp
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
+
+      - name: Optimize website images
+        run: npm run optimize:images
 
       - name: Build preview-mode site
         env:
           VITE_ROUTER_MODE: hash
           VITE_USE_PREVIEW_DATA: "true"
+          VITE_USE_OPTIMIZED_IMAGES: "true"
         run: npx vite build --base=/
 
       - name: Start local preview server
@@ -58,11 +62,18 @@ jobs:
       - name: Capture responsive screenshots and diagnostics
         run: node scripts/visual-audit.mjs
 
+      - name: Validate optimized image delivery
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173
+        run: node scripts/validate-image-performance.mjs
+
       - name: Upload visual audit report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: responsive-visual-audit
-          path: visual-audit
+          path: |
+            visual-audit
+            image-optimization-report.json
           if-no-files-found: error
           retention-days: 14

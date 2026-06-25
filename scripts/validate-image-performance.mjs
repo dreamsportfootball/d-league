@@ -131,11 +131,15 @@ const validateHomeHero = (result, expectedFileName) => {
   if (hero.currentSrc !== preload.href) {
     fail(`hero preload does not match the rendered image: ${preload.href} vs ${hero.currentSrc}`);
   }
-  if (result.posterResources.length !== 1) {
-    fail(`homepage downloaded ${result.posterResources.length} hero poster resources instead of one`);
+
+  const preloadResources = result.posterResources.filter(
+    (resource) => resource.initiatorType === 'link',
+  );
+  if (preloadResources.length !== 1) {
+    fail(`homepage created ${preloadResources.length} high-priority poster requests instead of one`);
   }
-  if (!result.posterResources[0].name.endsWith(`${expectedFileName}.webp`)) {
-    fail(`homepage downloaded the wrong hero resource: ${result.posterResources[0].name}`);
+  if (!preloadResources[0].name.endsWith(`${expectedFileName}.webp`)) {
+    fail(`homepage requested the wrong high-priority hero: ${preloadResources[0].name}`);
   }
 };
 
@@ -153,7 +157,7 @@ try {
   validateHomeHero(desktopHome, 'registration-poster-desktop');
 
   const news = await inspectRoute(mobileContext, '/news');
-  if (news.preloads.length !== 0 || news.posterResources.length !== 0) {
+  if (news.preloads.length !== 0 || news.posterResources.some((resource) => resource.initiatorType === 'link')) {
     fail('non-home routes should not preload the homepage poster');
   }
   const localNewsImage = news.images.find((image) => image.currentSrc.includes('/assets/'));

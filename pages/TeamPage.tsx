@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowLeft, CalendarDays, Shield, Trophy, UserRound } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable, calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { MatchStatus } from '../types';
@@ -11,6 +12,11 @@ const TeamPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { activeSeason, activeSeasonId, seasonData } = useSeason();
   const team = id ? seasonData.teamMap[id] : undefined;
+  const isHistoricalSeason = activeSeasonId !== CURRENT_SEASON_ID;
+  const backLink = isHistoricalSeason ? `/standings?season=${activeSeasonId}` : '/#teams';
+  const backLabel = isHistoricalSeason
+    ? `返回 ${activeSeason.shortName} 積分榜`
+    : '返回參賽球隊';
 
   const players = useMemo(
     () =>
@@ -69,8 +75,8 @@ const TeamPage: React.FC = () => {
         <div className="mx-auto max-w-4xl">
           <EmptyState title="找不到此球隊" description="此球隊可能不屬於目前選擇的賽季" />
           <div className="mt-8 text-center">
-            <Link to={`/?season=${activeSeasonId}#teams`} className="text-sm font-bold text-brand-blue">
-              返回參賽球隊
+            <Link to={backLink} className="text-sm font-bold text-brand-blue">
+              {backLabel}
             </Link>
           </div>
         </div>
@@ -83,8 +89,8 @@ const TeamPage: React.FC = () => {
       <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-950 px-4 py-12 text-white md:px-12 md:py-20">
         <div className="absolute inset-0 opacity-30" style={{ background: `linear-gradient(135deg, ${team.primaryColor}, transparent 70%)` }} />
         <div className="relative mx-auto max-w-7xl">
-          <Link to={`/?season=${activeSeasonId}#teams`} className="mb-10 inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white">
-            <ArrowLeft className="mr-2 h-4 w-4" /> 返回球隊列表
+          <Link to={backLink} className="mb-10 inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white">
+            <ArrowLeft className="mr-2 h-4 w-4" /> {backLabel}
           </Link>
           <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div className="flex items-center gap-6">

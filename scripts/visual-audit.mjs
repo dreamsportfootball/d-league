@@ -138,6 +138,9 @@ const auditViewport = async (viewport) => {
 
       if (route.name === 'standings-2026') {
         const expectedSeasonLabel = viewport.width < 768 ? 'D LEAGUE 2026/27' : '2026/27 賽季';
+        const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
+          elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
+        );
         assert(
           'standings-shows-current-season',
           diagnostics.bodyText.includes(expectedSeasonLabel),
@@ -145,9 +148,9 @@ const auditViewport = async (viewport) => {
         );
         assert('standings-shows-past-season-control', diagnostics.bodyText.includes('過往賽季'), 'Expected past-season control');
         assert(
-          'standings-exposes-league-tabs',
-          diagnostics.bodyText.includes('L1') && diagnostics.bodyText.includes('L2') && diagnostics.bodyText.includes('L3'),
-          'Expected visible L1, L2 and L3 tabs',
+          'standings-hides-inline-league-tabs',
+          visibleLeagueTabs === 0,
+          `Expected league controls inside filter drawer, found ${visibleLeagueTabs} visible tab(s)`,
         );
         assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }

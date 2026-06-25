@@ -41,10 +41,40 @@
         window.history.replaceState(null, '', '/d-league/' + redirectPath);
       })();
     </script>
-    <script
-      src="/d-league/preview/season-2026-27/hero-preload.js"
-      data-optimized="true"
-    ></script>
+    <script>
+      (function () {
+        var baseUrl = '/d-league/preview/season-2026-27/';
+        var normalizedBaseUrl = baseUrl.charAt(baseUrl.length - 1) === '/' ? baseUrl : baseUrl + '/';
+        var hash = window.location.hash;
+        var usesHashRoute = hash.indexOf('#/') === 0;
+        var isHomeRoute = usesHashRoute
+          ? hash === '#/'
+          : window.location.pathname === normalizedBaseUrl ||
+            window.location.pathname === normalizedBaseUrl.slice(0, -1);
+
+        if (!isHomeRoute) return;
+
+        var optimized = 'true' === 'true';
+        var mobile = window.matchMedia('(max-width: 767px)').matches;
+        var fileName = mobile
+          ? 'registration-poster-mobile'
+          : 'registration-poster-desktop';
+        var preload = document.createElement('link');
+
+        preload.rel = 'preload';
+        preload.as = 'image';
+        preload.href =
+          normalizedBaseUrl +
+          'assets/seasons/2026-27/' +
+          fileName +
+          (optimized ? '.webp' : '.png');
+        preload.type = optimized ? 'image/webp' : 'image/png';
+        preload.fetchPriority = 'high';
+        preload.setAttribute('fetchpriority', 'high');
+        preload.setAttribute('data-home-hero-preload', 'true');
+        document.head.appendChild(preload);
+      })();
+    </script>
 
     <link rel="preconnect" href="https://cdn.store-assets.com" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.store-assets.com" />

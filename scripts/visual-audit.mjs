@@ -137,7 +137,13 @@ const auditViewport = async (viewport) => {
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
 
       if (route.name === 'standings-2026') {
-        assert('standings-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        assert('standings-shows-current-season', diagnostics.bodyText.includes('2026/27 賽季'), 'Expected visible current-season label');
+        assert('standings-shows-past-season-control', diagnostics.bodyText.includes('過往賽季'), 'Expected past-season control');
+        assert(
+          'standings-exposes-league-tabs',
+          diagnostics.bodyText.includes('L1') && diagnostics.bodyText.includes('L2') && diagnostics.bodyText.includes('L3'),
+          'Expected visible L1, L2 and L3 tabs',
+        );
         assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }
 
@@ -230,7 +236,7 @@ const auditInteractiveCase = async (testCase) => {
       await page.waitForTimeout(300);
       afterCount = await page.locator('main a[href*="/news/"]').count();
     } else {
-      await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選/i }).first().click();
+      await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i }).first().click();
     }
 
     await page.waitForTimeout(250);

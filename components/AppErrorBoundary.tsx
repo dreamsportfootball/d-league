@@ -9,6 +9,9 @@ interface AppErrorBoundaryState {
 }
 
 class AppErrorBoundary extends React.Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
+  declare readonly props: Readonly<AppErrorBoundaryProps>;
+  declare setState: (state: AppErrorBoundaryState) => void;
+
   state: AppErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError(): AppErrorBoundaryState {

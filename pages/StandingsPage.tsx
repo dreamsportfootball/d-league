@@ -27,12 +27,15 @@ const StandingsPage: React.FC = () => {
   });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+  const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
+  const currentSeason = availableSeasons.find((season) => season.id === CURRENT_SEASON_ID) ?? activeSeason;
+  const defaultLeague = currentSeason.enabledLeagues[0];
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
@@ -86,21 +89,42 @@ const StandingsPage: React.FC = () => {
       value: draftSeasonId,
       displayValue: draftSeason.shortName,
       options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
-      onChange: (value) => setDraftSeasonId(value as SeasonId),
+      onChange: (value) => {
+        const nextSeasonId = value as SeasonId;
+        const nextSeason = availableSeasons.find((season) => season.id === nextSeasonId);
+        setDraftSeasonId(nextSeasonId);
+        if (nextSeason && !nextSeason.enabledLeagues.includes(draftLeague)) {
+          setDraftLeague(nextSeason.enabledLeagues[0]);
+        }
+      },
+    },
+    {
+      id: 'league',
+      label: '級別',
+      value: draftLeague,
+      displayValue: draftLeague,
+      options: draftSeason.enabledLeagues.map((league) => ({ value: league, label: league })),
+      onChange: (value) => setDraftLeague(value as LeagueId),
     },
   ];
 
   const openFilters = () => {
     setDraftSeasonId(activeSeasonId);
+    setDraftLeague(activeLeague);
     setFiltersOpen(true);
+  };
+
+  const clearFilters = () => {
+    setDraftSeasonId(CURRENT_SEASON_ID);
+    setDraftLeague(defaultLeague);
   };
 
   const applyFilters = () => {
     const nextSeason = availableSeasons.find((season) => season.id === draftSeasonId);
     if (!nextSeason) return;
 
-    const nextLeague = nextSeason.enabledLeagues.includes(activeLeague)
-      ? activeLeague
+    const nextLeague = nextSeason.enabledLeagues.includes(draftLeague)
+      ? draftLeague
       : nextSeason.enabledLeagues[0];
 
     if (nextLeague !== activeLeague) updateLeague(nextLeague);
@@ -130,7 +154,7 @@ const StandingsPage: React.FC = () => {
           <div
             role="tablist"
             aria-label="切換積分榜聯賽級別"
-            className="flex min-w-0 items-center gap-0.5 md:gap-1"
+            className="hidden min-w-0 items-center gap-1 md:flex"
           >
             {activeSeason.enabledLeagues.map((league) => {
               const selected = activeLeague === league;
@@ -156,7 +180,7 @@ const StandingsPage: React.FC = () => {
           <button
             type="button"
             onClick={openFilters}
-            aria-label="選擇積分榜賽季"
+            aria-label="篩選積分榜"
             className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-[11px] font-semibold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm md:font-bold"
           >
             {seasonButtonLabel}
@@ -245,12 +269,12 @@ const StandingsPage: React.FC = () => {
         open={filtersOpen}
         fields={filterFields}
         onClose={() => setFiltersOpen(false)}
-        onClear={() => setDraftSeasonId(CURRENT_SEASON_ID)}
-        clearDisabled={draftSeasonId === CURRENT_SEASON_ID}
+        onClear={clearFilters}
+        clearDisabled={draftSeasonId === CURRENT_SEASON_ID && draftLeague === defaultLeague}
         onApply={applyFilters}
         applyLabel="查看積分榜"
-        title="選擇賽季"
-        subtitle="查看目前或過往賽季積分榜"
+        title="篩選積分榜"
+        subtitle="選擇賽季與聯賽級別"
       />
     </div>
   );

@@ -41,9 +41,17 @@ export interface SeasonData {
   albums: MediaAlbum[];
 }
 
+const useOptimizedImages = import.meta.env.VITE_USE_OPTIMIZED_IMAGES === 'true';
+
+const getOptimizedAssetPath = (path: string): string => {
+  if (!useOptimizedImages || !/\.(png|jpe?g)$/i.test(path)) return path;
+  return path.replace(/\.(png|jpe?g)$/i, '.webp');
+};
+
 export const assetUrl = (path: string): string => {
   if (/^https?:\/\//.test(path)) return path;
-  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '').replace(/^d-league\//, '')}`;
+  const cleanPath = path.replace(/^\/+/, '').replace(/^d-league\//, '');
+  return `${import.meta.env.BASE_URL}${getOptimizedAssetPath(cleanPath)}`;
 };
 
 const use2026PreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';

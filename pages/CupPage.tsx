@@ -49,12 +49,12 @@ const getLoserTeamId = (match?: CupMatch): string | null => {
 
 const getScoreLabel = (match: CupMatch): string => {
   if (match.homeScore === undefined || match.awayScore === undefined) return 'VS';
-  return `${match.homeScore}–${match.awayScore}`;
+  return `${match.homeScore} - ${match.awayScore}`;
 };
 
 const getPenaltyLabel = (match: CupMatch): string | null =>
   match.homePenalty !== undefined && match.awayPenalty !== undefined
-    ? `PK ${match.homePenalty}–${match.awayPenalty}`
+    ? `PK ${match.homePenalty} - ${match.awayPenalty}`
     : null;
 
 const SectionHeader: React.FC<{
@@ -305,7 +305,7 @@ const CupPage: React.FC = () => {
               {cupFinal && cupRunnerUp && (
                 <p className="mt-4 text-sm font-bold text-white/65 md:text-base">
                   決賽　{cupChampion?.name} {cupFinal.homeTeamId === cupChampion?.id ? cupFinal.homeScore : cupFinal.awayScore}
-                  <span className="mx-2 text-[#e1c47f]">–</span>
+                  <span className="mx-2 text-[#e1c47f]">-</span>
                   {cupFinal.homeTeamId === cupChampion?.id ? cupFinal.awayScore : cupFinal.homeScore} {cupRunnerUp.name}
                 </p>
               )}

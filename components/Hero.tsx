@@ -64,6 +64,10 @@ const Hero: React.FC = () => {
             src={heroImages.desktop}
             onError={() => setImageFailed(true)}
             alt={`${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            data-image-priority="true"
             className="block h-auto w-full"
           />
         </picture>
@@ -121,6 +125,10 @@ const Hero: React.FC = () => {
             src={heroImages.desktop}
             onError={() => setImageFailed(true)}
             alt={`${activeSeason.displayName} 主視覺`}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            data-image-priority="true"
             className="h-full w-full object-cover object-center opacity-90 md:object-center"
           />
         </picture>

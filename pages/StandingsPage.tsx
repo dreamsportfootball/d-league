@@ -138,8 +138,7 @@ const StandingsPage: React.FC = () => {
           <div
             role="tablist"
             aria-label="切換積分榜聯賽級別"
-            className="grid w-full max-w-md"
-            style={{ gridTemplateColumns: `repeat(${activeSeason.enabledLeagues.length}, minmax(0, 1fr))` }}
+            className="inline-flex items-center gap-1 md:gap-2"
           >
             {activeSeason.enabledLeagues.map((league) => {
               const selected = activeLeague === league;
@@ -150,10 +149,10 @@ const StandingsPage: React.FC = () => {
                   role="tab"
                   aria-selected={selected}
                   onClick={() => updateLeague(league)}
-                  className={`min-h-12 border-b-2 px-4 text-sm font-black transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
+                  className={`relative min-h-11 min-w-12 px-3 font-display text-[15px] tracking-[0.08em] transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:-translate-x-1/2 after:transition-[width,background-color] after:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                     selected
-                      ? 'border-brand-blue text-brand-black'
-                      : 'border-transparent text-neutral-400 hover:text-neutral-600'
+                      ? 'font-bold text-brand-black after:w-5 after:bg-brand-blue'
+                      : 'font-medium text-neutral-400 after:w-0 after:bg-transparent hover:text-neutral-600'
                   }`}
                 >
                   {league}

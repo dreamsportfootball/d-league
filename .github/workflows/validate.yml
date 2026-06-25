@@ -150,5 +150,6 @@ jobs:
           path: |
             visual-audit
             image-optimization-report.json
+            hero-performance-diagnostics.json
           if-no-files-found: error
           retention-days: 14

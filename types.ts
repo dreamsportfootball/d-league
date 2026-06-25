@@ -1,4 +1,6 @@
-// 檔案路徑：d-league web/types.ts
+// Shared legacy-compatible types. New season-aware types live under /types.
+
+import type { SeasonId } from './types/season';
 
 export interface Team {
   id: string;
@@ -11,9 +13,12 @@ export interface Team {
 
 export enum MatchStatus {
   SCHEDULED = 'SCHEDULED',
-  LIVE = 'LIVE',
   FINISHED = 'FINISHED'
 }
+
+export type LeagueCode = 'L1' | 'L2' | 'L3' | 'CUP';
+
+export type MatchResultType = 'PLAYED' | 'FORFEIT' | 'DOUBLE_FORFEIT' | 'VOID';
 
 export interface Match {
   id: string;
@@ -24,10 +29,19 @@ export interface Match {
   status: MatchStatus;
   timestamp: string;
   venue: string;
-  // 👇 修改這裡：增加了 'CUP'
-  league: 'L1' | 'L2' | 'CUP'; 
-  round: number | string; // 👇 修改這裡：允許 round 是文字 (例如 "決賽")
+  league: LeagueCode;
+  round: number | string;
+  resultType?: MatchResultType;
+  countsForStandings?: boolean;
+  countsForPlayerStats?: boolean;
+  countsForSuspensionService?: boolean;
+  administrativeNote?: string;
+  videoUrl?: string;
+  albumId?: string;
+  reportArticleId?: string;
 }
+
+export type StandingTieStatus = 'NONE' | 'SHARED' | 'DRAW_REQUIRED';
 
 export interface Standing {
   teamId: string;
@@ -39,11 +53,18 @@ export interface Standing {
   ga: number;
   gd: number;
   points: number;
+  pointsAdjustment: number;
+  directRedCards: number;
+  secondYellowDismissals: number;
+  yellowCards: number;
+  rank: number;
+  tieStatus: StandingTieStatus;
   form: ('W' | 'D' | 'L')[];
 }
 
 export interface NewsArticle {
   id: string;
+  seasonId?: SeasonId;
   title: string;
   summary: string;
   content: string;
@@ -57,5 +78,12 @@ export interface Video {
   title: string;
   duration: string;
   thumbnail: string;
-  date: string; 
+  date: string;
+  link?: string;
 }
+
+export type MatchEventType = 'GOAL' | 'YELLOW_CARD' | 'RED_CARD' | 'SECOND_YELLOW';
+
+// Runtime compatibility value for the legacy matchData import.
+// The actual MatchEvent interface is centralized in types/matchEvent.ts.
+export const MatchEvent = Symbol('MatchEvent');

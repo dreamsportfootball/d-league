@@ -1,91 +1,39 @@
-// pages/ArticleDetailPage.tsx
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useMemo } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { fetchLeagueNews } from '../services/geminiService';
-import { NewsArticle } from './types';
+import { Link, useParams } from 'react-router-dom';
+import { getSeasonConfig } from '../config/seasons';
+import { getNewsArticle } from '../services/seasonDataJson';
+import { formatTaipeiDate } from '../utils/dateFormat';
 
-// 日本質感風格：分類設定
-const CATEGORY_META: Record<
-  string,
-  {
-    label: string;      // 備用
-    subLabel: string;   // 主要顯示文字 (中文)
-  }
-> = {
-  'Match Report': {
-    label: 'Match Report',
-    subLabel: '賽事戰報',
-  },
-  Official: {
-    label: 'Official',
-    subLabel: '官方公告',
-  },
-};
+const CATEGORY_META = {
+  'Match Report': { label: '賽事戰報' },
+  Official: { label: '官方公告' },
+} as const;
 
-const DEFAULT_CATEGORY_META = {
-  label: 'News',
-  subLabel: '最新消息',
-};
+const getBadgeStyle = (category: 'Match Report' | 'Official') =>
+  category === 'Match Report'
+    ? 'bg-brand-accent text-brand-black border-transparent'
+    : 'bg-brand-blue text-white border-transparent';
 
-// 標籤顏色邏輯
-const getBadgeStyle = (category: string) => {
-  if (category === 'Match Report' || category === '戰報') {
-    return 'bg-brand-accent text-brand-black border-transparent'; // 螢光綠
-  }
-  if (category === 'Official' || category === '公告') {
-    return 'bg-brand-blue text-white border-transparent'; // 品牌藍
-  }
-  return 'bg-neutral-100 text-neutral-600 border-transparent'; // 預設灰
-};
-
-const formatDate = (isoString: string) => {
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return '';
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}.${m}.${d}`;
-};
-
-// 文章內文組件
 const ArticleBody: React.FC<{ text: string }> = ({ text }) => {
-  if (!text) return null;
-
-  const blocks = text
-    .split(/\n{2,}/)       // 兩個以上換行視為新段落
-    .map((b) => b.trim())
-    .filter((b) => b.length > 0);
+  const blocks = useMemo(
+    () =>
+      text
+        .split(/\n{2,}/)
+        .map((block) => block.trim())
+        .filter(Boolean),
+    [text],
+  );
 
   if (blocks.length === 0) return null;
 
   return (
-    // 父層設定字級與行距
-    <div className="text-[15px] md:text-[16px] leading-[2.2] text-neutral-800 font-light md:font-medium text-justify">
-      {/* 引導段 (Lead Paragraph) */}
-      <div
-        className="
-          mb-10 
-          pl-4 md:pl-5 
-          border-l-[3px] border-[#0047AB] 
-          text-[18px] md:text-[20px] 
-          leading-[1.7] 
-          font-semibold
-          font-display
-          text-black 
-          tracking-wide
-          whitespace-pre-line
-        "
-      >
+    <div className="text-justify text-[15px] font-light leading-[2.2] text-neutral-800 md:text-[16px] md:font-medium">
+      <div className="mb-10 whitespace-pre-line border-l-[3px] border-[#0047AB] pl-4 font-display text-[18px] font-semibold leading-[1.7] tracking-wide text-black md:pl-5 md:text-[20px]">
         {blocks[0]}
       </div>
-
-      {/* 正文段落 */}
-      {blocks.slice(1).map((block, idx) => (
-        <p
-          key={idx}
-          className="mb-8 tracking-wide whitespace-pre-line"
-        >
+      {blocks.slice(1).map((block, index) => (
+        <p key={`${index}-${block.slice(0, 20)}`} className="mb-8 whitespace-pre-line tracking-wide">
           {block}
         </p>
       ))}
@@ -95,134 +43,96 @@ const ArticleBody: React.FC<{ text: string }> = ({ text }) => {
 
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [article, setArticle] = useState<NewsArticle | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadArticle = async () => {
-      try {
-        const news = await fetchLeagueNews();
-        const found = news.find((item) => item.id === id) || null;
-        setArticle(found);
-      } catch (error) {
-        console.error('Failed to load article:', error);
-        setArticle(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadArticle();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-neutral-800 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const article = useMemo(
+    () => (id ? getNewsArticle(id) : null),
+    [id],
+  );
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-white pt-32 px-6 text-center">
-        <h1 className="text-xl font-medium tracking-widest text-neutral-900 mb-4">
-          文章不存在
-        </h1>
+      <div className="min-h-screen bg-white px-6 pt-32 text-center">
+        <h1 className="mb-4 text-xl font-medium tracking-widest text-neutral-900">文章不存在</h1>
+        <p className="mb-6 text-sm text-neutral-400">此文章可能已移除或網址不正確</p>
         <Link
           to="/news"
-          className="text-xs tracking-[0.2em] text-neutral-400 hover:text-black transition-colors border-b border-transparent hover:border-black pb-1"
+          className="border-b border-transparent pb-1 text-xs tracking-[0.2em] text-neutral-400 transition-colors hover:border-black hover:text-black"
         >
-          返回首頁
+          返回最新消息
         </Link>
       </div>
     );
   }
 
-  const categoryMeta =
-    CATEGORY_META[article.category] || DEFAULT_CATEGORY_META;
-
-  // 若有 content 就用 content，否則退而用 summary 當內文
   const contentText = article.content || article.summary || '';
+  const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
   return (
-    <article className="min-h-screen bg-white pt-14 md:pt-24 pb-32">
-      <div className="max-w-3xl mx-auto px-6 md:px-8">
-        {/* 頂部導航：返回最新消息 */}
+    <article className="min-h-screen bg-white pb-32 pt-14 md:pt-24">
+      <div className="mx-auto max-w-3xl px-6 md:px-8">
         <div className="mb-6 md:mb-8">
           <Link
             to="/news"
-            className="inline-flex items-center group text-[11px] md:text-[12px] tracking-[0.15em] text-neutral-400 hover:text-black transition-colors"
+            className="group inline-flex items-center text-[11px] tracking-[0.15em] text-neutral-400 transition-colors hover:text-black md:text-[12px]"
           >
-            <ArrowLeft className="w-3 h-3 mr-2 transition-transform group-hover:-translate-x-1" />
+            <ArrowLeft className="mr-2 h-3 w-3 transition-transform group-hover:-translate-x-1" />
             返回最新消息
           </Link>
         </div>
 
-        {/* 標題區塊 Header */}
-        <header className="mb-12 md:mb-16 flex flex-col items-start text-left">
-          {/* 分類與日期 */}
-          <div className="flex flex-row items-center gap-3 mb-6 md:mb-8">
+        <header className="mb-12 flex flex-col items-start text-left md:mb-16">
+          <div className="mb-6 flex flex-row items-center gap-3 md:mb-8">
             <span
-              className={`
-                text-[12px] tracking-[0.1em] font-bold px-2 py-1 rounded-sm
-                ${getBadgeStyle(article.category)}
-              `}
+              className={`rounded-sm px-2 py-1 text-[12px] font-bold tracking-[0.1em] ${getBadgeStyle(
+                article.category,
+              )}`}
             >
-              {categoryMeta.subLabel}
+              {CATEGORY_META[article.category].label}
             </span>
-
-            <span className="text-[11px] font-mono text-neutral-400 tracking-wider">
-              {formatDate(article.timestamp)}
+            <span className="font-mono text-[11px] tracking-wider text-neutral-400">
+              {formatTaipeiDate(article.timestamp, '.')}
             </span>
+            {seasonLabel && (
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-blue">
+                {seasonLabel}
+              </span>
+            )}
           </div>
 
-          {/* 標題 */}
-          <h1
-            className="
-              font-display font-bold uppercase
-              text-[26px] md:text-[34px] 
-              leading-[1.2] tracking-wider 
-              text-neutral-900 mb-4 md:mb-5
-            "
-          >
+          <h1 className="mb-4 font-display text-[26px] font-bold uppercase leading-[1.2] tracking-wider text-neutral-900 md:mb-5 md:text-[34px]">
             {article.title}
           </h1>
 
-          {/* 摘要段落 */}
           {article.summary && (
-            <p className="text-[13px] md:text-[14px] leading-relaxed text-neutral-500 tracking-wide mb-6 md:mb-7">
+            <p className="mb-6 text-[13px] leading-relaxed tracking-wide text-neutral-500 md:mb-7 md:text-[14px]">
               {article.summary}
             </p>
           )}
 
-          {/* 裝飾線 */}
-          <div className="w-10 h-[1px] bg-neutral-300" />
+          <div className="h-px w-10 bg-neutral-300" />
         </header>
 
-        {/* 主圖 */}
         {article.imageUrl && (
           <figure className="mb-8 md:mb-10">
-            <div className="w-full bg-neutral-100 overflow-hidden">
+            <div className="w-full overflow-hidden bg-neutral-100">
               <img
                 src={article.imageUrl}
                 alt={article.title}
-                className="w-full h-auto block grayscale-[10%] hover:grayscale-0 transition-all duration-700"
+                className="block h-auto w-full grayscale-[10%] transition-all duration-700 hover:grayscale-0"
               />
             </div>
           </figure>
         )}
 
-        {/* 內文區域 */}
         <div className="mx-auto max-w-[680px]">
           <ArticleBody text={contentText} />
         </div>
 
-        {/* 底部結束符號 (Logo) */}
-        <div className="mt-24 flex justify-center opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
+        <div className="mt-24 flex justify-center opacity-30 grayscale transition-all duration-500 hover:grayscale-0">
           <img
             src="https://cdn.store-assets.com/s/783745/f/16299215.png"
-            alt="End of Article"
-            className="w-12 h-auto object-contain"
+            alt="D LEAGUE"
+            className="h-auto w-12 object-contain"
           />
         </div>
       </div>

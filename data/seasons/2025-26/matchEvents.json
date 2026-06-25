@@ -1,0 +1,1496 @@
+{
+  "m1": [
+    {
+      "id": "m1-1",
+      "minute": 25,
+      "player": "陳麒竣",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m1-2",
+      "minute": 25,
+      "player": "吳明遠",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m1-3",
+      "minute": 32,
+      "player": "吳明遠",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m2": [
+    {
+      "id": "m2-1",
+      "minute": 3,
+      "player": "吳亦民",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2-2",
+      "minute": 5,
+      "player": "潘晨維",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2-4",
+      "minute": 5,
+      "player": "潘晨維",
+      "type": "SECOND_YELLOW",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2-5",
+      "minute": 23,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2-6",
+      "minute": 24,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2-7",
+      "minute": 26,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2-8",
+      "minute": 28,
+      "player": "王亦瑋",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m3": [
+    {
+      "id": "m3-1",
+      "minute": 2,
+      "player": "陳官澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m3-2",
+      "minute": 14,
+      "player": "顏廷邕",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m3-3",
+      "minute": 15,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m3-4",
+      "minute": 31,
+      "player": "林鈺閔",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m3-5",
+      "minute": 33,
+      "player": "謝孟軒",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m3-6",
+      "minute": 38,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m4": [
+    {
+      "id": "m4-1",
+      "minute": 18,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isPK": true
+    },
+    {
+      "id": "m4-2",
+      "minute": 34,
+      "player": "洪品丞",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isPK": true
+    }
+  ],
+  "m5": [
+    {
+      "id": "m5-1",
+      "minute": 25,
+      "player": "王竣弘",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m6": [
+    {
+      "id": "m6-1",
+      "minute": 4,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m6-2",
+      "minute": 37,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m7": [
+    {
+      "id": "m7-1",
+      "minute": 9,
+      "player": "優沙",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m7-2",
+      "minute": 21,
+      "player": "高世科",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m7-3",
+      "minute": 30,
+      "player": "拉非",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m7-4",
+      "minute": 32,
+      "player": "YEHUDA GAGAH WICAKSONO",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m7-5",
+      "minute": 37,
+      "player": "優沙",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m7-6",
+      "minute": 38,
+      "player": "YEHUDA GAGAH WICAKSONO",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m8": [
+    {
+      "id": "m8-1",
+      "minute": 4,
+      "player": "文俊偉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m8-2",
+      "minute": 12,
+      "player": "王亦瑋",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m8-3",
+      "minute": 13,
+      "player": "戴威閎",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m8-4",
+      "minute": 33,
+      "player": "戴威閎",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m9": [
+    {
+      "id": "m9-1",
+      "minute": 1,
+      "player": "簡法亦",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m9-2",
+      "minute": 4,
+      "player": "毛邦澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m9-3",
+      "minute": 5,
+      "player": "楊承諺",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m9-4",
+      "minute": 7,
+      "player": "邱文良",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m9-5",
+      "minute": 24,
+      "player": "林湧鈞",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isOwnGoal": true
+    },
+    {
+      "id": "m9-6",
+      "minute": 27,
+      "player": "毛邦澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m9-7",
+      "minute": 32,
+      "player": "李偲瑋",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    },
+    {
+      "id": "m9-8",
+      "minute": 40,
+      "player": "王浩誠",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m10": [
+    {
+      "id": "m10-1",
+      "minute": 19,
+      "player": "蔡軒誠",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m10-2",
+      "minute": 28,
+      "player": "王竣弘",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m10-3",
+      "minute": 33,
+      "player": "林耀強",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m10-4",
+      "minute": 36,
+      "player": "王竣弘",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m11": [
+    {
+      "id": "m11-1",
+      "minute": 6,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m11-2",
+      "minute": 13,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m11-3",
+      "minute": 24,
+      "player": "趙學邦",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m11-4",
+      "minute": 29,
+      "player": "趙學邦",
+      "type": "GOAL",
+      "team": "HOME",
+      "isPK": true
+    },
+    {
+      "id": "m11-5",
+      "minute": 40,
+      "player": "李偲瑋",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    }
+  ],
+  "m12": [
+    {
+      "id": "m12-1",
+      "minute": 34,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m12-2",
+      "minute": 39,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m13": [
+    {
+      "id": "m13-1",
+      "minute": 39,
+      "player": "YEHUDA GAGAH WICAKSONO",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m14": [
+    {
+      "id": "m14-1",
+      "minute": 23,
+      "player": "高世科",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m14-2",
+      "minute": 35,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m14-3",
+      "minute": 39,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m15": [
+    {
+      "id": "m15-1",
+      "minute": 3,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-2",
+      "minute": 8,
+      "player": "陳建宏",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-3",
+      "minute": 9,
+      "player": "王亦瑋",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-4",
+      "minute": 17,
+      "player": "戴威閎",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-5",
+      "minute": 22,
+      "player": "趙學邦",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-6",
+      "minute": 32,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m15-7",
+      "minute": 33,
+      "player": "陳麒竣",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m16": [
+    {
+      "id": "m16-1",
+      "minute": 15,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m16-2",
+      "minute": 17,
+      "player": "施聖章",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m16-3",
+      "minute": 18,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m16-4",
+      "minute": 37,
+      "player": "李家勳",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m17": [
+    {
+      "id": "m17-1",
+      "minute": 4,
+      "player": "陳官澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m17-2",
+      "minute": 7,
+      "player": "黃偉倫",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m17-3",
+      "minute": 24,
+      "player": "林柏辰",
+      "type": "YELLOW_CARD",
+      "team": "HOME"
+    }
+  ],
+  "m18": [
+    {
+      "id": "m18-1",
+      "minute": 37,
+      "player": "葉晉嘉",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    }
+  ],
+  "m19": [
+    {
+      "id": "m19-1",
+      "minute": 8,
+      "player": "林柏辰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m19-2",
+      "minute": 12,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m19-3",
+      "minute": 15,
+      "player": "唐毓翔",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    },
+    {
+      "id": "m19-4",
+      "minute": 25,
+      "player": "謝孟軒",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m19-5",
+      "minute": 28,
+      "player": "王建翔",
+      "type": "YELLOW_CARD",
+      "team": "AWAY"
+    },
+    {
+      "id": "m19-6",
+      "minute": 33,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m20": [
+    {
+      "id": "m20-1",
+      "minute": 4,
+      "player": "林家銘",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m20-2",
+      "minute": 8,
+      "player": "巫嘉德",
+      "type": "GOAL",
+      "team": "HOME",
+      "isOwnGoal": true
+    },
+    {
+      "id": "m20-3",
+      "minute": 27,
+      "player": "林宴丞",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m20-4",
+      "minute": 29,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "HOME",
+      "isPK": true
+    },
+    {
+      "id": "m20-5",
+      "minute": 36,
+      "player": "倪天銘",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m20-6",
+      "minute": 37,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m21": [],
+  "m22": [
+    {
+      "id": "m22-1",
+      "minute": 10,
+      "player": "李偲瑋",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m22-2",
+      "minute": 27,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m22-3",
+      "minute": 26,
+      "player": "謝俊杰",
+      "type": "RED_CARD",
+      "team": "AWAY"
+    },
+    {
+      "id": "m22-4",
+      "minute": 31,
+      "player": "連哲緯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m22-5",
+      "minute": 36,
+      "player": "李偲瑋",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m22-6",
+      "minute": 36,
+      "player": "邱文良",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m23": [
+    {
+      "id": "m23-1",
+      "minute": 15,
+      "player": "潘晨維",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-2",
+      "minute": 19,
+      "player": "林湧鈞",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-3",
+      "minute": 25,
+      "player": "潘晨維",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-4",
+      "minute": 27,
+      "player": "林聖恩",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-5",
+      "minute": 28,
+      "player": "潘晨維",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-6",
+      "minute": 29,
+      "player": "潘晨維",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m23-7",
+      "minute": 32,
+      "player": "林湧鈞",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m24": [
+    {
+      "id": "m24-1",
+      "minute": 11,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m25": [
+    {
+      "id": "m25-1",
+      "minute": 7,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m25-2",
+      "minute": 12,
+      "player": "毛邦澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m25-3",
+      "minute": 18,
+      "player": "丁誌暉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m25-4",
+      "minute": 32,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m25-5",
+      "minute": 39,
+      "player": "王佳祈",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m26": [
+    {
+      "id": "m26-1",
+      "minute": 18,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m26-2",
+      "minute": 21,
+      "player": "吳明興",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m26-3",
+      "minute": 30,
+      "player": "陳麒竣",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m26-4",
+      "minute": 33,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m27": [
+    {
+      "id": "m27-1",
+      "minute": 6,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m27-2",
+      "minute": 9,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "HOME",
+      "isPK": true
+    },
+    {
+      "id": "m27-3",
+      "minute": 17,
+      "player": "楊俊雄",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m27-4",
+      "minute": 19,
+      "player": "曾龍盛",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m27-5",
+      "minute": 19,
+      "player": "楊俊雄",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m27-6",
+      "minute": 23,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME",
+      "isOwnGoal": true
+    },
+    {
+      "id": "m27-7",
+      "minute": 40,
+      "player": "李鎮宇",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m28": [
+    {
+      "id": "m28-1",
+      "minute": 9,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m28-2",
+      "minute": 15,
+      "player": "何柏緯",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m28-3",
+      "minute": 26,
+      "player": "趙南聰",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m28-4",
+      "minute": 28,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m28-5",
+      "minute": 30,
+      "player": "林晉威",
+      "type": "YELLOW_CARD",
+      "team": "HOME"
+    },
+    {
+      "id": "m28-6",
+      "minute": 31,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m29": [
+    {
+      "id": "m29-1",
+      "minute": 2,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m29-2",
+      "minute": 7,
+      "player": "何柏緯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m29-3",
+      "minute": 15,
+      "player": "楊俊雄",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m29-4",
+      "minute": 18,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m29-5",
+      "minute": 19,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m29-6",
+      "minute": 32,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m29-7",
+      "minute": 39,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m30": [
+    {
+      "id": "m30-1",
+      "minute": 5,
+      "player": "趙南聰",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m30-2",
+      "minute": 36,
+      "player": "溫立丞",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m30-3",
+      "minute": 38,
+      "player": "黃偉倫",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m31": [
+    {
+      "id": "m31-1",
+      "minute": 4,
+      "player": "陳宇翔",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m31-2",
+      "minute": 7,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m31-3",
+      "minute": 17,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m31-4",
+      "minute": 18,
+      "player": "高義莉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m31-5",
+      "minute": 28,
+      "player": "王亦瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m31-6",
+      "minute": 30,
+      "player": "蘇智龍",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m31-7",
+      "minute": 39,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m32": [
+    {
+      "id": "m32-1",
+      "minute": 1,
+      "player": "林敬祐",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m32-2",
+      "minute": 12,
+      "player": "蘇凡迪",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m32-3",
+      "minute": 22,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m32-4",
+      "minute": 24,
+      "player": "伊拉曼",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m32-5",
+      "minute": 29,
+      "player": "陳泰盛",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isOwnGoal": true
+    },
+    {
+      "id": "m32-6",
+      "minute": 32,
+      "player": "YEHUDA GAGAH WICAKSONO",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m32-7",
+      "minute": 39,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m33": [
+    {
+      "id": "m33-1",
+      "minute": 29,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m33-2",
+      "minute": 36,
+      "player": "葉晉嘉",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m34": [
+    {
+      "id": "m34-1",
+      "minute": 19,
+      "player": "吳昱陞",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m34-2",
+      "minute": 28,
+      "player": "林耀強",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m34-3",
+      "minute": 32,
+      "player": "陳遠泰",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m35": [
+    {
+      "id": "m35-1",
+      "minute": 15,
+      "player": "盧冠宇",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m36": [
+    {
+      "id": "m36-1",
+      "minute": 5,
+      "player": "林晉威",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m36-2",
+      "minute": 23,
+      "player": "潘志豪",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m36-3",
+      "minute": 24,
+      "player": "克魯茲",
+      "type": "YELLOW_CARD",
+      "team": "HOME"
+    },
+    {
+      "id": "m36-4",
+      "minute": 32,
+      "player": "洪品宇",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isPK": true
+    },
+    {
+      "id": "m36-5",
+      "minute": 34,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m36-6",
+      "minute": 35,
+      "player": "趙南聰",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m37": [
+    {
+      "id": "m37-1",
+      "minute": 22,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m37-2",
+      "minute": 25,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m37-3",
+      "minute": 38,
+      "player": "何柏緯",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m38": [
+    {
+      "id": "m38-1",
+      "minute": 5,
+      "player": "連哲緯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m38-2",
+      "minute": 19,
+      "player": "王亦瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m38-3",
+      "minute": 31,
+      "player": "連哲緯",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m38-4",
+      "minute": 33,
+      "player": "黃浩程",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m39": [
+    {
+      "id": "m39-1",
+      "minute": 2,
+      "player": "吳亦民",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m39-2",
+      "minute": 12,
+      "player": "張博宇",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m39-3",
+      "minute": 13,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m39-4",
+      "minute": 17,
+      "player": "陳泰盛",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m39-5",
+      "minute": 24,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m39-6",
+      "minute": 35,
+      "player": "劉力瑋",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m39-7",
+      "minute": 36,
+      "player": "吳亦民",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m40": [
+    {
+      "id": "m40-1",
+      "minute": 24,
+      "player": "鄭詠翰",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m40-2",
+      "minute": 29,
+      "player": "林鈺閔",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m40-3",
+      "minute": 35,
+      "player": "趙南聰",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m40-4",
+      "minute": 39,
+      "player": "趙學克",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m41": [
+    {
+      "id": "m41-1",
+      "minute": 26,
+      "player": "倪天銘",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m42": [
+    {
+      "id": "m42-1",
+      "minute": 4,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m42-2",
+      "minute": 19,
+      "player": "YEHUDA GAGAH WICAKSONO",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m42-3",
+      "minute": 28,
+      "player": "林韋堯",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m42-4",
+      "minute": 31,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m42-5",
+      "minute": 33,
+      "player": "牙提",
+      "type": "YELLOW_CARD",
+      "team": "HOME"
+    }
+  ],
+  "m43": [
+    {
+      "id": "m43-1",
+      "minute": 12,
+      "player": "蘇智龍",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m43-2",
+      "minute": 37,
+      "player": "潘晨維",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m44": [
+    {
+      "id": "m44-1",
+      "minute": 7,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m44-2",
+      "minute": 35,
+      "player": "布丹",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m45": [
+    {
+      "id": "m45-1",
+      "minute": 10,
+      "player": "郭彥廷",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m45-2",
+      "minute": 20,
+      "player": "毛邦澤",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m45-3",
+      "minute": 28,
+      "player": "洪子程",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m45-4",
+      "minute": 40,
+      "player": "梶原航",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isPK": true
+    }
+  ],
+  "m46": [
+    {
+      "id": "m46-1",
+      "minute": 4,
+      "player": "溫立丞",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m46-2",
+      "minute": 10,
+      "player": "林柏辰",
+      "type": "GOAL",
+      "team": "HOME",
+      "isPK": true
+    },
+    {
+      "id": "m46-3",
+      "minute": 28,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m46-4",
+      "minute": 31,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m46-5",
+      "minute": 40,
+      "player": "鄭州偉",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m47": [
+    {
+      "id": "m47-1",
+      "minute": 19,
+      "player": "陳宇翔",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m47-2",
+      "minute": 32,
+      "player": "邱文良",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
+  ],
+  "m48": [
+    {
+      "id": "m48-1",
+      "minute": 10,
+      "player": "林冠亨",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m48-2",
+      "minute": 21,
+      "player": "洪品丞",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m48-3",
+      "minute": 24,
+      "player": "洪品丞",
+      "type": "GOAL",
+      "team": "HOME",
+      "isPK": true
+    },
+    {
+      "id": "m48-4",
+      "minute": 28,
+      "player": "潘志豪",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m48-5",
+      "minute": 37,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m48-6",
+      "minute": 39,
+      "player": "吳明威",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ]
+}

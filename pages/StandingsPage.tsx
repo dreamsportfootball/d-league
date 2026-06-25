@@ -1,169 +1,257 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AlertCircle, BookOpen, Filter } from 'lucide-react';
+import EmptyState from '../components/EmptyState';
+import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
+import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
-import { AlertCircle, BookOpen, Trophy } from 'lucide-react';
-
-type LeagueFilter = 'L1' | 'L2'; 
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
+import { useSeason } from '../hooks/useSeason';
+import { MatchStatus } from '../types';
+import type { LeagueId, SeasonId } from '../types/season';
 
 const StandingsPage: React.FC = () => {
-    
-    // ✅ 修正 1: 使用 useState 的函數式更新，在初始化時同步讀取 Session Storage
-    const [activeLeague, setActiveLeague] = useState<LeagueFilter>(() => {
-        try {
-            const saved = window.sessionStorage.getItem('standingsActiveLeague');
-            // 只有當儲存的值是有效的聯賽名稱時才使用
-            if (saved === 'L1' || saved === 'L2') {
-                return saved as LeagueFilter;
-            }
-        } catch (e) {
-            // ignore
+  const {
+    activeSeasonId,
+    activeSeason,
+    seasonData,
+    availableSeasons,
+    setActiveSeason,
+  } = useSeason();
+  const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
+    try {
+      const saved = window.sessionStorage.getItem('standingsActiveLeague');
+      return saved === 'L1' || saved === 'L2' || saved === 'L3' ? saved : 'L1';
+    } catch {
+      return 'L1';
+    }
+  });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
+  const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
+
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
+  const currentSeason = availableSeasons.find((season) => season.id === CURRENT_SEASON_ID) ?? activeSeason;
+  const defaultLeague = currentSeason.enabledLeagues[0];
+
+  useEffect(() => {
+    if (!activeSeason.enabledLeagues.includes(activeLeague)) {
+      const fallbackLeague = activeSeason.enabledLeagues[0];
+      setActiveLeague(fallbackLeague);
+      try {
+        window.sessionStorage.setItem('standingsActiveLeague', fallbackLeague);
+      } catch {
+        // Session storage may be unavailable.
+      }
+    }
+  }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
+
+  const updateLeague = (league: LeagueId) => {
+    setActiveLeague(league);
+    try {
+      window.sessionStorage.setItem('standingsActiveLeague', league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+  };
+
+  const leagueConfig = activeSeason.leagues[activeLeague];
+  const leagueTeams = useMemo(
+    () =>
+      seasonData.teams.filter(
+        (team) => team.leagueId === activeLeague && team.competitionStatus !== 'WITHDRAWN',
+      ),
+    [activeLeague, seasonData.teams],
+  );
+  const hasFinishedMatches = useMemo(
+    () =>
+      seasonData.matches.some(
+        (match) =>
+          match.league === activeLeague &&
+          match.resultType !== 'VOID' &&
+          match.countsForStandings !== false &&
+          (match.status === MatchStatus.FINISHED ||
+            (match.homeScore !== null && match.awayScore !== null)),
+      ),
+    [activeLeague, seasonData.matches],
+  );
+
+  const shouldShowEmptyState = leagueTeams.length === 0 || !hasFinishedMatches;
+  const filterFields: FilterDrawerField[] = [
+    {
+      id: 'season',
+      label: '賽季',
+      value: draftSeasonId,
+      displayValue: draftSeason.shortName,
+      options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+      onChange: (value) => {
+        const nextSeasonId = value as SeasonId;
+        const nextSeason = availableSeasons.find((season) => season.id === nextSeasonId);
+        setDraftSeasonId(nextSeasonId);
+        if (nextSeason && !nextSeason.enabledLeagues.includes(draftLeague)) {
+          setDraftLeague(nextSeason.enabledLeagues[0]);
         }
-        return 'L1'; // 預設值
-    });
+      },
+    },
+    {
+      id: 'league',
+      label: '級別',
+      value: draftLeague,
+      displayValue: draftLeague,
+      options: draftSeason.enabledLeagues.map((league) => ({ value: league, label: league })),
+      onChange: (value) => setDraftLeague(value as LeagueId),
+    },
+  ];
 
-    // ✅ 修正 2: 處理聯賽切換並保存狀態
-    const handleLeagueChange = (league: LeagueFilter) => {
-        setActiveLeague(league);
-        try {
-            // 每次切換時將新狀態保存到 sessionStorage
-            window.sessionStorage.setItem('standingsActiveLeague', league);
-        } catch (e) {
-            // ignore
-        }
-    };
+  const openFilters = () => {
+    setDraftSeasonId(activeSeasonId);
+    setDraftLeague(activeLeague);
+    setFiltersOpen(true);
+  };
 
+  const clearFilters = () => {
+    setDraftSeasonId(CURRENT_SEASON_ID);
+    setDraftLeague(defaultLeague);
+  };
 
-    // 篩選器渲染邏輯
-    const filterContent = (
-        // 🚀 間距縮小：space-x-4
-        <div className="flex space-x-4 text-xs font-bold">
-            {([ 'L1', 'L2' ] as LeagueFilter[]).map((tab) => {
-                const mobileLabel = tab; // L1 / L2
-                // 🚀 文字柔化：自然大小寫 (League 1)
-                const desktopLabel = tab === 'L1' ? 'LEAGUE 1' : 'LEAGUE 2'; 
-                
-                const responsiveLabel = (
-                    <>
-                        {/* ✅ 響應式文字: 手機 L1/L2 (Oswald font-display) */}
-                        <span className="inline md:hidden font-display">{mobileLabel}</span>
-                        {/* 電腦 League 1 / League 2 */}
-                        <span className="hidden md:inline">{desktopLabel}</span>
-                    </>
-                );
+  const applyFilters = () => {
+    const nextSeason = availableSeasons.find((season) => season.id === draftSeasonId);
+    if (!nextSeason) return;
 
-                return (
-                    <button
-                        key={tab}
-                        // ✅ 使用新的處理函式
-                        onClick={() => handleLeagueChange(tab)}
-                        // 🚀 移除 uppercase 類別
-                        className={`px-1 pb-1 transition-all whitespace-nowrap
-                            border-b-2 
-                            ${activeLeague === tab
-                                ? 'border-brand-blue text-brand-black font-bold' // 選中：深黑文字
-                                : 'border-transparent text-neutral-400 font-medium hover:text-neutral-600'} // 未選中：淺灰文字
-                        `}
-                    >
-                        {responsiveLabel}
-                    </button>
-                );
-            })}
+    const nextLeague = nextSeason.enabledLeagues.includes(draftLeague)
+      ? draftLeague
+      : nextSeason.enabledLeagues[0];
+
+    if (nextLeague !== activeLeague) updateLeague(nextLeague);
+    if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
+    setFiltersOpen(false);
+  };
+
+  return (
+    <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
+      <div className="container mx-auto max-w-7xl px-4 md:px-12">
+        <SeasonPageHeader
+          title="積分"
+          accent="榜"
+          description={`${activeSeason.displayName} ${activeLeague} 即時排名與數據`}
+          showMobileSeasonSelector={false}
+          showDesktopSeasonSelector={false}
+        />
+
+        <div className="mb-8 flex min-h-14 items-center border-b border-neutral-100">
+          <div className="flex min-w-0 items-center">
+            <span className="whitespace-nowrap text-xs font-bold tracking-[0.02em] text-brand-black md:hidden">
+              {activeSeason.shortName} · {activeLeague}
+            </span>
+            <span className="hidden whitespace-nowrap text-sm font-bold tracking-[0.02em] text-brand-black md:inline">
+              {activeSeason.shortName} 賽季 · {activeLeague}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={openFilters}
+            aria-label="篩選積分榜"
+            className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-[11px] font-semibold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm md:font-bold"
+          >
+            <Filter className="mr-1.5 h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden="true" />
+            篩選
+          </button>
         </div>
-    );
 
-    return (
-        // ✅ 空間緊湊化: 手機版 pt-6，電腦版 md:pt-20 維持大氣
-        <div className="pt-6 md:pt-20 min-h-[80vh] bg-white pb-24">
-            <div className="container mx-auto px-6 md:px-12 max-w-7xl">
-                
-                {/* Header - 保持標題區的簡潔 */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-5 md:mb-12">
-                    <div>
-                        {/* ✅ 標題加強: 手機版文字描邊 (.25px) 模擬加粗，電腦版移除描邊 */}
-                        <h1 className="font-display font-black text-4xl md:text-6xl uppercase text-brand-black mb-4 tracking-tight [-webkit-text-stroke:.25px_currentColor] md:[-webkit-text-stroke:0px]">
-                            積分 <span className="text-brand-blue">榜</span>
-                        </h1>
-                        <p className="text-neutral-400 text-sm md:text-base font-medium tracking-wide">
-                            {activeLeague} 聯賽 的即時排名與數據
-                        </p>
-                    </div>
-                </div>
-
-                {/* 🚀 獨立聯賽選擇區塊 - 修正垂直對齊問題 (items-center) */}
-                <div className="flex justify-between items-center mb-8"> 
-                    {/* 標題靠左 */}
-                    <h3 className="font-bold text-base text-neutral-900 font-display uppercase tracking-wider flex items-center">
-                        {/* 修正：移除 translate-y-[1px]，讓 items-center 實現完美對齊 */}
-                        <Trophy className="w-5 h-5 mr-2 text-brand-blue" />
-                        選擇聯賽
-                    </h3>
-
-                    {/* 篩選器內容：被父級的 justify-between 推向右側，與標題水平對齊 */}
-                    {filterContent}
-                </div>
-                {/* 結束獨立聯賽選擇區塊 */}
-
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 items-start">
-                    
-                    {/* 表格區塊 */}
-                    <div className="xl:col-span-8">
-                        
-                        <Standings league={activeLeague} variant="page" />
-                        
-                        <div className="mt-6 flex items-center text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
-                            <div className="w-1.5 h-1.5 rounded-full bg-brand-blue mr-2"></div> 
-                            League Champion
-                        </div>
-                    </div>
-
-                    {/* 側邊資訊區 (Rules) - 極簡化 */}
-                    <div className="hidden xl:col-span-4 xl:flex flex-col space-y-8 sticky top-24 pl-8">
-                        
-                        {/* 賽制說明 */}
-                        <div>
-                            <div className="flex items-center mb-4 text-brand-black">
-                                <BookOpen className="w-4 h-4 mr-2" />
-                                <h3 className="font-bold uppercase tracking-widest text-xs">賽制說明</h3>
-                            </div>
-                            <ul className="space-y-6">
-                                <li>
-                                    <span className="block font-bold text-brand-black text-sm mb-1">冠軍獎項</span>
-                                    <p className="text-xs text-neutral-500 leading-relaxed">各組冠軍頒發獎盃乙座與獎牌 20 面</p>
-                                </li>
-                                <li>
-                                    <span className="block font-bold text-brand-black text-sm mb-1">賽制循環</span>
-                                    <p className="text-xs text-neutral-500 leading-relaxed">
-                                        {activeLeague === 'L1' 
-                                            ? 'L1 組採三循環賽制，每隊共比賽 9 場' 
-                                            : 'L2 組採雙循環賽制，每隊共比賽 10 場'}
-                                    </p>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* 排名規則 (✅ 新增 mt-8 增加頂部間距) */}
-                        <div className="mt-8"> 
-                            <div className="flex items-center mb-4 text-brand-black">
-                                <AlertCircle className="w-4 h-4 mr-2" />
-                                <h3 className="font-bold uppercase tracking-widest text-xs">排名規則</h3>
-                            </div>
-                            
-                            {/* 清單文字對比度已優化 */}
-                            <div className="text-xs leading-relaxed text-neutral-700">
-                                <p className="mb-2 text-neutral-500">積分相同時，依序比較：</p>
-                                <ol className="list-decimal list-inside space-y-1 ml-1">
-                                    <li>得失球差</li>
-                                    <li>進球數</li>
-                                    <li>相關隊伍間對戰成績</li>
-                                    <li>黃紅牌</li>
-                                    <li>並列</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        {shouldShowEmptyState ? (
+          <EmptyState
+            title="新賽季尚未開始"
+            description="積分榜將於首輪比賽完成後更新"
+            showRegistrationLink={activeSeason.status === 'registration'}
+          />
+        ) : (
+          <div className="grid grid-cols-1 items-start gap-12 xl:grid-cols-12">
+            <div className="xl:col-span-8">
+              <Standings league={activeLeague} variant="page" />
+              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                <span className="flex items-center">
+                  <span className="mr-2 h-1.5 w-1.5 rounded-full bg-brand-blue" />
+                  冠軍
+                </span>
+                {leagueConfig && leagueConfig.promotionPlaces > 0 && (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-green-500" />
+                    升級區
+                  </span>
+                )}
+                {leagueConfig && leagueConfig.relegationPlaces > 0 && (
+                  <span className="flex items-center">
+                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-red-500" />
+                    降級區
+                  </span>
+                )}
+              </div>
             </div>
-        </div>
-    );
+
+            <div className="sticky top-24 hidden flex-col space-y-8 pl-8 xl:col-span-4 xl:flex">
+              <div>
+                <div className="mb-4 flex items-center text-brand-black">
+                  <BookOpen className="mr-2 h-4 w-4" aria-hidden="true" />
+                  <h3 className="text-xs font-bold uppercase tracking-widest">賽制說明</h3>
+                </div>
+                <ul className="space-y-6">
+                  <li>
+                    <span className="mb-1 block text-sm font-bold text-brand-black">冠軍獎項</span>
+                    <p className="text-xs leading-relaxed text-neutral-500">各組冠軍頒發獎盃乙座與獎牌 20 面</p>
+                  </li>
+                  <li>
+                    <span className="mb-1 block text-sm font-bold text-brand-black">賽制循環</span>
+                    <p className="text-xs leading-relaxed text-neutral-500">
+                      {leagueConfig?.description ?? '賽制資訊將由主辦單位公布'}
+                    </p>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-8">
+                <div className="mb-4 flex items-center text-brand-black">
+                  <AlertCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+                  <h3 className="text-xs font-bold uppercase tracking-widest">排名規則</h3>
+                </div>
+                <div className="text-xs leading-relaxed text-neutral-700">
+                  {activeSeason.standingsDisplay.showPointsSummary && (
+                    <p className="mb-2 text-neutral-500">
+                      勝 {activeSeason.rules.winPoints} 分、和 {activeSeason.rules.drawPoints} 分、負 {activeSeason.rules.lossPoints} 分
+                    </p>
+                  )}
+                  <p className="mb-2 text-neutral-500">積分相同時，依序比較：</p>
+                  <ol className="ml-1 list-inside list-decimal space-y-1">
+                    {activeSeason.standingsDisplay.rankingRules.map((rule) => (
+                      <li key={rule}>{rule}</li>
+                    ))}
+                  </ol>
+                  {activeSeason.standingsDisplay.footerNote && (
+                    <p className="mt-3 text-neutral-500">{activeSeason.standingsDisplay.footerNote}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <ResponsiveFilterDrawer
+        open={filtersOpen}
+        fields={filterFields}
+        onClose={() => setFiltersOpen(false)}
+        onClear={clearFilters}
+        clearDisabled={draftSeasonId === CURRENT_SEASON_ID && draftLeague === defaultLeague}
+        onApply={applyFilters}
+        applyLabel="查看積分榜"
+        title="篩選積分榜"
+        subtitle="選擇賽季與聯賽級別"
+      />
+    </div>
+  );
 };
 
 export default StandingsPage;

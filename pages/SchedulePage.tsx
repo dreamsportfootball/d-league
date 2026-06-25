@@ -1,234 +1,949 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  RotateCcw,
+  X,
+} from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
-import MatchEvents from '../components/MatchEvents';
-import { MATCHES, TEAMS } from '../constants';
-import { X, MousePointerClick, Trophy } from 'lucide-react'; // 🚀 導入 Trophy
+import MatchDialog from '../components/MatchDialog';
+import SeasonPageHeader from '../components/SeasonPageHeader';
+import { useSeason } from '../hooks/useSeason';
+import { getSeasonData } from '../services/seasonDataJson';
+import type { Match } from '../types';
+import { MatchStatus } from '../types';
+import type { LeagueId, SeasonId } from '../types/season';
+import type { SeasonTeam } from '../types/team';
 
-type LeagueFilter = 'L1' | 'L2' | 'ALL';
+type LeagueFilter = LeagueId | 'ALL';
+type StatusFilter = 'ALL' | 'UPCOMING' | 'FINISHED';
+type MobileFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
+type DesktopFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
+type FacetKey = 'league' | 'team' | 'round' | 'date' | 'status';
 
-// 格式化日期時間 helper
-const formatMatchDateTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const datePart = date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit', weekday: 'short' });
-    const timePart = date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
-    return `${datePart} ${timePart}`;
+interface ScheduleFilters {
+  league: LeagueFilter;
+  team: string;
+  round: string;
+  date: string;
+  status: StatusFilter;
+}
+
+interface FacetOptions {
+  leagueIds: LeagueId[];
+  teams: SeasonTeam[];
+  rounds: string[];
+  dates: string[];
+  statuses: StatusFilter[];
+}
+
+interface ScheduleFilterDraft {
+  seasonId: SeasonId;
+  filters: ScheduleFilters;
+}
+
+interface FilterSelectOption {
+  value: string;
+  label: string;
+}
+
+interface FilterSelectorConfig {
+  title: string;
+  selectedValue: string;
+  options: FilterSelectOption[];
+  onSelect: (value: string) => void;
+}
+
+const EMPTY_FILTERS: ScheduleFilters = {
+  league: 'ALL',
+  team: 'ALL',
+  round: 'ALL',
+  date: 'ALL',
+  status: 'ALL',
 };
 
-// 🎌 UI 元件：MinimalFilter 已移除，樣式直接在 filterContent 中實現
+const matchPassesFilters = (
+  match: Match,
+  filters: ScheduleFilters,
+  excludedFacet?: FacetKey,
+): boolean => {
+  if (excludedFacet !== 'league' && filters.league !== 'ALL' && match.league !== filters.league) {
+    return false;
+  }
+  if (
+    excludedFacet !== 'team' &&
+    filters.team !== 'ALL' &&
+    match.homeTeamId !== filters.team &&
+    match.awayTeamId !== filters.team
+  ) {
+    return false;
+  }
+  if (excludedFacet !== 'round' && filters.round !== 'ALL' && String(match.round) !== filters.round) {
+    return false;
+  }
+  if (excludedFacet !== 'date' && filters.date !== 'ALL' && !match.timestamp.startsWith(filters.date)) {
+    return false;
+  }
+  if (excludedFacet !== 'status') {
+    if (filters.status === 'UPCOMING' && match.status !== MatchStatus.SCHEDULED) return false;
+    if (filters.status === 'FINISHED' && match.status !== MatchStatus.FINISHED) return false;
+  }
+  return true;
+};
+
+const getFacetOptions = (
+  matches: Match[],
+  teams: SeasonTeam[],
+  filters: ScheduleFilters,
+  enabledLeagues: LeagueId[],
+): FacetOptions => {
+  const leagueIdsWithMatches = new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'league'))
+      .map((match) => match.league),
+  );
+  const leagueIds = enabledLeagues.filter((leagueId) => leagueIdsWithMatches.has(leagueId));
+
+  const teamIds = new Set<string>();
+  matches
+    .filter((match) => matchPassesFilters(match, filters, 'team'))
+    .forEach((match) => {
+      teamIds.add(match.homeTeamId);
+      teamIds.add(match.awayTeamId);
+    });
+  const availableTeams = teams
+    .filter((team) => teamIds.has(team.id))
+    .sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
+
+  const rounds = [...new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'round'))
+      .map((match) => String(match.round)),
+  )].sort((a, b) => Number(a) - Number(b));
+
+  const dates = [...new Set(
+    matches
+      .filter((match) => matchPassesFilters(match, filters, 'date'))
+      .map((match) => match.timestamp.split('T')[0]),
+  )].sort();
+
+  const statusMatches = matches.filter((match) => matchPassesFilters(match, filters, 'status'));
+  const statuses: StatusFilter[] = ['ALL'];
+  if (statusMatches.some((match) => match.status === MatchStatus.FINISHED)) statuses.push('FINISHED');
+  if (statusMatches.some((match) => match.status === MatchStatus.SCHEDULED)) statuses.push('UPCOMING');
+
+  return { leagueIds, teams: availableTeams, rounds, dates, statuses };
+};
+
+const isFacetValueAvailable = (
+  facet: FacetKey,
+  value: string,
+  matches: Match[],
+  filters: ScheduleFilters,
+): boolean => {
+  if (value === 'ALL') return true;
+  const candidateFilters = { ...filters, [facet]: value } as ScheduleFilters;
+  return matches.some((match) => matchPassesFilters(match, candidateFilters));
+};
+
+const reconcileFilters = (
+  proposedFilters: ScheduleFilters,
+  changedFacet: FacetKey,
+  matches: Match[],
+): ScheduleFilters => {
+  const nextFilters = { ...proposedFilters };
+  const facets: FacetKey[] = ['league', 'status', 'team', 'date', 'round'];
+
+  for (let pass = 0; pass < facets.length; pass += 1) {
+    let changed = false;
+    for (const facet of facets) {
+      if (facet === changedFacet || nextFilters[facet] === 'ALL') continue;
+      if (!isFacetValueAvailable(facet, nextFilters[facet], matches, nextFilters)) {
+        nextFilters[facet] = 'ALL';
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+
+  return nextFilters;
+};
+
+const getStatusSummary = (status: StatusFilter): string => {
+  if (status === 'FINISHED') return '已完賽';
+  if (status === 'UPCOMING') return '即將開賽';
+  return '全部狀態';
+};
 
 const SchedulePage: React.FC = () => {
-    
-    // ✅ 修正 1: 使用 useState 的函數式更新，在初始化時同步讀取 Session Storage
-    const [leagueTab, setLeagueTab] = useState<LeagueFilter>(() => {
-        try {
-            const saved = window.sessionStorage.getItem('scheduleActiveLeague');
-            if (saved === 'L1' || saved === 'L2' || saved === 'ALL') {
-                return saved as LeagueFilter;
-            }
-        } catch (e) {
-            // ignore
-        }
-        return 'ALL'; // 預設值
-    });
+  const {
+    activeSeasonId,
+    activeSeason,
+    seasonData,
+    availableSeasons,
+    setActiveSeason,
+  } = useSeason();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const previousSeasonIdRef = useRef(activeSeasonId);
+  const [filters, setFilters] = useState<ScheduleFilters>(() => {
+    let savedLeague: LeagueFilter = 'ALL';
+    try {
+      const saved = window.sessionStorage.getItem('scheduleActiveLeague');
+      if (saved === 'L1' || saved === 'L2' || saved === 'L3') savedLeague = saved;
+    } catch {
+      // Session storage may be unavailable.
+    }
+    return {
+      ...EMPTY_FILTERS,
+      league: savedLeague !== 'ALL' && activeSeason.enabledLeagues.includes(savedLeague)
+        ? savedLeague
+        : 'ALL',
+    };
+  });
+  const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
+  const [desktopFilterView, setDesktopFilterView] = useState<DesktopFilterView>('ROOT');
+  const [desktopDraft, setDesktopDraft] = useState<ScheduleFilterDraft>({
+    seasonId: activeSeasonId,
+    filters: { ...EMPTY_FILTERS },
+  });
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileFilterView, setMobileFilterView] = useState<MobileFilterView>('ROOT');
+  const [mobileDraft, setMobileDraft] = useState<ScheduleFilterDraft>({
+    seasonId: activeSeasonId,
+    filters: { ...EMPTY_FILTERS },
+  });
 
-    const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const selectedMatchId = searchParams.get('match');
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const filteredMatches = useMemo(
+    () => seasonData.matches.filter((match) => matchPassesFilters(match, filters)),
+    [filters, seasonData.matches],
+  );
 
-    // ✅ 修正 2: 處理聯賽切換並保存狀態
-    const handleLeagueChange = (league: LeagueFilter) => {
-        setLeagueTab(league);
-        setSelectedMatchId(null);
-        try {
-            // 每次切換時將新狀態保存到 sessionStorage
-            window.sessionStorage.setItem('scheduleActiveLeague', league);
-        } catch (e) {
-            // ignore
-        }
+  const desktopDraftSeason = availableSeasons.find((season) => season.id === desktopDraft.seasonId) ?? activeSeason;
+  const desktopDraftSeasonData = getSeasonData(desktopDraft.seasonId);
+  const desktopDraftFacetOptions = useMemo(
+    () => getFacetOptions(
+      desktopDraftSeasonData.matches,
+      desktopDraftSeasonData.teams,
+      desktopDraft.filters,
+      desktopDraftSeason.enabledLeagues,
+    ),
+    [
+      desktopDraft.filters,
+      desktopDraftSeason.enabledLeagues,
+      desktopDraftSeasonData.matches,
+      desktopDraftSeasonData.teams,
+    ],
+  );
+  const desktopDraftFilteredMatches = useMemo(
+    () => desktopDraftSeasonData.matches.filter((match) => matchPassesFilters(match, desktopDraft.filters)),
+    [desktopDraft.filters, desktopDraftSeasonData.matches],
+  );
+
+  const mobileDraftSeason = availableSeasons.find((season) => season.id === mobileDraft.seasonId) ?? activeSeason;
+  const mobileDraftSeasonData = getSeasonData(mobileDraft.seasonId);
+  const mobileDraftFacetOptions = useMemo(
+    () => getFacetOptions(
+      mobileDraftSeasonData.matches,
+      mobileDraftSeasonData.teams,
+      mobileDraft.filters,
+      mobileDraftSeason.enabledLeagues,
+    ),
+    [
+      mobileDraft.filters,
+      mobileDraftSeason.enabledLeagues,
+      mobileDraftSeasonData.matches,
+      mobileDraftSeasonData.teams,
+    ],
+  );
+  const mobileDraftFilteredMatches = useMemo(
+    () => mobileDraftSeasonData.matches.filter((match) => matchPassesFilters(match, mobileDraft.filters)),
+    [mobileDraft.filters, mobileDraftSeasonData.matches],
+  );
+
+  useEffect(() => {
+    if (previousSeasonIdRef.current === activeSeasonId) return;
+    previousSeasonIdRef.current = activeSeasonId;
+    setFilters({ ...EMPTY_FILTERS });
+    setDesktopFiltersOpen(false);
+    setDesktopFilterView('ROOT');
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', 'ALL');
+    } catch {
+      // Session storage may be unavailable.
+    }
+  }, [activeSeasonId]);
+
+  useEffect(() => {
+    if (selectedMatchId && !seasonData.matches.some((match) => match.id === selectedMatchId)) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('match');
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, seasonData.matches, selectedMatchId, setSearchParams]);
+
+  useEffect(() => {
+    if (!desktopFiltersOpen) return;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setDesktopFilterView('ROOT');
+      setDesktopFiltersOpen(false);
     };
 
-
-    const handleMatchClick = (matchId: string) => {
-        setSelectedMatchId(prevId => prevId === matchId ? null : matchId);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
     };
+  }, [desktopFiltersOpen]);
 
-    const selectedMatch = useMemo(() => 
-        MATCHES.find(m => m.id === selectedMatchId), 
-    [selectedMatchId]);
-
-    React.useEffect(() => {
-        if (selectedMatchId) {
-            document.body.style.overflow = 'hidden';
+  useEffect(() => {
+    if (!mobileFiltersOpen) return;
+    document.body.style.overflow = 'hidden';
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (mobileFilterView !== 'ROOT') {
+          setMobileFilterView('ROOT');
         } else {
-            document.body.style.overflow = '';
+          setMobileFiltersOpen(false);
         }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [selectedMatchId]);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileFilterView, mobileFiltersOpen]);
 
+  const closeDesktopFilters = () => {
+    setDesktopFilterView('ROOT');
+    setDesktopFiltersOpen(false);
+  };
 
-    // 篩選器渲染邏輯 (極簡線條風格)
-    const filterContent = (
-        <div className="flex space-x-4 text-xs font-bold">
-            {([ 'ALL', 'L1', 'L2' ] as LeagueFilter[]).map((tab) => {
-                
-                let labelText: string;
-                if (tab === 'ALL') {
-                    // 手機版使用中文 "全部"
-                    labelText = '全部';
-                } else {
-                    // 電腦版使用自然大小寫 "League 1"
-                    labelText = tab === 'L1' ? 'LEAGUE 1' : 'LEAGUE 2';
+  const updateDesktopDraftFacet = (facet: FacetKey, value: string) => {
+    setDesktopDraft((currentDraft) => {
+      if (currentDraft.filters[facet] === value) return currentDraft;
+      const currentData = getSeasonData(currentDraft.seasonId);
+      const proposedFilters = { ...currentDraft.filters, [facet]: value } as ScheduleFilters;
+      return {
+        ...currentDraft,
+        filters: reconcileFilters(proposedFilters, facet, currentData.matches),
+      };
+    });
+  };
+
+  const updateMobileDraftFacet = (facet: FacetKey, value: string) => {
+    setMobileDraft((currentDraft) => {
+      if (currentDraft.filters[facet] === value) return currentDraft;
+      const currentData = getSeasonData(currentDraft.seasonId);
+      const proposedFilters = { ...currentDraft.filters, [facet]: value } as ScheduleFilters;
+      return {
+        ...currentDraft,
+        filters: reconcileFilters(proposedFilters, facet, currentData.matches),
+      };
+    });
+  };
+
+  const openDesktopFilters = () => {
+    setDesktopDraft({ seasonId: activeSeasonId, filters: { ...filters } });
+    setDesktopFilterView('ROOT');
+    setDesktopFiltersOpen(true);
+  };
+
+  const toggleDesktopFilters = () => {
+    if (desktopFiltersOpen) {
+      closeDesktopFilters();
+      return;
+    }
+    openDesktopFilters();
+  };
+
+  const applyDesktopFilters = () => {
+    previousSeasonIdRef.current = desktopDraft.seasonId;
+    if (desktopDraft.seasonId !== activeSeasonId) {
+      setActiveSeason(desktopDraft.seasonId);
+    }
+    setFilters(desktopDraft.filters);
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', desktopDraft.filters.league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+    closeDesktopFilters();
+  };
+
+  const openMobileFilters = () => {
+    setMobileDraft({ seasonId: activeSeasonId, filters: { ...filters } });
+    setMobileFilterView('ROOT');
+    setMobileFiltersOpen(true);
+  };
+
+  const closeMobileFilters = () => {
+    setMobileFilterView('ROOT');
+    setMobileFiltersOpen(false);
+  };
+
+  const applyMobileFilters = () => {
+    previousSeasonIdRef.current = mobileDraft.seasonId;
+    if (mobileDraft.seasonId !== activeSeasonId) {
+      setActiveSeason(mobileDraft.seasonId);
+    }
+    setFilters(mobileDraft.filters);
+    try {
+      window.sessionStorage.setItem('scheduleActiveLeague', mobileDraft.filters.league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+    closeMobileFilters();
+  };
+
+  const selectMatch = (matchId: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('match', matchId);
+    setSearchParams(next, { replace: false });
+  };
+
+  const closeMatch = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete('match');
+    setSearchParams(next, { replace: false });
+  };
+
+  const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
+  const desktopActiveFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
+  const desktopDraftFilterCount = Object.values(desktopDraft.filters).filter((value) => value !== 'ALL').length;
+  const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
+  const mobileDraftFilterCount = Object.values(mobileDraft.filters).filter((value) => value !== 'ALL').length;
+
+  const desktopDraftLeagueSummary = desktopDraft.filters.league === 'ALL'
+    ? '全部級別'
+    : desktopDraft.filters.league;
+  const desktopDraftStatusSummary = getStatusSummary(desktopDraft.filters.status);
+  const desktopDraftTeamSummary = desktopDraft.filters.team === 'ALL'
+    ? '全部球隊'
+    : desktopDraftSeasonData.teamMap[desktopDraft.filters.team]?.name ?? '全部球隊';
+  const desktopDraftDateSummary = desktopDraft.filters.date === 'ALL'
+    ? '全部日期'
+    : desktopDraft.filters.date.replaceAll('-', '/');
+  const desktopDraftRoundSummary = desktopDraft.filters.round === 'ALL'
+    ? '全部輪次'
+    : `第 ${desktopDraft.filters.round} 輪`;
+
+  const mobileDraftLeagueSummary = mobileDraft.filters.league === 'ALL'
+    ? '全部級別'
+    : mobileDraft.filters.league;
+  const mobileDraftStatusSummary = getStatusSummary(mobileDraft.filters.status);
+  const mobileDraftTeamSummary = mobileDraft.filters.team === 'ALL'
+    ? '全部球隊'
+    : mobileDraftSeasonData.teamMap[mobileDraft.filters.team]?.name ?? '全部球隊';
+  const mobileDraftDateSummary = mobileDraft.filters.date === 'ALL'
+    ? '全部日期'
+    : mobileDraft.filters.date.replaceAll('-', '/');
+  const mobileDraftRoundSummary = mobileDraft.filters.round === 'ALL'
+    ? '全部輪次'
+    : `第 ${mobileDraft.filters.round} 輪`;
+
+  const desktopSelectorConfig: FilterSelectorConfig | null = desktopFilterView === 'SEASON'
+    ? {
+        title: '選擇賽季',
+        selectedValue: desktopDraft.seasonId,
+        options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+        onSelect: (value) => {
+          const seasonId = value as SeasonId;
+          if (seasonId === desktopDraft.seasonId) return;
+          setDesktopDraft({ seasonId, filters: { ...EMPTY_FILTERS } });
+        },
+      }
+    : desktopFilterView === 'LEAGUE'
+      ? {
+          title: '選擇聯賽級別',
+          selectedValue: desktopDraft.filters.league,
+          options: (['ALL', ...desktopDraftSeason.enabledLeagues] as LeagueFilter[]).map((league) => ({
+            value: league,
+            label: league === 'ALL' ? '全部級別' : league,
+          })),
+          onSelect: (value) => updateDesktopDraftFacet('league', value),
+        }
+      : desktopFilterView === 'STATUS'
+        ? {
+            title: '選擇比賽狀態',
+            selectedValue: desktopDraft.filters.status,
+            options: desktopDraftFacetOptions.statuses.map((status) => ({
+              value: status,
+              label: getStatusSummary(status),
+            })),
+            onSelect: (value) => updateDesktopDraftFacet('status', value),
+          }
+        : desktopFilterView === 'TEAM'
+          ? {
+              title: '選擇球隊',
+              selectedValue: desktopDraft.filters.team,
+              options: [
+                { value: 'ALL', label: '全部球隊' },
+                ...desktopDraftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
+              ],
+              onSelect: (value) => updateDesktopDraftFacet('team', value),
+            }
+          : desktopFilterView === 'DATE'
+            ? {
+                title: '選擇日期',
+                selectedValue: desktopDraft.filters.date,
+                options: [
+                  { value: 'ALL', label: '全部日期' },
+                  ...desktopDraftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+                ],
+                onSelect: (value) => updateDesktopDraftFacet('date', value),
+              }
+            : desktopFilterView === 'ROUND'
+              ? {
+                  title: '選擇輪次',
+                  selectedValue: desktopDraft.filters.round,
+                  options: [
+                    { value: 'ALL', label: '全部輪次' },
+                    ...desktopDraftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                  ],
+                  onSelect: (value) => updateDesktopDraftFacet('round', value),
                 }
-                
-                // 處理手機版顯示 L1/L2，電腦版顯示 League 1/League 2
-                const responsiveLabel = (
-                    <>
-                        {/* 手機 L1/L2/ALL */}
-                        <span className="inline md:hidden font-display">{tab === 'ALL' ? 'ALL' : tab}</span>
-                        {/* 電腦 League 1 / League 2 / 全部 */}
-                        <span className="hidden md:inline">{labelText}</span>
-                    </>
-                );
+              : null;
 
-                return (
-                    <button
-                        key={tab}
-                        // ✅ 使用新的處理函式
-                        onClick={() => { handleLeagueChange(tab); }}
-                        // 樣式：極簡線條，無背景，無圓角
-                        className={`px-1 pb-1 transition-all whitespace-nowrap
-                            border-b-2 
-                            ${leagueTab === tab
-                                ? 'border-brand-blue text-brand-black font-bold' // 選中：藍線，深黑文字
-                                : 'border-transparent text-neutral-400 font-medium hover:text-neutral-600'} // 未選中：透明線，淺灰文字
-                        `}
-                    >
-                        {responsiveLabel}
-                    </button>
-                );
-            })}
-        </div>
-    );
-    // 結束篩選器渲染邏輯
+  const mobileSelectorConfig: FilterSelectorConfig | null = mobileFilterView === 'SEASON'
+    ? {
+        title: '選擇賽季',
+        selectedValue: mobileDraft.seasonId,
+        options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
+        onSelect: (value) => {
+          const seasonId = value as SeasonId;
+          if (seasonId === mobileDraft.seasonId) return;
+          setMobileDraft({ seasonId, filters: { ...EMPTY_FILTERS } });
+        },
+      }
+    : mobileFilterView === 'LEAGUE'
+      ? {
+          title: '選擇聯賽級別',
+          selectedValue: mobileDraft.filters.league,
+          options: (['ALL', ...mobileDraftFacetOptions.leagueIds] as LeagueFilter[]).map((league) => ({
+            value: league,
+            label: league === 'ALL' ? '全部級別' : league,
+          })),
+          onSelect: (value) => updateMobileDraftFacet('league', value),
+        }
+      : mobileFilterView === 'STATUS'
+        ? {
+            title: '選擇比賽狀態',
+            selectedValue: mobileDraft.filters.status,
+            options: mobileDraftFacetOptions.statuses.map((status) => ({
+              value: status,
+              label: getStatusSummary(status),
+            })),
+            onSelect: (value) => updateMobileDraftFacet('status', value),
+          }
+        : mobileFilterView === 'TEAM'
+          ? {
+              title: '選擇球隊',
+              selectedValue: mobileDraft.filters.team,
+              options: [
+                { value: 'ALL', label: '全部球隊' },
+                ...mobileDraftFacetOptions.teams.map((team) => ({ value: team.id, label: team.name })),
+              ],
+              onSelect: (value) => updateMobileDraftFacet('team', value),
+            }
+          : mobileFilterView === 'DATE'
+            ? {
+                title: '選擇日期',
+                selectedValue: mobileDraft.filters.date,
+                options: [
+                  { value: 'ALL', label: '全部日期' },
+                  ...mobileDraftFacetOptions.dates.map((date) => ({ value: date, label: date.replaceAll('-', '/') })),
+                ],
+                onSelect: (value) => updateMobileDraftFacet('date', value),
+              }
+            : mobileFilterView === 'ROUND'
+              ? {
+                  title: '選擇輪次',
+                  selectedValue: mobileDraft.filters.round,
+                  options: [
+                    { value: 'ALL', label: '全部輪次' },
+                    ...mobileDraftFacetOptions.rounds.map((round) => ({ value: round, label: `第 ${round} 輪` })),
+                  ],
+                  onSelect: (value) => updateMobileDraftFacet('round', value),
+                }
+              : null;
 
-    return (
-        <div className="pt-6 md:pt-24 min-h-[80vh] bg-white pb-24">
-            <div className="container mx-auto px-4 md:px-12 max-w-7xl">
-                
-                {/* Header 區塊 - 移除篩選器和底線 */}
-                {/* 🚀 移除 border-b 和 pb-4 md:pb-6 */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-12">
-                    <div>
-                        {/* 手機版文字描邊，模擬加粗效果，電腦版移除描邊 */}
-                        <h1 className="font-display font-black md:font-extrabold text-4xl md:text-6xl uppercase text-brand-black mb-2 md:mb-4 tracking-tight [-webkit-text-stroke:.25px_currentColor] md:[-webkit-text-stroke:0px]">
-                             完整 <span className="text-brand-blue">賽程</span>
-                        </h1>
-                        <div className="flex flex-col md:flex-row md:items-center text-neutral-400 text-sm md:text-base font-medium tracking-wide space-y-2 md:space-y-0">
-                            <span>所有賽季比賽、結果與事件詳情</span>
-                            
-                            {/* 提示文字 - 極簡風格 */}
-                            <div className="flex items-center ml-0 md:ml-4 text-xs font-bold text-brand-blue hover:text-brand-black transition-colors">
-                                <MousePointerClick className="w-3 h-3 mr-1.5 opacity-70" />
-                                <span className="border-b border-brand-blue/50 hover:border-brand-black transition-colors">點擊賽果看詳情</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* 篩選器已移動到獨立區塊 */}
-                </div>
-                
-                {/* 🚀 獨立聯賽選擇區塊 (手機隱藏，PC 顯示) */}
-                {/* ✅ 變更：移除 border-b pb-4 border-neutral-200 */}
-                <div className="hidden md:flex justify-between items-center mb-8">
-                    {/* 標題靠左 */}
-                    <h3 className="font-bold text-base text-neutral-900 font-display uppercase tracking-wider flex items-center">
-                        <Trophy className="w-5 h-5 mr-2 text-brand-blue" />
-                        選擇聯賽
-                    </h3>
+  return (
+    <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
+      <div className="container mx-auto max-w-7xl px-4 md:px-12">
+        <SeasonPageHeader
+          title="賽程與"
+          accent="結果"
+          showMobileSeasonSelector={false}
+          showDesktopSeasonSelector={false}
+          description={<div><span>{activeSeason.displayName} 比賽、結果與事件詳情</span></div>}
+        />
 
-                    {/* 篩選器內容：靠右對齊 */}
-                    {filterContent}
-                </div>
-                {/* 結束獨立聯賽選擇區塊 */}
-
-                <div className="mb-20">
-                    <FullSchedule 
-                        onMatchClick={handleMatchClick} 
-                        selectedMatchId={selectedMatchId} 
-                        leagueFilter={leagueTab}
-                    /> 
-                 </div>
-            </div>
-            
-            {/* Match Detail Modal (保持不變) */}
-            {selectedMatchId && selectedMatch && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6">
-                    <div 
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-                        onClick={() => setSelectedMatchId(null)}
-                    ></div>
-
-                    <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
-                        <div className="bg-neutral-50 border-b border-neutral-100 p-6 relative">
-                            <button 
-                                onClick={() => setSelectedMatchId(null)}
-                                className="absolute top-4 right-4 p-2 bg-white hover:bg-neutral-100 rounded-full text-neutral-400 hover:text-brand-black transition-colors shadow-sm z-10"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-
-                            <div className="text-center mb-4">
-                                <span className="text-xs font-bold text-brand-blue bg-brand-blue/10 px-3 py-1 rounded-full uppercase tracking-widest">
-                                    {selectedMatch.league} • 第 {selectedMatch.round} 輪
-                                </span>
-                                <p className="text-xs font-medium text-neutral-500 mt-2">
-                                    {formatMatchDateTime(selectedMatch.timestamp)}
-                                </p>
-                            </div>
-
-                            <div className="flex justify-between items-center px-2 sm:px-8">
-                                <div className="flex flex-col items-center w-1/3 min-w-0">
-                                    <img src={TEAMS[selectedMatch.homeTeamId].logo} className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-black text-center leading-tight text-xs sm:text-lg tracking-tighter whitespace-nowrap min-w-0">
-                                        {TEAMS[selectedMatch.homeTeamId].shortName}
-                                    </h3>
-                                </div>
-
-                                <div className="flex flex-col items-center w-1/3">
-                                    <div className="text-4xl sm:text-6xl font-display font-black text-brand-black tracking-tight">
-                                        {selectedMatch.homeScore ?? '-'} - {selectedMatch.awayScore ?? '-'}
-                                    </div>
-                                    <div className="text-xs font-bold text-neutral-400 mt-2 uppercase tracking-wider">Full Time</div>
-                                </div>
-
-                                <div className="flex flex-col items-center w-1/3 min-w-0">
-                                    <img src={TEAMS[selectedMatch.awayTeamId].logo} className="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-3" />
-                                    <h3 className="font-bold text-brand-black text-center leading-tight text-xs sm:text-lg tracking-tighter whitespace-nowrap min-w-0">
-                                        {TEAMS[selectedMatch.awayTeamId].shortName}
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex-grow overflow-y-auto p-0 bg-white">
-                            <div className="sticky top-0 bg-white/95 backdrop-blur z-10 py-3 border-b border-neutral-100 text-center">
-                                <span className="text-xs font-black text-neutral-400 uppercase tracking-[0.2em]">Match Events</span>
-                            </div>
-                            <div className="px-4 pb-8">
-                                <MatchEvents matchId={selectedMatchId} />
-                            </div>
-                        </div>
-
-                        <div className="p-4 border-t border-neutral-100 bg-neutral-50 text-center">
-                            <span className="text-xs font-bold text-neutral-500 uppercase tracking-widest">
-                                D LEAGUE 官方賽事記錄
-                            </span>
-                        </div>
-                    </div>
-                </div>
+        <button
+          type="button"
+          onClick={openMobileFilters}
+          className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
+          aria-label={`開啟賽程篩選，目前顯示${leagueSummary}，共 ${filteredMatches.length} 場`}
+        >
+          <span className="flex items-center text-[13px] font-black text-brand-black">
+            <Filter className="mr-2 h-3.5 w-3.5 text-brand-blue" aria-hidden="true" />
+            篩選
+            {activeMobileFilterCount > 0 && (
+              <span className="ml-1.5 text-[11px] font-black text-brand-blue">
+                {activeMobileFilterCount}
+              </span>
             )}
+          </span>
+          <span className="flex items-center text-[11px] font-bold text-neutral-400">
+            {activeSeason.shortName} · {leagueSummary} · {filteredMatches.length} 場
+            <ChevronRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
+          </span>
+        </button>
+
+        <div className="relative mb-8 hidden md:block">
+          <div className="flex min-h-14 items-center justify-between border-b border-neutral-100">
+            <div className="flex items-baseline gap-3">
+              <span className="font-display text-sm font-black tracking-wide text-brand-black">
+                {filteredMatches.length} 場比賽
+              </span>
+              <span className="text-[11px] font-bold text-neutral-400">
+                {activeSeason.shortName} · {leagueSummary}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={toggleDesktopFilters}
+              aria-expanded={desktopFiltersOpen}
+              aria-controls="desktop-schedule-filters"
+              className={`inline-flex min-h-11 items-center text-sm font-black transition-colors ${
+                desktopFiltersOpen || desktopActiveFilterCount > 0
+                  ? 'text-brand-blue'
+                  : 'text-brand-black hover:text-brand-blue'
+              }`}
+            >
+              <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
+              篩選
+              {desktopActiveFilterCount > 0 && (
+                <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
+              )}
+              <ChevronRight
+                className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
+                aria-hidden="true"
+              />
+            </button>
+          </div>
         </div>
-    );
+
+        <div className="mb-20">
+          {seasonData.matches.length === 0 ? (
+            <EmptyState
+              title={`${activeSeason.shortName} 賽程尚未公布`}
+              description={`${activeSeason.shortName} 賽程將於球隊錄取及分級完成後公布`}
+              showRegistrationLink={activeSeason.status === 'registration'}
+            />
+          ) : filteredMatches.length === 0 ? (
+            <EmptyState title="沒有符合條件的賽事" description="請調整篩選條件後再查看" />
+          ) : (
+            <FullSchedule
+              matches={filteredMatches}
+              teamMap={seasonData.teamMap}
+              onMatchClick={selectMatch}
+              leagueFilter="ALL"
+            />
+          )}
+        </div>
+      </div>
+
+      {desktopFiltersOpen && (
+        <div className="fixed inset-0 z-[1200] hidden md:block">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+            onClick={closeDesktopFilters}
+            aria-label="取消並關閉篩選"
+          />
+
+          <aside
+            id="desktop-schedule-filters"
+            role="dialog"
+            aria-modal="true"
+            aria-label="篩選賽程"
+            className="absolute right-0 top-0 flex h-full w-[420px] max-w-full flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.2)]"
+          >
+            {desktopSelectorConfig ? (
+              <>
+                <div className="grid shrink-0 grid-cols-[52px_1fr_52px] items-center border-b border-neutral-100 px-3 py-3">
+                  <button
+                    type="button"
+                    onClick={() => setDesktopFilterView('ROOT')}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black"
+                    aria-label="返回篩選"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <h2 className="text-center font-display text-lg font-black text-brand-black">
+                    {desktopSelectorConfig.title}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={closeDesktopFilters}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                    aria-label="取消並關閉"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
+                  {desktopSelectorConfig.options.map((option) => {
+                    const selected = option.value === desktopSelectorConfig.selectedValue;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => {
+                          desktopSelectorConfig.onSelect(option.value);
+                          setDesktopFilterView('ROOT');
+                        }}
+                        className={`flex min-h-[56px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
+                          selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
+                        }`}
+                      >
+                        <span>{option.label}</span>
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            selected ? 'border-brand-blue' : 'border-neutral-300'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="shrink-0 border-b border-neutral-100 px-7 py-7">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-display text-2xl font-black text-brand-black">篩選賽程</p>
+                      <p className="mt-1 text-xs font-medium text-neutral-400">選擇要查看的比賽範圍</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={closeDesktopFilters}
+                      className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
+                      aria-label="取消並關閉"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
+                  {[
+                    { label: '賽季', value: desktopDraftSeason.shortName, view: 'SEASON' as const },
+                    { label: '聯賽級別', value: desktopDraftLeagueSummary, view: 'LEAGUE' as const },
+                    { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
+                    { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
+                    { label: '日期', value: desktopDraftDateSummary, view: 'DATE' as const },
+                    { label: '輪次', value: desktopDraftRoundSummary, view: 'ROUND' as const },
+                  ].map((field) => (
+                    <button
+                      key={field.label}
+                      type="button"
+                      onClick={() => setDesktopFilterView(field.view)}
+                      className="flex min-h-[64px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
+                    >
+                      <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+                        {field.value}
+                      </span>
+                      <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid shrink-0 grid-cols-[auto_1fr] gap-4 border-t border-neutral-100 bg-white px-7 py-6">
+                  <button
+                    type="button"
+                    onClick={() => setDesktopDraft((currentDraft) => ({
+                      ...currentDraft,
+                      filters: { ...EMPTY_FILTERS },
+                    }))}
+                    disabled={desktopDraftFilterCount === 0}
+                    className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black disabled:opacity-30 disabled:hover:text-neutral-500"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" /> 清除
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyDesktopFilters}
+                    className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800"
+                  >
+                    <Check className="mr-2 h-4 w-4" /> 顯示 {desktopDraftFilteredMatches.length} 場
+                  </button>
+                </div>
+              </>
+            )}
+          </aside>
+        </div>
+      )}
+
+      {mobileFiltersOpen && (
+        <div className="fixed inset-0 z-[1200] flex items-end md:hidden" role="dialog" aria-modal="true" aria-label="篩選賽程">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
+            onClick={closeMobileFilters}
+            aria-label="取消並關閉篩選"
+          />
+
+          <div className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl">
+            {mobileSelectorConfig ? (
+              <>
+                <div className="grid shrink-0 grid-cols-[44px_1fr_44px] items-center border-b border-neutral-100 px-2 py-2">
+                  <button
+                    type="button"
+                    onClick={() => setMobileFilterView('ROOT')}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-500 active:text-brand-black"
+                    aria-label="返回篩選"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <h2 className="text-center font-display text-lg font-black text-brand-black">
+                    {mobileSelectorConfig.title}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={closeMobileFilters}
+                    className="flex h-11 w-11 items-center justify-center text-neutral-400 active:text-brand-black"
+                    aria-label="取消並關閉"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                  {mobileSelectorConfig.options.map((option) => {
+                    const selected = option.value === mobileSelectorConfig.selectedValue;
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => {
+                          mobileSelectorConfig.onSelect(option.value);
+                          setMobileFilterView('ROOT');
+                        }}
+                        className={`flex min-h-[54px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 ${
+                          selected ? 'text-brand-blue' : 'text-brand-black'
+                        }`}
+                      >
+                        <span>{option.label}</span>
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            selected ? 'border-brand-blue' : 'border-neutral-300'
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {selected && <span className="h-2.5 w-2.5 rounded-full bg-brand-blue" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="shrink-0 border-b border-neutral-100 px-5 pb-4 pt-3">
+                  <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-neutral-200" aria-hidden="true" />
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-display text-xl font-black text-brand-black">篩選賽程</p>
+                      <p className="mt-1 text-[11px] font-medium text-neutral-400">選擇要查看的比賽範圍</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={closeMobileFilters}
+                      className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-400 transition-colors active:bg-neutral-100 active:text-brand-black"
+                      aria-label="取消並關閉"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                  {[
+                    { label: '賽季', value: mobileDraftSeason.shortName, view: 'SEASON' as const },
+                    { label: '聯賽級別', value: mobileDraftLeagueSummary, view: 'LEAGUE' as const },
+                    { label: '比賽狀態', value: mobileDraftStatusSummary, view: 'STATUS' as const },
+                    { label: '球隊', value: mobileDraftTeamSummary, view: 'TEAM' as const },
+                    { label: '日期', value: mobileDraftDateSummary, view: 'DATE' as const },
+                    { label: '輪次', value: mobileDraftRoundSummary, view: 'ROUND' as const },
+                  ].map((field) => (
+                    <button
+                      key={field.label}
+                      type="button"
+                      onClick={() => setMobileFilterView(field.view)}
+                      className="flex min-h-[58px] w-full items-center border-b border-neutral-100 text-left last:border-b-0"
+                    >
+                      <span className="w-20 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
+                      <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+                        {field.value}
+                      </span>
+                      <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid shrink-0 grid-cols-[auto_1fr] gap-3 border-t border-neutral-100 bg-white px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setMobileDraft((currentDraft) => ({
+                      ...currentDraft,
+                      filters: { ...EMPTY_FILTERS },
+                    }))}
+                    disabled={mobileDraftFilterCount === 0}
+                    className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 disabled:opacity-30"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" /> 清除
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyMobileFilters}
+                    className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white active:bg-blue-800"
+                  >
+                    <Check className="mr-2 h-4 w-4" /> 顯示 {mobileDraftFilteredMatches.length} 場
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <MatchDialog matchId={selectedMatchId} onClose={closeMatch} onSelectMatch={selectMatch} />
+    </div>
+  );
 };
 
 export default SchedulePage;

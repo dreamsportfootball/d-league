@@ -1,22 +1,85 @@
-// 檔案路徑：App.tsx
-
-import React, { useEffect, lazy, Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-
-import Header from './components/Header';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import Analytics from './components/Analytics';
+import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
+import Header from './components/Header';
+import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
+import MobileRegistrationBar from './components/MobileRegistrationBar';
+import Seo from './components/Seo';
+import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
-// Lazy load pages for better performance
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
 const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
-// 👇 新增這裡：引入 CupPage
 const CupPage = lazy(() => import('./pages/CupPage'));
+const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+const PageSkeleton: React.FC = () => (
+  <div className="min-h-[70vh] animate-pulse bg-white px-4 pb-24 pt-10 md:px-12 md:pt-24">
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-12 flex items-end justify-between gap-6">
+        <div className="w-full max-w-xl">
+          <div className="mb-4 h-12 w-3/5 rounded bg-neutral-200 md:h-16" />
+          <div className="h-5 w-4/5 rounded bg-neutral-100" />
+        </div>
+        <div className="hidden h-9 w-[148px] rounded-lg bg-neutral-100 md:block" />
+      </div>
+      <div className="mb-8 h-12 rounded-xl bg-neutral-100" />
+      <div className="space-y-4">
+        <div className="h-24 rounded-xl bg-neutral-100" />
+        <div className="h-24 rounded-xl bg-neutral-100" />
+        <div className="h-24 rounded-xl bg-neutral-100" />
+      </div>
+    </div>
+  </div>
+);
+
+const SectionAnchorNavigation: React.FC = () => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const target = event.target;
+      const anchor = target instanceof Element
+        ? target.closest<HTMLAnchorElement>('a[href^="#"]')
+        : null;
+      const href = anchor?.getAttribute('href');
+
+      if (!href || href === '#' || href.startsWith('#/')) return;
+
+      const sectionId = decodeURIComponent(href.slice(1));
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      event.preventDefault();
+      const headerHeight = 64;
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: sectionTop - headerHeight, behavior: 'smooth' });
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
+  return null;
+};
 
 const ScrollMemory: React.FC = () => {
   const { pathname, hash } = useLocation();
@@ -64,38 +127,41 @@ const ScrollMemory: React.FC = () => {
   return null;
 };
 
-const App: React.FC = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans bg-neutral-50 text-brand-black w-full overflow-x-hidden">
+const App: React.FC = () => (
+  <SeasonProvider>
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <Header />
+      <ImageLoadingOptimizer />
+      <SectionAnchorNavigation />
       <ScrollMemory />
+      <Seo />
+      <Analytics />
 
-      <main className="flex-grow pt-16 w-full">
-        <Suspense
-          fallback={
-            <div className="text-center p-20 text-xl font-bold text-brand-blue">
-              正在加載頁面中...
-            </div>
-          }
-        >
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/standings" element={<StandingsPage />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/stats" element={<StatsPage />} />
-            <Route path="/news/:id" element={<ArticleDetailPage />} />
-            <Route path="/media" element={<MediaPage />} />
-            <Route path="/about" element={<AboutPage />} /> 
-            {/* 👇 新增這裡：加入盃賽的路徑 */}
-            <Route path="/cup" element={<CupPage />} />
-          </Routes>
-        </Suspense>
+      <main className="w-full flex-grow pt-16">
+        <AppErrorBoundary>
+          <Suspense fallback={<PageSkeleton />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/registration" element={<RegistrationPage />} />
+              <Route path="/schedule" element={<SchedulePage />} />
+              <Route path="/standings" element={<StandingsPage />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/news/:id" element={<ArticleDetailPage />} />
+              <Route path="/teams/:id" element={<TeamPage />} />
+              <Route path="/media" element={<MediaPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/cup" element={<CupPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </AppErrorBoundary>
       </main>
 
       <Footer />
+      <MobileRegistrationBar />
     </div>
-  );
-};
+  </SeasonProvider>
+);
 
 export default App;

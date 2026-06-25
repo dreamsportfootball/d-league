@@ -40,6 +40,25 @@ export interface StandingsDisplayConfig {
   footerNote?: string;
 }
 
+export interface RegistrationFaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface RegistrationContentConfig {
+  intro: string;
+  ageReferenceDate: string;
+  minimumAge: number;
+  minimumPlayers: number;
+  maximumPlayers: number;
+  maximumStaff: number;
+  staffDescription: string;
+  steps: string[];
+  faqItems: RegistrationFaqItem[];
+  reviewDescription: string;
+  reviewFeatures: string[];
+}
+
 export interface LeagueConfig {
   id: LeagueId;
   displayName: string;
@@ -72,6 +91,7 @@ export interface SeasonConfig {
   youtubePlaylistLabel?: string;
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
+  registrationContent?: RegistrationContentConfig;
   rules: CompetitionRules;
   standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;

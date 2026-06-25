@@ -20,6 +20,19 @@ export interface CupMatch {
   venue: 'A' | 'B';
 }
 
+export interface CupGroupStanding {
+  rank: number;
+  team: CupTeam;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+}
+
 export interface CupEventConfig {
   name: string;
   shortName: string;
@@ -29,6 +42,11 @@ export interface CupEventConfig {
   teamCount: number;
   matchCount: number;
   matchesPerTeam: number;
+  groupPoints: {
+    win: number;
+    draw: number;
+    loss: number;
+  };
   cupFinalMatchId: number;
   cupThirdPlaceMatchId: number;
   plateFinalMatchId: number;
@@ -50,6 +68,11 @@ export const CUP_EVENT: CupEventConfig = {
   teamCount: 8,
   matchCount: 20,
   matchesPerTeam: 5,
+  groupPoints: {
+    win: 3,
+    draw: 1,
+    loss: 0,
+  },
   cupFinalMatchId: 20,
   cupThirdPlaceMatchId: 19,
   plateFinalMatchId: 17,
@@ -65,7 +88,7 @@ export const CUP_EVENT: CupEventConfig = {
   ],
 };
 
-export const CUP_TEAMS: Record<string, CupTeam> = {
+const CUP_TEAM_DEFINITIONS: Record<string, CupTeam> = {
   KAFC: { id: 'KAFC', name: 'KAFC', group: 'A' },
   DONG_GAO: { id: 'DONG_GAO', name: '東高 FC', group: 'A' },
   TN_SENIOR: { id: 'TN_SENIOR', name: '台南長青俱樂部', group: 'A' },
@@ -98,3 +121,80 @@ export const CUP_MATCHES: CupMatch[] = [
   { id: 19, round: '盃賽季軍', timestamp: '2026-02-01T15:00:00+08:00', venue: 'A', homeTeamId: 'TNSCF', awayTeamId: 'DONG_GAO', status: 'FINISHED', homeScore: 2, awayScore: 0 },
   { id: 20, round: '盃賽決賽', timestamp: '2026-02-01T15:30:00+08:00', venue: 'A', homeTeamId: 'DONG_GANG', awayTeamId: 'HAPPY_NEW_YEAR', status: 'FINISHED', homeScore: 2, awayScore: 1 },
 ];
+
+const calculateCupGroupStandings = (group: CupGroup): CupGroupStanding[] => {
+  const rows = new Map<string, Omit<CupGroupStanding, 'rank'>>();
+
+  Object.values(CUP_TEAM_DEFINITIONS)
+    .filter((team) => team.group === group)
+    .forEach((team) => {
+      rows.set(team.id, {
+        team,
+        played: 0,
+        won: 0,
+        drawn: 0,
+        lost: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        goalDifference: 0,
+        points: 0,
+      });
+    });
+
+  CUP_MATCHES
+    .filter((match) => match.round.startsWith('小組賽'))
+    .forEach((match) => {
+      const home = rows.get(match.homeTeamId);
+      const away = rows.get(match.awayTeamId);
+      if (!home || !away || match.homeScore === undefined || match.awayScore === undefined) return;
+
+      home.played += 1;
+      away.played += 1;
+      home.goalsFor += match.homeScore;
+      home.goalsAgainst += match.awayScore;
+      away.goalsFor += match.awayScore;
+      away.goalsAgainst += match.homeScore;
+
+      if (match.homeScore > match.awayScore) {
+        home.won += 1;
+        away.lost += 1;
+        home.points += CUP_EVENT.groupPoints.win;
+        away.points += CUP_EVENT.groupPoints.loss;
+      } else if (match.homeScore < match.awayScore) {
+        away.won += 1;
+        home.lost += 1;
+        away.points += CUP_EVENT.groupPoints.win;
+        home.points += CUP_EVENT.groupPoints.loss;
+      } else {
+        home.drawn += 1;
+        away.drawn += 1;
+        home.points += CUP_EVENT.groupPoints.draw;
+        away.points += CUP_EVENT.groupPoints.draw;
+      }
+    });
+
+  return [...rows.values()]
+    .map((row) => ({
+      ...row,
+      goalDifference: row.goalsFor - row.goalsAgainst,
+    }))
+    .sort((a, b) =>
+      b.points - a.points ||
+      b.goalDifference - a.goalDifference ||
+      b.goalsFor - a.goalsFor ||
+      a.team.name.localeCompare(b.team.name, 'zh-TW'),
+    )
+    .map((row, index) => ({ ...row, rank: index + 1 }));
+};
+
+export const CUP_GROUP_STANDINGS: Record<CupGroup, CupGroupStanding[]> = {
+  A: calculateCupGroupStandings('A'),
+  B: calculateCupGroupStandings('B'),
+};
+
+export const CUP_TEAMS: Record<string, CupTeam> = Object.fromEntries(
+  [...CUP_GROUP_STANDINGS.A, ...CUP_GROUP_STANDINGS.B].map((standing) => [
+    standing.team.id,
+    standing.team,
+  ]),
+);

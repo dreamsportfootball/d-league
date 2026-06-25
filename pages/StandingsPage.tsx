@@ -191,10 +191,6 @@ const StandingsPage: React.FC = () => {
                     降級區
                   </span>
                 )}
-                <span className="flex items-center">
-                  <span className="mr-2 h-1.5 w-1.5 rounded-full bg-amber-400" />
-                  待公開抽籤
-                </span>
               </div>
             </div>
 

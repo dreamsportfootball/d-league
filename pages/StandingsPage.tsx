@@ -148,33 +148,6 @@ const StandingsPage: React.FC = () => {
             <span className="text-sm font-bold tracking-[0.02em] text-brand-black">
               {activeSeason.shortName} 賽季
             </span>
-            <span className="mx-4 h-4 w-px bg-neutral-200" aria-hidden="true" />
-          </div>
-
-          <div
-            role="tablist"
-            aria-label="切換積分榜聯賽級別"
-            className="hidden min-w-0 items-center gap-1 md:flex"
-          >
-            {activeSeason.enabledLeagues.map((league) => {
-              const selected = activeLeague === league;
-              return (
-                <button
-                  key={league}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onClick={() => updateLeague(league)}
-                  className={`relative min-h-11 min-w-11 px-2 text-sm font-bold tracking-[0.02em] transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:-translate-x-1/2 after:transition-[width,background-color] after:duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
-                    selected
-                      ? 'text-brand-blue after:w-5 after:bg-brand-blue'
-                      : 'text-neutral-500 after:w-0 after:bg-transparent hover:text-brand-black'
-                  }`}
-                >
-                  {league}
-                </button>
-              );
-            })}
           </div>
 
           <button

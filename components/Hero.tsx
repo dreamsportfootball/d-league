@@ -52,18 +52,21 @@ const Hero: React.FC = () => {
           {activeSeason.registrationMessage ?? `${activeSeason.displayName} 正式開放報名`}
         </h1>
 
-        <picture
-          className={`block w-full transition-opacity duration-700 ${
-            loaded ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
+        <picture className="block w-full">
           {activeSeason.heroImageMobile && (
-            <source media="(max-width: 767px)" srcSet={heroImages.mobile} />
+            <source
+              media="(max-width: 767px)"
+              srcSet={heroImages.mobile}
+              width={960}
+              height={1200}
+            />
           )}
           <img
             src={heroImages.desktop}
             onError={() => setImageFailed(true)}
             alt={`${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
+            width={1920}
+            height={800}
             loading="eager"
             decoding="async"
             fetchPriority="high"

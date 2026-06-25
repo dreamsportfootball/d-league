@@ -1,0 +1,67 @@
+name: Responsive visual audit
+
+on:
+  push:
+    branches:
+      - season/2026-27
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: responsive-visual-audit
+  cancel-in-progress: true
+
+jobs:
+  visual-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          npm ci --silent
+          npm install --no-save playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build preview-mode site
+        env:
+          VITE_ROUTER_MODE: hash
+        run: npx vite build --base=/
+
+      - name: Start local preview server
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/d-league-preview.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/d-league-preview.log
+          exit 1
+
+      - name: Capture responsive screenshots and diagnostics
+        run: node scripts/visual-audit.mjs
+
+      - name: Upload visual audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-visual-audit
+          path: visual-audit
+          if-no-files-found: error
+          retention-days: 14

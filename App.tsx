@@ -41,6 +41,45 @@ const PageSkeleton: React.FC = () => (
   </div>
 );
 
+const SectionAnchorNavigation: React.FC = () => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const target = event.target;
+      const anchor = target instanceof Element
+        ? target.closest<HTMLAnchorElement>('a[href^="#"]')
+        : null;
+      const href = anchor?.getAttribute('href');
+
+      if (!href || href === '#' || href.startsWith('#/')) return;
+
+      const sectionId = decodeURIComponent(href.slice(1));
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      event.preventDefault();
+      const headerHeight = 64;
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: sectionTop - headerHeight, behavior: 'smooth' });
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
+  return null;
+};
+
 const ScrollMemory: React.FC = () => {
   const { pathname, hash } = useLocation();
 
@@ -91,6 +130,7 @@ const App: React.FC = () => (
   <SeasonProvider>
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <Header />
+      <SectionAnchorNavigation />
       <ScrollMemory />
       <Seo />
       <Analytics />

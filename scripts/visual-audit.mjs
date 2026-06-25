@@ -137,7 +137,12 @@ const auditViewport = async (viewport) => {
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
 
       if (route.name === 'standings-2026') {
-        assert('standings-shows-current-season', diagnostics.bodyText.includes('2026/27 賽季'), 'Expected visible current-season label');
+        const expectedSeasonLabel = viewport.width < 768 ? 'D LEAGUE 2026/27' : '2026/27 賽季';
+        assert(
+          'standings-shows-current-season',
+          diagnostics.bodyText.includes(expectedSeasonLabel),
+          `Expected ${expectedSeasonLabel}`,
+        );
         assert('standings-shows-past-season-control', diagnostics.bodyText.includes('過往賽季'), 'Expected past-season control');
         assert(
           'standings-exposes-league-tabs',

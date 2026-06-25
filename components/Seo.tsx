@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getSeasonConfig } from '../config/seasons';
 import { useSeason } from '../hooks/useSeason';
+import { getNewsArticle } from '../services/seasonDataJson';
 
 const SITE_NAME = 'D LEAGUE｜台南夢達七人足球聯賽';
 const SITE_URL = 'https://dreamsportfootball.github.io/d-league';
@@ -30,9 +32,7 @@ const Seo: React.FC = () => {
   const metadata = useMemo(() => {
     const pathname = location.pathname;
     const routeId = decodeURIComponent(pathname.split('/').filter(Boolean)[1] ?? '');
-    const article = pathname.startsWith('/news/')
-      ? seasonData.news.find((item) => item.id === routeId)
-      : undefined;
+    const article = pathname.startsWith('/news/') ? getNewsArticle(routeId) : null;
     const team = pathname.startsWith('/teams/')
       ? seasonData.teamMap[routeId]
       : undefined;
@@ -40,10 +40,14 @@ const Seo: React.FC = () => {
     const match = matchId ? seasonData.matches.find((item) => item.id === matchId) : undefined;
 
     if (article) {
+      const articleSeason = article.seasonId ? getSeasonConfig(article.seasonId) : activeSeason;
       return {
-        title: `${article.title}｜${SITE_NAME}`,
+        title: `${article.title}｜${articleSeason.displayName}｜${SITE_NAME}`,
         description: article.summary || DEFAULT_DESCRIPTION,
-        image: absoluteAssetUrl(article.imageUrl),
+        image: absoluteAssetUrl(
+          article.imageUrl || articleSeason.heroImageDesktop || articleSeason.heroFallbackImage,
+        ),
+        type: 'article',
       };
     }
 
@@ -52,6 +56,7 @@ const Seo: React.FC = () => {
         title: `${team.name}｜${activeSeason.displayName}｜${SITE_NAME}`,
         description: `${team.name}於 ${activeSeason.displayName} ${team.leagueId} 的球員名單、賽程、賽果及球隊數據`,
         image: absoluteAssetUrl(team.logo),
+        type: 'website',
       };
     }
 
@@ -62,6 +67,7 @@ const Seo: React.FC = () => {
         title: `${home?.shortName ?? match.homeTeamId} vs ${away?.shortName ?? match.awayTeamId}｜${activeSeason.displayName}`,
         description: `${match.league} 第 ${match.round} 輪比賽詳情、時間、地點、比數及比賽事件`,
         image: absoluteAssetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
+        type: 'website',
       };
     }
 
@@ -81,8 +87,9 @@ const Seo: React.FC = () => {
       title: `${page.label}｜${SITE_NAME}`,
       description: page.description,
       image: absoluteAssetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
+      type: 'website',
     };
-  }, [activeSeason, location.pathname, location.search, seasonData.matches, seasonData.news, seasonData.teamMap]);
+  }, [activeSeason, location.pathname, location.search, seasonData.matches, seasonData.teamMap]);
 
   useEffect(() => {
     document.title = metadata.title;
@@ -90,7 +97,7 @@ const Seo: React.FC = () => {
     setMeta('meta[property="og:title"]', 'property', 'og:title', metadata.title);
     setMeta('meta[property="og:description"]', 'property', 'og:description', metadata.description);
     setMeta('meta[property="og:image"]', 'property', 'og:image', metadata.image);
-    setMeta('meta[property="og:type"]', 'property', 'og:type', 'website');
+    setMeta('meta[property="og:type"]', 'property', 'og:type', metadata.type);
     setMeta('meta[property="og:site_name"]', 'property', 'og:site_name', SITE_NAME);
     setMeta('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image');
 

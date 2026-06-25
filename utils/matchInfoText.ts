@@ -1,7 +1,7 @@
 import type { Match } from '../types';
 import { MatchStatus } from '../types';
+import { getTaipeiDateParts } from './dateFormat';
 
-const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const;
 const VENUE_SHORT_NAME = '仁德文賢國中';
 
 interface BuildMatchInfoTextParams {
@@ -16,14 +16,9 @@ interface BuildMatchInfoTextParams {
 }
 
 const formatMatchDateTime = (timestamp: string): string => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${year}/${month}/${day}（${WEEKDAYS[date.getDay()]}）${hours}:${minutes}`;
+  const parts = getTaipeiDateParts(timestamp);
+  if (!parts) return '';
+  return `${parts.year}/${parts.month}/${parts.day}（${parts.weekday}）${parts.hour}:${parts.minute}`;
 };
 
 export const buildMatchInfoText = ({

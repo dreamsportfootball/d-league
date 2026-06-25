@@ -3,6 +3,7 @@ import type { Match } from '../types';
 import { MatchStatus } from '../types';
 import type { LeagueId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
+import { formatTaipeiDate, formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import AutoFitText from './AutoFitText';
 
 type LeagueFilter = LeagueId | 'ALL';
@@ -13,24 +14,6 @@ interface FullScheduleProps {
   onMatchClick: (matchId: string) => void;
   leagueFilter: LeagueFilter;
 }
-
-const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const;
-
-const formatDateTime = (isoString: string) => {
-  const date = new Date(isoString);
-  const fullDateHeader = date.toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const mobileDateHeader = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}（${WEEKDAYS[date.getDay()]}）`;
-  const timeStr = date.toLocaleTimeString('zh-TW', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  return { fullDateHeader, mobileDateHeader, timeStr };
-};
 
 const renderScore = (match: Match) => {
   if (
@@ -78,7 +61,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const awayTeam = teamMap[match.awayTeamId];
         if (!homeTeam || !awayTeam) return null;
 
-        const { fullDateHeader, mobileDateHeader, timeStr } = formatDateTime(match.timestamp);
+        const fullDateHeader = formatTaipeiDate(match.timestamp);
+        const mobileDateHeader = formatTaipeiDateWithWeekday(match.timestamp);
+        const timeStr = formatTaipeiTime(match.timestamp);
         const isNewDate = fullDateHeader !== lastDateHeader;
         if (isNewDate) lastDateHeader = fullDateHeader;
         const isFinished = match.status === MatchStatus.FINISHED;

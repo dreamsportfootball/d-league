@@ -22,6 +22,8 @@ const routes = [
   { name: 'standings-2025', path: '/standings?season=2025-26' },
   { name: 'stats-2026', path: '/stats?season=2026-27' },
   { name: 'news', path: '/news' },
+  { name: 'article-detail', path: '/news/2026-27-registration-open' },
+  { name: 'team-detail', path: '/teams/preview26_l1_north?season=2026-27' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -34,10 +36,12 @@ const interactiveCases = [
   { name: 'standings-mobile-filter', path: '/standings?season=2026-27', viewport: 'mobile-390', action: 'filter' },
   { name: 'stats-mobile-filter', path: '/stats?season=2026-27', viewport: 'mobile-390', action: 'filter' },
   { name: 'media-mobile-filter', path: '/media', viewport: 'mobile-390', action: 'filter' },
+  { name: 'news-mobile-load-more', path: '/news', viewport: 'mobile-390', action: 'load-more' },
   { name: 'schedule-desktop-filter', path: '/schedule?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'standings-desktop-filter', path: '/standings?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'stats-desktop-filter', path: '/stats?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'media-desktop-filter', path: '/media', viewport: 'desktop-1280', action: 'filter' },
+  { name: 'news-desktop-load-more', path: '/news', viewport: 'desktop-1280', action: 'load-more' },
 ];
 
 await fs.rm(outputDir, { recursive: true, force: true });
@@ -80,6 +84,11 @@ const collectDiagnostics = async (page) =>
         };
       });
 
+    const newsCardCount = document.querySelectorAll('main a[href*="/news/"]').length;
+    const loadMoreVisible = [...document.querySelectorAll('main button')].some(
+      (element) => element.textContent?.includes('載入更多消息') && getComputedStyle(element).display !== 'none',
+    );
+
     return {
       title: document.title,
       documentWidth,
@@ -90,6 +99,9 @@ const collectDiagnostics = async (page) =>
         const label = `${element.getAttribute('aria-label') ?? ''} ${element.textContent ?? ''}`;
         return /選擇賽季|更改賽季|賽季篩選/.test(label);
       }),
+      fixedRegistrationVisible: fixedElements.some((element) => element.text.includes('立即報名')),
+      newsCardCount,
+      loadMoreVisible,
       fixedElements,
     };
   });
@@ -141,10 +153,24 @@ const auditViewport = async (viewport) => {
       if (route.name === 'news') {
         addAssertion('news-has-no-season-control', !diagnostics.hasSeasonControl, 'News must not expose a season selector');
         addAssertion('news-has-global-tabs', diagnostics.bodyText.includes('全部消息') && diagnostics.bodyText.includes('賽事戰報') && diagnostics.bodyText.includes('官方公告'), 'Expected global news tabs');
+        addAssertion('news-initial-batch-limited', diagnostics.newsCardCount <= 9, `Rendered ${diagnostics.newsCardCount} article cards`);
+        addAssertion('news-load-more-visible', diagnostics.loadMoreVisible, 'Expected load more control');
+      }
+
+      if (route.name === 'article-detail') {
+        addAssertion('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article detail');
+      }
+
+      if (route.name === 'team-detail') {
+        addAssertion('team-detail-resolves', diagnostics.bodyText.includes('府城競技') && !diagnostics.bodyText.includes('找不到球隊'), 'Expected preview team detail');
       }
 
       if (route.name === 'media-default') {
         addAssertion('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
+      }
+
+      if (viewport.width < 768 && (route.name === 'standings-2025' || route.name === 'media-2025')) {
+        addAssertion('historical-page-keeps-registration-cta', diagnostics.fixedRegistrationVisible, 'Historical data pages must retain current-season mobile registration CTA');
       }
 
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
@@ -164,6 +190,9 @@ const auditViewport = async (viewport) => {
           documentWidth: diagnostics.documentWidth,
           viewportWidth: diagnostics.viewportWidth,
           horizontalOverflow: diagnostics.horizontalOverflow,
+          fixedRegistrationVisible: diagnostics.fixedRegistrationVisible,
+          newsCardCount: diagnostics.newsCardCount,
+          loadMoreVisible: diagnostics.loadMoreVisible,
           fixedElements: diagnostics.fixedElements,
         },
         assertions,
@@ -201,9 +230,17 @@ const auditInteractiveCase = async (testCase) => {
     await page.goto(makeUrl(testCase.path), { waitUntil: 'domcontentloaded', timeout: 20000 });
     await waitForStablePage(page);
 
+    let beforeCount = null;
+    let afterCount = null;
+
     if (testCase.action === 'mobile-menu') {
       const trigger = page.getByRole('button', { name: /開啟.*選單|選單/i }).last();
       await trigger.click();
+    } else if (testCase.action === 'load-more') {
+      beforeCount = await page.locator('main a[href*="/news/"]').count();
+      await page.getByRole('button', { name: '載入更多消息' }).click();
+      await page.waitForTimeout(300);
+      afterCount = await page.locator('main a[href*="/news/"]').count();
     } else {
       const trigger = page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選/i }).first();
       await trigger.click();
@@ -232,14 +269,22 @@ const auditInteractiveCase = async (testCase) => {
       };
     }, testCase.action);
 
-    const passed = testCase.action === 'mobile-menu' ? stateInfo.menuVisible : stateInfo.dialogVisible;
-    if (!passed) report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'interactive-state-opened', detail: JSON.stringify(stateInfo) });
+    const passed =
+      testCase.action === 'mobile-menu'
+        ? stateInfo.menuVisible
+        : testCase.action === 'load-more'
+          ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
+          : stateInfo.dialogVisible;
+
+    if (!passed) report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'interactive-state-opened', detail: JSON.stringify({ stateInfo, beforeCount, afterCount }) });
 
     report.interactive.push({
       name: testCase.name,
       viewport: testCase.viewport,
       screenshot: screenshotPath,
       stateInfo,
+      beforeCount,
+      afterCount,
       passed,
     });
   } catch (error) {

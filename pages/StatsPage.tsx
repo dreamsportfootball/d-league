@@ -22,6 +22,10 @@ interface RankedPlayerRow {
   rank: number;
 }
 
+interface AggregatedPlayerRow extends Omit<RankedPlayerRow, 'rank'> {
+  lastEventTimestamp: string;
+}
+
 type StatsTab = 'SCORERS' | 'CARDS' | 'SUSPENSIONS';
 
 const tabLabels: Record<StatsTab, string> = {
@@ -77,7 +81,7 @@ const StatsPage: React.FC = () => {
     }
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
 
-  const playerStats = useMemo(
+  const playerTeamStats = useMemo(
     () =>
       calculatePlayerCompetitionStats(
         activeLeague,
@@ -88,6 +92,40 @@ const StatsPage: React.FC = () => {
       ),
     [activeLeague, seasonData.matchEvents, seasonData.matches, seasonData.players, seasonData.teams],
   );
+
+  const playerStats = useMemo<AggregatedPlayerRow[]>(() => {
+    const grouped = new Map<string, AggregatedPlayerRow>();
+
+    playerTeamStats.forEach((row) => {
+      const existing = grouped.get(row.subjectId);
+      if (!existing) {
+        grouped.set(row.subjectId, { ...row });
+        return;
+      }
+
+      existing.goals += row.goals;
+      existing.yellowCards += row.yellowCards;
+      existing.secondYellowDismissals += row.secondYellowDismissals;
+      existing.directRedCards += row.directRedCards;
+      if (new Date(row.lastEventTimestamp).getTime() >= new Date(existing.lastEventTimestamp).getTime()) {
+        existing.teamId = row.teamId;
+        existing.lastEventTimestamp = row.lastEventTimestamp;
+      }
+    });
+
+    grouped.forEach((row) => {
+      const player = seasonData.players.find((item) => item.id === row.subjectId);
+      const currentTeam = player ? seasonData.teamMap[player.teamId] : undefined;
+      if (
+        currentTeam?.leagueId === activeLeague &&
+        currentTeam.competitionStatus !== 'WITHDRAWN'
+      ) {
+        row.teamId = currentTeam.id;
+      }
+    });
+
+    return [...grouped.values()];
+  }, [activeLeague, playerTeamStats, seasonData.players, seasonData.teamMap]);
 
   const discipline = useMemo(
     () =>
@@ -168,7 +206,6 @@ const StatsPage: React.FC = () => {
       ? activeSuspensions.length > 0 || publicDecisions.length > 0
       : rankedList.length > 0;
 
-  const defaultDraftLeague = draftSeason.enabledLeagues[0];
   const activeFilterCount = activeLeague === activeSeason.enabledLeagues[0] ? 0 : 1;
   const filterFields: FilterDrawerField[] = [
     {

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
+import { CUP_EVENT } from '../cupData';
 import { useSeason } from '../hooks/useSeason';
 import { getNewsArticle } from '../services/seasonDataJson';
 
@@ -71,6 +72,15 @@ const Seo: React.FC = () => {
       };
     }
 
+    if (pathname === '/cup') {
+      return {
+        title: `${CUP_EVENT.name}｜${SITE_NAME}`,
+        description: `${CUP_EVENT.name}完整賽果、冠亞季軍、參賽球隊及賽事影像`,
+        image: absoluteAssetUrl(CUP_EVENT.heroImage),
+        type: 'website',
+      };
+    }
+
     const pageMap: Record<string, { label: string; description: string }> = {
       '/': { label: activeSeason.displayName, description: DEFAULT_DESCRIPTION },
       '/registration': { label: '賽季報名', description: `${activeSeason.displayName} 報名資格、賽制、流程及常見問題` },
@@ -80,7 +90,6 @@ const Seo: React.FC = () => {
       '/news': { label: '最新消息', description: 'D LEAGUE 官方公告、賽事戰報與過往賽季消息' },
       '/media': { label: '賽事媒體', description: 'D LEAGUE 比賽影片、相簿及賽事媒體內容' },
       '/about': { label: '關於我們', description: '認識 D LEAGUE 台南夢達七人足球聯賽' },
-      '/cup': { label: '盃賽', description: 'D LEAGUE 盃賽資訊、賽程及比賽結果' },
     };
     const page = pageMap[pathname] ?? { label: '找不到此頁面', description: DEFAULT_DESCRIPTION };
     return {

@@ -10,6 +10,7 @@ import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
 import type { SuspensionReason } from '../types/discipline';
 import type { LeagueId, SeasonId } from '../types/season';
+import { formatTaipeiDate } from '../utils/dateFormat';
 
 interface RankedPlayerRow {
   subjectId: string;
@@ -41,12 +42,7 @@ const suspensionReasonLabel: Record<SuspensionReason, string> = {
   MANUAL_DECISION: '紀律處分',
 };
 
-const formatMatchLabel = (timestamp: string) =>
-  new Date(timestamp).toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+const formatMatchLabel = (timestamp: string) => formatTaipeiDate(timestamp);
 
 const StatsPage: React.FC = () => {
   const {

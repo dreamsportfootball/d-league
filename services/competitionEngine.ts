@@ -30,6 +30,7 @@ export interface PlayerCompetitionStats {
   yellowCards: number;
   secondYellowDismissals: number;
   directRedCards: number;
+  lastEventTimestamp: string;
 }
 
 const HEAD_TO_HEAD_CRITERIA: RankingCriterion[] = [
@@ -263,10 +264,6 @@ const resolveByCriteria = (
     }
   }
 
-  const manualOrders = rows.map((row) => row.teamId);
-  if (manualOrders.length > 1) {
-    return [rows];
-  }
   return [rows];
 };
 
@@ -368,26 +365,25 @@ export const calculateLeagueTable = ({
     ]),
   );
 
-  matches
-    .filter((match) => match.league === league)
-    .forEach((match) => {
-      const events = matchEvents[match.id] ?? [];
-      events.forEach((event) => {
-        const teamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
-        const row = rows[teamId];
-        if (!row) return;
-        if (event.type === 'YELLOW_CARD') row.yellowCards += 1;
-        if (event.type === 'SECOND_YELLOW') {
-          row.yellowCards += 1;
-          row.secondYellowDismissals += 1;
-        }
-        if (event.type === 'RED_CARD') row.directRedCards += 1;
-      });
-    });
-
   const countedMatches = matches.filter(
     (match) => match.league === league && countsForStandings(match, activeTeamIds),
   );
+
+  countedMatches.forEach((match) => {
+    const events = matchEvents[match.id] ?? [];
+    events.forEach((event) => {
+      const teamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+      const row = rows[teamId];
+      if (!row) return;
+      if (event.type === 'YELLOW_CARD') row.yellowCards += 1;
+      if (event.type === 'SECOND_YELLOW') {
+        row.yellowCards += 1;
+        row.secondYellowDismissals += 1;
+      }
+      if (event.type === 'RED_CARD') row.directRedCards += 1;
+    });
+  });
+
   countedMatches
     .slice()
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
@@ -416,11 +412,11 @@ const resolveEventSubject = (
   event: MatchEvent,
   teamId: string,
   players: PlayerProfile[],
-): { subjectId: string; name: string; teamId: string } => {
+): { subjectId: string; name: string } => {
   const explicitId = event.playerId ?? event.subjectId;
   if (explicitId) {
     const player = players.find((item) => item.id === explicitId);
-    return { subjectId: explicitId, name: player?.name ?? event.player, teamId: player?.teamId ?? teamId };
+    return { subjectId: explicitId, name: player?.name ?? event.player };
   }
 
   const candidates = players.filter((player) => player.name === event.player);
@@ -429,7 +425,6 @@ const resolveEventSubject = (
   return {
     subjectId: matched?.id ?? `legacy:${teamId}:${event.player}`,
     name: matched?.name ?? event.player,
-    teamId: matched?.teamId ?? teamId,
   };
 };
 
@@ -447,6 +442,8 @@ export const calculatePlayerCompetitionStats = (
 
   matches
     .filter((match) => match.league === league)
+    .slice()
+    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     .forEach((match) => {
       const matchInvalidForGoals =
         match.resultType === 'VOID' ||
@@ -457,18 +454,20 @@ export const calculatePlayerCompetitionStats = (
       (matchEvents[match.id] ?? []).forEach((event) => {
         const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
         const subject = resolveEventSubject(event, eventTeamId, players);
-        const key = subject.subjectId;
+        const key = `${subject.subjectId}:${eventTeamId}`;
         const row = stats.get(key) ?? {
-          subjectId: key,
+          subjectId: subject.subjectId,
           name: subject.name,
-          teamId: subject.teamId,
+          teamId: eventTeamId,
           goals: 0,
           yellowCards: 0,
           secondYellowDismissals: 0,
           directRedCards: 0,
+          lastEventTimestamp: match.timestamp,
         };
 
-        row.teamId = subject.teamId;
+        row.name = subject.name;
+        row.lastEventTimestamp = match.timestamp;
         if (event.type === 'GOAL' && !event.isOwnGoal && !matchInvalidForGoals) row.goals += 1;
         if (event.type === 'YELLOW_CARD') row.yellowCards += 1;
         if (event.type === 'SECOND_YELLOW') {

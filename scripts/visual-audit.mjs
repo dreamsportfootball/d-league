@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173';
+const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
 const outputDir = process.env.AUDIT_OUTPUT_DIR ?? 'visual-audit';
 
 const viewports = [
@@ -23,7 +23,7 @@ const routes = [
   { name: 'stats-2026', path: '/stats?season=2026-27' },
   { name: 'news', path: '/news' },
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
-  { name: 'team-detail', path: '/teams/preview26_l1_north?season=2026-27' },
+  { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -71,46 +71,42 @@ const collectDiagnostics = async (page) =>
     const bodyText = document.body.innerText;
     const fixedElements = [...document.querySelectorAll('*')]
       .filter((element) => getComputedStyle(element).position === 'fixed')
-      .map((element) => {
-        const rect = element.getBoundingClientRect();
-        return {
-          tag: element.tagName,
-          ariaLabel: element.getAttribute('aria-label'),
-          text: element.textContent?.trim().slice(0, 80) ?? '',
-          top: Math.round(rect.top),
-          bottom: Math.round(rect.bottom),
-          left: Math.round(rect.left),
-          right: Math.round(rect.right),
-        };
-      });
-
-    const newsCardCount = document.querySelectorAll('main a[href*="/news/"]').length;
-    const loadMoreVisible = [...document.querySelectorAll('main button')].some(
-      (element) => element.textContent?.includes('載入更多消息') && getComputedStyle(element).display !== 'none',
-    );
+      .map((element) => ({
+        tag: element.tagName,
+        ariaLabel: element.getAttribute('aria-label'),
+        text: element.textContent?.trim().slice(0, 100) ?? '',
+      }));
 
     return {
       title: document.title,
       documentWidth,
       viewportWidth,
+      documentHeight: document.documentElement.scrollHeight,
       horizontalOverflow: documentWidth > viewportWidth + 1,
-      bodyText: bodyText.slice(0, 7000),
+      bodyText: bodyText.slice(0, 9000),
       hasSeasonControl: [...document.querySelectorAll('button, select')].some((element) => {
         const label = `${element.getAttribute('aria-label') ?? ''} ${element.textContent ?? ''}`;
         return /選擇賽季|更改賽季|賽季篩選/.test(label);
       }),
       fixedRegistrationVisible: fixedElements.some((element) => element.text.includes('立即報名')),
-      newsCardCount,
-      loadMoreVisible,
+      newsCardCount: document.querySelectorAll('main a[href*="/news/"]').length,
+      loadMoreVisible: [...document.querySelectorAll('main button')].some(
+        (element) => element.textContent?.includes('載入更多消息') && getComputedStyle(element).display !== 'none',
+      ),
       fixedElements,
     };
   });
+
+const addFailure = (viewport, route, name, detail) => {
+  report.failures.push({ viewport, route, name, detail });
+};
 
 const auditViewport = async (viewport) => {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: 1,
     locale: 'zh-TW',
+    timezoneId: 'UTC',
     serviceWorkers: 'block',
   });
 
@@ -132,45 +128,46 @@ const auditViewport = async (viewport) => {
       const diagnostics = await collectDiagnostics(page);
       const assertions = [];
 
-      const addAssertion = (name, passed, detail) => {
+      const assert = (name, passed, detail) => {
         assertions.push({ name, passed, detail });
-        if (!passed) report.failures.push({ viewport: viewport.name, route: route.name, name, detail });
+        if (!passed) addFailure(viewport.name, route.name, name, detail);
       };
 
-      addAssertion('no-horizontal-overflow', !diagnostics.horizontalOverflow, `${diagnostics.documentWidth}/${diagnostics.viewportWidth}`);
-      addAssertion('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
+      assert('no-horizontal-overflow', !diagnostics.horizontalOverflow, `${diagnostics.documentWidth}/${diagnostics.viewportWidth}`);
+      assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
 
       if (route.name === 'standings-2026') {
-        addAssertion('standings-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
-        addAssertion('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear in standings toolbar');
+        assert('standings-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }
 
       if (route.name === 'stats-2026') {
-        addAssertion('stats-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
-        addAssertion('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selection must be inside filter drawer');
+        assert('stats-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        assert('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selector must stay inside drawer');
       }
 
       if (route.name === 'news') {
-        addAssertion('news-has-no-season-control', !diagnostics.hasSeasonControl, 'News must not expose a season selector');
-        addAssertion('news-has-global-tabs', diagnostics.bodyText.includes('全部消息') && diagnostics.bodyText.includes('賽事戰報') && diagnostics.bodyText.includes('官方公告'), 'Expected global news tabs');
-        addAssertion('news-initial-batch-limited', diagnostics.newsCardCount <= 9, `Rendered ${diagnostics.newsCardCount} article cards`);
-        addAssertion('news-load-more-visible', diagnostics.loadMoreVisible, 'Expected load more control');
+        assert('news-has-no-season-control', !diagnostics.hasSeasonControl, 'News must not expose season selector');
+        assert('news-has-global-tabs', diagnostics.bodyText.includes('全部消息') && diagnostics.bodyText.includes('賽事戰報') && diagnostics.bodyText.includes('官方公告'), 'Expected global news tabs');
+        assert('news-initial-batch-limited', diagnostics.newsCardCount <= 9, `Rendered ${diagnostics.newsCardCount} cards`);
+        assert('news-load-more-visible', diagnostics.loadMoreVisible, 'Expected load more control');
       }
 
       if (route.name === 'article-detail') {
-        addAssertion('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article detail');
+        assert('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article');
+        assert('article-date-uses-taipei-timezone', diagnostics.bodyText.includes('2026.06.23'), 'Expected 2026.06.23 even under UTC browser timezone');
       }
 
       if (route.name === 'team-detail') {
-        addAssertion('team-detail-resolves', diagnostics.bodyText.includes('府城競技') && !diagnostics.bodyText.includes('找不到球隊'), 'Expected preview team detail');
+        assert('team-detail-resolves', diagnostics.bodyText.includes('嘉義諸羅山FC') && !diagnostics.bodyText.includes('找不到此球隊'), 'Expected real 2025/26 team');
       }
 
       if (route.name === 'media-default') {
-        addAssertion('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
+        assert('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
       }
 
-      if (viewport.width < 768 && (route.name === 'standings-2025' || route.name === 'media-2025')) {
-        addAssertion('historical-page-keeps-registration-cta', diagnostics.fixedRegistrationVisible, 'Historical data pages must retain current-season mobile registration CTA');
+      if (viewport.width < 768 && (route.name === 'standings-2025' || route.name === 'media-2025' || route.name === 'team-detail')) {
+        assert('historical-page-keeps-registration-cta', diagnostics.fixedRegistrationVisible, 'Historical data must retain current-season registration CTA');
       }
 
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
@@ -185,22 +182,13 @@ const auditViewport = async (viewport) => {
         route: route.name,
         url: page.url(),
         screenshot: screenshotPath,
-        diagnostics: {
-          title: diagnostics.title,
-          documentWidth: diagnostics.documentWidth,
-          viewportWidth: diagnostics.viewportWidth,
-          horizontalOverflow: diagnostics.horizontalOverflow,
-          fixedRegistrationVisible: diagnostics.fixedRegistrationVisible,
-          newsCardCount: diagnostics.newsCardCount,
-          loadMoreVisible: diagnostics.loadMoreVisible,
-          fixedElements: diagnostics.fixedElements,
-        },
+        diagnostics,
         assertions,
         consoleErrors,
         pageErrors,
       });
     } catch (error) {
-      report.failures.push({ viewport: viewport.name, route: route.name, name: 'audit-execution', detail: error.message });
+      addFailure(viewport.name, route.name, 'audit-execution', error.message);
       report.pages.push({ viewport: viewport.name, route: route.name, error: error.message, consoleErrors, pageErrors });
     } finally {
       await page.close();
@@ -221,6 +209,7 @@ const auditInteractiveCase = async (testCase) => {
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: 1,
     locale: 'zh-TW',
+    timezoneId: 'UTC',
     serviceWorkers: 'block',
   });
   const page = await context.newPage();
@@ -234,62 +223,35 @@ const auditInteractiveCase = async (testCase) => {
     let afterCount = null;
 
     if (testCase.action === 'mobile-menu') {
-      const trigger = page.getByRole('button', { name: /開啟.*選單|選單/i }).last();
-      await trigger.click();
+      await page.getByRole('button', { name: /開啟.*選單|選單/i }).last().click();
     } else if (testCase.action === 'load-more') {
       beforeCount = await page.locator('main a[href*="/news/"]').count();
       await page.getByRole('button', { name: '載入更多消息' }).click();
       await page.waitForTimeout(300);
       afterCount = await page.locator('main a[href*="/news/"]').count();
     } else {
-      const trigger = page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選/i }).first();
-      await trigger.click();
+      await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選/i }).first().click();
     }
 
     await page.waitForTimeout(250);
+    const dialogVisible = await page.locator('[role="dialog"]').count() > 0;
+    const menuVisible = testCase.action === 'mobile-menu'
+      ? await page.evaluate(() => document.body.innerText.includes('賽季報名') && getComputedStyle(document.body).overflow === 'hidden')
+      : false;
+    const passed = testCase.action === 'mobile-menu'
+      ? menuVisible
+      : testCase.action === 'load-more'
+        ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
+        : dialogVisible;
+
+    if (!passed) addFailure(testCase.viewport, testCase.name, 'interactive-state', JSON.stringify({ dialogVisible, menuVisible, beforeCount, afterCount }));
+
     const screenshotPath = path.join(outputDir, 'screenshots', `${testCase.viewport}__${testCase.name}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false, animations: 'disabled' });
-
-    const stateInfo = await page.evaluate((action) => {
-      const dialog = document.querySelector('[role="dialog"]');
-      const bodyText = document.body.innerText;
-      const target = dialog ?? document.body;
-      const rect = target.getBoundingClientRect();
-      const menuVisible = action === 'mobile-menu' && bodyText.includes('賽季報名') && bodyText.includes('賽程與結果') && getComputedStyle(document.body).overflow === 'hidden';
-      return {
-        text: target.textContent?.trim().slice(0, 1500) ?? '',
-        top: Math.round(rect.top),
-        bottom: Math.round(rect.bottom),
-        left: Math.round(rect.left),
-        right: Math.round(rect.right),
-        viewportWidth: window.innerWidth,
-        viewportHeight: window.innerHeight,
-        dialogVisible: Boolean(dialog),
-        menuVisible,
-      };
-    }, testCase.action);
-
-    const passed =
-      testCase.action === 'mobile-menu'
-        ? stateInfo.menuVisible
-        : testCase.action === 'load-more'
-          ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
-          : stateInfo.dialogVisible;
-
-    if (!passed) report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'interactive-state-opened', detail: JSON.stringify({ stateInfo, beforeCount, afterCount }) });
-
-    report.interactive.push({
-      name: testCase.name,
-      viewport: testCase.viewport,
-      screenshot: screenshotPath,
-      stateInfo,
-      beforeCount,
-      afterCount,
-      passed,
-    });
+    report.interactive.push({ ...testCase, screenshot: screenshotPath, dialogVisible, menuVisible, beforeCount, afterCount, passed });
   } catch (error) {
-    report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'interactive-audit', detail: error.message });
-    report.interactive.push({ name: testCase.name, viewport: testCase.viewport, error: error.message, passed: false });
+    addFailure(testCase.viewport, testCase.name, 'interactive-audit', error.message);
+    report.interactive.push({ ...testCase, error: error.message, passed: false });
   } finally {
     await page.close();
     await context.close();
@@ -297,8 +259,8 @@ const auditInteractiveCase = async (testCase) => {
 };
 
 await Promise.all(interactiveCases.map(auditInteractiveCase));
-
 await browser.close();
+
 await fs.writeFile(path.join(outputDir, 'report.json'), JSON.stringify(report, null, 2));
 await fs.writeFile(
   path.join(outputDir, 'summary.txt'),
@@ -311,4 +273,5 @@ await fs.writeFile(
   ].join('\n'),
 );
 
-console.log(`Visual audit complete: ${report.pages.length} pages, ${report.interactive.length} interactive states, ${report.failures.length} failure(s).`);
+console.log(`Visual audit complete: ${report.pages.length} pages, ${report.interactive.length} states, ${report.failures.length} failure(s).`);
+if (report.failures.length > 0) process.exitCode = 1;

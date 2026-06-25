@@ -1,14 +1,15 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
-import { useSeason } from '../hooks/useSeason';
+import { getSeasonConfig } from '../config/seasons';
+import { CURRENT_SEASON_ID, SHOW_REGISTRATION_NAV } from '../config/siteConfig';
 
 const MobileRegistrationBar: React.FC = () => {
-  const { activeSeason } = useSeason();
+  const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
 
   if (
-    activeSeason.status !== 'registration' ||
-    !activeSeason.registrationFormUrl ||
-    !activeSeason.regulationsUrl
+    !SHOW_REGISTRATION_NAV ||
+    !currentSeason.registrationFormUrl ||
+    !currentSeason.regulationsUrl
   ) {
     return null;
   }
@@ -19,7 +20,7 @@ const MobileRegistrationBar: React.FC = () => {
       <div className="fixed inset-x-0 bottom-0 z-[950] border-t border-neutral-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur md:hidden">
         <div className="mx-auto grid max-w-lg grid-cols-[1fr_auto] gap-2">
           <a
-            href={activeSeason.registrationFormUrl}
+            href={currentSeason.registrationFormUrl}
             target="_blank"
             rel="noopener noreferrer"
             data-analytics-event="registration_click"
@@ -28,7 +29,7 @@ const MobileRegistrationBar: React.FC = () => {
             立即報名
           </a>
           <a
-            href={activeSeason.regulationsUrl}
+            href={currentSeason.regulationsUrl}
             target="_blank"
             rel="noopener noreferrer"
             data-analytics-event="regulations_click"

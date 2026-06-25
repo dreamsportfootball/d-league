@@ -3,6 +3,7 @@ import { ArrowRight, Newspaper } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import { getAllNews } from '../services/seasonDataJson';
+import { formatTaipeiDate } from '../utils/dateFormat';
 
 const getBadgeStyle = (category: string) =>
   category === 'Match Report'
@@ -62,7 +63,7 @@ const NewsSection: React.FC = () => {
                       </span>
                     )}
                     <span className="text-[10px] font-bold text-neutral-400">
-                      {new Date(article.timestamp).toLocaleDateString('zh-TW')}
+                      {formatTaipeiDate(article.timestamp)}
                     </span>
                   </div>
                   <h4 className="mb-2 line-clamp-2 font-display text-lg font-bold uppercase leading-tight text-brand-black transition-colors group-hover:text-brand-blue">

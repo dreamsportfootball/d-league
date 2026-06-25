@@ -125,7 +125,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     rules: legacyRules,
     standingsDisplay: {
       showPointsSummary: false,
-      rankingRules: ['得失球差', '進球數', '相關隊伍間對戰成績', '黃紅牌', '並列'],
+      rankingRules: ['得失球差', '進球數', '並列'],
     },
     leagues: season2025Leagues,
   },
@@ -145,6 +145,60 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     heroFallbackImage: 'banner.png',
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式開放報名',
+    registrationContent: {
+      intro: '不論是具競爭力的成熟球隊，或剛成立並希望累積正式比賽經驗的新球隊，都可以依照目前實力選擇希望參加的級別',
+      ageReferenceDate: '2026-11-01',
+      minimumAge: 15,
+      minimumPlayers: 12,
+      maximumPlayers: 20,
+      maximumStaff: 3,
+      staffDescription: '可包含領隊、教練及管理等職務，其中領隊為必登職務',
+      steps: [
+        '填寫正式報名表',
+        '主辦單位審核球隊資料與實力',
+        '公布錄取球隊及正式參賽級別',
+        '依錄取通知完成相關程序',
+        '提交球員及隊職員登錄資料',
+        '公布正式賽程',
+      ],
+      faqItems: [
+        {
+          question: '填寫報名表後就一定會錄取嗎？',
+          answer: '不一定。主辦單位會依球隊過往成績、主要球員組成、參賽經驗、紀律及各級別整體實力進行審核，最終錄取名單以主辦單位公告為準',
+        },
+        {
+          question: '可以自行選擇 L1、L2 或 L3 嗎？',
+          answer: '報名時可以填寫希望參加的級別，但主辦單位會依整體實力進行分級，最終參賽級別以公布結果為準',
+        },
+        {
+          question: '球員年齡及登錄人數有什麼限制？',
+          answer: '球員須於 2026/11/01 當日年滿 15 歲，性別不限。每隊球員最少登錄 12 人、最多 20 人',
+        },
+        {
+          question: '隊職員可以登錄多少人？',
+          answer: '每隊最多登錄 3 名隊職員，可包含領隊、教練及管理等職務，其中領隊為必登職務',
+        },
+        {
+          question: '每隊可以踢幾場比賽？',
+          answer: '目前規劃 L1、L2、L3 均採雙循環，每隊共進行 10 場正式比賽',
+        },
+        {
+          question: '經費較有限的 L3 球隊有其他方案嗎？',
+          answer: 'L3 預計提供一隊工作人員合作名額，協助 L1、L2 比賽日的場地整理、設備設置及比賽期間撿球等工作，實際內容與資格由主辦單位另行確認',
+        },
+        {
+          question: '報名費及後續期限在哪裡查看？',
+          answer: '相關費用、繳交期限、球員登錄期限及其他錄取後程序，將於正式錄取通知中個別說明',
+        },
+      ],
+      reviewDescription: '主辦單位將依球隊過往成績、主要球員組成、參賽經驗、紀律及各級別整體實力進行審核與分級，最終參賽級別以主辦單位公布結果為準',
+      reviewFeatures: [
+        '可依球隊目前實力選擇希望參加的級別',
+        '各級別預計錄取 6 支球隊',
+        '正式實施升降級制度',
+        '不設升降級附加賽',
+      ],
+    },
     rules: season2026Rules,
     standingsDisplay: {
       showPointsSummary: true,

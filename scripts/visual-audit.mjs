@@ -52,23 +52,60 @@ const report = {
   failures: [],
 };
 
-const waitForStablePage = async (page) => {
-  await page.waitForLoadState('domcontentloaded');
-  await page.waitForSelector('#root > *', { timeout: 15000 });
-  await page.waitForTimeout(1400);
-};
-
 const makeUrl = (routePath) => `${baseUrl}/#${routePath}`;
 
-for (const viewport of viewports) {
+const waitForStablePage = async (page) => {
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForSelector('#root > *', { timeout: 12000 });
+  await page.waitForTimeout(500);
+};
+
+const collectDiagnostics = async (page) =>
+  page.evaluate(() => {
+    const documentWidth = document.documentElement.scrollWidth;
+    const viewportWidth = window.innerWidth;
+    const bodyText = document.body.innerText;
+    const fixedElements = [...document.querySelectorAll('*')]
+      .filter((element) => getComputedStyle(element).position === 'fixed')
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName,
+          ariaLabel: element.getAttribute('aria-label'),
+          text: element.textContent?.trim().slice(0, 80) ?? '',
+          top: Math.round(rect.top),
+          bottom: Math.round(rect.bottom),
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+        };
+      });
+
+    return {
+      title: document.title,
+      documentWidth,
+      viewportWidth,
+      horizontalOverflow: documentWidth > viewportWidth + 1,
+      bodyText: bodyText.slice(0, 7000),
+      hasSeasonControl: [...document.querySelectorAll('button, select')].some((element) => {
+        const label = `${element.getAttribute('aria-label') ?? ''} ${element.textContent ?? ''}`;
+        return /選擇賽季|更改賽季|賽季篩選/.test(label);
+      }),
+      fixedElements,
+    };
+  });
+
+const auditViewport = async (viewport) => {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: 1,
     locale: 'zh-TW',
+    serviceWorkers: 'block',
   });
 
   for (const route of routes) {
+    console.log(`[page] ${viewport.name} / ${route.name}`);
     const page = await context.newPage();
+    page.setDefaultTimeout(10000);
     const consoleErrors = [];
     const pageErrors = [];
 
@@ -78,39 +115,11 @@ for (const viewport of viewports) {
     page.on('pageerror', (error) => pageErrors.push(error.message));
 
     try {
-      await page.goto(makeUrl(route.path), { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.goto(makeUrl(route.path), { waitUntil: 'domcontentloaded', timeout: 20000 });
       await waitForStablePage(page);
-
-      const diagnostics = await page.evaluate(() => {
-        const documentWidth = document.documentElement.scrollWidth;
-        const viewportWidth = window.innerWidth;
-        const bodyText = document.body.innerText;
-        const fixedElements = [...document.querySelectorAll('*')]
-          .filter((element) => getComputedStyle(element).position === 'fixed')
-          .map((element) => {
-            const rect = element.getBoundingClientRect();
-            return {
-              tag: element.tagName,
-              ariaLabel: element.getAttribute('aria-label'),
-              text: element.textContent?.trim().slice(0, 80) ?? '',
-              top: Math.round(rect.top),
-              bottom: Math.round(rect.bottom),
-              left: Math.round(rect.left),
-              right: Math.round(rect.right),
-            };
-          });
-
-        return {
-          title: document.title,
-          documentWidth,
-          viewportWidth,
-          horizontalOverflow: documentWidth > viewportWidth + 1,
-          bodyText: bodyText.slice(0, 5000),
-          fixedElements,
-        };
-      });
-
+      const diagnostics = await collectDiagnostics(page);
       const assertions = [];
+
       const addAssertion = (name, passed, detail) => {
         assertions.push({ name, passed, detail });
         if (!passed) report.failures.push({ viewport: viewport.name, route: route.name, name, detail });
@@ -130,7 +139,7 @@ for (const viewport of viewports) {
       }
 
       if (route.name === 'news') {
-        addAssertion('news-has-no-season-selector', !diagnostics.bodyText.includes('D LEAGUE 2026/27\n'), 'News should not expose season selector');
+        addAssertion('news-has-no-season-control', !diagnostics.hasSeasonControl, 'News must not expose a season selector');
         addAssertion('news-has-global-tabs', diagnostics.bodyText.includes('全部消息') && diagnostics.bodyText.includes('賽事戰報') && diagnostics.bodyText.includes('官方公告'), 'Expected global news tabs');
       }
 
@@ -139,7 +148,11 @@ for (const viewport of viewports) {
       }
 
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
-      await page.screenshot({ path: screenshotPath, fullPage: true });
+      await page.screenshot({
+        path: screenshotPath,
+        fullPage: viewport.name === 'mobile-390' || viewport.name === 'desktop-1280',
+        animations: 'disabled',
+      });
 
       report.pages.push({
         viewport: viewport.name,
@@ -166,58 +179,67 @@ for (const viewport of viewports) {
   }
 
   await context.close();
-}
+};
 
-for (const testCase of interactiveCases) {
+await Promise.all(viewports.map(auditViewport));
+
+const auditInteractiveCase = async (testCase) => {
   const viewport = viewports.find((item) => item.name === testCase.viewport);
-  if (!viewport) continue;
+  if (!viewport) return;
 
+  console.log(`[interactive] ${testCase.viewport} / ${testCase.name}`);
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     deviceScaleFactor: 1,
     locale: 'zh-TW',
+    serviceWorkers: 'block',
   });
   const page = await context.newPage();
+  page.setDefaultTimeout(10000);
 
   try {
-    await page.goto(makeUrl(testCase.path), { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(makeUrl(testCase.path), { waitUntil: 'domcontentloaded', timeout: 20000 });
     await waitForStablePage(page);
 
     if (testCase.action === 'mobile-menu') {
-      const trigger = page.getByRole('button', { name: /開啟|選單|menu/i }).last();
+      const trigger = page.getByRole('button', { name: /開啟.*選單|選單/i }).last();
       await trigger.click();
     } else {
       const trigger = page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選/i }).first();
       await trigger.click();
     }
 
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(250);
     const screenshotPath = path.join(outputDir, 'screenshots', `${testCase.viewport}__${testCase.name}.png`);
-    await page.screenshot({ path: screenshotPath, fullPage: true });
+    await page.screenshot({ path: screenshotPath, fullPage: false, animations: 'disabled' });
 
-    const dialogInfo = await page.evaluate(() => {
+    const stateInfo = await page.evaluate((action) => {
       const dialog = document.querySelector('[role="dialog"]');
-      if (!dialog) return null;
-      const rect = dialog.getBoundingClientRect();
+      const bodyText = document.body.innerText;
+      const target = dialog ?? document.body;
+      const rect = target.getBoundingClientRect();
+      const menuVisible = action === 'mobile-menu' && bodyText.includes('賽季報名') && bodyText.includes('賽程與結果') && getComputedStyle(document.body).overflow === 'hidden';
       return {
-        text: dialog.textContent?.trim().slice(0, 1200) ?? '',
+        text: target.textContent?.trim().slice(0, 1500) ?? '',
         top: Math.round(rect.top),
         bottom: Math.round(rect.bottom),
         left: Math.round(rect.left),
         right: Math.round(rect.right),
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
+        dialogVisible: Boolean(dialog),
+        menuVisible,
       };
-    });
+    }, testCase.action);
 
-    const passed = Boolean(dialogInfo);
-    if (!passed) report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'dialog-opened', detail: 'No role=dialog found' });
+    const passed = testCase.action === 'mobile-menu' ? stateInfo.menuVisible : stateInfo.dialogVisible;
+    if (!passed) report.failures.push({ viewport: testCase.viewport, route: testCase.name, name: 'interactive-state-opened', detail: JSON.stringify(stateInfo) });
 
     report.interactive.push({
       name: testCase.name,
       viewport: testCase.viewport,
       screenshot: screenshotPath,
-      dialogInfo,
+      stateInfo,
       passed,
     });
   } catch (error) {
@@ -227,7 +249,9 @@ for (const testCase of interactiveCases) {
     await page.close();
     await context.close();
   }
-}
+};
+
+await Promise.all(interactiveCases.map(auditInteractiveCase));
 
 await browser.close();
 await fs.writeFile(path.join(outputDir, 'report.json'), JSON.stringify(report, null, 2));
@@ -242,8 +266,4 @@ await fs.writeFile(
   ].join('\n'),
 );
 
-if (report.failures.length > 0) {
-  console.error(`Visual audit completed with ${report.failures.length} failure(s).`);
-} else {
-  console.log('Visual audit completed without automated failures.');
-}
+console.log(`Visual audit complete: ${report.pages.length} pages, ${report.interactive.length} interactive states, ${report.failures.length} failure(s).`);

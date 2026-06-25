@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import { getAllNews } from '../services/seasonDataJson';
 import type { NewsArticle } from '../types';
+import { formatTaipeiDate } from '../utils/dateFormat';
 
 type NewsFilter = 'ALL' | 'Match Report' | 'Official';
 
@@ -17,14 +18,6 @@ const CATEGORY_MAP: Record<NewsArticle['category'], string> = {
 const TAG_COLOR_MAP: Record<NewsArticle['category'], string> = {
   'Match Report': 'bg-brand-accent text-brand-black',
   Official: 'bg-brand-blue text-white',
-};
-
-const formatDate = (isoString: string) => {
-  const date = new Date(isoString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}/${month}/${day}`;
 };
 
 const getArticleSeasonLabel = (article: NewsArticle): string | null =>
@@ -66,7 +59,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             )}
           </div>
           <span className="shrink-0 font-mono text-[11px] text-neutral-400">
-            {formatDate(article.timestamp)}
+            {formatTaipeiDate(article.timestamp)}
           </span>
         </div>
 

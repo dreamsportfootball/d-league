@@ -71,6 +71,7 @@ jobs:
   visual-audit:
     runs-on: ubuntu-latest
     needs: build
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -95,13 +96,13 @@ jobs:
       - name: Build preview-mode site
         env:
           VITE_ROUTER_MODE: hash
-        run: npx vite build --base=/
+        run: npx vite build
 
       - name: Start local preview server
         run: |
           nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/d-league-preview.log 2>&1 &
           for attempt in {1..30}; do
-            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then
+            if curl --silent --fail http://127.0.0.1:4173/d-league/ > /dev/null; then
               exit 0
             fi
             sleep 1
@@ -110,6 +111,8 @@ jobs:
           exit 1
 
       - name: Capture responsive screenshots and diagnostics
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/visual-audit.mjs
 
       - name: Upload visual audit report

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Camera } from 'lucide-react';
 import { assetUrl } from '../services/seasonData';
 
@@ -8,8 +8,11 @@ const carouselImages = [1, 2, 3, 4, 5].map((id) => ({
 }));
 
 const PhotoCarousel: React.FC = () => {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
+  const [isNearViewport, setIsNearViewport] = useState(false);
+  const [loadedIndices, setLoadedIndices] = useState<Set<number>>(() => new Set([0]));
 
   const nextSlide = () => {
     setActiveIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
@@ -20,9 +23,34 @@ const PhotoCarousel: React.FC = () => {
   };
 
   useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsNearViewport(entry.isIntersecting),
+      { rootMargin: '240px 0px' },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isNearViewport) return;
+    const nextIndex = (activeIndex + 1) % carouselImages.length;
+    setLoadedIndices((current) => {
+      if (current.has(activeIndex) && current.has(nextIndex)) return current;
+      const next = new Set(current);
+      next.add(activeIndex);
+      next.add(nextIndex);
+      return next;
+    });
+  }, [activeIndex, isNearViewport]);
+
+  useEffect(() => {
+    if (!isNearViewport) return undefined;
     const interval = window.setInterval(nextSlide, 5000);
     return () => window.clearInterval(interval);
-  }, []);
+  }, [isNearViewport]);
 
   const handleTouchEnd = (event: React.TouchEvent) => {
     const swipeDistance = event.changedTouches[0].clientX - touchStartX;
@@ -33,7 +61,7 @@ const PhotoCarousel: React.FC = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-neutral-50 to-white py-12 md:py-20">
+    <section ref={sectionRef} className="relative overflow-hidden bg-gradient-to-b from-white via-neutral-50 to-white py-12 md:py-20">
       <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 select-none whitespace-nowrap font-display text-[10rem] font-black uppercase text-neutral-100 opacity-40">
         MOMENTS
       </div>
@@ -63,16 +91,19 @@ const PhotoCarousel: React.FC = () => {
                   index === activeIndex ? 'z-10 scale-100 opacity-100' : 'z-0 scale-105 opacity-0'
                 }`}
               >
-                <img
-                  src={image.src}
-                  alt={`賽事精選圖片 ${image.id}`}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                  onError={(event) => {
-                    event.currentTarget.onerror = null;
-                    event.currentTarget.src = 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1200&auto=format&fit=crop';
-                  }}
-                />
+                {loadedIndices.has(index) && (
+                  <img
+                    src={image.src}
+                    alt={`賽事精選圖片 ${image.id}`}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1200&auto=format&fit=crop';
+                    }}
+                  />
+                )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
               </div>
             ))}

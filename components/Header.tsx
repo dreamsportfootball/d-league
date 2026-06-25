@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
@@ -28,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -44,9 +45,14 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMobileDropdownOpen(null);
-        setMobileMenuOpen(false);
+      if (event.key !== 'Escape') return;
+      setMobileDropdownOpen(null);
+      setMobileMenuOpen(false);
+      if (
+        document.activeElement instanceof HTMLElement &&
+        headerRef.current?.contains(document.activeElement)
+      ) {
+        document.activeElement.blur();
       }
     };
 
@@ -71,7 +77,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
+    <header ref={headerRef} className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
       <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">
           <Link
@@ -98,24 +104,29 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7">
+        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7" aria-label="主要導覽">
           {NAV_ITEMS.map((item) => (
             <div key={item.name} className="group relative flex h-16 items-center">
               {item.children ? (
                 <>
                   <button
                     type="button"
-                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+                    aria-haspopup="menu"
+                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40"
                   >
                     {item.name}
-                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" />
+                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
                   </button>
-                  <div className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                  <div
+                    role="menu"
+                    className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                  >
                     {item.children.map((child) => (
                       <Link
                         key={child.name}
                         to={child.href}
-                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue"
+                        role="menuitem"
+                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue focus:bg-neutral-50 focus:text-brand-blue focus:outline-none"
                       >
                         {child.name}
                       </Link>

@@ -27,7 +27,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3 md:block">
           <h1 className="min-w-0 whitespace-nowrap font-display text-[32px] font-black uppercase leading-none tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:mb-4 md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
-            {title}<span className="text-brand-blue">{accent}</span>
+            {title}{' '}<span className="text-brand-blue">{accent}</span>
           </h1>
 
           {showMobileSeasonSelector && (

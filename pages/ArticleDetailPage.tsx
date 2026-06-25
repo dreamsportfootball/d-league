@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import { getNewsArticle } from '../services/seasonDataJson';
+import { formatTaipeiDate } from '../utils/dateFormat';
 
 const CATEGORY_META = {
   'Match Report': { label: '賽事戰報' },
@@ -13,15 +14,6 @@ const getBadgeStyle = (category: 'Match Report' | 'Official') =>
   category === 'Match Report'
     ? 'bg-brand-accent text-brand-black border-transparent'
     : 'bg-brand-blue text-white border-transparent';
-
-const formatDate = (isoString: string) => {
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return '';
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-};
 
 const ArticleBody: React.FC<{ text: string }> = ({ text }) => {
   const blocks = useMemo(
@@ -98,7 +90,7 @@ const ArticleDetailPage: React.FC = () => {
               {CATEGORY_META[article.category].label}
             </span>
             <span className="font-mono text-[11px] tracking-wider text-neutral-400">
-              {formatDate(article.timestamp)}
+              {formatTaipeiDate(article.timestamp, '.')}
             </span>
             {seasonLabel && (
               <span className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-blue">

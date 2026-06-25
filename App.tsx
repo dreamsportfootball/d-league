@@ -4,6 +4,7 @@ import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
 import MobileRegistrationBar from './components/MobileRegistrationBar';
 import Seo from './components/Seo';
 import { SeasonProvider } from './contexts/SeasonContext';
@@ -130,6 +131,7 @@ const App: React.FC = () => (
   <SeasonProvider>
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <Header />
+      <ImageLoadingOptimizer />
       <SectionAnchorNavigation />
       <ScrollMemory />
       <Seo />

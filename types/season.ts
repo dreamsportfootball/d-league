@@ -59,6 +59,12 @@ export interface RegistrationContentConfig {
   reviewFeatures: string[];
 }
 
+export interface RegistrationProgressConfig {
+  receivedTeams: number;
+  updatedAt: string;
+  note: string;
+}
+
 export interface LeagueConfig {
   id: LeagueId;
   displayName: string;
@@ -92,6 +98,7 @@ export interface SeasonConfig {
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
   registrationContent?: RegistrationContentConfig;
+  registrationProgress?: RegistrationProgressConfig;
   rules: CompetitionRules;
   standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;

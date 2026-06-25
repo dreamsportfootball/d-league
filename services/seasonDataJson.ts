@@ -46,9 +46,7 @@ export const assetUrl = (path: string): string => {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '').replace(/^d-league\//, '')}`;
 };
 
-const use2026PreviewData =
-  typeof window !== 'undefined' &&
-  (import.meta.env.DEV || window.location.pathname.includes('/preview/season-2026-27/'));
+const use2026PreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
 
 const makeData = (
   id: SeasonId,

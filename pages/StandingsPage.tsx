@@ -157,10 +157,10 @@ const StandingsPage: React.FC = () => {
             type="button"
             onClick={openFilters}
             aria-label="選擇積分榜賽季"
-            className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-xs font-bold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm"
+            className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-[11px] font-semibold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm md:font-bold"
           >
             {seasonButtonLabel}
-            <ChevronRight className="ml-1.5 h-4 w-4" aria-hidden="true" />
+            <ChevronRight className="ml-1.5 h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden="true" />
           </button>
         </div>
 

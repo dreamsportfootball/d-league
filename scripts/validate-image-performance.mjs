@@ -38,6 +38,19 @@ const inspectRoute = async (context, route) => {
 
     const result = await page.evaluate(() => ({
       viewportHeight: window.innerHeight,
+      externalHeroPreloadScripts: [
+        ...document.querySelectorAll('script[src*="hero-preload.js"]'),
+      ].map((script) => script.getAttribute('src') ?? ''),
+      heroBootstrapResources: performance
+        .getEntriesByType('resource')
+        .filter((entry) => entry.name.includes('hero-preload.js'))
+        .map((entry) => ({
+          name: entry.name,
+          initiatorType: entry.initiatorType,
+          startTime: entry.startTime,
+          duration: entry.duration,
+          transferSize: 'transferSize' in entry ? entry.transferSize : 0,
+        })),
       preloads: [...document.querySelectorAll('link[data-home-hero-preload="true"]')].map((link) => ({
         href: link.href,
         as: link.getAttribute('as') ?? '',
@@ -76,6 +89,10 @@ const inspectRoute = async (context, route) => {
     }));
 
     if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
+
+    if (result.externalHeroPreloadScripts.length > 0 || result.heroBootstrapResources.length > 0) {
+      fail(`${route}: homepage hero preload must not require an external blocking script`);
+    }
 
     const visibleBroken = result.images.filter(
       (image) => image.bottom > 0 && image.top < result.viewportHeight && image.complete && image.naturalWidth === 0,

@@ -10,6 +10,20 @@ if (!rootElement) {
 }
 
 const useHashRouter = import.meta.env.VITE_ROUTER_MODE === 'hash';
+const previewRoutes = new Set(['schedule', 'standings', 'stats', 'media', 'news']);
+
+if (useHashRouter && !window.location.hash) {
+  const previewParams = new URLSearchParams(window.location.search);
+  const route = previewParams.get('route');
+
+  if (route && previewRoutes.has(route)) {
+    const season = previewParams.get('season');
+    const routeSearch = season ? `?season=${encodeURIComponent(season)}` : '';
+    window.history.replaceState(null, '', window.location.pathname);
+    window.location.hash = `/${route}${routeSearch}`;
+  }
+}
+
 const app = useHashRouter ? (
   <HashRouter>
     <App />

@@ -9,16 +9,18 @@ import {
 } from 'lucide-react';
 import {
   CUP_EVENT,
+  CUP_GROUP_RANKING_RULE_LABEL,
+  CUP_GROUP_STANDINGS,
   CUP_MATCHES,
   CUP_TEAMS,
   type CupGroup,
+  type CupGroupStanding,
   type CupMatch,
   type CupTeam,
 } from '../cupData';
 import { formatTaipeiDate, formatTaipeiTime } from '../utils/dateFormat';
 
 const CUP_RED = '#8f1d1d';
-const CUP_DARK_RED = '#4a1010';
 const CUP_GOLD = '#c8a45a';
 
 const assetUrl = (path: string): string =>
@@ -95,6 +97,7 @@ const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match,
 
   return (
     <div
+      data-cup-match-id={match.id}
       className={`grid grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center border-b px-0 py-5 last:border-b-0 md:grid-cols-[minmax(0,1fr)_112px_minmax(0,1fr)] md:py-6 ${
         featured ? 'border-white/15 text-white' : 'border-neutral-200 text-brand-black'
       }`}
@@ -193,10 +196,10 @@ const CompactGroupMatch: React.FC<{ match?: CupMatch }> = ({ match }) => {
 
 const TeamGroup: React.FC<{
   group: CupGroup;
-  teams: CupTeam[];
+  standings: CupGroupStanding[];
   placementLabels: Record<string, string>;
-}> = ({ group, teams, placementLabels }) => (
-  <section className="border-t-4 border-[#8f1d1d] bg-white">
+}> = ({ group, standings, placementLabels }) => (
+  <section data-cup-group={group} className="border-t-4 border-[#8f1d1d] bg-white">
     <div className="flex items-end justify-between border-b border-neutral-200 px-5 py-5 md:px-7">
       <div>
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Group</p>
@@ -205,17 +208,27 @@ const TeamGroup: React.FC<{
       <span className="font-display text-5xl font-black text-neutral-100" aria-hidden="true">{group}</span>
     </div>
     <ol className="px-5 md:px-7">
-      {teams.map((team, index) => (
-        <li key={team.id} className="grid min-h-16 grid-cols-[36px_minmax(0,1fr)_auto] items-center border-b border-neutral-100 last:border-b-0">
-          <span className="font-display text-sm font-black text-[#8f1d1d]">{String(index + 1).padStart(2, '0')}</span>
-          <span className="min-w-0 break-words pr-4 text-sm font-black text-brand-black md:text-base">{team.name}</span>
-          {placementLabels[team.id] && (
-            <span className="text-right text-[9px] font-black uppercase tracking-[0.1em] text-neutral-400">
-              {placementLabels[team.id]}
-            </span>
-          )}
-        </li>
-      ))}
+      {standings.map((standing) => {
+        const team = standing.team;
+        return (
+          <li key={team.id} className="grid min-h-16 grid-cols-[36px_minmax(0,1fr)_auto] items-center border-b border-neutral-100 last:border-b-0">
+            <span className="font-display text-sm font-black text-[#8f1d1d]">{String(standing.rank).padStart(2, '0')}</span>
+            <span className="min-w-0 break-words pr-4 text-sm font-black text-brand-black md:text-base">{team.name}</span>
+            <div className="text-right">
+              <span className="block text-[10px] font-black tabular-nums text-neutral-500">
+                {standing.points} 分 · {standing.goalDifference >= 0 ? '+' : ''}{standing.goalDifference}
+              </span>
+              {standing.tieBreakStatus === 'PENALTY_SHOOTOUT_REQUIRED' ? (
+                <span className="mt-1 block text-[9px] font-black uppercase tracking-[0.1em] text-[#8f1d1d]">PK 待定</span>
+              ) : placementLabels[team.id] ? (
+                <span className="mt-1 block text-[9px] font-black uppercase tracking-[0.1em] text-neutral-400">
+                  {placementLabels[team.id]}
+                </span>
+              ) : null}
+            </div>
+          </li>
+        );
+      })}
     </ol>
   </section>
 );
@@ -247,13 +260,6 @@ const CupPage: React.FC = () => {
   );
   const plateKnockoutMatches = useMemo(
     () => CUP_MATCHES.filter((match) => match.round.startsWith('盤賽')),
-    [],
-  );
-  const teamsByGroup = useMemo(
-    () => ({
-      A: Object.values(CUP_TEAMS).filter((team) => team.group === 'A'),
-      B: Object.values(CUP_TEAMS).filter((team) => team.group === 'B'),
-    }),
     [],
   );
 
@@ -467,13 +473,16 @@ const CupPage: React.FC = () => {
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               index="04"
-              title="參賽球隊"
-              description="八支球隊分為 A、B 兩組，完成小組循環及分級淘汰賽"
+              title="小組排名"
+              description={CUP_GROUP_RANKING_RULE_LABEL}
             />
             <div className="grid gap-8 md:grid-cols-2">
-              <TeamGroup group="A" teams={teamsByGroup.A} placementLabels={placementLabels} />
-              <TeamGroup group="B" teams={teamsByGroup.B} placementLabels={placementLabels} />
+              <TeamGroup group="A" standings={CUP_GROUP_STANDINGS.A} placementLabels={placementLabels} />
+              <TeamGroup group="B" standings={CUP_GROUP_STANDINGS.B} placementLabels={placementLabels} />
             </div>
+            <p className="mt-6 border-l-2 border-[#8f1d1d] pl-4 text-xs font-bold leading-6 text-neutral-500">
+              小組前兩名進入盃賽：A1 對 B2、B1 對 A2；小組後兩名進入盤賽：A3 對 B4、B3 對 A4
+            </p>
           </div>
         </section>
 

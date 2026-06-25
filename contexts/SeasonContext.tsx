@@ -49,7 +49,7 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       return;
     }
 
-    const fallbackSeason = querySeason === null ? selectedSeasonId : CURRENT_SEASON_ID;
+    const fallbackSeason = CURRENT_SEASON_ID;
     if (fallbackSeason !== selectedSeasonId) setSelectedSeasonId(fallbackSeason);
 
     const nextParams = new URLSearchParams(searchParams);

@@ -1,0 +1,224 @@
+name: Repository capacity audit
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/capacity-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout audit branch with history
+        uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Fetch all repository branches
+        run: |
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --tags --force
+
+      - name: Generate capacity report
+        run: |
+          mkdir -p audit
+          python <<'PY'
+          from __future__ import annotations
+
+          import collections
+          import datetime as dt
+          import pathlib
+          import subprocess
+
+          REPO = 'dreamsportfootball/d-league'
+          REPORT = pathlib.Path('audit/repository-capacity-report.md')
+
+          def run(*args: str, input_text: str | None = None) -> str:
+              return subprocess.check_output(args, input=input_text, text=True, stderr=subprocess.STDOUT)
+
+          def human(value: int) -> str:
+              units = ['B', 'KiB', 'MiB', 'GiB']
+              size = float(value)
+              for unit in units:
+                  if size < 1024 or unit == units[-1]:
+                      return f'{size:.2f} {unit}'
+                  size /= 1024
+              return f'{value} B'
+
+          def tree_entries(ref: str) -> list[tuple[int, str]]:
+              output = run('git', 'ls-tree', '-r', '-l', ref)
+              rows: list[tuple[int, str]] = []
+              for line in output.splitlines():
+                  meta, path = line.split('\t', 1)
+                  parts = meta.split()
+                  if len(parts) < 4 or not parts[3].isdigit():
+                      continue
+                  rows.append((int(parts[3]), path))
+              return rows
+
+          def extension(path: str) -> str:
+              suffix = pathlib.PurePosixPath(path).suffix.lower()
+              return suffix if suffix else '[no extension]'
+
+          def top_level(path: str) -> str:
+              return path.split('/', 1)[0]
+
+          def summarize_tree(ref: str) -> dict[str, object]:
+              entries = tree_entries(ref)
+              return {
+                  'entries': entries,
+                  'total': sum(size for size, _ in entries),
+                  'files': len(entries),
+                  'largest': sorted(entries, reverse=True)[:25],
+                  'dirs': collections.Counter(),
+                  'exts': collections.Counter(),
+              }
+
+          def fill_breakdowns(summary: dict[str, object]) -> None:
+              entries = summary['entries']
+              dirs = summary['dirs']
+              exts = summary['exts']
+              assert isinstance(entries, list)
+              assert isinstance(dirs, collections.Counter)
+              assert isinstance(exts, collections.Counter)
+              for size, path in entries:
+                  dirs[top_level(path)] += size
+                  exts[extension(path)] += size
+
+          def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
+              lines = [
+                  '| ' + ' | '.join(headers) + ' |',
+                  '| ' + ' | '.join('---' for _ in headers) + ' |',
+              ]
+              lines.extend('| ' + ' | '.join(row) + ' |' for row in rows)
+              return '\n'.join(lines)
+
+          master = summarize_tree('origin/master')
+          pages = summarize_tree('origin/gh-pages')
+          fill_breakdowns(master)
+          fill_breakdowns(pages)
+
+          object_lines = run('git', 'rev-list', '--objects', '--all')
+          checked = run(
+              'git',
+              'cat-file',
+              '--batch-check=%(objecttype) %(objectname) %(objectsize) %(rest)',
+              input_text=object_lines,
+          )
+          historical_blobs: list[tuple[int, str, str]] = []
+          for line in checked.splitlines():
+              parts = line.split(' ', 3)
+              if len(parts) < 3 or parts[0] != 'blob' or not parts[2].isdigit():
+                  continue
+              historical_blobs.append((int(parts[2]), parts[3] if len(parts) > 3 else '[unknown path]', parts[1]))
+
+          count_objects = {}
+          for line in run('git', 'count-objects', '-v').splitlines():
+              if ': ' not in line:
+                  continue
+              key, value = line.split(': ', 1)
+              count_objects[key] = value
+
+          history_blob_total = sum(size for size, _, _ in historical_blobs)
+          history_blob_count = len(historical_blobs)
+          commit_count = int(run('git', 'rev-list', '--count', '--all').strip())
+          branch_count = len(run('git', 'for-each-ref', '--format=%(refname)', 'refs/remotes/origin').splitlines())
+
+          master_dirs = master['dirs']
+          master_exts = master['exts']
+          pages_dirs = pages['dirs']
+          assert isinstance(master_dirs, collections.Counter)
+          assert isinstance(master_exts, collections.Counter)
+          assert isinstance(pages_dirs, collections.Counter)
+
+          image_exts = {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.avif'}
+          master_image_total = sum(size for ext, size in master_exts.items() if ext in image_exts)
+          master_image_files = sum(1 for size, path in master['entries'] if extension(path) in image_exts)
+
+          lines: list[str] = []
+          lines.append('# D LEAGUE Repository Capacity Audit')
+          lines.append('')
+          lines.append(f'- Repository: `{REPO}`')
+          lines.append(f'- Generated: `{dt.datetime.now(dt.timezone.utc).isoformat()}`')
+          lines.append('- Audit only: no files were deleted or rewritten')
+          lines.append('')
+          lines.append('## Executive summary')
+          lines.append('')
+          lines.append(markdown_table(
+              ['Scope', 'Logical size', 'File/blob count'],
+              [
+                  ['Current `master` tree', human(master['total']), f"{master['files']:,}"],
+                  ['Current `gh-pages` deployment tree', human(pages['total']), f"{pages['files']:,}"],
+                  ['All unique historical blobs', human(history_blob_total), f'{history_blob_count:,}'],
+              ],
+          ))
+          lines.append('')
+          lines.append(f'- Current `master` image assets: **{human(master_image_total)}** across **{master_image_files:,} files**')
+          lines.append(f'- Reachable commits across fetched refs: **{commit_count:,}**')
+          lines.append(f'- Remote refs counted: **{branch_count:,}**')
+          lines.append(f"- Git packed storage (`size-pack`): **{count_objects.get('size-pack', 'unknown')} KiB**")
+          lines.append(f"- Loose object storage (`size`): **{count_objects.get('size', 'unknown')} KiB**")
+          lines.append('')
+
+          for title, summary in [('Current master tree', master), ('Current gh-pages deployment tree', pages)]:
+              lines.append(f'## {title}')
+              lines.append('')
+              lines.append(f"- Files: **{summary['files']:,}**")
+              lines.append(f"- Logical size: **{human(summary['total'])}**")
+              lines.append('')
+              lines.append('### Largest files')
+              lines.append('')
+              lines.append(markdown_table(
+                  ['Size', 'Path'],
+                  [[human(size), f'`{path}`'] for size, path in summary['largest']],
+              ))
+              lines.append('')
+              dirs = summary['dirs']
+              assert isinstance(dirs, collections.Counter)
+              lines.append('### Largest top-level paths')
+              lines.append('')
+              lines.append(markdown_table(
+                  ['Size', 'Top-level path'],
+                  [[human(size), f'`{path}`'] for path, size in dirs.most_common(20)],
+              ))
+              lines.append('')
+
+          lines.append('## Current master by file extension')
+          lines.append('')
+          lines.append(markdown_table(
+              ['Size', 'Extension'],
+              [[human(size), f'`{ext}`'] for ext, size in master_exts.most_common(25)],
+          ))
+          lines.append('')
+
+          lines.append('## Largest blobs anywhere in Git history')
+          lines.append('')
+          lines.append(markdown_table(
+              ['Size', 'Path', 'Blob SHA'],
+              [[human(size), f'`{path}`', f'`{sha}`'] for size, path, sha in sorted(historical_blobs, reverse=True)[:40]],
+          ))
+          lines.append('')
+
+          REPORT.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print(REPORT.read_text(encoding='utf-8'))
+          PY
+
+      - name: Commit audit report to audit branch
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add audit/repository-capacity-report.md
+          if git diff --cached --quiet; then
+            echo 'Capacity report is unchanged.'
+            exit 0
+          fi
+          git commit -m 'docs: add repository capacity audit report'
+          git push origin HEAD:season/2026-27

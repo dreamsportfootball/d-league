@@ -40,14 +40,15 @@ const SiteViewCount: React.FC = () => {
   }, []);
 
   return (
-    <div className="border-y border-neutral-200 bg-white px-4 py-4 text-center md:px-6">
-      <p className="text-xs font-medium tracking-wide text-neutral-500">
-        累計瀏覽次數
-        <span className="ml-2 font-display text-sm font-bold tabular-nums text-brand-black">
-          {totalViews === null ? '—' : formatViews(totalViews)}
-        </span>
-      </p>
-    </div>
+    <p
+      className="mt-5 text-[11px] font-medium tracking-wide text-neutral-400"
+      aria-live="polite"
+    >
+      累計瀏覽次數
+      <span className="ml-2 font-display text-xs font-bold tabular-nums text-neutral-600">
+        {totalViews === null ? '-' : formatViews(totalViews)}
+      </span>
+    </p>
   );
 };
 

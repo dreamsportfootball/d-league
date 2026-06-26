@@ -43,7 +43,7 @@ jobs:
 
       - name: Generate public site metrics
         env:
-          GA4_PROPERTY_ID: ${{ vars.GA4_PROPERTY_ID }}
+          GA4_PROPERTY_ID: "543337320"
           GA4_SERVICE_ACCOUNT_JSON: ${{ secrets.GA4_SERVICE_ACCOUNT_JSON }}
         run: node scripts/fetch-ga4-site-metrics.mjs
 

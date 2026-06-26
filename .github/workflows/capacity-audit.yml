@@ -26,6 +26,7 @@ jobs:
       - name: Fetch all repository branches
         run: |
           git fetch origin '+refs/heads/*:refs/remotes/origin/*' --tags --force
+          git config core.quotePath false
 
       - name: Generate capacity report
         run: |

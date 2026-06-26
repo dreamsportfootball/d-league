@@ -1,16 +1,26 @@
+type AnalyticsParameter = string | number | boolean;
+type GtagFunction = (...args: unknown[]) => void;
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
-    gtag?: (...args: unknown[]) => void;
+    gtag?: GtagFunction;
   }
 }
 
-const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;
+const measurementId = (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim();
+const analyticsDisabled = import.meta.env.VITE_ANALYTICS_DISABLED === 'true';
+const previewPath = window.location.pathname.includes('/preview/');
+const analyticsAllowed = !analyticsDisabled && !previewPath;
 
-export const analyticsEnabled = Boolean(measurementId);
+export const analyticsEnabled = analyticsAllowed && Boolean(measurementId);
+
+let analyticsInitialized = false;
 
 export const initializeAnalytics = (): void => {
-  if (!measurementId || window.gtag) return;
+  if (analyticsInitialized || !analyticsEnabled || !measurementId || window.gtag) return;
+
+  analyticsInitialized = true;
 
   const script = document.createElement('script');
   script.async = true;
@@ -26,17 +36,19 @@ export const initializeAnalytics = (): void => {
 };
 
 export const trackPageView = (path: string, title: string): void => {
-  if (!measurementId || !window.gtag) return;
+  if (!analyticsEnabled || !window.gtag) return;
+
   window.gtag('event', 'page_view', {
     page_path: path,
     page_title: title,
+    page_location: window.location.href,
   });
 };
 
 export const trackEvent = (
   eventName: string,
-  parameters: Record<string, string | number | boolean> = {},
+  parameters: Record<string, AnalyticsParameter> = {},
 ): void => {
-  if (!measurementId || !window.gtag) return;
+  if (!analyticsEnabled || !window.gtag) return;
   window.gtag('event', eventName, parameters);
 };

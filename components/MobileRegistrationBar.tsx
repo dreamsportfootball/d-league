@@ -13,7 +13,10 @@ const MobileRegistrationBar: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[950] border-t border-neutral-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur md:hidden">
+    <div
+      data-analytics-placement="mobile_registration_bar"
+      className="fixed inset-x-0 bottom-0 z-[950] border-t border-neutral-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur md:hidden"
+    >
       <div className={`mx-auto grid max-w-lg gap-2 ${hasRegistration && hasRegulations ? 'grid-cols-[1fr_auto]' : 'grid-cols-1'}`}>
         {currentSeason.registrationFormUrl && (
           <a
@@ -21,6 +24,7 @@ const MobileRegistrationBar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             data-analytics-event="registration_click"
+            data-analytics-label="立即報名"
             className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-accent px-5 text-sm font-black text-brand-black"
           >
             立即報名
@@ -32,6 +36,7 @@ const MobileRegistrationBar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             data-analytics-event="regulations_click"
+            data-analytics-label="查看競賽規程"
             aria-label="查看競賽規程"
             className={`inline-flex h-12 items-center justify-center rounded-lg border border-neutral-300 bg-white text-brand-black ${hasRegistration ? 'w-12' : 'w-full px-5'}`}
           >

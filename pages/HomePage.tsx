@@ -8,7 +8,6 @@ import MatchCenter from '../components/MatchCenter';
 import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
 import RegistrationOverview from '../components/RegistrationOverview';
-import SiteViewCount from '../components/SiteViewCount';
 import Standings from '../components/Standings';
 import Tabs from '../components/Tabs';
 import VideoHub from '../components/VideoHub';
@@ -71,7 +70,6 @@ const HomePage: React.FC = () => {
           <NewsSection />
         </section>
         <div id="teams"><ClubGrid /></div>
-        <SiteViewCount />
         <BrandStory />
       </div>
     );
@@ -84,7 +82,6 @@ const HomePage: React.FC = () => {
         <StatusOverview status={activeSeason.status} />
         <section className="container mx-auto px-4 py-12 md:px-6 md:py-16"><NewsSection /></section>
         <div id="teams"><ClubGrid /></div>
-        <SiteViewCount />
         <BrandStory />
       </div>
     );
@@ -153,7 +150,6 @@ const HomePage: React.FC = () => {
       <VideoHub />
       <PhotoCarousel />
       <div id="teams"><ClubGrid /></div>
-      <SiteViewCount />
       <BrandStory />
     </div>
   );

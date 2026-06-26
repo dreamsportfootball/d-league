@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { UsersRound } from 'lucide-react';
+import { CURRENT_REGISTRATION_PROGRESS, CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 
 type RegistrationProgressVariant = 'compact' | 'full';
@@ -16,7 +17,9 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
   className = '',
 }) => {
   const { activeSeason } = useSeason();
-  const progress = activeSeason.registrationProgress;
+  const progress = activeSeason.id === CURRENT_SEASON_ID
+    ? CURRENT_REGISTRATION_PROGRESS
+    : activeSeason.registrationProgress;
 
   const expectedTeamCount = useMemo(() => {
     const counts = activeSeason.enabledLeagues

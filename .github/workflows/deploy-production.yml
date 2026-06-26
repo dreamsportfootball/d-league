@@ -41,6 +41,7 @@ jobs:
           npm run typecheck
           npm run validate:data
 
+      # Refresh the public cumulative view count from GA4.
       - name: Generate public site metrics
         env:
           GA4_PROPERTY_ID: "543337320"

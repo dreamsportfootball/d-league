@@ -245,7 +245,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
                 id="match-dialog-title"
                 className="font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
               >
-                {isFinished ? `${match.homeScore ?? '-'}－${match.awayScore ?? '-'}` : 'VS'}
+                {isFinished ? `${match.homeScore ?? '-'}-${match.awayScore ?? '-'}` : 'VS'}
               </div>
               <span className="mt-2 text-[10px] font-black tracking-[0.12em] text-neutral-400 sm:mt-3 sm:text-[11px]">
                 {displayStatusLabel}

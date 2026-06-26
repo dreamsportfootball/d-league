@@ -44,7 +44,7 @@ const SiteViewCount: React.FC = () => {
       className="mt-5 text-[11px] font-medium tracking-wide text-neutral-400"
       aria-live="polite"
     >
-      累計瀏覽次數
+      網站累計瀏覽次數
       <span className="ml-2 font-display text-xs font-bold tabular-nums text-neutral-600">
         {totalViews === null ? '-' : formatViews(totalViews)}
       </span>

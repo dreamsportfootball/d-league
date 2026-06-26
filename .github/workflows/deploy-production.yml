@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+  schedule:
+    - cron: '15 16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -38,6 +40,12 @@ jobs:
         run: |
           npm run typecheck
           npm run validate:data
+
+      - name: Generate public site metrics
+        env:
+          GA4_PROPERTY_ID: ${{ vars.GA4_PROPERTY_ID }}
+          GA4_SERVICE_ACCOUNT_JSON: ${{ secrets.GA4_SERVICE_ACCOUNT_JSON }}
+        run: node scripts/fetch-ga4-site-metrics.mjs
 
       - name: Optimize website images
         run: npm run optimize:images

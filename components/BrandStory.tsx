@@ -28,7 +28,9 @@ const BrandStory: React.FC = () => (
         <span className="font-display text-4xl font-black text-brand-black md:text-5xl">DREAM IT.</span>
         <span className="stroke-black font-display text-4xl font-black text-brand-accent md:text-5xl">PLAY IT.</span>
       </div>
-      <SiteViewCount />
+      <div className="pt-5 md:pt-9">
+        <SiteViewCount />
+      </div>
     </div>
   </section>
 );

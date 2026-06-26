@@ -243,9 +243,18 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
                 id="match-dialog-title"
-                className="font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
+                className="flex items-center justify-center gap-[0.16em] font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
+                aria-label={isFinished
+                  ? `${homeTeam.name} ${match.homeScore ?? '-'} 比 ${match.awayScore ?? '-'} ${awayTeam.name}`
+                  : `${homeTeam.name} 對 ${awayTeam.name}`}
               >
-                {isFinished ? `${match.homeScore ?? '-'}-${match.awayScore ?? '-'}` : 'VS'}
+                {isFinished ? (
+                  <>
+                    <span>{match.homeScore ?? '-'}</span>
+                    <span aria-hidden="true">-</span>
+                    <span>{match.awayScore ?? '-'}</span>
+                  </>
+                ) : 'VS'}
               </div>
               <span className="mt-2 text-[10px] font-black tracking-[0.12em] text-neutral-400 sm:mt-3 sm:text-[11px]">
                 {displayStatusLabel}

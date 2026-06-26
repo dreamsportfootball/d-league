@@ -1,7 +1,7 @@
 # D LEAGUE Repository Capacity Audit
 
 - Repository: `dreamsportfootball/d-league`
-- Generated: `2026-06-26T07:01:26.187206+00:00`
+- Generated: `2026-06-26T07:02:36.686046+00:00`
 - Audit only: no files were deleted or rewritten
 
 ## Executive summary
@@ -10,12 +10,12 @@
 | --- | --- | --- |
 | Current `master` tree | 176.62 MiB | 439 |
 | Current `gh-pages` deployment tree | 434.03 MiB | 3,653 |
-| All unique historical blobs | 646.11 MiB | 4,579 |
+| All unique historical blobs | 646.13 MiB | 4,581 |
 
-- Current `master` image assets: **157.71 MiB** across **107 files**
-- Reachable commits across fetched refs: **393**
+- Current `master` image assets: **175.69 MiB** across **316 files**
+- Reachable commits across fetched refs: **395**
 - Remote refs counted: **4**
-- Git packed storage (`size-pack`): **524799 KiB**
+- Git packed storage (`size-pack`): **524803 KiB**
 - Loose object storage (`size`): **0 KiB**
 
 ## Current master tree
@@ -57,8 +57,7 @@
 
 | Size | Top-level path |
 | --- | --- |
-| 157.72 MiB | `public` |
-| 17.98 MiB | `"public` |
+| 175.69 MiB | `public` |
 | 181.63 KiB | `data` |
 | 156.61 KiB | `pages` |
 | 156.50 KiB | `components` |
@@ -77,6 +76,7 @@
 | 3.56 KiB | `utils` |
 | 3.04 KiB | `contexts` |
 | 1.97 KiB | `types.ts` |
+| 1.16 KiB | `index.tsx` |
 
 ## Current gh-pages deployment tree
 
@@ -117,10 +117,8 @@
 
 | Size | Top-level path |
 | --- | --- |
-| 244.50 MiB | `preview` |
-| 149.70 MiB | `assets` |
-| 18.11 MiB | `"assets` |
-| 18.11 MiB | `"preview` |
+| 262.61 MiB | `preview` |
+| 167.81 MiB | `assets` |
 | 1.99 MiB | `banner.png` |
 | 1.15 MiB | `cup-banner.png` |
 | 241.65 KiB | `banner.webp` |
@@ -136,13 +134,11 @@
 
 | Size | Extension |
 | --- | --- |
-| 128.10 MiB | `.png` |
-| 29.62 MiB | `.jpg` |
-| 17.85 MiB | `.png"` |
+| 145.95 MiB | `.png` |
+| 29.74 MiB | `.jpg` |
 | 323.10 KiB | `.tsx` |
 | 311.38 KiB | `.json` |
 | 241.50 KiB | `.ts` |
-| 124.86 KiB | `.jpg"` |
 | 57.59 KiB | `.mjs` |
 | 8.85 KiB | `.yml` |
 | 4.73 KiB | `.html` |

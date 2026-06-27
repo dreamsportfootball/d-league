@@ -12,8 +12,10 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
+import type { SeasonTeam } from '../types/team';
 import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import AutoFitText from './AutoFitText';
@@ -157,6 +159,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
+  const teamProfilesEnabled = activeSeason.id === TEAM_PROFILE_SEASON_ID;
   const matchInfoText = buildMatchInfoText({
     match,
     seasonShortName: activeSeason.shortName,
@@ -199,6 +202,37 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     }
   };
 
+  const renderTeamIdentity = (team: SeasonTeam) => {
+    const content = (
+      <>
+        <img
+          src={team.logo}
+          alt={team.name}
+          className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
+        />
+        <div className="w-full min-w-0 text-center">
+          <AutoFitText
+            text={team.name}
+            minFontSize={8}
+            className="text-sm font-black text-brand-black transition-colors group-hover:text-brand-blue sm:text-base"
+          />
+        </div>
+      </>
+    );
+
+    return teamProfilesEnabled ? (
+      <Link
+        to={`/teams/${team.id}?season=${activeSeason.id}`}
+        onClick={onClose}
+        className="group flex min-w-0 flex-col items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+      >
+        {content}
+      </Link>
+    ) : (
+      <div className="group flex min-w-0 flex-col items-center">{content}</div>
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-[1100] flex items-center justify-center p-3 sm:p-6">
       <button
@@ -236,25 +270,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">
-            <Link
-              to={`/teams/${homeTeam.id}?season=${activeSeason.id}`}
-              onClick={onClose}
-              className="group flex min-w-0 flex-col items-center"
-            >
-              <img
-                src={homeTeam.logo}
-                alt={homeTeam.name}
-                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
-              />
-              <div className="w-full min-w-0 text-center">
-                <AutoFitText
-                  text={homeTeam.name}
-                  maxFontSize={18}
-                  minFontSize={8}
-                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
-                />
-              </div>
-            </Link>
+            {renderTeamIdentity(homeTeam)}
 
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
@@ -277,25 +293,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               </span>
             </div>
 
-            <Link
-              to={`/teams/${awayTeam.id}?season=${activeSeason.id}`}
-              onClick={onClose}
-              className="group flex min-w-0 flex-col items-center"
-            >
-              <img
-                src={awayTeam.logo}
-                alt={awayTeam.name}
-                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
-              />
-              <div className="w-full min-w-0 text-center">
-                <AutoFitText
-                  text={awayTeam.name}
-                  maxFontSize={18}
-                  minFontSize={8}
-                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
-                />
-              </div>
-            </Link>
+            {renderTeamIdentity(awayTeam)}
           </div>
 
           <div className="mx-auto mt-7 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:mt-8 sm:flex sm:w-auto sm:max-w-none sm:justify-center">

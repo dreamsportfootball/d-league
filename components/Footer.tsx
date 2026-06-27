@@ -96,9 +96,6 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
               )}
-              <li>
-                <FooterLink to="/standings?season=2025-26">2025/26 過往賽事</FooterLink>
-              </li>
             </ul>
           </div>
 

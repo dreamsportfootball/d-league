@@ -135,8 +135,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   <div className="min-w-0 flex-1 text-right">
                     <AutoFitText
                       text={homeTeam.name}
-                      maxFontSize={14}
-                      minFontSize={8}
+                      maxFontSize={16}
+                      minFontSize={10}
                       fitPadding={2}
                       className="font-bold text-brand-black"
                     />
@@ -173,8 +173,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   <div className="min-w-0 flex-1 text-left">
                     <AutoFitText
                       text={awayTeam.name}
-                      maxFontSize={14}
-                      minFontSize={8}
+                      maxFontSize={16}
+                      minFontSize={10}
                       fitPadding={2}
                       className="font-bold text-brand-black"
                     />

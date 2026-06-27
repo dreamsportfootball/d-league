@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
@@ -159,7 +159,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
-  const teamProfilesEnabled = activeSeason.id === TEAM_PROFILE_SEASON_ID;
+  const teamProfilesEnabled = activeSeason.id === CURRENT_SEASON_ID;
   const matchInfoText = buildMatchInfoText({
     match,
     seasonShortName: activeSeason.shortName,

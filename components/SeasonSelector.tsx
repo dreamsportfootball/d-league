@@ -40,25 +40,25 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   };
 
   return (
-    <div ref={rootRef} className={`relative ml-auto ${compact ? 'inline-flex' : 'w-[148px]'}`}>
+    <div ref={rootRef} className={`relative ml-auto ${compact ? 'w-[124px]' : 'w-[148px]'}`}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
         aria-haspopup="listbox"
         aria-expanded={open}
         className={`group flex w-full items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
-          compact ? 'h-9 rounded-full px-3' : 'h-9 rounded-lg px-3'
+          compact ? 'h-11 rounded-lg px-2.5' : 'h-9 rounded-lg px-3'
         }`}
       >
-        <span className="flex min-w-0 items-baseline gap-1.5 whitespace-nowrap">
-          <span className="font-display text-[13px] font-black tracking-wide">
+        <span className="flex min-w-0 items-baseline gap-1 whitespace-nowrap">
+          <span className={`font-display font-black tracking-wide ${compact ? 'text-xs' : 'text-[13px]'}`}>
             {activeSeason.shortName}
           </span>
-          <span className="text-[10px] font-bold text-neutral-400">賽季</span>
+          <span className="text-[9px] font-bold text-neutral-400">賽季</span>
         </span>
 
         <ChevronDown
-          className={`ml-2 h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform duration-200 group-hover:text-brand-blue ${
+          className={`ml-1.5 h-3.5 w-3.5 shrink-0 text-neutral-400 transition-transform duration-200 group-hover:text-brand-blue ${
             open ? 'rotate-180' : ''
           }`}
           aria-hidden="true"
@@ -69,7 +69,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         <div
           role="listbox"
           aria-label="選擇賽季"
-          className="absolute right-0 z-[1200] mt-2 w-[148px] overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
+          className="absolute right-0 z-[1200] mt-2 w-full overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
         >
           <div className="space-y-1">
             {sortedSeasons.map((season) => {
@@ -82,7 +82,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                   role="option"
                   aria-selected={isActive}
                   onClick={() => selectSeason(season.id)}
-                  className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2.5 text-left transition-all ${
+                  className={`flex min-h-11 w-full items-center justify-between rounded-lg px-2.5 text-left transition-all ${
                     isActive
                       ? 'bg-brand-blue text-white shadow-sm'
                       : 'text-brand-black hover:bg-neutral-100'

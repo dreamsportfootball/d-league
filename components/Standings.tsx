@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
-import { calculateLeagueTable } from '../services/competitionEngine';
+import { Link } from 'react-router-dom';
+import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
+import { calculateLeagueTable } from '../services/competitionEngine';
 import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
 import AutoFitText from './AutoFitText';
@@ -46,6 +48,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   );
 
   const isWidget = variant === 'widget';
+  const teamProfilesEnabled = activeSeason.id === TEAM_PROFILE_SEASON_ID;
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
   const relegationStart =
     leagueConfig && leagueConfig.relegationPlaces > 0
@@ -74,6 +77,16 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
         {displayed.map((row) => {
           const team = seasonData.teamMap[row.teamId];
           if (!team) return null;
+          const teamIdentity = (
+            <>
+              <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain" />
+              <div className="min-w-0 flex-1">
+                <AutoFitText text={team.name} maxFontSize={12} minFontSize={7} className="font-bold text-brand-black" />
+              </div>
+              <TieLabel row={row} compact />
+            </>
+          );
+
           return (
             <div
               key={row.teamId}
@@ -83,13 +96,17 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
                 <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(row)}`} />
                 <span className="ml-2 font-medium tabular-nums text-brand-black">{row.rank}</span>
               </div>
-              <div className="flex min-w-0 items-center space-x-2">
-                <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain" />
-                <div className="min-w-0 flex-1">
-                  <AutoFitText text={team.name} maxFontSize={12} minFontSize={7} className="font-bold text-brand-black" />
-                </div>
-                <TieLabel row={row} compact />
-              </div>
+              {teamProfilesEnabled ? (
+                <Link
+                  to={`/teams/${team.id}?season=${activeSeason.id}`}
+                  className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none transition-colors hover:text-brand-blue focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                  aria-label={`查看 ${team.name} 球隊頁`}
+                >
+                  {teamIdentity}
+                </Link>
+              ) : (
+                <div className="flex min-w-0 items-center space-x-2">{teamIdentity}</div>
+              )}
               <span className="text-center tabular-nums text-brand-black">{row.played}</span>
               <span className="text-center font-semibold tabular-nums text-brand-black">{row.points}</span>
             </div>
@@ -121,6 +138,16 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           {displayed.map((row) => {
             const team = seasonData.teamMap[row.teamId];
             if (!team) return null;
+            const teamIdentity = (
+              <>
+                <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" />
+                <div className="min-w-0 flex-1">
+                  <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" />
+                </div>
+                <TieLabel row={row} />
+              </>
+            );
+
             return (
               <tr
                 key={row.teamId}
@@ -134,14 +161,18 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
                     </span>
                   </div>
                 </td>
-                <td className="w-[140px] py-3 pl-2 pr-2 md:w-[220px] md:px-4">
-                  <div className="flex min-w-0 items-center space-x-3">
-                    <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" />
-                    <div className="min-w-0 flex-1">
-                      <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" />
-                    </div>
-                    <TieLabel row={row} />
-                  </div>
+                <td className="w-[140px] py-1.5 pl-2 pr-2 md:w-[220px] md:px-4">
+                  {teamProfilesEnabled ? (
+                    <Link
+                      to={`/teams/${team.id}?season=${activeSeason.id}`}
+                      className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none transition-colors hover:text-brand-blue focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                      aria-label={`查看 ${team.name} 球隊頁`}
+                    >
+                      {teamIdentity}
+                    </Link>
+                  ) : (
+                    <div className="flex min-h-11 min-w-0 items-center space-x-3">{teamIdentity}</div>
+                  )}
                 </td>
                 <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.played}</td>
                 <td className="px-1 py-3 text-center text-xs tabular-nums text-brand-black md:text-sm">{row.won}</td>

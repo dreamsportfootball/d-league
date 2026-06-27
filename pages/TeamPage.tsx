@@ -1,37 +1,63 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CalendarDays, TrendingUp, UserRound } from 'lucide-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import MatchDialog from '../components/MatchDialog';
 import SeasonSelector from '../components/SeasonSelector';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getSeasonData } from '../services/seasonDataJson';
-import { MatchStatus } from '../types';
+import { MatchStatus, type Match } from '../types';
+import type { SeasonTeam } from '../types/team';
+
+interface RoundBucket {
+  round: string;
+  matches: Match[];
+  firstKickoff: number;
+}
+
+const getTeamIdentity = (team: SeasonTeam): string => team.identityId ?? team.id;
+
+const isResolvedMatch = (match: Match): boolean =>
+  match.status === MatchStatus.FINISHED ||
+  match.resultType === 'VOID' ||
+  (match.homeScore !== null && match.awayScore !== null);
 
 const TeamPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const {
     activeSeason,
     activeSeasonId,
     seasonData,
     availableSeasons,
   } = useSeason();
-  const team = id ? seasonData.teamMap[id] : undefined;
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+
   const referenceTeam = useMemo(() => {
     if (!id) return undefined;
-    if (team) return team;
 
     for (const season of availableSeasons) {
-      const candidate = getSeasonData(season.id).teamMap[id];
+      const candidate = getSeasonData(season.id).teams.find(
+        (item) => item.id === id || item.identityId === id,
+      );
       if (candidate) return candidate;
     }
 
     return undefined;
-  }, [availableSeasons, id, team]);
+  }, [availableSeasons, id]);
+
+  const identityId = referenceTeam ? getTeamIdentity(referenceTeam) : id;
+  const team = useMemo(
+    () => seasonData.teams.find(
+      (candidate) =>
+        candidate.id === id ||
+        (identityId !== undefined && getTeamIdentity(candidate) === identityId),
+    ),
+    [id, identityId, seasonData.teams],
+  );
   const displayTeam = team ?? referenceTeam;
   const isHistoricalSeason = activeSeasonId !== CURRENT_SEASON_ID;
   const backLink = isHistoricalSeason ? `/standings?season=${activeSeasonId}` : '/#teams';
@@ -44,7 +70,7 @@ const TeamPage: React.FC = () => {
       team
         ? seasonData.players
             .filter((player) => player.teamId === team.id)
-            .sort((a, b) => a.number - b.number)
+            .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'))
         : [],
     [seasonData.players, team],
   );
@@ -58,6 +84,11 @@ const TeamPage: React.FC = () => {
         : [],
     [seasonData.matches, team],
   );
+  const teamMatchIds = useMemo(() => teamMatches.map((match) => match.id), [teamMatches]);
+
+  useEffect(() => {
+    setSelectedMatchId(null);
+  }, [activeSeasonId, team?.id]);
 
   const standing = useMemo(() => {
     if (!team) return undefined;
@@ -71,46 +102,76 @@ const TeamPage: React.FC = () => {
     }).find((row) => row.teamId === team.id);
   }, [activeSeason.leagues, activeSeason.rules, seasonData.matchEvents, seasonData.matches, seasonData.teams, team]);
 
+  const activeLeagueTeams = useMemo(
+    () =>
+      team
+        ? seasonData.teams.filter(
+            (item) => item.leagueId === team.leagueId && item.competitionStatus !== 'WITHDRAWN',
+          )
+        : [],
+    [seasonData.teams, team],
+  );
+  const leagueTeamCount = activeLeagueTeams.length;
+  const activeLeagueTeamIds = useMemo(
+    () => new Set(activeLeagueTeams.map((item) => item.id)),
+    [activeLeagueTeams],
+  );
+  const eligibleLeagueMatches = useMemo(
+    () =>
+      team
+        ? seasonData.matches.filter(
+            (match) =>
+              match.league === team.leagueId &&
+              activeLeagueTeamIds.has(match.homeTeamId) &&
+              activeLeagueTeamIds.has(match.awayTeamId),
+          )
+        : [],
+    [activeLeagueTeamIds, seasonData.matches, team],
+  );
+  const seasonHasStarted = eligibleLeagueMatches.some(isResolvedMatch);
+
   const rankHistory = useMemo<TeamRankPoint[]>(() => {
-    if (!team) return [];
+    if (!team || leagueTeamCount < 2) return [];
 
-    const completedTeamMatches = teamMatches.filter(
-      (match) => match.status === MatchStatus.FINISHED,
-    );
-    const roundOrder = [...new Set(completedTeamMatches.map((match) => String(match.round)))];
+    const buckets = new Map<string, RoundBucket>();
+    eligibleLeagueMatches.forEach((match) => {
+      const round = String(match.round);
+      const kickoff = new Date(match.timestamp).getTime();
+      const current = buckets.get(round);
+      if (current) {
+        current.matches.push(match);
+        current.firstKickoff = Math.min(current.firstKickoff, kickoff);
+      } else {
+        buckets.set(round, { round, matches: [match], firstKickoff: kickoff });
+      }
+    });
 
-    return roundOrder.flatMap((round, index) => {
-      const includedRounds = new Set(roundOrder.slice(0, index + 1));
-      const matchesThroughRound = seasonData.matches.filter(
-        (match) =>
-          match.league === team.leagueId &&
-          match.status === MatchStatus.FINISHED &&
-          includedRounds.has(String(match.round)),
-      );
+    const expectedMatchesPerRound = Math.max(1, Math.floor(leagueTeamCount / 2));
+    const completedRounds = [...buckets.values()]
+      .filter(
+        (bucket) =>
+          bucket.matches.length >= expectedMatchesPerRound &&
+          bucket.matches.every(isResolvedMatch),
+      )
+      .sort((a, b) => a.firstKickoff - b.firstKickoff);
+
+    const completedMatches: Match[] = [];
+    return completedRounds.flatMap((bucket) => {
+      completedMatches.push(...bucket.matches);
       const row = calculateLeagueTable({
         league: team.leagueId,
         teams: seasonData.teams,
-        matches: matchesThroughRound,
+        matches: completedMatches,
         matchEvents: seasonData.matchEvents,
         rules: activeSeason.rules,
         leagueConfig: activeSeason.leagues[team.leagueId],
       }).find((standingRow) => standingRow.teamId === team.id);
 
       return row
-        ? [{ round, rank: row.rank, points: row.points, played: row.played }]
+        ? [{ round: bucket.round, rank: row.rank, points: row.points, played: row.played }]
         : [];
     });
-  }, [activeSeason.leagues, activeSeason.rules, seasonData.matchEvents, seasonData.matches, seasonData.teams, team, teamMatches]);
-
-  const leagueTeamCount = useMemo(
-    () =>
-      team
-        ? seasonData.teams.filter(
-            (item) => item.leagueId === team.leagueId && item.competitionStatus !== 'WITHDRAWN',
-          ).length
-        : 0,
-    [seasonData.teams, team],
-  );
+  }, [activeSeason.leagues, activeSeason.rules, eligibleLeagueMatches, leagueTeamCount, seasonData.matchEvents, seasonData.teams, team]);
 
   if (!displayTeam) {
     return (
@@ -127,120 +188,183 @@ const TeamPage: React.FC = () => {
     );
   }
 
+  const leagueConfig = team ? activeSeason.leagues[team.leagueId] : null;
+  const leagueLabel = leagueConfig?.displayName ?? team?.leagueId ?? '未參賽';
+  const rankValue = team && seasonHasStarted && standing ? standing.rank : '—';
+  const playedValue = standing?.played ?? 0;
+  const pointsValue = standing?.points ?? 0;
+
   return (
-    <div className="min-h-screen bg-white pb-24">
-      <section className="relative border-b border-neutral-200 bg-neutral-950 px-4 py-12 text-white md:px-12 md:py-20">
+    <div className="min-h-screen overflow-x-hidden bg-white pb-24">
+      <section className="relative overflow-hidden border-b border-neutral-800 bg-neutral-950 px-4 py-10 text-white md:px-12 md:py-16 lg:py-20">
         <div
-          className="absolute inset-0 opacity-30"
-          style={{ background: `linear-gradient(135deg, ${displayTeam.primaryColor}, transparent 70%)` }}
+          className="pointer-events-none absolute -right-20 top-12 h-64 w-64 rounded-full opacity-[0.14] blur-3xl md:h-96 md:w-96"
+          style={{ backgroundColor: displayTeam.primaryColor }}
+          aria-hidden="true"
         />
+        <div
+          className="pointer-events-none absolute bottom-0 left-0 h-px w-full opacity-50"
+          style={{ backgroundColor: displayTeam.primaryColor }}
+          aria-hidden="true"
+        />
+
         <div className="relative mx-auto max-w-7xl">
-          <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-8 flex min-w-0 items-center justify-between gap-3 md:mb-12">
             <Link
               to={backLink}
-              className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white"
+              className="inline-flex min-h-11 min-w-0 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-white/65 transition-colors hover:text-white"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" /> {backLabel}
+              <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
+              <span className="truncate">{backLabel}</span>
             </Link>
-            <div className="flex w-full justify-end sm:w-auto">
+            <div className="shrink-0 [&>div>button:first-child]:h-11 [&_[role=option]]:min-h-11">
               <SeasonSelector />
             </div>
           </div>
 
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <div className="flex items-center gap-6">
-              <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl bg-white p-4 shadow-2xl md:h-36 md:w-36">
-                <img src={displayTeam.logo} alt={displayTeam.name} className="max-h-full max-w-full object-contain" />
+          <div className="grid gap-9 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end lg:gap-14">
+            <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-7">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white p-3 sm:h-32 sm:w-32 sm:p-4 lg:h-36 lg:w-36">
+                <img
+                  src={displayTeam.logo}
+                  alt={`${displayTeam.name} 隊徽`}
+                  className="max-h-full max-w-full object-contain"
+                />
               </div>
-              <div className="min-w-0">
-                <span className="text-xs font-black uppercase tracking-[0.25em] text-white/60">
-                  {team ? team.leagueId : `${activeSeason.shortName} 未參賽`}
-                </span>
-                <h1 className="mt-2 font-display text-4xl font-black leading-none md:text-6xl">
-                  {displayTeam.shortName}
+              <div className="min-w-0 pt-1 sm:pt-0">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50 sm:text-xs">
+                  {leagueLabel} · {activeSeason.shortName} 賽季
+                </p>
+                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  {displayTeam.name}
                 </h1>
-                <p className="mt-3 text-sm font-bold text-white/70 md:text-base">{displayTeam.name}</p>
+                <p className="mt-3 text-xs font-bold text-white/55 sm:text-sm">
+                  球隊簡稱 <span className="ml-2 text-white/85">{displayTeam.shortName}</span>
+                </p>
               </div>
             </div>
 
-            {standing && (
-              <div className="grid grid-cols-3 gap-6 rounded-xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur">
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-white/50">排名</p>
-                  <p className="mt-1 font-display text-3xl font-black">{standing.rank}</p>
+            <div className="border-y border-white/15 py-5 lg:py-6">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
+                  賽季概況
+                </p>
+                <p className="text-[10px] font-bold text-white/45">
+                  {team ? leagueLabel : '所選賽季未參賽'}
+                </p>
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-white/15">
+                <div className="pr-4">
+                  <p className="text-[10px] font-bold tracking-widest text-white/45">排名</p>
+                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{rankValue}</p>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-white/50">場次</p>
-                  <p className="mt-1 font-display text-3xl font-black">{standing.played}</p>
+                <div className="px-4">
+                  <p className="text-[10px] font-bold tracking-widest text-white/45">場次</p>
+                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{playedValue}</p>
                 </div>
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-white/50">積分</p>
-                  <p className="mt-1 font-display text-3xl font-black text-brand-accent">{standing.points}</p>
+                <div className="pl-4">
+                  <p className="text-[10px] font-bold tracking-widest text-white/45">積分</p>
+                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-brand-accent">{pointsValue}</p>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>
 
       {!team ? (
-        <div className="mx-auto max-w-4xl px-4 py-16 md:px-12 md:py-24">
-          <EmptyState
-            title={`未參加 ${activeSeason.shortName} 賽季`}
-            description="此球隊在所選賽季沒有參賽資料，請使用上方賽季選單查看其他賽季"
-          />
-        </div>
+        <main className="mx-auto max-w-4xl px-4 py-16 md:px-12 md:py-24">
+          <section className="border-y border-neutral-200 py-12 text-center md:py-16">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">
+              {activeSeason.shortName} 賽季
+            </p>
+            <h2 className="mt-4 font-display text-3xl font-black text-brand-black md:text-4xl">
+              未參加 {activeSeason.shortName} 賽季
+            </h2>
+            <p className="mt-4 text-sm font-medium text-neutral-500">
+              此球隊在所選賽季沒有參賽資料
+            </p>
+            <p className="mt-2 text-sm font-bold text-neutral-700">
+              請切換其他賽季查看球隊紀錄
+            </p>
+          </section>
+        </main>
       ) : (
-        <div className="mx-auto max-w-7xl space-y-14 px-4 py-12 md:px-12 md:py-16">
-          <section>
+        <main className="mx-auto max-w-7xl space-y-16 px-4 py-12 md:px-12 md:py-16 lg:space-y-20">
+          {!seasonHasStarted && (
+            <section className="border-y border-neutral-200 py-6">
+              <p className="font-display text-xl font-black text-brand-black">賽季尚未開始</p>
+              <p className="mt-2 text-sm leading-6 text-neutral-500">
+                完成首輪正式比賽後，排名走勢與比賽紀錄將自動更新
+              </p>
+            </section>
+          )}
+
+          <section aria-labelledby="team-rank-heading">
             <div className="mb-5 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
-              <div className="flex items-center">
-                <TrendingUp className="mr-2 h-5 w-5 text-brand-blue" />
-                <h2 className="font-display text-2xl font-black uppercase">排名走勢</h2>
+              <div className="flex min-w-0 items-center">
+                <TrendingUp className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+                <h2 id="team-rank-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+                  排名走勢
+                </h2>
               </div>
-              <span className="text-xs font-bold text-neutral-400">{activeSeason.shortName} · {team.leagueId}</span>
+              <span className="shrink-0 text-[11px] font-bold text-neutral-400">
+                {activeSeason.shortName} · {team.leagueId}
+              </span>
             </div>
             {rankHistory.length > 0 ? (
               <TeamRankChart points={rankHistory} teamCount={leagueTeamCount} />
             ) : (
-              <p className="py-12 text-center text-sm text-neutral-400">完成首輪比賽後更新排名走勢</p>
+              <p className="border-y border-neutral-100 py-12 text-center text-sm text-neutral-400">
+                完成首輪比賽後更新排名走勢
+              </p>
             )}
           </section>
 
-          <section>
+          <section aria-labelledby="team-schedule-heading">
             <div className="mb-5 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
-              <div className="flex items-center">
-                <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
-                <h2 className="font-display text-2xl font-black uppercase">賽程與結果</h2>
+              <div className="flex min-w-0 items-center">
+                <CalendarDays className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+                <h2 id="team-schedule-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+                  賽程與結果
+                </h2>
               </div>
-              <span className="text-xs font-bold text-neutral-400">共 {teamMatches.length} 場</span>
+              <span className="shrink-0 text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span>
             </div>
             {teamMatches.length > 0 ? (
               <FullSchedule
                 matches={teamMatches}
                 teamMap={seasonData.teamMap}
                 leagueFilter="ALL"
-                onMatchClick={(matchId) => navigate(`/schedule?season=${activeSeasonId}&match=${matchId}`)}
+                variant="team"
+                onMatchClick={setSelectedMatchId}
               />
             ) : (
-              <p className="py-12 text-center text-sm text-neutral-400">此球隊目前尚未公布賽程</p>
+              <div className="border-y border-neutral-100 py-12 text-center">
+                <p className="text-sm font-bold text-neutral-500">此球隊目前尚未公布賽程</p>
+                <p className="mt-2 text-xs text-neutral-400">賽程公布後會在此顯示完整比賽紀錄</p>
+              </div>
             )}
           </section>
 
-          <section>
+          <section aria-labelledby="team-squad-heading">
             <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
-              <UserRound className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-black uppercase">球員名單</h2>
+              <UserRound className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+              <h2 id="team-squad-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+                球員名單
+              </h2>
             </div>
             {players.length > 0 ? (
-              <div className="grid gap-x-8 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">
                 {players.map((player) => (
-                  <div key={player.id} className="grid grid-cols-[3rem_1fr] items-center border-b border-neutral-100 py-3">
-                    <span className="font-display text-xl font-black text-brand-blue">{player.number}</span>
+                  <div key={player.id} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3">
+                    <span className="font-display text-xl font-black tabular-nums text-brand-blue">
+                      {player.number}
+                    </span>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-bold">{player.name}</p>
+                      <p className="break-words text-sm font-bold leading-5 text-brand-black">{player.name}</p>
                       {player.englishName && (
-                        <p className="truncate text-[10px] uppercase tracking-wider text-neutral-400">
+                        <p className="mt-0.5 break-words text-[10px] uppercase leading-4 tracking-wider text-neutral-400">
                           {player.englishName}
                         </p>
                       )}
@@ -249,11 +373,18 @@ const TeamPage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>
+              <p className="border-y border-neutral-100 py-10 text-sm text-neutral-400">球員名單尚未公布</p>
             )}
           </section>
-        </div>
+        </main>
       )}
+
+      <MatchDialog
+        matchId={selectedMatchId}
+        onClose={() => setSelectedMatchId(null)}
+        onSelectMatch={setSelectedMatchId}
+        navigationMatchIds={teamMatchIds}
+      />
     </div>
   );
 };

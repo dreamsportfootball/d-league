@@ -64,7 +64,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
   return (
     <div className="relative w-full">
-      {filteredMatches.map((match, matchIndex) => {
+      {filteredMatches.map((match) => {
         const homeTeam = teamMap[match.homeTeamId];
         const awayTeam = teamMap[match.awayTeamId];
         if (!homeTeam || !awayTeam) return null;
@@ -77,30 +77,20 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const isFinished = match.status === MatchStatus.FINISHED;
         const hasScore = isFinished && match.homeScore !== null && match.awayScore !== null;
         const statusLabel = getMatchStatusLabel(match);
-        const isTeamVariant = variant === 'team';
-        const isAlternateRow = matchIndex % 2 === 1;
-        const teamRowBackground = isAlternateRow ? 'bg-neutral-50' : 'bg-white';
-        const mobileNameMaxSize = isTeamVariant ? 16 : 18;
-        const mobileNameMinSize = isTeamVariant ? 10 : 11;
-        const mobileLogoSize = isTeamVariant ? 'h-6 w-6' : 'h-7 w-7';
 
         return (
           <React.Fragment key={match.id}>
             {isNewDate && (
               <>
-                <div
-                  className={`flex items-center border-b border-neutral-100 md:hidden ${
-                    isTeamVariant ? 'mt-2.5 pb-1.5 pt-1' : 'mt-4 pb-2 pt-1'
-                  }`}
-                >
+                <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
                   <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
                   <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
                     {mobileDateHeader}
                   </span>
                 </div>
                 <div
-                  className={isTeamVariant
-                    ? 'mb-0 mt-5 hidden border-b border-neutral-100 bg-white py-2 md:block'
+                  className={variant === 'team'
+                    ? 'mb-2 mt-8 hidden border-b border-neutral-100 bg-white py-3 md:block'
                     : 'sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block'}
                 >
                   <div className="flex items-center">
@@ -119,11 +109,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               data-analytics-event="match_open"
               data-analytics-label={match.id}
               aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-              className={`w-full border-b border-neutral-100 px-0.5 text-left transition-colors active:bg-neutral-100 md:hidden ${
-                isTeamVariant ? `${teamRowBackground} py-2` : 'bg-white py-4'
-              }`}
+              className="w-full border-b border-neutral-100 px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
             >
-              <div className={`flex min-w-0 items-center justify-between gap-3 ${isTeamVariant ? 'mb-0.5' : 'mb-2'}`}>
+              <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
                 <div className="flex shrink-0 items-center gap-2.5">
                   <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
                     {timeStr}
@@ -132,7 +120,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     {match.league} 第{match.round}輪
                   </span>
                 </div>
-                {isTeamVariant && (
+                {variant === 'team' && (
                   <span
                     className="min-w-0 truncate text-right text-[9px] font-bold tracking-wide text-neutral-400"
                     title={statusLabel}
@@ -142,14 +130,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                 )}
               </div>
 
-              <div className="grid grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] items-center gap-1">
-                <div className="flex min-w-0 items-center justify-end gap-1">
+              <div className="grid grid-cols-[minmax(0,1fr)_52px_minmax(0,1fr)] items-center gap-2">
+                <div className="flex min-w-0 items-center justify-end gap-1.5">
                   <div className="min-w-0 flex-1 text-right">
                     <AutoFitText
                       text={homeTeam.name}
-                      maxFontSize={mobileNameMaxSize}
-                      minFontSize={mobileNameMinSize}
-                      fitPadding={0}
+                      maxFontSize={14}
+                      minFontSize={8}
+                      fitPadding={2}
                       className="font-bold text-brand-black"
                     />
                   </div>
@@ -158,13 +146,13 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     alt={homeTeam.name}
                     loading="lazy"
                     decoding="async"
-                    className={`${mobileLogoSize} shrink-0 object-contain`}
+                    className="h-[30px] w-[30px] shrink-0 object-contain"
                   />
                 </div>
 
-                <div className="flex min-w-[40px] items-center justify-center text-center">
+                <div className="flex min-w-[52px] items-center justify-center text-center">
                   {hasScore ? (
-                    <span className="font-display text-[18px] font-black tracking-tight text-brand-black tabular-nums">
+                    <span className="font-display text-[19px] font-black tracking-tight text-brand-black tabular-nums">
                       {match.homeScore} - {match.awayScore}
                     </span>
                   ) : (
@@ -174,20 +162,20 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   )}
                 </div>
 
-                <div className="flex min-w-0 items-center justify-start gap-1">
+                <div className="flex min-w-0 items-center justify-start gap-1.5">
                   <img
                     src={awayTeam.logo}
                     alt={awayTeam.name}
                     loading="lazy"
                     decoding="async"
-                    className={`${mobileLogoSize} shrink-0 object-contain`}
+                    className="h-[30px] w-[30px] shrink-0 object-contain"
                   />
                   <div className="min-w-0 flex-1 text-left">
                     <AutoFitText
                       text={awayTeam.name}
-                      maxFontSize={mobileNameMaxSize}
-                      minFontSize={mobileNameMinSize}
-                      fitPadding={0}
+                      maxFontSize={14}
+                      minFontSize={8}
+                      fitPadding={2}
                       className="font-bold text-brand-black"
                     />
                   </div>
@@ -201,16 +189,12 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               data-analytics-event="match_open"
               data-analytics-label={match.id}
               aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-              className={`group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-100 text-left transition-all duration-300 md:flex md:flex-row ${
-                isTeamVariant
-                  ? `${teamRowBackground} py-3 hover:bg-neutral-100`
-                  : 'bg-white py-5 hover:bg-neutral-50'
-              }`}
+              className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 
               <div className="flex w-full flex-col items-center transition-transform duration-300 md:flex-row md:group-hover:translate-x-1">
-                <div className={`mb-3 flex w-full shrink-0 items-center justify-between px-2 md:mb-0 md:flex-col md:items-start md:px-4 ${isTeamVariant ? 'md:w-28' : 'md:w-32'}`}>
+                <div className="mb-3 flex w-full shrink-0 items-center justify-between px-2 md:mb-0 md:w-32 md:flex-col md:items-start md:px-4">
                   <span className="font-display text-sm font-bold text-neutral-400 transition-colors group-hover:text-brand-black">
                     {timeStr}
                   </span>
@@ -219,12 +203,12 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   </span>
                 </div>
 
-                <div className={`grid w-full flex-1 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-2 ${isTeamVariant ? 'md:gap-4' : 'md:gap-6'}`}>
-                  <div className={`flex min-w-0 items-center justify-end ${isTeamVariant ? 'space-x-3' : 'space-x-2 md:space-x-4'}`}>
+                <div className="grid w-full flex-1 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-2 md:gap-6">
+                  <div className="flex min-w-0 items-center justify-end space-x-2 md:space-x-4">
                     <div className="min-w-0 flex-1 text-right">
                       <AutoFitText
                         text={homeTeam.name}
-                        maxFontSize={isTeamVariant ? 16 : 17}
+                        maxFontSize={17}
                         minFontSize={9}
                         className="font-bold text-brand-black"
                       />
@@ -234,26 +218,26 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       alt={homeTeam.name}
                       loading="lazy"
                       decoding="async"
-                      className={`${isTeamVariant ? 'h-8 w-8' : 'h-8 w-8 md:h-10 md:w-10'} shrink-0 object-contain`}
+                      className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
                     />
                   </div>
 
-                  <div className={`flex justify-center ${isTeamVariant ? 'min-w-[64px]' : 'min-w-[50px] md:min-w-[80px]'}`}>
+                  <div className="flex min-w-[50px] justify-center md:min-w-[80px]">
                     {renderScore(match)}
                   </div>
 
-                  <div className={`flex min-w-0 items-center justify-start ${isTeamVariant ? 'space-x-3' : 'space-x-2 md:space-x-4'}`}>
+                  <div className="flex min-w-0 items-center justify-start space-x-2 md:space-x-4">
                     <img
                       src={awayTeam.logo}
                       alt={awayTeam.name}
                       loading="lazy"
                       decoding="async"
-                      className={`${isTeamVariant ? 'h-8 w-8' : 'h-8 w-8 md:h-10 md:w-10'} shrink-0 object-contain`}
+                      className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
                     />
                     <div className="min-w-0 flex-1 text-left">
                       <AutoFitText
                         text={awayTeam.name}
-                        maxFontSize={isTeamVariant ? 16 : 17}
+                        maxFontSize={17}
                         minFontSize={9}
                         className="font-bold text-brand-black"
                       />
@@ -261,13 +245,13 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   </div>
                 </div>
 
-                <div className={`hidden shrink-0 flex-col items-end pr-4 text-right md:flex ${isTeamVariant ? 'w-28' : 'w-32'}`}>
-                  {isTeamVariant ? (
+                <div className="hidden w-32 shrink-0 flex-col items-end pr-4 text-right md:flex">
+                  {variant === 'team' ? (
                     <>
                       <span className="max-w-full truncate text-[10px] font-bold tracking-wide text-neutral-500" title={statusLabel}>
                         {statusLabel}
                       </span>
-                      <span className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-brand-blue">
+                      <span className="mt-1 text-[9px] font-bold uppercase tracking-widest text-brand-blue">
                         查看詳情 →
                       </span>
                     </>

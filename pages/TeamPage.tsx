@@ -325,7 +325,7 @@ const TeamPage: React.FC = () => {
             <div className="flex min-w-0 items-center">
               <CalendarDays className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
               <h2 id="team-schedule-heading" className="font-display text-2xl font-black uppercase text-brand-black">
-                賽程
+                賽程與結果
               </h2>
             </div>
             <span className="shrink-0 text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span>

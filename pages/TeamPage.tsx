@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CalendarDays, TrendingUp, UserRound } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
-import SeasonSelector from '../components/SeasonSelector';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
-import { CURRENT_SEASON_ID } from '../config/siteConfig';
+import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getSeasonData } from '../services/seasonDataJson';
@@ -59,12 +58,9 @@ const TeamPage: React.FC = () => {
     ),
     [id, identityId, seasonData.teams],
   );
-  const displayTeam = team ?? referenceTeam;
-  const isHistoricalSeason = activeSeasonId !== CURRENT_SEASON_ID;
-  const backLink = isHistoricalSeason ? `/standings?season=${activeSeasonId}` : '/#teams';
-  const backLabel = isHistoricalSeason
-    ? `返回 ${activeSeason.shortName} 積分榜`
-    : '返回參賽球隊';
+  const displayTeam = team;
+  const backLink = '/#teams';
+  const backLabel = '返回參賽球隊';
 
   const players = useMemo(
     () =>
@@ -174,11 +170,15 @@ const TeamPage: React.FC = () => {
     });
   }, [activeSeason.leagues, activeSeason.rules, eligibleLeagueMatches, leagueTeamCount, seasonData.matchEvents, seasonData.teams, team]);
 
+  if (activeSeasonId !== TEAM_PROFILE_SEASON_ID) {
+    return <Navigate to={`/standings?season=${activeSeasonId}`} replace />;
+  }
+
   if (!displayTeam) {
     return (
       <div className="min-h-[75vh] bg-white px-4 py-16 md:py-28">
         <div className="mx-auto max-w-4xl">
-          <EmptyState title="找不到此球隊" description="此球隊資料不存在或網址已失效" />
+          <EmptyState title="找不到此球隊" description="此球隊未參加目前營運賽季或網址已失效" />
           <div className="mt-8 text-center">
             <Link to={backLink} className="text-sm font-bold text-brand-blue">
               {backLabel}
@@ -189,9 +189,9 @@ const TeamPage: React.FC = () => {
     );
   }
 
-  const leagueConfig = team ? activeSeason.leagues[team.leagueId] : null;
-  const leagueLabel = leagueConfig?.displayName ?? team?.leagueId ?? '未參賽';
-  const rankValue = team && seasonHasStarted && standing ? standing.rank : '—';
+  const leagueConfig = activeSeason.leagues[displayTeam.leagueId];
+  const leagueLabel = leagueConfig?.displayName ?? displayTeam.leagueId;
+  const rankValue = seasonHasStarted && standing ? standing.rank : '—';
   const playedValue = standing?.played ?? 0;
   const pointsValue = standing?.points ?? 0;
   const goalsValue = standing?.gf ?? 0;
@@ -211,17 +211,14 @@ const TeamPage: React.FC = () => {
         />
 
         <div className="relative mx-auto max-w-7xl">
-          <div className="mb-8 flex min-w-0 items-center justify-between gap-2 md:mb-12 md:gap-3">
+          <div className="mb-8 md:mb-12">
             <Link
               to={backLink}
-              className="inline-flex min-h-11 min-w-0 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-brand-black"
+              className="inline-flex min-h-11 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-brand-black"
             >
               <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
-              <span className="truncate">{backLabel}</span>
+              {backLabel}
             </Link>
-            <div className="shrink-0">
-              <SeasonSelector compact />
-            </div>
           </div>
 
           <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-8">
@@ -292,112 +289,93 @@ const TeamPage: React.FC = () => {
         </div>
       </section>
 
-      {!team ? (
-        <main className="mx-auto max-w-4xl px-4 py-16 md:px-12 md:py-24">
-          <section className="border-y border-neutral-200 py-12 text-center md:py-16">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue">
-              {activeSeason.shortName} 賽季
-            </p>
-            <h2 className="mt-4 font-display text-3xl font-black text-brand-black md:text-4xl">
-              未參加 {activeSeason.shortName} 賽季
-            </h2>
-            <p className="mt-4 text-sm font-medium text-neutral-500">
-              此球隊在所選賽季沒有參賽資料
-            </p>
-            <p className="mt-2 text-sm font-bold text-neutral-700">
-              請切換其他賽季查看球隊紀錄
+      <main className="mx-auto max-w-7xl space-y-16 px-4 py-12 md:px-12 md:py-16 lg:space-y-20">
+        {!seasonHasStarted && (
+          <section className="border-y border-neutral-200 py-6">
+            <p className="font-display text-xl font-black text-brand-black">賽季尚未開始</p>
+            <p className="mt-2 text-sm leading-6 text-neutral-500">
+              完成首輪正式比賽後，排名走勢與比賽紀錄將自動更新
             </p>
           </section>
-        </main>
-      ) : (
-        <main className="mx-auto max-w-7xl space-y-16 px-4 py-12 md:px-12 md:py-16 lg:space-y-20">
-          {!seasonHasStarted && (
-            <section className="border-y border-neutral-200 py-6">
-              <p className="font-display text-xl font-black text-brand-black">賽季尚未開始</p>
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
-                完成首輪正式比賽後，排名走勢與比賽紀錄將自動更新
-              </p>
-            </section>
-          )}
+        )}
 
-          <section aria-labelledby="team-rank-heading">
-            <div className="mb-3 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
-              <div className="flex min-w-0 items-center">
-                <TrendingUp className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
-                <h2 id="team-rank-heading" className="font-display text-2xl font-black uppercase text-brand-black">
-                  排名走勢
-                </h2>
-              </div>
-              <span className="shrink-0 text-[11px] font-bold text-neutral-400">
-                {activeSeason.shortName} · {team.leagueId}
-              </span>
-            </div>
-            {rankHistory.length > 0 ? (
-              <TeamRankChart points={rankHistory} teamCount={leagueTeamCount} />
-            ) : (
-              <p className="border-y border-neutral-100 py-10 text-center text-sm text-neutral-400">
-                完成首輪比賽後更新排名走勢
-              </p>
-            )}
-          </section>
-
-          <section aria-labelledby="team-schedule-heading">
-            <div className="mb-5 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
-              <div className="flex min-w-0 items-center">
-                <CalendarDays className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
-                <h2 id="team-schedule-heading" className="font-display text-2xl font-black uppercase text-brand-black">
-                  賽程與結果
-                </h2>
-              </div>
-              <span className="shrink-0 text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span>
-            </div>
-            {teamMatches.length > 0 ? (
-              <FullSchedule
-                matches={teamMatches}
-                teamMap={seasonData.teamMap}
-                leagueFilter="ALL"
-                variant="team"
-                onMatchClick={setSelectedMatchId}
-              />
-            ) : (
-              <div className="border-y border-neutral-100 py-12 text-center">
-                <p className="text-sm font-bold text-neutral-500">此球隊目前尚未公布賽程</p>
-                <p className="mt-2 text-xs text-neutral-400">賽程公布後會在此顯示完整比賽紀錄</p>
-              </div>
-            )}
-          </section>
-
-          <section aria-labelledby="team-squad-heading">
-            <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
-              <UserRound className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
-              <h2 id="team-squad-heading" className="font-display text-2xl font-black uppercase text-brand-black">
-                球員名單
+        <section aria-labelledby="team-rank-heading">
+          <div className="mb-3 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
+            <div className="flex min-w-0 items-center">
+              <TrendingUp className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+              <h2 id="team-rank-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+                排名走勢
               </h2>
             </div>
-            {players.length > 0 ? (
-              <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">
-                {players.map((player) => (
-                  <div key={player.id} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3">
-                    <span className="font-display text-xl font-black tabular-nums text-brand-blue">
-                      {player.number}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="break-words text-sm font-bold leading-5 text-brand-black">{player.name}</p>
-                      {player.englishName && (
-                        <p className="mt-0.5 break-words text-[10px] uppercase leading-4 tracking-wider text-neutral-400">
-                          {player.englishName}
-                        </p>
-                      )}
-                    </div>
+            <span className="shrink-0 text-[11px] font-bold text-neutral-400">
+              {activeSeason.shortName} · {displayTeam.leagueId}
+            </span>
+          </div>
+          {rankHistory.length > 0 ? (
+            <TeamRankChart points={rankHistory} teamCount={leagueTeamCount} />
+          ) : (
+            <p className="border-y border-neutral-100 py-10 text-center text-sm text-neutral-400">
+              完成首輪比賽後更新排名走勢
+            </p>
+          )}
+        </section>
+
+        <section aria-labelledby="team-schedule-heading">
+          <div className="mb-5 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
+            <div className="flex min-w-0 items-center">
+              <CalendarDays className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+              <h2 id="team-schedule-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+                賽程與結果
+              </h2>
+            </div>
+            <span className="shrink-0 text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span>
+          </div>
+          {teamMatches.length > 0 ? (
+            <FullSchedule
+              matches={teamMatches}
+              teamMap={seasonData.teamMap}
+              leagueFilter="ALL"
+              variant="team"
+              onMatchClick={setSelectedMatchId}
+            />
+          ) : (
+            <div className="border-y border-neutral-100 py-12 text-center">
+              <p className="text-sm font-bold text-neutral-500">此球隊目前尚未公布賽程</p>
+              <p className="mt-2 text-xs text-neutral-400">賽程公布後會在此顯示完整比賽紀錄</p>
+            </div>
+          )}
+        </section>
+
+        <section aria-labelledby="team-squad-heading">
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
+            <UserRound className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+            <h2 id="team-squad-heading" className="font-display text-2xl font-black uppercase text-brand-black">
+              球員名單
+            </h2>
+          </div>
+          {players.length > 0 ? (
+            <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">
+              {players.map((player) => (
+                <div key={player.id} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3">
+                  <span className="font-display text-xl font-black tabular-nums text-brand-blue">
+                    {player.number}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-bold leading-5 text-brand-black">{player.name}</p>
+                    {player.englishName && (
+                      <p className="mt-0.5 break-words text-[10px] uppercase leading-4 tracking-wider text-neutral-400">
+                        {player.englishName}
+                      </p>
+                    )}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="border-y border-neutral-100 py-10 text-sm text-neutral-400">球員名單尚未公布</p>
-            )}
-          </section>
-        </main>
-      )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="border-y border-neutral-100 py-10 text-sm text-neutral-400">球員名單尚未公布</p>
+          )}
+        </section>
+      </main>
 
       <MatchDialog
         matchId={selectedMatchId}

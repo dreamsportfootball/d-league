@@ -7,12 +7,14 @@ import { formatTaipeiDate, formatTaipeiDateWithWeekday, formatTaipeiTime } from 
 import AutoFitText from './AutoFitText';
 
 type LeagueFilter = LeagueId | 'ALL';
+type FullScheduleVariant = 'default' | 'team';
 
 interface FullScheduleProps {
   matches: Match[];
   teamMap: Record<string, SeasonTeam>;
   onMatchClick: (matchId: string) => void;
   leagueFilter: LeagueFilter;
+  variant?: FullScheduleVariant;
 }
 
 const renderScore = (match: Match) => {
@@ -35,11 +37,17 @@ const renderScore = (match: Match) => {
   );
 };
 
+const getMatchStatusLabel = (match: Match): string => {
+  if (match.administrativeNote?.trim()) return match.administrativeNote.trim();
+  return match.status === MatchStatus.FINISHED ? '比賽結束' : '尚未開賽';
+};
+
 const FullSchedule: React.FC<FullScheduleProps> = ({
   matches,
   teamMap,
   onMatchClick,
   leagueFilter,
+  variant = 'default',
 }) => {
   const filteredMatches = useMemo(() => {
     const filtered =
@@ -68,6 +76,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         if (isNewDate) lastDateHeader = fullDateHeader;
         const isFinished = match.status === MatchStatus.FINISHED;
         const hasScore = isFinished && match.homeScore !== null && match.awayScore !== null;
+        const statusLabel = getMatchStatusLabel(match);
 
         return (
           <React.Fragment key={match.id}>
@@ -79,7 +88,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     {mobileDateHeader}
                   </span>
                 </div>
-                <div className="sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block">
+                <div
+                  className={variant === 'team'
+                    ? 'mb-2 mt-8 hidden border-b border-neutral-100 bg-white py-3 md:block'
+                    : 'sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block'}
+                >
                   <div className="flex items-center">
                     <div className="mr-3 h-4 w-1 bg-brand-accent" />
                     <span className="font-display text-sm font-black uppercase tracking-[0.15em] text-brand-black">
@@ -95,11 +108,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               onClick={() => onMatchClick(match.id)}
               data-analytics-event="match_open"
               data-analytics-label={match.id}
-              aria-label={`${homeTeam.name} 對 ${awayTeam.name}`}
+              aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
               className="w-full border-b border-neutral-100 px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
             >
-              <div className="mb-2 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
+              <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
+                <div className="flex shrink-0 items-center gap-2.5">
                   <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
                     {timeStr}
                   </span>
@@ -107,6 +120,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     {match.league} 第{match.round}輪
                   </span>
                 </div>
+                {variant === 'team' && (
+                  <span
+                    className="min-w-0 truncate text-right text-[9px] font-bold tracking-wide text-neutral-400"
+                    title={statusLabel}
+                  >
+                    {statusLabel}
+                  </span>
+                )}
               </div>
 
               <div className="grid grid-cols-[minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1.5">
@@ -167,6 +188,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               onClick={() => onMatchClick(match.id)}
               data-analytics-event="match_open"
               data-analytics-label={match.id}
+              aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
               className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
@@ -224,9 +246,20 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                 </div>
 
                 <div className="hidden w-32 shrink-0 flex-col items-end pr-4 text-right md:flex">
-                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFinished ? 'text-brand-blue' : 'text-neutral-400'}`}>
-                    {isFinished ? '查看比賽 →' : '查看賽程 →'}
-                  </span>
+                  {variant === 'team' ? (
+                    <>
+                      <span className="max-w-full truncate text-[10px] font-bold tracking-wide text-neutral-500" title={statusLabel}>
+                        {statusLabel}
+                      </span>
+                      <span className="mt-1 text-[9px] font-bold uppercase tracking-widest text-brand-blue">
+                        查看詳情 →
+                      </span>
+                    </>
+                  ) : (
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${isFinished ? 'text-brand-blue' : 'text-neutral-400'}`}>
+                      {isFinished ? '查看比賽 →' : '查看賽程 →'}
+                    </span>
+                  )}
                 </div>
               </div>
             </button>

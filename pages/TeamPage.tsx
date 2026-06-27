@@ -222,9 +222,9 @@ const TeamPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid gap-9 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end lg:gap-14">
+          <div className="grid gap-9 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-end xl:gap-14">
             <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-7">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white p-3 sm:h-32 sm:w-32 sm:p-4 lg:h-36 lg:w-36">
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white p-3 sm:h-32 sm:w-32 sm:p-4 xl:h-36 xl:w-36">
                 <img
                   src={displayTeam.logo}
                   alt={`${displayTeam.name} 隊徽`}
@@ -235,7 +235,7 @@ const TeamPage: React.FC = () => {
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50 sm:text-xs">
                   {leagueLabel} · {activeSeason.shortName} 賽季
                 </p>
-                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl xl:text-6xl">
                   {displayTeam.name}
                 </h1>
                 <p className="mt-3 text-xs font-bold text-white/55 sm:text-sm">
@@ -244,7 +244,7 @@ const TeamPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="border-y border-white/15 py-5 lg:py-6">
+            <div className="border-y border-white/15 py-5 xl:py-6">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
                   賽季概況

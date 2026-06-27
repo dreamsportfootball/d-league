@@ -64,7 +64,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
   return (
     <div className="relative w-full">
-      {filteredMatches.map((match) => {
+      {filteredMatches.map((match, matchIndex) => {
         const homeTeam = teamMap[match.homeTeamId];
         const awayTeam = teamMap[match.awayTeamId];
         if (!homeTeam || !awayTeam) return null;
@@ -77,12 +77,18 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const isFinished = match.status === MatchStatus.FINISHED;
         const hasScore = isFinished && match.homeScore !== null && match.awayScore !== null;
         const statusLabel = getMatchStatusLabel(match);
+        const administrativeNote = match.administrativeNote?.trim();
+        const teamRowBackground = matchIndex % 2 === 0 ? 'bg-white' : 'bg-neutral-50';
 
         return (
           <React.Fragment key={match.id}>
             {isNewDate && (
               <>
-                <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
+                <div
+                  className={`flex items-center border-b border-neutral-100 md:hidden ${
+                    variant === 'team' ? 'mt-3 pb-1.5 pt-1' : 'mt-4 pb-2 pt-1'
+                  }`}
+                >
                   <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
                   <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
                     {mobileDateHeader}
@@ -90,7 +96,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                 </div>
                 <div
                   className={variant === 'team'
-                    ? 'mb-2 mt-8 hidden border-b border-neutral-100 bg-white py-3 md:block'
+                    ? 'mb-0 mt-6 hidden border-b border-neutral-100 bg-white py-2 md:block'
                     : 'sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block'}
                 >
                   <div className="flex items-center">
@@ -109,9 +115,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               data-analytics-event="match_open"
               data-analytics-label={match.id}
               aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-              className="w-full border-b border-neutral-100 px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
+              className={`w-full border-b border-neutral-100 px-1 text-left transition-colors active:bg-neutral-100 md:hidden ${
+                variant === 'team' ? `${teamRowBackground} py-3` : 'bg-white py-4'
+              }`}
             >
-              <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
+              <div className={`flex min-w-0 items-center justify-between gap-3 ${variant === 'team' ? 'mb-1.5' : 'mb-2'}`}>
                 <div className="flex shrink-0 items-center gap-2.5">
                   <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
                     {timeStr}
@@ -120,12 +128,12 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     {match.league} 第{match.round}輪
                   </span>
                 </div>
-                {variant === 'team' && (
+                {variant === 'team' && administrativeNote && (
                   <span
-                    className="min-w-0 truncate text-right text-[9px] font-bold tracking-wide text-neutral-400"
-                    title={statusLabel}
+                    className="min-w-0 truncate text-right text-[9px] font-bold tracking-wide text-amber-700"
+                    title={administrativeNote}
                   >
-                    {statusLabel}
+                    {administrativeNote}
                   </span>
                 )}
               </div>
@@ -189,7 +197,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               data-analytics-event="match_open"
               data-analytics-label={match.id}
               aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-              className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
+              className={`group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-100 text-left transition-all duration-300 md:flex md:flex-row ${
+                variant === 'team'
+                  ? `${teamRowBackground} py-4 hover:bg-neutral-100`
+                  : 'bg-white py-5 hover:bg-neutral-50'
+              }`}
             >
               <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 
@@ -248,10 +260,12 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                 <div className="hidden w-32 shrink-0 flex-col items-end pr-4 text-right md:flex">
                   {variant === 'team' ? (
                     <>
-                      <span className="max-w-full truncate text-[10px] font-bold tracking-wide text-neutral-500" title={statusLabel}>
-                        {statusLabel}
-                      </span>
-                      <span className="mt-1 text-[9px] font-bold uppercase tracking-widest text-brand-blue">
+                      {administrativeNote && (
+                        <span className="max-w-full truncate text-[10px] font-bold tracking-wide text-amber-700" title={administrativeNote}>
+                          {administrativeNote}
+                        </span>
+                      )}
+                      <span className={`${administrativeNote ? 'mt-1' : ''} text-[9px] font-bold uppercase tracking-widest text-brand-blue`}>
                         查看詳情 →
                       </span>
                     </>

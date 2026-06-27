@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import type { Standing } from '../types';
@@ -48,7 +48,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   );
 
   const isWidget = variant === 'widget';
-  const teamProfilesEnabled = activeSeason.id === TEAM_PROFILE_SEASON_ID;
+  const teamProfilesEnabled = activeSeason.id === CURRENT_SEASON_ID;
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
   const relegationStart =
     leagueConfig && leagueConfig.relegationPlaces > 0

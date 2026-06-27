@@ -6,19 +6,21 @@ interface AutoFitTextProps {
   maxFontSize?: number;
   minFontSize?: number;
   fitPadding?: number;
+  lineHeight?: React.CSSProperties['lineHeight'];
   title?: string;
 }
 
 const AutoFitText: React.FC<AutoFitTextProps> = ({
   text,
   className = '',
-  maxFontSize = 16,
-  minFontSize = 7,
+  maxFontSize,
+  minFontSize = 6,
   fitPadding = 0,
+  lineHeight = 1.15,
   title,
 }) => {
   const ref = useRef<HTMLSpanElement>(null);
-  const [fontSize, setFontSize] = useState(maxFontSize);
+  const [fontSize, setFontSize] = useState<number | null>(maxFontSize ?? null);
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -28,15 +30,23 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
       const availableWidth = Math.max(0, element.clientWidth - fitPadding);
       if (availableWidth <= 0) return;
 
-      element.style.fontSize = `${maxFontSize}px`;
+      element.style.fontSize = maxFontSize ? `${maxFontSize}px` : '';
+      const computedFontSize = Number.parseFloat(window.getComputedStyle(element).fontSize) || 16;
+      const naturalFontSize = maxFontSize ?? computedFontSize;
       const requiredWidth = element.scrollWidth;
-      const nextSize =
-        requiredWidth > availableWidth
-          ? Math.max(minFontSize, Math.floor((maxFontSize * availableWidth) / requiredWidth))
-          : maxFontSize;
+      let nextSize = requiredWidth > availableWidth
+        ? Math.max(minFontSize, (naturalFontSize * availableWidth) / requiredWidth)
+        : naturalFontSize;
 
       element.style.fontSize = `${nextSize}px`;
-      setFontSize((currentSize) => currentSize === nextSize ? currentSize : nextSize);
+      while (nextSize > minFontSize && element.scrollWidth > availableWidth) {
+        nextSize = Math.max(minFontSize, nextSize - 0.5);
+        element.style.fontSize = `${nextSize}px`;
+      }
+
+      const roundedSize = Math.round(nextSize * 2) / 2;
+      element.style.fontSize = `${roundedSize}px`;
+      setFontSize((currentSize) => currentSize === roundedSize ? currentSize : roundedSize);
     };
 
     fit();
@@ -52,7 +62,10 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
       ref={ref}
       title={title ?? text}
       className={`block w-full whitespace-nowrap ${className}`}
-      style={{ fontSize: `${fontSize}px`, lineHeight: 1.15 }}
+      style={{
+        ...(fontSize === null ? {} : { fontSize: `${fontSize}px` }),
+        lineHeight,
+      }}
     >
       {text}
     </span>

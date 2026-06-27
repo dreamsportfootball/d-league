@@ -174,7 +174,11 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'team-detail') {
-        assert('team-detail-resolves', diagnostics.bodyText.includes('嘉義諸羅山FC') && !diagnostics.bodyText.includes('找不到此球隊'), 'Expected real 2025/26 team');
+        assert(
+          'historical-team-redirects-to-standings',
+          page.url().includes('#/standings?season=2025-26') && diagnostics.bodyText.includes('2025/26'),
+          `Expected 2025/26 standings redirect, resolved ${page.url()}`,
+        );
       }
 
       if (route.name === 'media-default') {

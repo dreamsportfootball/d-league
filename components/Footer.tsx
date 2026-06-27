@@ -21,18 +21,17 @@ const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: strin
 );
 
 const PartnerLogo: React.FC<{ src: string; className?: string }> = ({ src, className }) => (
-  <div className="group/logo flex h-8 w-auto items-center justify-center transition-all duration-300">
+  <div className="group/logo flex h-10 w-auto items-center justify-center transition-all duration-300 md:h-12">
     <img
       src={src}
-      alt="D LEAGUE 合作夥伴"
-      loading="lazy"
+      alt="Dreamsport 夢達足球"
       className={`max-h-full w-auto object-contain transition-all duration-300 group-hover/logo:scale-105 ${className ?? ''}`}
     />
   </div>
 );
 
 const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, children }) => (
-  <Link to={to} className="group flex min-h-11 items-center transition-colors hover:text-brand-accent">
+  <Link to={to} className="group flex min-h-9 items-center transition-colors hover:text-brand-accent">
     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
     {children}
   </Link>
@@ -47,7 +46,7 @@ const Footer: React.FC = () => {
   return (
     <footer className={`relative border-t border-neutral-900 bg-neutral-950 pt-12 text-white md:pb-5 md:pt-20 ${hasMobileRegistrationBar ? 'pb-24' : 'pb-2'}`}>
       <div className="container relative z-10 mx-auto px-4 md:px-6">
-        <div className="mb-8 grid grid-cols-1 gap-12 md:mb-20 md:grid-cols-12 lg:gap-16">
+        <div className="mb-8 grid grid-cols-1 gap-10 md:mb-20 md:grid-cols-12 lg:gap-16">
           <div className="flex flex-col items-start md:col-span-5">
             <div className="mb-1 md:mb-2">
               <span className="border-l-4 border-brand-accent pl-3 font-display text-2xl font-black uppercase tracking-widest text-white">
@@ -73,10 +72,10 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="md:col-span-3">
-            <h4 className="mb-5 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-8">
+            <h4 className="mb-4 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
               聯賽資訊
             </h4>
-            <ul className="space-y-1 text-sm font-medium text-neutral-500 md:space-y-2">
+            <ul className="space-y-0 text-sm font-medium text-neutral-500">
               <li><FooterLink to="/about">關於 D LEAGUE</FooterLink></li>
               <li><FooterLink to="/#teams">參賽球隊</FooterLink></li>
               <li><FooterLink to="/schedule">賽程與結果</FooterLink></li>
@@ -89,7 +88,7 @@ const Footer: React.FC = () => {
                     href={currentSeason.regulationsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex min-h-11 items-center transition-colors hover:text-brand-accent"
+                    className="group flex min-h-9 items-center transition-colors hover:text-brand-accent"
                   >
                     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
                     {currentSeason.shortName} 競賽規程
@@ -97,21 +96,15 @@ const Footer: React.FC = () => {
                   </a>
                 </li>
               )}
-              <li>
-                <FooterLink to="/standings?season=2025-26">2025/26 過往賽事</FooterLink>
-              </li>
             </ul>
           </div>
 
           <div className="md:col-span-4">
-            <h4 className="mb-5 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-8">
+            <h4 className="mb-4 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
               官方合作夥伴
             </h4>
-            <div className="flex max-w-sm flex-wrap items-center justify-start gap-8">
-              <PartnerLogo className="brightness-0 invert" src="https://cdn.store-assets.com/s/783745/f/15686789.png" />
-              <PartnerLogo className="brightness-0 invert" src="https://cdn.store-assets.com/s/783745/f/15684766.png" />
+            <div className="flex max-w-sm items-center justify-start">
               <PartnerLogo className="brightness-0 invert" src="https://cdn.store-assets.com/s/783745/f/15684770.png" />
-              <PartnerLogo src="https://cdn.store-assets.com/s/783745/f/15684768.png" />
             </div>
           </div>
         </div>

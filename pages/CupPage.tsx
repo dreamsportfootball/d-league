@@ -7,6 +7,7 @@ import {
   Trophy,
   UsersRound,
 } from 'lucide-react';
+import AutoFitText from '../components/AutoFitText';
 import {
   CUP_EVENT,
   CUP_GROUP_RANKING_RULE_LABEL,
@@ -103,9 +104,12 @@ const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match,
       }`}
     >
       <div className="min-w-0 text-right">
-        <p className={`break-words text-sm md:text-lg ${winnerId === homeTeam.id ? 'font-black' : 'font-bold opacity-55'}`}>
-          {homeTeam.name}
-        </p>
+        <AutoFitText
+          text={homeTeam.name}
+          minFontSize={6}
+          lineHeight={1.25}
+          className={`text-right text-sm md:text-lg ${winnerId === homeTeam.id ? 'font-black' : 'font-bold opacity-55'}`}
+        />
       </div>
       <div className="px-2 text-center">
         <p className={`font-display text-2xl font-black tabular-nums md:text-4xl ${featured ? 'text-white' : 'text-brand-black'}`}>
@@ -118,9 +122,12 @@ const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match,
         )}
       </div>
       <div className="min-w-0 text-left">
-        <p className={`break-words text-sm md:text-lg ${winnerId === awayTeam.id ? 'font-black' : 'font-bold opacity-55'}`}>
-          {awayTeam.name}
-        </p>
+        <AutoFitText
+          text={awayTeam.name}
+          minFontSize={6}
+          lineHeight={1.25}
+          className={`text-left text-sm md:text-lg ${winnerId === awayTeam.id ? 'font-black' : 'font-bold opacity-55'}`}
+        />
       </div>
     </div>
   );
@@ -181,15 +188,25 @@ const CompactGroupMatch: React.FC<{ match?: CupMatch }> = ({ match }) => {
 
   return (
     <div className="grid min-h-[58px] grid-cols-[minmax(0,1fr)_54px_minmax(0,1fr)] items-center gap-2 border-t border-neutral-200 py-3 first:border-t-0 md:border-l md:border-t-0 md:px-5">
-      <span className="min-w-0 break-words text-right text-xs font-bold leading-5 text-brand-black md:text-sm">
-        {homeTeam.name}
-      </span>
+      <div className="min-w-0 text-right">
+        <AutoFitText
+          text={homeTeam.name}
+          minFontSize={6}
+          lineHeight={1.25}
+          className="text-right text-xs font-bold text-brand-black md:text-sm"
+        />
+      </div>
       <span className="text-center font-display text-xl font-black tabular-nums text-brand-black">
         {getScoreLabel(match)}
       </span>
-      <span className="min-w-0 break-words text-left text-xs font-bold leading-5 text-brand-black md:text-sm">
-        {awayTeam.name}
-      </span>
+      <div className="min-w-0 text-left">
+        <AutoFitText
+          text={awayTeam.name}
+          minFontSize={6}
+          lineHeight={1.25}
+          className="text-left text-xs font-bold text-brand-black md:text-sm"
+        />
+      </div>
     </div>
   );
 };
@@ -213,7 +230,13 @@ const TeamGroup: React.FC<{
         return (
           <li key={team.id} className="grid min-h-16 grid-cols-[36px_minmax(0,1fr)_auto] items-center border-b border-neutral-100 last:border-b-0">
             <span className="font-display text-sm font-black text-[#8f1d1d]">{String(standing.rank).padStart(2, '0')}</span>
-            <span className="min-w-0 break-words pr-4 text-sm font-black text-brand-black md:text-base">{team.name}</span>
+            <div className="min-w-0 pr-4">
+              <AutoFitText
+                text={team.name}
+                minFontSize={6}
+                className="text-sm font-black text-brand-black md:text-base"
+              />
+            </div>
             <div className="text-right">
               <span className="block text-[10px] font-black tabular-nums text-neutral-500">
                 {standing.points} 分 · {standing.goalDifference >= 0 ? '+' : ''}{standing.goalDifference}
@@ -283,7 +306,7 @@ const CupPage: React.FC = () => {
           }}
           aria-hidden="true"
         />
-        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-[#240b0b] via-[#4a1010]/95 to-transparent lg:w-3/4" aria-hidden="true" />
+        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-[#240b0b] via-[#4a1010]/72 to-transparent lg:w-2/3" aria-hidden="true" />
 
         <div className="relative mx-auto grid min-h-[720px] max-w-7xl lg:grid-cols-[1.05fr_.95fr]">
           <div className="flex flex-col justify-center px-4 py-14 md:px-12 md:py-20 lg:py-24">
@@ -297,17 +320,24 @@ const CupPage: React.FC = () => {
               <span className="mt-2 block text-[#e1c47f]">新春賀歲盃</span>
             </h1>
 
-            <div className="mt-10 border-l-4 border-[#c8a45a] pl-5 md:mt-12 md:pl-7">
+            <div className="mt-10 min-w-0 border-l-4 border-[#c8a45a] pl-5 md:mt-12 md:pl-7">
               <p className="text-xs font-black uppercase tracking-[0.2em] text-white/55">盃賽冠軍</p>
-              <p className="mt-2 font-display text-4xl font-black tracking-tight text-white md:text-6xl">
-                {cupChampion?.name ?? '賽果待確認'}
-              </p>
-              {cupFinal && cupRunnerUp && (
-                <p className="mt-4 text-sm font-bold text-white/65 md:text-base">
-                  決賽　{cupChampion?.name} {cupFinal.homeTeamId === cupChampion?.id ? cupFinal.homeScore : cupFinal.awayScore}
-                  <span className="mx-2 text-[#e1c47f]">-</span>
-                  {cupFinal.homeTeamId === cupChampion?.id ? cupFinal.awayScore : cupFinal.homeScore} {cupRunnerUp.name}
-                </p>
+              <div className="mt-2 min-w-0">
+                <AutoFitText
+                  text={cupChampion?.name ?? '賽果待確認'}
+                  minFontSize={18}
+                  lineHeight={0.98}
+                  className="font-display text-4xl font-black tracking-tight text-white md:text-6xl"
+                />
+              </div>
+              {cupFinal && cupRunnerUp && cupChampion && (
+                <div className="mt-4 min-w-0">
+                  <AutoFitText
+                    text={`決賽　${cupChampion.name} ${cupFinal.homeTeamId === cupChampion.id ? cupFinal.homeScore : cupFinal.awayScore} - ${cupFinal.homeTeamId === cupChampion.id ? cupFinal.awayScore : cupFinal.homeScore} ${cupRunnerUp.name}`}
+                    minFontSize={7}
+                    className="text-sm font-bold text-white/65 md:text-base"
+                  />
+                </div>
               )}
             </div>
 
@@ -334,7 +364,7 @@ const CupPage: React.FC = () => {
               alt={`${cupChampion?.name ?? '盃賽冠軍'}頒獎典禮`}
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#240b0b] via-transparent to-black/10 lg:bg-gradient-to-r lg:from-[#240b0b]/65 lg:via-transparent lg:to-transparent" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#240b0b]/55 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#240b0b]/30 lg:via-transparent lg:to-transparent" aria-hidden="true" />
             <div className="absolute bottom-6 right-5 text-right md:bottom-10 md:right-10">
               <p className="font-display text-5xl font-black leading-none text-white/20 md:text-7xl">CHAMPIONS</p>
             </div>
@@ -385,35 +415,61 @@ const CupPage: React.FC = () => {
               <div className="border-t-4 border-[#c8a45a] bg-white">
                 <div className="grid border-b border-neutral-200 px-5 py-7 md:grid-cols-[120px_1fr_auto] md:items-center md:px-8">
                   <span className="font-display text-6xl font-black text-[#c8a45a]">01</span>
-                  <div className="mt-3 md:mt-0">
+                  <div className="mt-3 min-w-0 md:mt-0">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Cup Champion</p>
-                    <p className="mt-1 font-display text-3xl font-black md:text-5xl">{cupChampion?.name}</p>
+                    <div className="mt-1 min-w-0">
+                      <AutoFitText
+                        text={cupChampion?.name ?? '—'}
+                        minFontSize={12}
+                        lineHeight={1}
+                        className="font-display text-3xl font-black md:text-5xl"
+                      />
+                    </div>
                   </div>
                   <Trophy className="mt-5 h-9 w-9 text-[#c8a45a] md:mt-0" aria-hidden="true" />
                 </div>
 
                 <div className="grid md:grid-cols-2">
-                  <div className="border-b border-neutral-200 px-5 py-6 md:border-b-0 md:border-r md:px-8">
+                  <div className="min-w-0 border-b border-neutral-200 px-5 py-6 md:border-b-0 md:border-r md:px-8">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">盃賽亞軍</p>
-                    <p className="mt-2 text-xl font-black">{cupRunnerUp?.name}</p>
+                    <div className="mt-2 min-w-0">
+                      <AutoFitText text={cupRunnerUp?.name ?? '—'} minFontSize={8} className="text-xl font-black" />
+                    </div>
                   </div>
-                  <div className="px-5 py-6 md:px-8">
+                  <div className="min-w-0 px-5 py-6 md:px-8">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">盃賽季軍</p>
-                    <p className="mt-2 text-xl font-black">{cupThird?.name}</p>
+                    <div className="mt-2 min-w-0">
+                      <AutoFitText text={cupThird?.name ?? '—'} minFontSize={8} className="text-xl font-black" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col justify-between bg-[#4a1010] p-7 text-white md:p-9">
-                <div>
+              <div className="flex min-w-0 flex-col justify-between bg-[#4a1010] p-7 text-white md:p-9">
+                <div className="min-w-0">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#d7b86e]">Plate Champion</p>
-                  <p className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">{plateChampion?.name}</p>
+                  <div className="mt-3 min-w-0">
+                    <AutoFitText
+                      text={plateChampion?.name ?? '—'}
+                      minFontSize={10}
+                      lineHeight={1}
+                      className="font-display text-3xl font-black md:text-4xl"
+                    />
+                  </div>
                 </div>
-                <div className="mt-12 border-t border-white/15 pt-5">
+                <div className="mt-12 min-w-0 border-t border-white/15 pt-5">
                   <p className="text-xs font-bold text-white/50">盤賽亞軍</p>
-                  <p className="mt-1 text-base font-black">{plateRunnerUp?.name}</p>
+                  <div className="mt-1 min-w-0">
+                    <AutoFitText text={plateRunnerUp?.name ?? '—'} minFontSize={7} className="text-base font-black" />
+                  </div>
                   {plateThird && (
-                    <p className="mt-4 text-xs font-bold text-white/50">盤賽季軍　<span className="text-white">{plateThird.name}</span></p>
+                    <div className="mt-4 min-w-0">
+                      <AutoFitText
+                        text={`盤賽季軍　${plateThird.name}`}
+                        minFontSize={6}
+                        className="text-xs font-bold text-white/50"
+                      />
+                    </div>
                   )}
                 </div>
               </div>

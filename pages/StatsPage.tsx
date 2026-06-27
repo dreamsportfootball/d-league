@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
+import AutoFitText from '../components/AutoFitText';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -305,11 +306,19 @@ const StatsPage: React.FC = () => {
                       <div key={suspension.id} className="grid gap-4 py-5 md:grid-cols-[1fr_auto] md:items-center">
                         <div className="flex min-w-0 items-center gap-3">
                           {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
-                          <div className="min-w-0">
+                          <div className="min-w-0 flex-1">
                             <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
-                            <p className="mt-1 text-xs font-bold text-neutral-400">
-                              {team?.shortName ?? suspension.teamIdAtIssue} · {suspensionReasonLabel[suspension.reason]}
-                            </p>
+                            <div className="mt-1 flex min-w-0 items-center gap-1 text-xs font-bold text-neutral-400">
+                              <div className="min-w-0 flex-1">
+                                <AutoFitText
+                                  text={team?.shortName ?? suspension.teamIdAtIssue}
+                                  maxFontSize={12}
+                                  minFontSize={6}
+                                  className="font-bold text-neutral-400"
+                                />
+                              </div>
+                              <span className="shrink-0">· {suspensionReasonLabel[suspension.reason]}</span>
+                            </div>
                           </div>
                         </div>
                         <div className="text-left md:text-right">
@@ -381,11 +390,16 @@ const StatsPage: React.FC = () => {
                       <span className={`block break-words tracking-tight text-brand-black ${isTopScorer ? 'font-display text-2xl font-black italic text-brand-blue md:text-3xl' : 'text-sm font-bold md:text-base'}`}>
                         {player.name}
                       </span>
-                      <div className="mt-1 flex items-center">
-                        <img src={team.logo} alt="" className="mr-2 h-4 w-4 object-contain" />
-                        <span className="truncate text-[10px] font-bold uppercase tracking-wide text-neutral-400">
-                          {team.shortName}
-                        </span>
+                      <div className="mt-1 flex min-w-0 items-center">
+                        <img src={team.logo} alt="" className="mr-2 h-4 w-4 shrink-0 object-contain" />
+                        <div className="min-w-0 flex-1">
+                          <AutoFitText
+                            text={team.shortName}
+                            maxFontSize={10}
+                            minFontSize={6}
+                            className="font-bold uppercase tracking-wide text-neutral-400"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

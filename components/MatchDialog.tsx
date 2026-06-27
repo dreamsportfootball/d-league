@@ -12,8 +12,10 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
-import { MatchStatus } from '../types';
+import { MatchStatus, type Match } from '../types';
+import type { SeasonTeam } from '../types/team';
 import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import AutoFitText from './AutoFitText';
@@ -23,6 +25,7 @@ interface MatchDialogProps {
   matchId: string | null;
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
+  navigationMatchIds?: string[];
 }
 
 type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
@@ -43,7 +46,12 @@ const copyText = async (value: string): Promise<void> => {
   textarea.remove();
 };
 
-const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMatch }) => {
+const MatchDialog: React.FC<MatchDialogProps> = ({
+  matchId,
+  onClose,
+  onSelectMatch,
+  navigationMatchIds,
+}) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -58,11 +66,21 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
 
   const relatedMatches = useMemo(() => {
     if (!match) return [];
+
+    if (navigationMatchIds) {
+      const matchMap = new Map<string, Match>(
+        seasonData.matches.map((item): [string, Match] => [item.id, item]),
+      );
+      return navigationMatchIds
+        .map((id) => matchMap.get(id))
+        .filter((item): item is Match => item !== undefined);
+    }
+
     return seasonData.matches
       .filter((item) => item.league === match.league)
       .slice()
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }, [match, seasonData.matches]);
+  }, [match, navigationMatchIds, seasonData.matches]);
 
   const currentIndex = match ? relatedMatches.findIndex((item) => item.id === match.id) : -1;
   const previousMatch = currentIndex > 0 ? relatedMatches[currentIndex - 1] : null;
@@ -141,6 +159,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
+  const teamProfilesEnabled = activeSeason.id === CURRENT_SEASON_ID;
   const matchInfoText = buildMatchInfoText({
     match,
     seasonShortName: activeSeason.shortName,
@@ -183,6 +202,37 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
     }
   };
 
+  const renderTeamIdentity = (team: SeasonTeam) => {
+    const content = (
+      <>
+        <img
+          src={team.logo}
+          alt={team.name}
+          className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
+        />
+        <div className="w-full min-w-0 text-center">
+          <AutoFitText
+            text={team.name}
+            minFontSize={8}
+            className="text-sm font-black text-brand-black transition-colors group-hover:text-brand-blue sm:text-base"
+          />
+        </div>
+      </>
+    );
+
+    return teamProfilesEnabled ? (
+      <Link
+        to={`/teams/${team.id}?season=${activeSeason.id}`}
+        onClick={onClose}
+        className="group flex min-w-0 flex-col items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+      >
+        {content}
+      </Link>
+    ) : (
+      <div className="group flex min-w-0 flex-col items-center">{content}</div>
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-[1100] flex items-center justify-center p-3 sm:p-6">
       <button
@@ -220,25 +270,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">
-            <Link
-              to={`/teams/${homeTeam.id}?season=${activeSeason.id}`}
-              onClick={onClose}
-              className="group flex min-w-0 flex-col items-center"
-            >
-              <img
-                src={homeTeam.logo}
-                alt={homeTeam.name}
-                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
-              />
-              <div className="w-full min-w-0 text-center">
-                <AutoFitText
-                  text={homeTeam.name}
-                  maxFontSize={18}
-                  minFontSize={8}
-                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
-                />
-              </div>
-            </Link>
+            {renderTeamIdentity(homeTeam)}
 
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
@@ -261,25 +293,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
               </span>
             </div>
 
-            <Link
-              to={`/teams/${awayTeam.id}?season=${activeSeason.id}`}
-              onClick={onClose}
-              className="group flex min-w-0 flex-col items-center"
-            >
-              <img
-                src={awayTeam.logo}
-                alt={awayTeam.name}
-                className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
-              />
-              <div className="w-full min-w-0 text-center">
-                <AutoFitText
-                  text={awayTeam.name}
-                  maxFontSize={18}
-                  minFontSize={8}
-                  className="font-black leading-tight text-brand-black transition-colors group-hover:text-brand-blue"
-                />
-              </div>
-            </Link>
+            {renderTeamIdentity(awayTeam)}
           </div>
 
           <div className="mx-auto mt-7 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:mt-8 sm:flex sm:w-auto sm:max-w-none sm:justify-center">
@@ -335,17 +349,17 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
                 {[
                   { team: homeTeam, players: homePlayers ?? [] },
                   { team: awayTeam, players: awayPlayers ?? [] },
-                ].map(({ team, players }) => (
-                  <div key={team.id}>
+                ].map(({ team: lineupTeam, players: lineupPlayers }) => (
+                  <div key={lineupTeam.id}>
                     <div className="mb-3 flex items-center border-b border-neutral-100 pb-2">
-                      <img src={team.logo} alt="" className="mr-2 h-6 w-6 shrink-0 object-contain" />
+                      <img src={lineupTeam.logo} alt="" className="mr-2 h-6 w-6 shrink-0 object-contain" />
                       <div className="min-w-0 flex-1">
-                        <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-black text-brand-black" />
+                        <AutoFitText text={lineupTeam.name} maxFontSize={14} minFontSize={7} className="font-black text-brand-black" />
                       </div>
                     </div>
-                    {players.length > 0 ? (
+                    {lineupPlayers.length > 0 ? (
                       <div className="space-y-2">
-                        {players.map((player) => player && (
+                        {lineupPlayers.map((player) => player && (
                           <div key={player.id} className="grid grid-cols-[2rem_1fr] text-sm">
                             <span className="font-display font-black tabular-nums text-brand-blue">{player.number}</span>
                             <span className="font-bold text-neutral-700">{player.name}</span>

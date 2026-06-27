@@ -70,7 +70,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         if (!homeTeam || !awayTeam) return null;
 
         const fullDateHeader = formatTaipeiDate(match.timestamp);
-        const mobileDateHeader = formatTaipeiDateWithWeekday(match.timestamp);
+        const mobileDateHeader = formatTaipeiDateWithWeekday(match.timestamp).replaceAll('.', '/');
         const timeStr = formatTaipeiTime(match.timestamp);
         const isNewDate = fullDateHeader !== lastDateHeader;
         if (isNewDate) lastDateHeader = fullDateHeader;
@@ -84,16 +84,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
           <React.Fragment key={match.id}>
             {isNewDate && (
               <>
-                <div
-                  className={`flex items-center border-b border-neutral-100 md:hidden ${
-                    variant === 'team' ? 'mt-2 py-1' : 'mt-4 pb-2 pt-1'
-                  }`}
-                >
-                  <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
-                  <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
-                    {mobileDateHeader}
-                  </span>
-                </div>
+                {variant !== 'team' && (
+                  <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
+                    <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
+                    <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
+                      {mobileDateHeader}
+                    </span>
+                  </div>
+                )}
                 <div
                   className={variant === 'team'
                     ? 'mb-0 mt-4 hidden border-b border-neutral-100 bg-white py-1.5 md:block'
@@ -119,13 +117,13 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
                   className={`w-full border-b border-neutral-100 px-1.5 py-1.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
                 >
-                  <div className="grid min-h-11 grid-cols-[46px_minmax(0,1fr)_42px_minmax(0,1fr)] items-center gap-1">
+                  <div className="grid min-h-11 grid-cols-[82px_minmax(0,1fr)_42px_minmax(0,1fr)] items-center gap-1">
                     <div className="flex min-w-0 flex-col items-start justify-center leading-none">
-                      <span className="font-display text-[11px] font-bold tabular-nums text-neutral-500">
-                        {timeStr}
+                      <span className="whitespace-nowrap font-display text-[9px] font-black tracking-[0.02em] text-neutral-500">
+                        {mobileDateHeader}
                       </span>
-                      <span className="mt-1 text-[8px] font-bold tracking-wide text-neutral-400">
-                        {match.league} 第{match.round}輪
+                      <span className="mt-1 whitespace-nowrap text-[8px] font-bold tracking-wide text-neutral-400">
+                        {timeStr} · {match.league} 第{match.round}輪
                       </span>
                     </div>
 
@@ -180,7 +178,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
                   </div>
                   {administrativeNote && (
-                    <p className="mt-1 truncate pl-[47px] text-[9px] font-bold text-amber-700" title={administrativeNote}>
+                    <p className="mt-1 truncate pl-[83px] text-[9px] font-bold text-amber-700" title={administrativeNote}>
                       {administrativeNote}
                     </p>
                   )}

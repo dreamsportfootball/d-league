@@ -6,7 +6,7 @@ import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
-import { TEAM_PROFILE_SEASON_ID } from '../config/siteConfig';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getSeasonData } from '../services/seasonDataJson';
@@ -170,7 +170,7 @@ const TeamPage: React.FC = () => {
     });
   }, [activeSeason.leagues, activeSeason.rules, eligibleLeagueMatches, leagueTeamCount, seasonData.matchEvents, seasonData.teams, team]);
 
-  if (activeSeasonId !== TEAM_PROFILE_SEASON_ID) {
+  if (activeSeasonId !== CURRENT_SEASON_ID) {
     return <Navigate to={`/standings?season=${activeSeasonId}`} replace />;
   }
 

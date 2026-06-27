@@ -193,17 +193,18 @@ const TeamPage: React.FC = () => {
   const rankValue = team && seasonHasStarted && standing ? standing.rank : '—';
   const playedValue = standing?.played ?? 0;
   const pointsValue = standing?.points ?? 0;
+  const goalsValue = standing?.gf ?? 0;
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white pb-24">
-      <section className="relative overflow-hidden border-b border-neutral-800 bg-neutral-950 px-4 py-10 text-white md:px-12 md:py-16 lg:py-20">
+      <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 text-brand-black md:px-12 md:py-16 lg:py-20">
         <div
-          className="pointer-events-none absolute -right-20 top-12 h-64 w-64 rounded-full opacity-[0.14] blur-3xl md:h-96 md:w-96"
+          className="pointer-events-none absolute -right-20 top-8 h-64 w-64 rounded-full opacity-[0.08] blur-3xl md:h-96 md:w-96"
           style={{ backgroundColor: displayTeam.primaryColor }}
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute bottom-0 left-0 h-px w-full opacity-50"
+          className="pointer-events-none absolute bottom-0 left-0 h-0.5 w-full opacity-70"
           style={{ backgroundColor: displayTeam.primaryColor }}
           aria-hidden="true"
         />
@@ -212,7 +213,7 @@ const TeamPage: React.FC = () => {
           <div className="mb-8 flex min-w-0 items-center justify-between gap-3 md:mb-12">
             <Link
               to={backLink}
-              className="inline-flex min-h-11 min-w-0 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-white/65 transition-colors hover:text-white"
+              className="inline-flex min-h-11 min-w-0 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-brand-black"
             >
               <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
               <span className="truncate">{backLabel}</span>
@@ -222,29 +223,34 @@ const TeamPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid gap-9 xl:grid-cols-[minmax(0,1fr)_360px] xl:items-end xl:gap-14">
-            <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-7">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white p-3 sm:h-32 sm:w-32 sm:p-4 xl:h-36 xl:w-36">
+          <div className="grid gap-9 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-end xl:gap-14">
+            <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-8">
+              <div className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-32 sm:w-32 xl:h-36 xl:w-36">
+                <div
+                  className="pointer-events-none absolute inset-2 rounded-full opacity-10"
+                  style={{ backgroundColor: displayTeam.primaryColor }}
+                  aria-hidden="true"
+                />
                 <img
                   src={displayTeam.logo}
                   alt={`${displayTeam.name} 隊徽`}
-                  className="max-h-full max-w-full object-contain"
+                  className="relative max-h-full max-w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.14)]"
                 />
               </div>
               <div className="min-w-0 pt-1 sm:pt-0">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50 sm:text-xs">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500 sm:text-xs">
                   {leagueLabel} · {activeSeason.shortName} 賽季
                 </p>
-                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-5xl xl:text-6xl">
+                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-brand-black sm:text-5xl xl:text-6xl">
                   {displayTeam.name}
                 </h1>
-                <p className="mt-3 text-xs font-bold text-white/55 sm:text-sm">
-                  球隊簡稱 <span className="ml-2 text-white/85">{displayTeam.shortName}</span>
+                <p className="mt-3 text-xs font-bold text-neutral-500 sm:text-sm">
+                  球隊簡稱 <span className="ml-2 text-brand-black">{displayTeam.shortName}</span>
                 </p>
               </div>
             </div>
 
-            <div className="border-y border-white/15 py-5 xl:py-6">
+            <div className="bg-neutral-950 px-4 py-5 text-white sm:px-6 xl:py-6">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
                   賽季概況
@@ -253,16 +259,20 @@ const TeamPage: React.FC = () => {
                   {team ? leagueLabel : '所選賽季未參賽'}
                 </p>
               </div>
-              <div className="grid grid-cols-3 divide-x divide-white/15">
-                <div className="pr-4">
+              <div className="grid grid-cols-4 divide-x divide-white/15">
+                <div className="pr-3 sm:pr-4">
                   <p className="text-[10px] font-bold tracking-widest text-white/45">排名</p>
                   <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{rankValue}</p>
                 </div>
-                <div className="px-4">
+                <div className="px-3 sm:px-4">
                   <p className="text-[10px] font-bold tracking-widest text-white/45">場次</p>
                   <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{playedValue}</p>
                 </div>
-                <div className="pl-4">
+                <div className="px-3 sm:px-4">
+                  <p className="text-[10px] font-bold tracking-widest text-white/45">進球</p>
+                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{goalsValue}</p>
+                </div>
+                <div className="pl-3 sm:pl-4">
                   <p className="text-[10px] font-bold tracking-widest text-white/45">積分</p>
                   <p className="mt-2 font-display text-3xl font-black tabular-nums text-brand-accent">{pointsValue}</p>
                 </div>
@@ -301,7 +311,7 @@ const TeamPage: React.FC = () => {
           )}
 
           <section aria-labelledby="team-rank-heading">
-            <div className="mb-5 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
+            <div className="mb-3 flex items-end justify-between gap-4 border-b border-neutral-200 pb-3">
               <div className="flex min-w-0 items-center">
                 <TrendingUp className="mr-2 h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
                 <h2 id="team-rank-heading" className="font-display text-2xl font-black uppercase text-brand-black">
@@ -315,7 +325,7 @@ const TeamPage: React.FC = () => {
             {rankHistory.length > 0 ? (
               <TeamRankChart points={rankHistory} teamCount={leagueTeamCount} />
             ) : (
-              <p className="border-y border-neutral-100 py-12 text-center text-sm text-neutral-400">
+              <p className="border-y border-neutral-100 py-10 text-center text-sm text-neutral-400">
                 完成首輪比賽後更新排名走勢
               </p>
             )}

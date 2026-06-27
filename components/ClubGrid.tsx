@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
+import AutoFitText from './AutoFitText';
 import EmptyState from './EmptyState';
 
 const ClubGrid: React.FC = () => {
@@ -75,9 +76,14 @@ const ClubGrid: React.FC = () => {
                       className="relative z-10 max-h-full max-w-full object-contain drop-shadow-md transition-all duration-500 md:grayscale-[30%] md:group-hover:grayscale-0"
                     />
                   </div>
-                  <h4 className="whitespace-nowrap text-center text-[10px] font-bold uppercase tracking-widest text-brand-black transition-colors md:text-sm md:text-neutral-400 md:group-hover:text-brand-black">
-                    {team.shortName}
-                  </h4>
+                  <div className="w-full min-w-0 px-1 text-center">
+                    <AutoFitText
+                      text={team.shortName}
+                      minFontSize={6}
+                      lineHeight={1.15}
+                      className="text-center text-[10px] font-bold uppercase tracking-widest text-brand-black transition-colors md:text-sm md:text-neutral-400 md:group-hover:text-brand-black"
+                    />
+                  </div>
                   <span className="mt-1 text-[9px] font-black uppercase tracking-widest text-brand-blue">
                     {team.leagueId}
                   </span>

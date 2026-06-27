@@ -82,21 +82,15 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
         return (
           <React.Fragment key={match.id}>
-            {isNewDate && (
+            {isNewDate && variant !== 'team' && (
               <>
-                {variant !== 'team' && (
-                  <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
-                    <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
-                    <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
-                      {mobileDateHeader}
-                    </span>
-                  </div>
-                )}
-                <div
-                  className={variant === 'team'
-                    ? 'mb-0 mt-4 hidden border-b border-neutral-100 bg-white py-1.5 md:block'
-                    : 'sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block'}
-                >
+                <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
+                  <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
+                  <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
+                    {mobileDateHeader}
+                  </span>
+                </div>
+                <div className="sticky top-16 z-30 mb-2 mt-8 hidden border-b border-neutral-100 bg-white/95 py-3 backdrop-blur-md md:block">
                   <div className="flex items-center">
                     <div className="mr-3 h-4 w-1 bg-brand-accent" />
                     <span className="font-display text-sm font-black uppercase tracking-[0.15em] text-brand-black">
@@ -190,16 +184,16 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-2.5 text-left transition-colors md:grid md:grid-cols-[92px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
+                  className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-2.5 text-left transition-colors md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
 
                   <div className="flex min-w-0 flex-col items-start justify-center leading-none">
-                    <span className="font-display text-[13px] font-bold tabular-nums text-neutral-500 transition-colors group-hover:text-brand-black">
-                      {timeStr}
+                    <span className="whitespace-nowrap font-display text-[11px] font-black tracking-[0.03em] text-neutral-500 transition-colors group-hover:text-brand-black">
+                      {mobileDateHeader}
                     </span>
-                    <span className="mt-1 text-[9px] font-bold uppercase tracking-wider text-neutral-400">
-                      {match.league} 第{match.round}輪
+                    <span className="mt-1 whitespace-nowrap text-[9px] font-bold uppercase tracking-wider text-neutral-400">
+                      {timeStr} · {match.league} 第{match.round}輪
                     </span>
                   </div>
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CalendarDays, TrendingUp, UserRound } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import AutoFitText from '../components/AutoFitText';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
@@ -196,7 +197,7 @@ const TeamPage: React.FC = () => {
   const goalsValue = standing?.gf ?? 0;
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white pb-24">
+    <div className="min-h-screen overflow-x-hidden bg-white pb-0 md:pb-24">
       <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 text-brand-black md:px-12 md:py-16 lg:py-20">
         <div
           className="pointer-events-none absolute -right-20 top-8 h-64 w-64 rounded-full opacity-[0.08] blur-3xl md:h-96 md:w-96"
@@ -210,7 +211,7 @@ const TeamPage: React.FC = () => {
         />
 
         <div className="relative mx-auto max-w-7xl">
-          <div className="mb-8 flex min-w-0 items-center justify-between gap-3 md:mb-12">
+          <div className="mb-8 flex min-w-0 items-center justify-between gap-2 md:mb-12 md:gap-3">
             <Link
               to={backLink}
               className="inline-flex min-h-11 min-w-0 items-center text-[11px] font-bold uppercase tracking-[0.12em] text-neutral-500 transition-colors hover:text-brand-black"
@@ -218,8 +219,8 @@ const TeamPage: React.FC = () => {
               <ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
               <span className="truncate">{backLabel}</span>
             </Link>
-            <div className="shrink-0 [&>div>button:first-child]:h-11 [&_[role=option]]:min-h-11">
-              <SeasonSelector />
+            <div className="shrink-0">
+              <SeasonSelector compact />
             </div>
           </div>
 
@@ -236,16 +237,29 @@ const TeamPage: React.FC = () => {
                 className="relative max-h-full max-w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.14)]"
               />
             </div>
-            <div className="min-w-0 pt-1 sm:pt-0">
+            <div className="min-w-0 flex-1 pt-1 sm:pt-0">
               <p className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500 sm:text-xs">
                 {leagueLabel} · {activeSeason.shortName} 賽季
               </p>
-              <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-brand-black sm:text-5xl xl:text-6xl">
-                {displayTeam.name}
+              <h1 className="mt-3 min-w-0">
+                <AutoFitText
+                  text={displayTeam.name}
+                  minFontSize={16}
+                  lineHeight={0.98}
+                  className="font-display text-4xl font-black tracking-tight text-brand-black sm:text-5xl xl:text-6xl"
+                />
               </h1>
-              <p className="mt-3 text-xs font-bold text-neutral-500 sm:text-sm">
-                球隊簡稱 <span className="ml-2 text-brand-black">{displayTeam.shortName}</span>
-              </p>
+              <div className="mt-3 flex min-w-0 items-baseline gap-2 text-xs font-bold text-neutral-500 sm:text-sm">
+                <span className="shrink-0">球隊簡稱</span>
+                <div className="min-w-0 flex-1">
+                  <AutoFitText
+                    text={displayTeam.shortName}
+                    minFontSize={7}
+                    lineHeight={1.2}
+                    className="text-xs font-bold text-brand-black sm:text-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

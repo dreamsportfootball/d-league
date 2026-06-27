@@ -2,10 +2,10 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
 const expectedMessages = [
-  '已有 11 支球隊完成正式報名',
+  '已有 12 支球隊完成正式報名',
   '2026/27 賽季持續接受報名中',
   'L1、L2、L3 各級別預計錄取 6 支球隊',
-  '更新至 2026/06/26',
+  '更新至 2026/06/27',
   '報名隊數不代表最終錄取結果',
 ];
 const forbiddenMessages = ['10／18', '55.6%', '剩餘 8 隊', '名額即將額滿'];

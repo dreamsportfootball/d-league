@@ -31,7 +31,9 @@ const TeamRankChart: React.FC<TeamRankChartProps> = ({ points, teamCount }) => {
     .map((point, index) => `${xPosition(index)},${yPosition(point.rank)}`)
     .join(' ');
   const labelStep = Math.max(1, Math.ceil(points.length / 6));
-  const labelRanks = [...new Set([1, Math.ceil(teamCount / 2), teamCount])];
+  const labelRanks = teamCount <= 6
+    ? Array.from({ length: teamCount }, (_, index) => index + 1)
+    : [...new Set([1, Math.ceil(teamCount / 2), teamCount])];
 
   return (
     <div

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
-import { MatchStatus } from '../types';
+import { MatchStatus, type Match } from '../types';
 import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import AutoFitText from './AutoFitText';
@@ -23,6 +23,7 @@ interface MatchDialogProps {
   matchId: string | null;
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
+  navigationMatchIds?: string[];
 }
 
 type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
@@ -43,7 +44,12 @@ const copyText = async (value: string): Promise<void> => {
   textarea.remove();
 };
 
-const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMatch }) => {
+const MatchDialog: React.FC<MatchDialogProps> = ({
+  matchId,
+  onClose,
+  onSelectMatch,
+  navigationMatchIds,
+}) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -58,11 +64,21 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
 
   const relatedMatches = useMemo(() => {
     if (!match) return [];
+
+    if (navigationMatchIds) {
+      const matchMap = new Map<string, Match>(
+        seasonData.matches.map((item): [string, Match] => [item.id, item]),
+      );
+      return navigationMatchIds
+        .map((id) => matchMap.get(id))
+        .filter((item): item is Match => item !== undefined);
+    }
+
     return seasonData.matches
       .filter((item) => item.league === match.league)
       .slice()
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }, [match, seasonData.matches]);
+  }, [match, navigationMatchIds, seasonData.matches]);
 
   const currentIndex = match ? relatedMatches.findIndex((item) => item.id === match.id) : -1;
   const previousMatch = currentIndex > 0 ? relatedMatches[currentIndex - 1] : null;
@@ -335,17 +351,17 @@ const MatchDialog: React.FC<MatchDialogProps> = ({ matchId, onClose, onSelectMat
                 {[
                   { team: homeTeam, players: homePlayers ?? [] },
                   { team: awayTeam, players: awayPlayers ?? [] },
-                ].map(({ team, players }) => (
-                  <div key={team.id}>
+                ].map(({ team: lineupTeam, players: lineupPlayers }) => (
+                  <div key={lineupTeam.id}>
                     <div className="mb-3 flex items-center border-b border-neutral-100 pb-2">
-                      <img src={team.logo} alt="" className="mr-2 h-6 w-6 shrink-0 object-contain" />
+                      <img src={lineupTeam.logo} alt="" className="mr-2 h-6 w-6 shrink-0 object-contain" />
                       <div className="min-w-0 flex-1">
-                        <AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-black text-brand-black" />
+                        <AutoFitText text={lineupTeam.name} maxFontSize={14} minFontSize={7} className="font-black text-brand-black" />
                       </div>
                     </div>
-                    {players.length > 0 ? (
+                    {lineupPlayers.length > 0 ? (
                       <div className="space-y-2">
-                        {players.map((player) => player && (
+                        {lineupPlayers.map((player) => player && (
                           <div key={player.id} className="grid grid-cols-[2rem_1fr] text-sm">
                             <span className="font-display font-black tabular-nums text-brand-blue">{player.number}</span>
                             <span className="font-bold text-neutral-700">{player.name}</span>

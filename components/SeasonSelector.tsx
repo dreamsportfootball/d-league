@@ -40,18 +40,18 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   };
 
   return (
-    <div ref={rootRef} className={`relative ml-auto ${compact ? 'w-[124px]' : 'w-[148px]'}`}>
+    <div ref={rootRef} className={`relative ml-auto ${compact ? 'w-[124px] md:w-[148px]' : 'w-[148px]'}`}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
         aria-haspopup="listbox"
         aria-expanded={open}
         className={`group flex w-full items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
-          compact ? 'h-11 rounded-lg px-2.5' : 'h-9 rounded-lg px-3'
+          compact ? 'h-11 rounded-lg px-2.5 md:h-9 md:px-3' : 'h-9 rounded-lg px-3'
         }`}
       >
         <span className="flex min-w-0 items-baseline gap-1 whitespace-nowrap">
-          <span className={`font-display font-black tracking-wide ${compact ? 'text-xs' : 'text-[13px]'}`}>
+          <span className={`font-display font-black tracking-wide ${compact ? 'text-xs md:text-[13px]' : 'text-[13px]'}`}>
             {activeSeason.shortName}
           </span>
           <span className="text-[9px] font-bold text-neutral-400">賽季</span>

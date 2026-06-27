@@ -17,6 +17,16 @@ const asset = (value, label) => {
   if (value.startsWith('/') || value.startsWith('d-league/')) fail(`${label}: invalid asset path ${value}`);
 };
 const validDate = (value) => !Number.isNaN(new Date(value).getTime());
+const validExternalUrl = (value) => {
+  if (typeof value !== 'string' || !value.trim()) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
+const supportedSocialPlatforms = new Set(['instagram', 'facebook', 'youtube', 'website']);
 const playerTeamAt = (player, timestamp) => {
   if (!player?.registrations?.length) return player?.teamId;
   const target = new Date(timestamp).getTime();
@@ -58,6 +68,19 @@ for (const season of seasons) {
     if (team.seasonId !== season) fail(`${season} team ${team.id}: invalid seasonId`);
     if (team.competitionStatus && !['ACTIVE', 'WITHDRAWN'].includes(team.competitionStatus)) {
       fail(`${season} team ${team.id}: invalid competitionStatus`);
+    }
+    if (team.socialLinks !== undefined) {
+      if (!team.socialLinks || typeof team.socialLinks !== 'object' || Array.isArray(team.socialLinks)) {
+        fail(`${season} team ${team.id}: socialLinks must be an object`);
+      }
+      for (const [platform, url] of Object.entries(team.socialLinks)) {
+        if (!supportedSocialPlatforms.has(platform)) {
+          fail(`${season} team ${team.id}: unsupported social platform ${platform}`);
+        }
+        if (!validExternalUrl(url)) {
+          fail(`${season} team ${team.id}: invalid ${platform} URL`);
+        }
+      }
     }
     if (team.pointsAdjustment !== undefined && !Number.isInteger(team.pointsAdjustment)) {
       fail(`${season} team ${team.id}: pointsAdjustment must be an integer`);

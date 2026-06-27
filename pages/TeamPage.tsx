@@ -223,62 +223,58 @@ const TeamPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid gap-9 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-end xl:gap-14">
-            <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-8">
-              <div className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-32 sm:w-32 xl:h-36 xl:w-36">
-                <div
-                  className="pointer-events-none absolute inset-2 rounded-full opacity-10"
-                  style={{ backgroundColor: displayTeam.primaryColor }}
-                  aria-hidden="true"
-                />
-                <img
-                  src={displayTeam.logo}
-                  alt={`${displayTeam.name} 隊徽`}
-                  className="relative max-h-full max-w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.14)]"
-                />
-              </div>
-              <div className="min-w-0 pt-1 sm:pt-0">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500 sm:text-xs">
-                  {leagueLabel} · {activeSeason.shortName} 賽季
-                </p>
-                <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-brand-black sm:text-5xl xl:text-6xl">
-                  {displayTeam.name}
-                </h1>
-                <p className="mt-3 text-xs font-bold text-neutral-500 sm:text-sm">
-                  球隊簡稱 <span className="ml-2 text-brand-black">{displayTeam.shortName}</span>
-                </p>
-              </div>
+          <div className="flex min-w-0 items-start gap-5 sm:items-center sm:gap-8">
+            <div className="relative flex h-24 w-24 shrink-0 items-center justify-center sm:h-32 sm:w-32 xl:h-36 xl:w-36">
+              <div
+                className="pointer-events-none absolute inset-2 rounded-full opacity-10"
+                style={{ backgroundColor: displayTeam.primaryColor }}
+                aria-hidden="true"
+              />
+              <img
+                src={displayTeam.logo}
+                alt={`${displayTeam.name} 隊徽`}
+                className="relative max-h-full max-w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.14)]"
+              />
             </div>
-
-            <div className="bg-neutral-950 px-4 py-5 text-white sm:px-6 xl:py-6">
-              <div className="mb-4 flex items-center justify-between gap-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/45">
-                  賽季概況
-                </p>
-                <p className="text-[10px] font-bold text-white/45">
-                  {team ? leagueLabel : '所選賽季未參賽'}
-                </p>
-              </div>
-              <div className="grid grid-cols-4 divide-x divide-white/15">
-                <div className="pr-3 sm:pr-4">
-                  <p className="text-[10px] font-bold tracking-widest text-white/45">排名</p>
-                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{rankValue}</p>
-                </div>
-                <div className="px-3 sm:px-4">
-                  <p className="text-[10px] font-bold tracking-widest text-white/45">場次</p>
-                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{playedValue}</p>
-                </div>
-                <div className="px-3 sm:px-4">
-                  <p className="text-[10px] font-bold tracking-widest text-white/45">進球</p>
-                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-white">{goalsValue}</p>
-                </div>
-                <div className="pl-3 sm:pl-4">
-                  <p className="text-[10px] font-bold tracking-widest text-white/45">積分</p>
-                  <p className="mt-2 font-display text-3xl font-black tabular-nums text-brand-accent">{pointsValue}</p>
-                </div>
-              </div>
+            <div className="min-w-0 pt-1 sm:pt-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-neutral-500 sm:text-xs">
+                {leagueLabel} · {activeSeason.shortName} 賽季
+              </p>
+              <h1 className="mt-3 break-words font-display text-4xl font-black leading-[0.98] tracking-tight text-brand-black sm:text-5xl xl:text-6xl">
+                {displayTeam.name}
+              </h1>
+              <p className="mt-3 text-xs font-bold text-neutral-500 sm:text-sm">
+                球隊簡稱 <span className="ml-2 text-brand-black">{displayTeam.shortName}</span>
+              </p>
             </div>
           </div>
+
+          <dl className="mt-9 grid grid-cols-4 divide-x divide-neutral-300/80 border-t border-neutral-300/80 pt-5 sm:mt-10 sm:pt-6">
+            <div className="px-2 text-center sm:px-6">
+              <dt className="text-[10px] font-bold tracking-widest text-neutral-500">排名</dt>
+              <dd className="mt-1.5 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">
+                {rankValue}
+              </dd>
+            </div>
+            <div className="px-2 text-center sm:px-6">
+              <dt className="text-[10px] font-bold tracking-widest text-neutral-500">場次</dt>
+              <dd className="mt-1.5 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">
+                {playedValue}
+              </dd>
+            </div>
+            <div className="px-2 text-center sm:px-6">
+              <dt className="text-[10px] font-bold tracking-widest text-neutral-500">進球</dt>
+              <dd className="mt-1.5 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">
+                {goalsValue}
+              </dd>
+            </div>
+            <div className="px-2 text-center sm:px-6">
+              <dt className="text-[10px] font-bold tracking-widest text-neutral-500">積分</dt>
+              <dd className="mt-1.5 font-display text-2xl font-black tabular-nums text-brand-blue sm:text-3xl">
+                {pointsValue}
+              </dd>
+            </div>
+          </dl>
         </div>
       </section>
 

@@ -306,7 +306,7 @@ const CupPage: React.FC = () => {
           }}
           aria-hidden="true"
         />
-        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-[#240b0b] via-[#4a1010]/95 to-transparent lg:w-3/4" aria-hidden="true" />
+        <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-[#240b0b] via-[#4a1010]/72 to-transparent lg:w-2/3" aria-hidden="true" />
 
         <div className="relative mx-auto grid min-h-[720px] max-w-7xl lg:grid-cols-[1.05fr_.95fr]">
           <div className="flex flex-col justify-center px-4 py-14 md:px-12 md:py-20 lg:py-24">
@@ -364,7 +364,7 @@ const CupPage: React.FC = () => {
               alt={`${cupChampion?.name ?? '盃賽冠軍'}頒獎典禮`}
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#240b0b] via-transparent to-black/10 lg:bg-gradient-to-r lg:from-[#240b0b]/65 lg:via-transparent lg:to-transparent" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#240b0b]/55 via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#240b0b]/30 lg:via-transparent lg:to-transparent" aria-hidden="true" />
             <div className="absolute bottom-6 right-5 text-right md:bottom-10 md:right-10">
               <p className="font-display text-5xl font-black leading-none text-white/20 md:text-7xl">CHAMPIONS</p>
             </div>

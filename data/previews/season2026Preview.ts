@@ -11,6 +11,12 @@ export const preview2026Teams: SeasonTeam[] = [
     logo: 'assets/teams/chiayi.png',
     primaryColor: '#0e3679',
     secondaryColor: '#ffffff',
+    socialLinks: {
+      instagram: 'https://www.instagram.com/d.league_tw/',
+      facebook: 'https://www.facebook.com/profile.php?id=61576222172219',
+      youtube: 'https://www.youtube.com/@DreamSportFootball',
+      website: 'https://dreamsportfootball.github.io/d-league/',
+    },
   },
   {
     id: 'preview26_l1_black',

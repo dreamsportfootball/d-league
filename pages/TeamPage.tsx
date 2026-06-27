@@ -1,5 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, CalendarDays, TrendingUp, UserRound } from 'lucide-react';
+import {
+  ArrowLeft,
+  CalendarDays,
+  Facebook,
+  Globe2,
+  Instagram,
+  TrendingUp,
+  UserRound,
+  Youtube,
+} from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import EmptyState from '../components/EmptyState';
@@ -11,12 +20,19 @@ import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getSeasonData } from '../services/seasonDataJson';
 import { MatchStatus, type Match } from '../types';
-import type { SeasonTeam } from '../types/team';
+import type { SeasonTeam, TeamSocialLinks } from '../types/team';
 
 interface RoundBucket {
   round: string;
   matches: Match[];
   firstKickoff: number;
+}
+
+interface TeamSocialLinkItem {
+  platform: keyof TeamSocialLinks;
+  label: string;
+  href: string;
+  icon: React.ReactNode;
 }
 
 const getTeamIdentity = (team: SeasonTeam): string => team.identityId ?? team.id;
@@ -25,6 +41,57 @@ const isResolvedMatch = (match: Match): boolean =>
   match.status === MatchStatus.FINISHED ||
   match.resultType === 'VOID' ||
   (match.homeScore !== null && match.awayScore !== null);
+
+const isSafeExternalUrl = (value: string): boolean => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
+
+const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
+  const links = team.socialLinks;
+  if (!links) return [];
+
+  const candidates: Array<TeamSocialLinkItem | null> = [
+    links.instagram && isSafeExternalUrl(links.instagram)
+      ? {
+          platform: 'instagram',
+          label: 'Instagram',
+          href: links.instagram,
+          icon: <Instagram className="h-4 w-4" aria-hidden="true" />,
+        }
+      : null,
+    links.facebook && isSafeExternalUrl(links.facebook)
+      ? {
+          platform: 'facebook',
+          label: 'Facebook',
+          href: links.facebook,
+          icon: <Facebook className="h-4 w-4" aria-hidden="true" />,
+        }
+      : null,
+    links.youtube && isSafeExternalUrl(links.youtube)
+      ? {
+          platform: 'youtube',
+          label: 'YouTube',
+          href: links.youtube,
+          icon: <Youtube className="h-4 w-4" aria-hidden="true" />,
+        }
+      : null,
+    links.website && isSafeExternalUrl(links.website)
+      ? {
+          platform: 'website',
+          label: '官方網站',
+          href: links.website,
+          icon: <Globe2 className="h-4 w-4" aria-hidden="true" />,
+        }
+      : null,
+  ];
+
+  return candidates.filter((item): item is TeamSocialLinkItem => item !== null);
+};
 
 const TeamPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,6 +128,11 @@ const TeamPage: React.FC = () => {
   const displayTeam = team;
   const backLink = '/#teams';
   const backLabel = '返回參賽球隊';
+
+  const socialLinks = useMemo(
+    () => (displayTeam ? getTeamSocialLinks(displayTeam) : []),
+    [displayTeam],
+  );
 
   const players = useMemo(
     () =>
@@ -257,6 +329,23 @@ const TeamPage: React.FC = () => {
                   />
                 </div>
               </div>
+              {socialLinks.length > 0 && (
+                <div className="mt-4 flex flex-wrap items-center gap-2" aria-label={`${displayTeam.name} 社群連結`}>
+                  {socialLinks.map((link) => (
+                    <a
+                      key={link.platform}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={link.label}
+                      aria-label={`前往 ${displayTeam.name} ${link.label}`}
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                    >
+                      {link.icon}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

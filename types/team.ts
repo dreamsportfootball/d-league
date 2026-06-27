@@ -2,6 +2,7 @@ import type { LeagueId, SeasonId } from './season';
 
 export interface SeasonTeam {
   id: string;
+  identityId?: string;
   seasonId: SeasonId;
   leagueId: LeagueId;
   name: string;

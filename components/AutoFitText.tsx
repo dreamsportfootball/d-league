@@ -31,7 +31,8 @@ const AutoFitText: React.FC<AutoFitTextProps> = ({
       if (availableWidth <= 0) return;
 
       element.style.fontSize = maxFontSize ? `${maxFontSize}px` : '';
-      const naturalFontSize = maxFontSize ?? Number.parseFloat(window.getComputedStyle(element).fontSize) || 16;
+      const computedFontSize = Number.parseFloat(window.getComputedStyle(element).fontSize) || 16;
+      const naturalFontSize = maxFontSize ?? computedFontSize;
       const requiredWidth = element.scrollWidth;
       let nextSize = requiredWidth > availableWidth
         ? Math.max(minFontSize, (naturalFontSize * availableWidth) / requiredWidth)

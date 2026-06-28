@@ -6,7 +6,8 @@ interface StaffPartnerTeamPopupConfig {
   showDelayMs: number;
   eyebrow: string;
   title: string;
-  intro: string;
+  introQuestion: string;
+  introCallout: string;
   targetLeagues: readonly LeagueId[];
   slotsPerLeague: number;
   tasks: readonly string[];
@@ -32,7 +33,8 @@ export const STAFF_PARTNER_TEAM_POPUP: StaffPartnerTeamPopupConfig = {
   showDelayMs: 300,
   eyebrow: 'D LEAGUE 工作人員合作隊招募',
   title: '踢聯賽，也成為比賽日的一份子',
-  intro: '想參加新賽季，同時減輕球隊報名費負擔？現正招募工作人員合作隊伍',
+  introQuestion: '想參加新賽季，同時減輕球隊報名費負擔？',
+  introCallout: '現正招募工作人員合作隊伍',
   targetLeagues: ['L2', 'L3'],
   slotsPerLeague: 1,
   tasks: ['器材搬運', '場地設置', '比賽期間撿球', '賽後場地整理'],

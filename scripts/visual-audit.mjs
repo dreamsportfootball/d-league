@@ -61,7 +61,7 @@ const makeUrl = (routePath) => `${baseUrl}/#${routePath}`;
 const waitForStablePage = async (page) => {
   await page.waitForLoadState('domcontentloaded');
   await page.waitForSelector('#root > *', { timeout: 12000 });
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(650);
 };
 
 const collectDiagnostics = async (page) =>
@@ -135,6 +135,18 @@ const auditViewport = async (viewport) => {
 
       assert('no-horizontal-overflow', !diagnostics.horizontalOverflow, `${diagnostics.documentWidth}/${diagnostics.viewportWidth}`);
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
+
+      if (route.name === 'home') {
+        const staffPopupVisible = await page.getByRole('dialog', { name: /踢聯賽，也成為比賽日的一份子/ }).isVisible();
+        assert('home-shows-staff-partner-popup', staffPopupVisible, 'Expected staff partner team recruitment popup');
+        assert(
+          'staff-popup-shows-required-details',
+          diagnostics.bodyText.includes('L2、L3 各限 1 隊') &&
+            diagnostics.bodyText.includes('專屬報名費方案') &&
+            diagnostics.bodyText.includes('比賽日提供飲料及便當'),
+          'Expected league limits, fee arrangement and match-day meal support',
+        );
+      }
 
       if (route.name === 'standings-2026') {
         const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · L1';
@@ -242,6 +254,11 @@ const auditInteractiveCase = async (testCase) => {
     let afterCount = null;
 
     if (testCase.action === 'mobile-menu') {
+      const popupCloseButton = page.getByRole('button', { name: '關閉工作人員合作隊招募' }).last();
+      if (await popupCloseButton.isVisible()) {
+        await popupCloseButton.click();
+        await page.waitForTimeout(150);
+      }
       await page.getByRole('button', { name: /開啟.*選單|選單/i }).last().click();
     } else if (testCase.action === 'load-more') {
       beforeCount = await page.locator('main a[href*="/news/"]').count();

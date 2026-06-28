@@ -4,6 +4,7 @@ import {
   Check,
   Instagram,
   PackageOpen,
+  Percent,
   UsersRound,
   Utensils,
   Wrench,
@@ -150,7 +151,32 @@ const StaffPartnerTeamPopup: React.FC = () => {
         </header>
 
         <div className="px-5 py-5 sm:px-8 sm:py-7">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-8">
+          <section
+            aria-labelledby="staff-partner-offer-heading"
+            className="border border-brand-accent bg-brand-accent px-4 py-3.5 text-brand-black sm:px-5 sm:py-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-black text-brand-accent sm:h-11 sm:w-11">
+                <Percent className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-brand-black/65 sm:text-[10px]">
+                  {STAFF_PARTNER_TEAM_POPUP.offerEyebrow}
+                </p>
+                <h3
+                  id="staff-partner-offer-heading"
+                  className="mt-0.5 font-display text-[22px] font-black uppercase leading-none tracking-tight sm:text-2xl"
+                >
+                  {STAFF_PARTNER_TEAM_POPUP.offerTitle}
+                </h3>
+                <p className="mt-1.5 text-[10px] font-bold leading-4 text-brand-black/70 sm:text-[11px]">
+                  {STAFF_PARTNER_TEAM_POPUP.offerNote}
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-8">
             <section aria-labelledby="staff-partner-tasks-heading">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Wrench className="h-3.5 w-3.5 shrink-0 text-brand-blue sm:h-4 sm:w-4" aria-hidden="true" />
@@ -172,7 +198,7 @@ const StaffPartnerTeamPopup: React.FC = () => {
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Utensils className="h-3.5 w-3.5 shrink-0 text-brand-blue sm:h-4 sm:w-4" aria-hidden="true" />
                 <h3 id="staff-partner-benefits-heading" className="text-[10px] font-black uppercase leading-4 tracking-[0.08em] text-brand-black sm:text-xs sm:tracking-[0.16em]">
-                  合作隊伍專屬安排
+                  其他合作安排
                 </h3>
               </div>
               <ul className="mt-2.5 space-y-2 sm:mt-3 sm:space-y-2.5">

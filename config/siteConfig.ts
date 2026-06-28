@@ -10,6 +10,9 @@ interface StaffPartnerTeamPopupConfig {
   introCallout: string;
   targetLeagues: readonly LeagueId[];
   slotsPerLeague: number;
+  offerEyebrow: string;
+  offerTitle: string;
+  offerNote: string;
   tasks: readonly string[];
   benefits: readonly string[];
   supportNote: string;
@@ -37,9 +40,12 @@ export const STAFF_PARTNER_TEAM_POPUP: StaffPartnerTeamPopupConfig = {
   introCallout: '現正招募工作人員合作隊伍',
   targetLeagues: ['L2', 'L3'],
   slotsPerLeague: 1,
+  offerEyebrow: '合作隊專屬',
+  offerTitle: '報名費優惠方案',
+  offerNote: '實際優惠內容及合作方式請私訊確認',
   tasks: ['器材搬運', '場地設置', '比賽期間撿球', '賽後場地整理'],
-  benefits: ['專屬報名費方案', '優先錄取資格', '比賽日提供飲料及便當'],
+  benefits: ['優先錄取資格', '比賽日提供飲料及便當'],
   supportNote: '實際合作安排及錄取結果以主辦單位最終確認為準',
-  ctaLabel: 'Instagram 私訊了解詳情',
+  ctaLabel: '私訊了解報名費優惠',
   ctaUrl: D_LEAGUE_INSTAGRAM_URL,
 };

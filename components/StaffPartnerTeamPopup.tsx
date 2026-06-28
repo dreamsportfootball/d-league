@@ -129,7 +129,7 @@ const StaffPartnerTeamPopup: React.FC = () => {
 
           <h2
             id="staff-partner-popup-title"
-            className="mt-4 max-w-md font-display text-3xl font-black uppercase leading-[1.05] tracking-tight sm:text-4xl"
+            className="mt-4 max-w-none whitespace-nowrap font-display text-[20px] font-black uppercase leading-tight tracking-[-0.02em] sm:max-w-md sm:whitespace-normal sm:text-4xl sm:leading-[1.05] sm:tracking-tight"
           >
             {STAFF_PARTNER_TEAM_POPUP.title}
           </h2>
@@ -137,7 +137,11 @@ const StaffPartnerTeamPopup: React.FC = () => {
             id="staff-partner-popup-description"
             className="mt-4 max-w-lg text-sm font-medium leading-6 text-white/70 sm:text-[15px]"
           >
-            {STAFF_PARTNER_TEAM_POPUP.intro}
+            <span className="block sm:inline">{STAFF_PARTNER_TEAM_POPUP.introQuestion}</span>
+            <span className="block sm:inline">
+              <span className="hidden sm:inline"> </span>
+              {STAFF_PARTNER_TEAM_POPUP.introCallout}
+            </span>
           </p>
 
           <div className="mt-5 inline-flex min-h-11 items-center border border-brand-accent/60 bg-brand-accent px-4 py-2 text-sm font-black text-brand-black">

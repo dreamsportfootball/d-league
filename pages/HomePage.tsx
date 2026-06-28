@@ -8,6 +8,7 @@ import MatchCenter from '../components/MatchCenter';
 import NewsSection from '../components/NewsSection';
 import PhotoCarousel from '../components/PhotoCarousel';
 import RegistrationOverview from '../components/RegistrationOverview';
+import StaffPartnerTeamPopup from '../components/StaffPartnerTeamPopup';
 import Standings from '../components/Standings';
 import Tabs from '../components/Tabs';
 import VideoHub from '../components/VideoHub';
@@ -64,6 +65,7 @@ const HomePage: React.FC = () => {
   if (activeSeason.status === 'registration') {
     return (
       <div className="w-full overflow-x-hidden">
+        <StaffPartnerTeamPopup />
         <Hero />
         <RegistrationOverview />
         <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">

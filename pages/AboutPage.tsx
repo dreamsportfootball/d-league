@@ -39,18 +39,26 @@ const OriginVisionSection: React.FC = () => (
           <div className="prose prose-neutral max-w-none">
             <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
               <span className="mr-2 font-display text-lg font-black uppercase text-brand-blue">D LEAGUE</span>
-              我們的理念很簡單：讓更多人<span className="border-b-2 border-brand-accent/30 font-bold text-brand-black">能夠踢、願意踢、享受踢</span>
+              的理念很簡單：讓更多人<span className="border-b-2 border-brand-accent/30 font-bold text-brand-black">能夠踢、願意踢、享受踢</span>
             </p>
             <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
-              這裡不只是球員的舞台，也是裁判的舞台。整個賽季將由資深裁判帶領資淺裁判，因為我們相信，真正的比賽就是最好的養分
+              我們希望先把環境建立起來，讓不同程度、不同背景的球員，都有一個可以持續參與正式比賽的平台
+            </p>
+            <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
+              這裡不只是球員的舞台，也是裁判成長的舞台<br />
+              整個賽季將由資深裁判帶領資淺裁判，因為我們相信，真正的比賽，就是最好的養分
+            </p>
+            <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
+              Dreamsport 背後帶著「夢想的港口」之意<br />
+              我們希望創造一個環境、一個平台，讓每一個熱愛足球的人，都能在這裡找到屬於自己的位置
             </p>
             <p className="mb-8 text-sm font-medium leading-loose text-neutral-600 md:text-base">
-              Dreamsport 其實背後帶著「夢想的港口」的意思，希望能創造一個環境、一個平台。一定不完美，但至少比沒有好。四年前我就想辦聯賽了，只希望這個聯賽能夠順利走下去
+              這個聯賽不會一開始就完美，但我們會一步一步把它做好<br />
+              也希望能跟每一支球隊、每一位球員、裁判與工作人員，一起讓這個聯賽長久走下去
             </p>
-            <p className="text-sm font-bold leading-loose text-brand-black md:text-base">也請大家一起幫忙</p>
             <div className="mt-12 flex items-center space-x-3 opacity-80">
-              <span className="font-display text-2xl font-black italic tracking-tighter text-brand-black md:text-3xl">DREAM IT.</span>
-              <span className="stroke-black font-display text-2xl font-black italic tracking-tighter text-brand-accent md:text-3xl">PLAY IT.</span>
+              <span className="font-display text-2xl font-black italic tracking-tighter text-brand-black md:text-3xl">DREAM IT</span>
+              <span className="stroke-black font-display text-2xl font-black italic tracking-tighter text-brand-accent md:text-3xl">PLAY IT</span>
             </div>
           </div>
         </div>

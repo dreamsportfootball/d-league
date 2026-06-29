@@ -22,6 +22,9 @@ const CupPage = lazy(() => import('./pages/CupPage'));
 const RegistrationPage = lazy(() => import('./pages/RegistrationPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
+const preferredScrollBehavior = (): ScrollBehavior =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
 const PageSkeleton: React.FC = () => (
   <div className="min-h-[70vh] animate-pulse bg-white px-4 pb-24 pt-10 md:px-12 md:pt-24">
     <div className="mx-auto max-w-7xl">
@@ -69,9 +72,13 @@ const SectionAnchorNavigation: React.FC = () => {
       if (!section) return;
 
       event.preventDefault();
-      const headerHeight = 64;
+      const headerHeight = sectionId === 'main-content' ? 0 : 64;
       const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: sectionTop - headerHeight, behavior: 'smooth' });
+      window.scrollTo({
+        top: sectionTop - headerHeight,
+        behavior: preferredScrollBehavior(),
+      });
+      if (sectionId === 'main-content') section.focus({ preventScroll: true });
     };
 
     document.addEventListener('click', handleClick);
@@ -105,9 +112,12 @@ const ScrollMemory: React.FC = () => {
       const id = hash.substring(1);
       const element = document.getElementById(id);
       if (element) {
-        const headerHeight = 64;
+        const headerHeight = id === 'main-content' ? 0 : 64;
         const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({ top: elementPosition - headerHeight, behavior: 'smooth' });
+        window.scrollTo({
+          top: elementPosition - headerHeight,
+          behavior: preferredScrollBehavior(),
+        });
         return;
       }
     }
@@ -130,6 +140,12 @@ const ScrollMemory: React.FC = () => {
 const App: React.FC = () => (
   <SeasonProvider>
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
+      <a
+        href="#main-content"
+        className="fixed left-4 top-2 z-[2000] -translate-y-20 bg-brand-black px-4 py-3 text-sm font-black text-white transition-transform focus:translate-y-0"
+      >
+        跳至主要內容
+      </a>
       <Header />
       <ImageLoadingOptimizer />
       <SectionAnchorNavigation />
@@ -137,7 +153,7 @@ const App: React.FC = () => (
       <Seo />
       <Analytics />
 
-      <main className="w-full flex-grow pt-16">
+      <main id="main-content" tabIndex={-1} className="w-full flex-grow pt-16 outline-none">
         <AppErrorBoundary>
           <Suspense fallback={<PageSkeleton />}>
             <Routes>

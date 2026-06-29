@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { useSeason } from '../hooks/useSeason';
 import type { SeasonId } from '../types/season';
@@ -10,16 +10,43 @@ interface SeasonSelectorProps {
 const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
   const { activeSeasonId, activeSeason, availableSeasons, setActiveSeason } = useSeason();
   const [open, setOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
-  const sortedSeasons = [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id));
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const listboxId = useId();
+  const sortedSeasons = useMemo(
+    () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
+    [availableSeasons],
+  );
+  const activeIndex = Math.max(0, sortedSeasons.findIndex((season) => season.id === activeSeasonId));
+
+  const focusOption = (index: number) => {
+    const normalizedIndex = (index + sortedSeasons.length) % sortedSeasons.length;
+    setFocusedIndex(normalizedIndex);
+    window.requestAnimationFrame(() => optionRefs.current[normalizedIndex]?.focus());
+  };
+
+  const openMenu = (index = activeIndex) => {
+    setOpen(true);
+    focusOption(index);
+  };
+
+  const closeMenu = (returnFocus = false) => {
+    setOpen(false);
+    if (returnFocus) window.requestAnimationFrame(() => triggerRef.current?.focus());
+  };
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(event.target as Node)) closeMenu(false);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape' && open) {
+        event.preventDefault();
+        closeMenu(true);
+      }
     };
 
     document.addEventListener('mousedown', handlePointerDown);
@@ -29,22 +56,67 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [open]);
 
   const selectSeason = (seasonId: SeasonId) => {
     if (seasonId !== activeSeasonId) {
       setActiveSeason(seasonId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
     }
-    setOpen(false);
+    closeMenu(true);
+  };
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      openMenu(open ? focusedIndex + 1 : activeIndex);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      openMenu(open ? focusedIndex - 1 : activeIndex);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      openMenu(0);
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      openMenu(sortedSeasons.length - 1);
+    }
+  };
+
+  const handleOptionKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    seasonId: SeasonId,
+    index: number,
+  ) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      focusOption(index + 1);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      focusOption(index - 1);
+    } else if (event.key === 'Home') {
+      event.preventDefault();
+      focusOption(0);
+    } else if (event.key === 'End') {
+      event.preventDefault();
+      focusOption(sortedSeasons.length - 1);
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectSeason(seasonId);
+    } else if (event.key === 'Tab') {
+      setOpen(false);
+    }
   };
 
   return (
     <div ref={rootRef} className={`relative ml-auto ${compact ? 'w-[124px] md:w-[148px]' : 'w-[148px]'}`}>
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => (open ? closeMenu(false) : openMenu())}
+        onKeyDown={handleTriggerKeyDown}
         aria-haspopup="listbox"
+        aria-controls={listboxId}
         aria-expanded={open}
         className={`group flex w-full items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
           compact ? 'h-11 rounded-lg px-2.5 md:h-9 md:px-3' : 'h-9 rounded-lg px-3'
@@ -67,20 +139,27 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
 
       {open && (
         <div
+          id={listboxId}
           role="listbox"
           aria-label="選擇賽季"
           className="absolute right-0 z-[1200] mt-2 w-full overflow-hidden rounded-xl border border-neutral-200 bg-white p-1.5 shadow-xl ring-1 ring-black/5"
         >
           <div className="space-y-1">
-            {sortedSeasons.map((season) => {
+            {sortedSeasons.map((season, index) => {
               const isActive = season.id === activeSeasonId;
 
               return (
                 <button
+                  ref={(element) => {
+                    optionRefs.current[index] = element;
+                  }}
                   key={season.id}
                   type="button"
                   role="option"
+                  tabIndex={focusedIndex === index ? 0 : -1}
                   aria-selected={isActive}
+                  onFocus={() => setFocusedIndex(index)}
+                  onKeyDown={(event) => handleOptionKeyDown(event, season.id, index)}
                   onClick={() => selectSeason(season.id)}
                   className={`flex min-h-11 w-full items-center justify-between rounded-lg px-2.5 text-left transition-all ${
                     isActive

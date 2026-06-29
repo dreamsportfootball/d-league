@@ -5,7 +5,7 @@ import AutoFitText from './AutoFitText';
 import EmptyState from './EmptyState';
 
 const ClubGrid: React.FC = () => {
-  const { activeSeason, activeSeasonId, seasonData } = useSeason();
+  const { activeSeason, seasonData } = useSeason();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [thumbWidthPercent, setThumbWidthPercent] = useState(100);
@@ -65,7 +65,7 @@ const ClubGrid: React.FC = () => {
               {seasonData.teams.map((team) => (
                 <Link
                   key={team.id}
-                  to={`/teams/${team.id}?season=${activeSeasonId}`}
+                  to={`/teams/${team.id}`}
                   className="group flex w-[24vw] shrink-0 snap-center flex-col items-center transition-transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 md:w-full"
                 >
                   <div className="relative mb-3 flex h-14 w-14 items-center justify-center transition-all duration-300 md:mb-6 md:h-20 md:w-20">

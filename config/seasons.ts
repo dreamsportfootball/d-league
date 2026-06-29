@@ -1,3 +1,4 @@
+import { CURRENT_SEASON_ID, isSeasonId } from './siteManifest.js';
 import type { CompetitionRules, LeagueConfig, LeagueId, SeasonConfig, SeasonId } from '../types/season';
 
 const createUnavailableLeagueMap = (): Record<LeagueId, LeagueConfig | null> => ({
@@ -145,11 +146,6 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     heroFallbackImage: 'banner.png',
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式開放報名',
-    registrationProgress: {
-      receivedTeams: 10,
-      updatedAt: '2026-06-25',
-      note: '報名隊數不代表最終錄取結果，正式參賽級別及錄取名單以主辦單位公告為準',
-    },
     registrationContent: {
       intro: '不論是具競爭力的成熟球隊，或剛成立並希望累積正式比賽經驗的新球隊，都可以依照目前實力選擇希望參加的級別',
       ageReferenceDate: '2026-11-01',
@@ -223,31 +219,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
   },
 };
 
-Object.values(SEASONS).forEach((season) => {
-  const progress = season.registrationProgress;
-  if (!progress) return;
-
-  if (!Number.isInteger(progress.receivedTeams) || progress.receivedTeams < 0) {
-    throw new Error(`${season.id}: registration receivedTeams must be a non-negative integer`);
-  }
-  if (Number.isNaN(new Date(progress.updatedAt).getTime())) {
-    throw new Error(`${season.id}: registration progress updatedAt is invalid`);
-  }
-  if (!progress.note.trim()) {
-    throw new Error(`${season.id}: registration progress note is required`);
-  }
-
-  const targetTeams = season.enabledLeagues.reduce((total, leagueId) => {
-    return total + (season.leagues[leagueId]?.expectedTeamCount ?? 0);
-  }, 0);
-  if (targetTeams <= 0) {
-    throw new Error(`${season.id}: registration progress requires a positive target team count`);
-  }
-});
-
-export const DEFAULT_SEASON_ID: SeasonId = '2026-27';
-
-export const isSeasonId = (value: string | null): value is SeasonId =>
-  value === '2025-26' || value === '2026-27';
+export const DEFAULT_SEASON_ID: SeasonId = CURRENT_SEASON_ID;
+export { isSeasonId };
 
 export const getSeasonConfig = (seasonId: SeasonId): SeasonConfig => SEASONS[seasonId];

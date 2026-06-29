@@ -1,4 +1,5 @@
-import type { LeagueId, RegistrationProgressConfig, SeasonId } from '../types/season';
+import { CURRENT_SEASON_ID } from './siteManifest.js';
+import type { LeagueId, RegistrationProgressConfig } from '../types/season';
 
 interface StaffPartnerTeamPopupConfig {
   enabled: boolean;
@@ -20,7 +21,7 @@ interface StaffPartnerTeamPopupConfig {
   ctaUrl: string;
 }
 
-export const CURRENT_SEASON_ID: SeasonId = '2026-27';
+export { CURRENT_SEASON_ID };
 export const SHOW_REGISTRATION_NAV = true;
 export const D_LEAGUE_INSTAGRAM_URL = 'https://www.instagram.com/d.league_tw/';
 

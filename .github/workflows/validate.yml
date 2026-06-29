@@ -70,10 +70,10 @@ jobs:
       - name: Optimize website images
         run: npm run optimize:images
 
-      - name: Build website
+      - name: Build website with static SEO
         env:
           VITE_USE_OPTIMIZED_IMAGES: "true"
-        run: npx vite build
+        run: npm run build:site
 
   visual-audit:
     runs-on: ubuntu-latest

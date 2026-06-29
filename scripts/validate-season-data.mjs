@@ -1,9 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 
-const seasons = ['2025-26', '2026-27'];
+const seasons = [...SEASON_IDS];
 const root = process.cwd();
-const read = (season, file) => JSON.parse(readFileSync(join(root, 'data', 'seasons', season, file), 'utf8'));
+const seasonsRoot = join(root, 'data', 'seasons');
+const read = (season, file) => JSON.parse(readFileSync(join(seasonsRoot, season, file), 'utf8'));
 const fail = (message) => { throw new Error(message); };
 const unique = (items, label) => {
   const ids = new Set();
@@ -37,6 +39,15 @@ const playerTeamAt = (player, timestamp) => {
   });
   return registration?.teamId ?? player.teamId;
 };
+
+const seasonDirectories = readdirSync(seasonsRoot, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .sort();
+const manifestDirectories = [...seasons].sort();
+if (JSON.stringify(seasonDirectories) !== JSON.stringify(manifestDirectories)) {
+  fail(`Season manifest mismatch: directories=${seasonDirectories.join(',')} manifest=${manifestDirectories.join(',')}`);
+}
 
 for (const season of seasons) {
   const teams = read(season, 'teams.json');
@@ -144,7 +155,7 @@ for (const season of seasons) {
       const subjectType = event.subjectType ?? 'PLAYER';
       const subjectId = event.subjectId ?? event.playerId;
       const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
-      if (season === '2026-27' && subjectType === 'PLAYER' && !subjectId) {
+      if (season === CURRENT_SEASON_ID && subjectType === 'PLAYER' && !subjectId) {
         fail(`${season} ${matchId} event ${event.id}: playerId is required`);
       }
       if (subjectType === 'PLAYER' && subjectId) {
@@ -163,7 +174,7 @@ for (const season of seasons) {
       subjectEvents.set(key, item);
     }
 
-    if (season === '2026-27') {
+    if (season === CURRENT_SEASON_ID) {
       for (const [subjectId, item] of subjectEvents.entries()) {
         if (item.secondYellow > 1) fail(`${season} ${matchId} ${subjectId}: multiple second-yellow events`);
         if (item.secondYellow === 1 && item.yellow < 1) {
@@ -242,14 +253,15 @@ for (const file of [
   'media.json',
   'albums.json',
 ]) {
-  const value = read('2026-27', file);
+  const value = read(CURRENT_SEASON_ID, file);
   const count = Array.isArray(value) ? value.length : Object.keys(value).length;
-  if (count !== 0) fail(`2026-27 ${file}: must stay empty until official data is confirmed`);
+  if (count !== 0) fail(`${CURRENT_SEASON_ID} ${file}: must stay empty until official data is confirmed`);
 }
 
-const registrationNews = read('2026-27', 'news.json');
-if (registrationNews.length !== 1 || registrationNews[0].id !== '2026-27-registration-open') {
-  fail('2026-27: registration announcement is missing or duplicated');
+const registrationNews = read(CURRENT_SEASON_ID, 'news.json');
+const registrationArticleId = `${CURRENT_SEASON_ID}-registration-open`;
+if (registrationNews.length !== 1 || registrationNews[0].id !== registrationArticleId) {
+  fail(`${CURRENT_SEASON_ID}: registration announcement is missing or duplicated`);
 }
 
 console.log('Season data validation passed');

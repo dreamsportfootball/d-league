@@ -9,8 +9,6 @@ import type { Video } from '../types';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
-const getMediaYearLabel = (seasonId: SeasonId): string => seasonId.split('-')[0];
-
 const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   <a
     href={album.link}
@@ -88,6 +86,7 @@ const MediaPage: React.FC = () => {
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
+  const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
   const reversedAlbums = useMemo(
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
@@ -132,15 +131,12 @@ const MediaPage: React.FC = () => {
     Boolean(activeSeason.youtubePlaylistEmbedUrl);
   const mediaItemCount =
     reversedAlbums.length + highlights.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
-  const yearField: FilterDrawerField = {
-    id: 'year',
-    label: '年份',
+  const seasonField: FilterDrawerField = {
+    id: 'season',
+    label: '賽季',
     value: draftSeasonId,
-    displayValue: getMediaYearLabel(draftSeasonId),
-    options: sortedSeasons.map((season) => ({
-      value: season.id,
-      label: getMediaYearLabel(season.id),
-    })),
+    displayValue: draftSeason.shortName,
+    options: sortedSeasons.map((season) => ({ value: season.id, label: season.shortName })),
     onChange: (value) => setDraftSeasonId(value as SeasonId),
   };
 
@@ -167,9 +163,10 @@ const MediaPage: React.FC = () => {
 
         <DataFilterToolbar
           primaryText={`${mediaItemCount} 項媒體`}
-          secondaryText={getMediaYearLabel(activeSeasonId)}
+          secondaryText={activeSeason.shortName}
           onOpen={openFilters}
-          ariaLabel="開啟賽事媒體年份篩選"
+          buttonLabel="賽季"
+          ariaLabel="開啟賽事媒體賽季篩選"
         />
 
         {!hasMedia ? (
@@ -178,7 +175,7 @@ const MediaPage: React.FC = () => {
             description="相簿及比賽影片將於新賽季開始後陸續更新"
             showRegistrationLink={false}
             primaryAction={{
-              label: '查看 2025 年賽事媒體',
+              label: '查看 2025/26 賽事媒體',
               to: '/media?season=2025-26',
             }}
           />
@@ -311,14 +308,14 @@ const MediaPage: React.FC = () => {
 
       <ResponsiveFilterDrawer
         open={filtersOpen}
-        fields={[yearField]}
+        fields={[seasonField]}
         onClose={() => setFiltersOpen(false)}
         onClear={() => setDraftSeasonId(activeSeasonId)}
         clearDisabled={draftSeasonId === activeSeasonId}
         onApply={applyFilters}
         applyLabel="查看賽事媒體"
         title="篩選賽事媒體"
-        subtitle="目前可依年份切換媒體內容"
+        subtitle="目前可依賽季切換媒體內容"
       />
     </div>
   );

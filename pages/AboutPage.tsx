@@ -39,7 +39,7 @@ const OriginVisionSection: React.FC = () => (
           <div className="prose prose-neutral max-w-none">
             <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
               <span className="mr-2 font-display text-lg font-black uppercase text-brand-blue">D LEAGUE</span>
-              我們的理念很簡單：讓更多人<span className="border-b-2 border-brand-accent/30 font-bold text-brand-black">願意踢、能夠踢、享受踢</span>
+              我們的理念很簡單：讓更多人<span className="border-b-2 border-brand-accent/30 font-bold text-brand-black">能夠踢、願意踢、享受踢</span>
             </p>
             <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
               這裡不只是球員的舞台，也是裁判的舞台。整個賽季將由資深裁判帶領資淺裁判，因為我們相信，真正的比賽就是最好的養分

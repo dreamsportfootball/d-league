@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
@@ -7,8 +7,6 @@ import Header from './components/Header';
 import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
 import MobileRegistrationBar from './components/MobileRegistrationBar';
 import Seo from './components/Seo';
-import { isSeasonId } from './config/seasons';
-import { CURRENT_SEASON_ID } from './config/siteConfig';
 import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
@@ -139,17 +137,6 @@ const ScrollMemory: React.FC = () => {
   return null;
 };
 
-const CurrentSeasonTeamRoute: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const requestedSeason = searchParams.get('season');
-
-  if (isSeasonId(requestedSeason) && requestedSeason !== CURRENT_SEASON_ID) {
-    return <Navigate to={`/standings?season=${requestedSeason}`} replace />;
-  }
-
-  return <TeamPage />;
-};
-
 const App: React.FC = () => (
   <SeasonProvider>
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
@@ -177,7 +164,7 @@ const App: React.FC = () => (
               <Route path="/news" element={<NewsPage />} />
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/news/:id" element={<ArticleDetailPage />} />
-              <Route path="/teams/:id" element={<CurrentSeasonTeamRoute />} />
+              <Route path="/teams/:id" element={<TeamPage />} />
               <Route path="/media" element={<MediaPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/cup" element={<CupPage />} />

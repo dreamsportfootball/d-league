@@ -51,12 +51,12 @@ jobs:
       - name: Optimize website images
         run: npm run optimize:images
 
-      - name: Build production site
+      - name: Build production site with static SEO
         env:
           VITE_USE_OPTIMIZED_IMAGES: "true"
           VITE_ANALYTICS_DISABLED: "false"
           VITE_GA_MEASUREMENT_ID: "G-XQBVK88M6K"
-        run: npx vite build --base=/d-league/
+        run: npm run build:site
 
       - name: Publish production site
         uses: peaceiris/actions-gh-pages@v4

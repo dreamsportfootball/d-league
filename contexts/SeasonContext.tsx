@@ -13,7 +13,7 @@ interface SeasonContextValue {
   setActiveSeason: (seasonId: SeasonId) => void;
 }
 
-const SEASON_AWARE_PATHS = ['/schedule', '/standings', '/stats', '/media', '/teams'] as const;
+const SEASON_AWARE_PATHS = ['/schedule', '/standings', '/stats', '/media'] as const;
 
 const isSeasonAwarePath = (pathname: string): boolean =>
   SEASON_AWARE_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));

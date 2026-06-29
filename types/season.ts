@@ -1,4 +1,6 @@
-export type SeasonId = '2025-26' | '2026-27';
+import type { SEASON_IDS } from '../config/siteManifest.js';
+
+export type SeasonId = (typeof SEASON_IDS)[number];
 
 export type LeagueId = 'L1' | 'L2' | 'L3';
 
@@ -98,7 +100,6 @@ export interface SeasonConfig {
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
   registrationContent?: RegistrationContentConfig;
-  registrationProgress?: RegistrationProgressConfig;
   rules: CompetitionRules;
   standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;

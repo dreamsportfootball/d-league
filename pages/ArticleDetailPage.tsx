@@ -25,7 +25,7 @@ type ArticleContentBlock =
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
 const ORDERED_PATTERN = /^\d+[.、]\s*(.+)$/;
 const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
-const PARAGRAPH_START_PATTERN = /^(?:第\s*\d|開賽|賽前|上半場|下半場|半場前|進入|比賽|最終|經歷|主辦單位)/;
+const PARAGRAPH_START_PATTERN = /^(?:第\s*\d|開賽|賽前|上半場|下半場|半場前|進入|比賽|最終|經歷|主辦單位|D LEAGUE)/;
 
 const parseArticleBlock = (rawBlock: string): ArticleContentBlock => {
   const text = rawBlock.trim();

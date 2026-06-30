@@ -70,7 +70,6 @@ export interface NewsArticle {
   content: string;
   category: 'Official' | 'Match Report';
   imageUrl: string;
-  imageAlt?: string;
   timestamp: string;
 }
 

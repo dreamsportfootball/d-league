@@ -1,7 +1,9 @@
 import React, { Fragment, useMemo } from 'react';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import StructuredArticleBody from '../components/article/StructuredArticleBody';
 import { getSeasonConfig } from '../config/seasons';
+import { getArticleContentBlocks } from '../services/articleContentBlocks';
 import { getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
@@ -230,6 +232,9 @@ const ArticleDetailPage: React.FC = () => {
 
   const contentText = article.content || article.summary || '';
   const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
+  const structuredContent = article.seasonId
+    ? getArticleContentBlocks(article.seasonId, article.id)
+    : null;
 
   return (
     <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
@@ -295,7 +300,11 @@ const ArticleDetailPage: React.FC = () => {
         )}
 
         <section className="mx-auto max-w-[720px]" aria-label="文章正文">
-          <ArticleBody text={contentText} category={article.category} />
+          {structuredContent ? (
+            <StructuredArticleBody blocks={structuredContent} />
+          ) : (
+            <ArticleBody text={contentText} category={article.category} />
+          )}
         </section>
 
         <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">

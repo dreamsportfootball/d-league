@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SEASON_IDS } from '../config/siteManifest.js';
 
@@ -12,6 +12,7 @@ const fail = (message) => {
 
 const isNonEmptyString = (value) => typeof value === 'string' && value.trim().length > 0;
 const isValidDate = (value) => isNonEmptyString(value) && !Number.isNaN(new Date(value).getTime());
+const isExternalUrl = (value) => /^https?:\/\//.test(value);
 
 for (const seasonId of SEASON_IDS) {
   const filePath = join(root, 'data', 'seasons', seasonId, 'news.json');
@@ -39,6 +40,10 @@ for (const seasonId of SEASON_IDS) {
     if (typeof article.imageUrl !== 'string') fail(`${label}: imageUrl must be a string`);
     if (article.imageUrl.startsWith('/') || article.imageUrl.startsWith('d-league/')) {
       fail(`${label}: imageUrl must be relative to the configured site base`);
+    }
+    if (article.imageUrl && !isExternalUrl(article.imageUrl)) {
+      const imagePath = join(root, 'public', article.imageUrl);
+      if (!existsSync(imagePath)) fail(`${label}: missing image file ${article.imageUrl}`);
     }
     if (article.imageAlt !== undefined && !isNonEmptyString(article.imageAlt)) {
       fail(`${label}: imageAlt must be a non-empty string when provided`);

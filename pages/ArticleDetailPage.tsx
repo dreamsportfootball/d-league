@@ -88,7 +88,7 @@ const ArticleDetailPage: React.FC = () => {
         <header className="border-b border-neutral-200 pb-10 md:pb-14">
           <div className="max-w-5xl">
             <ArticleMeta article={article} />
-            <h1 className="mt-6 max-w-4xl font-display text-4xl font-black leading-[1.12] tracking-tight text-brand-black md:text-6xl lg:text-[68px]">
+            <h1 className="mt-6 max-w-5xl font-display text-4xl font-black leading-[1.12] tracking-tight text-brand-black md:text-6xl lg:text-[68px]">
               {article.title}
             </h1>
             {article.summary && (

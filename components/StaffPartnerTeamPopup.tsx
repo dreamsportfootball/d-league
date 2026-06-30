@@ -130,7 +130,7 @@ const StaffPartnerTeamPopup: React.FC = () => {
 
           <h2
             id="staff-partner-popup-title"
-            className="mt-3 max-w-none whitespace-nowrap font-display text-[19px] font-black uppercase leading-tight tracking-[-0.03em] sm:mt-4 sm:max-w-md sm:whitespace-normal sm:text-4xl sm:leading-[1.05] sm:tracking-tight"
+            className="mt-3 max-w-none whitespace-nowrap font-display text-[19px] font-black uppercase leading-tight tracking-[-0.03em] sm:mt-4 sm:text-[30px] sm:leading-[1.05] sm:tracking-tight"
           >
             {STAFF_PARTNER_TEAM_POPUP.title}
           </h2>

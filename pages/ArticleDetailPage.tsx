@@ -104,18 +104,12 @@ const ArticleImage: React.FC<ArticleImageProps> = ({ article }) => {
   };
 
   const isOfficial = article.category === 'Official';
-  const widthClass =
-    shape === 'portrait'
-      ? isOfficial
-        ? 'max-w-[460px]'
-        : 'max-w-[520px]'
-      : shape === 'square'
-        ? isOfficial
-          ? 'max-w-[560px]'
-          : 'max-w-[620px]'
-        : isOfficial
-          ? 'max-w-[700px]'
-          : 'max-w-[760px]';
+  const widthClass = (() => {
+    if (shape === 'portrait') return isOfficial ? 'max-w-[460px]' : 'max-w-[520px]';
+    if (shape === 'square') return isOfficial ? 'max-w-[560px]' : 'max-w-[620px]';
+    if (shape === 'landscape') return isOfficial ? 'max-w-[700px]' : 'max-w-[760px]';
+    return isOfficial ? 'max-w-[560px]' : 'max-w-[760px]';
+  })();
 
   const imageClass =
     shape === 'portrait'

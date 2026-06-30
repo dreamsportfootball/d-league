@@ -1,6 +1,5 @@
 import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 import { preview2026Matches, preview2026Teams } from '../data/previews/season2026Preview';
-import { previewNewsArticleOverrides } from '../data/previews/newsArticleOverrides';
 import type { Match, NewsArticle, Video } from '../types';
 import type { DisciplineDecision, MatchLineup } from '../types/discipline';
 import type { MatchEvent } from '../types/matchEvent';
@@ -25,49 +24,18 @@ export interface SeasonData {
 
 type JsonModuleMap = Record<string, unknown>;
 
-const teamsModules = import.meta.glob('../data/seasons/*/teams.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const playersModules = import.meta.glob('../data/seasons/*/players.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const playerImagesModules = import.meta.glob('../data/seasons/*/playerImages.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const matchesModules = import.meta.glob('../data/seasons/*/matches.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const matchEventsModules = import.meta.glob('../data/seasons/*/matchEvents.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const disciplineModules = import.meta.glob('../data/seasons/*/disciplineDecisions.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const lineupsModules = import.meta.glob('../data/seasons/*/lineups.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const newsModules = import.meta.glob('../data/seasons/*/news.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const mediaModules = import.meta.glob('../data/seasons/*/media.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
-const albumsModules = import.meta.glob('../data/seasons/*/albums.json', {
-  eager: true,
-  import: 'default',
-}) as JsonModuleMap;
+const teamsModules = import.meta.glob('../data/seasons/*/teams.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const playersModules = import.meta.glob('../data/seasons/*/players.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const playerImagesModules = import.meta.glob('../data/seasons/*/playerImages.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const matchesModules = import.meta.glob('../data/seasons/*/matches.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const matchEventsModules = import.meta.glob('../data/seasons/*/matchEvents.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const disciplineModules = import.meta.glob('../data/seasons/*/disciplineDecisions.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const lineupsModules = import.meta.glob('../data/seasons/*/lineups.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const newsModules = import.meta.glob('../data/seasons/*/news.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const mediaModules = import.meta.glob('../data/seasons/*/media.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const albumsModules = import.meta.glob('../data/seasons/*/albums.json', { eager: true, import: 'default' }) as JsonModuleMap;
 
 const useOptimizedImages = import.meta.env.VITE_USE_OPTIMIZED_IMAGES === 'true';
-const usePreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
 
 const getOptimizedAssetPath = (path: string): string => {
   if (!useOptimizedImages || !/\.(png|jpe?g)$/i.test(path)) return path;
@@ -80,20 +48,14 @@ export const assetUrl = (path: string): string => {
   return `${import.meta.env.BASE_URL}${getOptimizedAssetPath(cleanPath)}`;
 };
 
-const getSeasonJson = <T,>(
-  modules: JsonModuleMap,
-  seasonId: SeasonId,
-  fileName: string,
-): T => {
+const getSeasonJson = <T,>(modules: JsonModuleMap, seasonId: SeasonId, fileName: string): T => {
   const key = `../data/seasons/${seasonId}/${fileName}`;
   const value = modules[key];
-  if (value === undefined) {
-    throw new Error(`${seasonId}: missing ${fileName}`);
-  }
+  if (value === undefined) throw new Error(`${seasonId}: missing ${fileName}`);
   return value as T;
 };
 
-const useCurrentSeasonPreviewData = usePreviewData;
+const useCurrentSeasonPreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
 
 const makeData = (
   id: SeasonId,
@@ -118,16 +80,11 @@ const makeData = (
     matchEvents,
     disciplineDecisions,
     lineups,
-    news: newsInput.map((article) => {
-      const previewOverride = usePreviewData ? previewNewsArticleOverrides[article.id] : undefined;
-      const resolvedArticle = previewOverride ? { ...article, ...previewOverride } : article;
-
-      return {
-        ...resolvedArticle,
-        seasonId: id,
-        imageUrl: resolvedArticle.imageUrl ? assetUrl(resolvedArticle.imageUrl) : '',
-      };
-    }),
+    news: newsInput.map((article) => ({
+      ...article,
+      seasonId: id,
+      imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
+    })),
     media: mediaInput.map((item) => ({ ...item, thumbnail: assetUrl(item.thumbnail) })),
     albums: albumsInput.map((album) => ({ ...album, cover: assetUrl(album.cover) })),
   };
@@ -140,14 +97,10 @@ const DATA = Object.fromEntries(
       seasonId,
       makeData(
         seasonId,
-        usePreview
-          ? preview2026Teams
-          : getSeasonJson<SeasonTeam[]>(teamsModules, seasonId, 'teams.json'),
+        usePreview ? preview2026Teams : getSeasonJson<SeasonTeam[]>(teamsModules, seasonId, 'teams.json'),
         getSeasonJson<PlayerProfile[]>(playersModules, seasonId, 'players.json'),
         getSeasonJson<Record<string, string>>(playerImagesModules, seasonId, 'playerImages.json'),
-        usePreview
-          ? preview2026Matches
-          : getSeasonJson<Match[]>(matchesModules, seasonId, 'matches.json'),
+        usePreview ? preview2026Matches : getSeasonJson<Match[]>(matchesModules, seasonId, 'matches.json'),
         getSeasonJson<Record<string, MatchEvent[]>>(matchEventsModules, seasonId, 'matchEvents.json'),
         getSeasonJson<DisciplineDecision[]>(disciplineModules, seasonId, 'disciplineDecisions.json'),
         getSeasonJson<Record<string, MatchLineup>>(lineupsModules, seasonId, 'lineups.json'),
@@ -162,8 +115,6 @@ const DATA = Object.fromEntries(
 const ALL_NEWS: NewsArticle[] = SEASON_IDS.flatMap((seasonId) => DATA[seasonId].news);
 
 export const getSeasonData = (seasonId: SeasonId): SeasonData => DATA[seasonId];
-
 export const getAllNews = (): NewsArticle[] => ALL_NEWS.slice();
-
 export const getNewsArticle = (articleId: string): NewsArticle | null =>
   ALL_NEWS.find((article) => article.id === articleId) ?? null;

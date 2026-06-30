@@ -284,7 +284,7 @@ const ArticleDetailPage: React.FC = () => {
 
         {article.imageUrl && (
           <figure className="my-9 md:my-12">
-            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden bg-neutral-50 px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
+            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
               <img
                 src={article.imageUrl}
                 alt={article.title}

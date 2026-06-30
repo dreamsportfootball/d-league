@@ -1,5 +1,6 @@
 import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 import { preview2026Matches, preview2026Teams } from '../data/previews/season2026Preview';
+import { previewNewsArticleOverrides } from '../data/previews/newsArticleOverrides';
 import type { Match, NewsArticle, Video } from '../types';
 import type { DisciplineDecision, MatchLineup } from '../types/discipline';
 import type { MatchEvent } from '../types/matchEvent';
@@ -66,6 +67,7 @@ const albumsModules = import.meta.glob('../data/seasons/*/albums.json', {
 }) as JsonModuleMap;
 
 const useOptimizedImages = import.meta.env.VITE_USE_OPTIMIZED_IMAGES === 'true';
+const usePreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
 
 const getOptimizedAssetPath = (path: string): string => {
   if (!useOptimizedImages || !/\.(png|jpe?g)$/i.test(path)) return path;
@@ -91,7 +93,7 @@ const getSeasonJson = <T,>(
   return value as T;
 };
 
-const useCurrentSeasonPreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
+const useCurrentSeasonPreviewData = usePreviewData;
 
 const makeData = (
   id: SeasonId,
@@ -116,11 +118,16 @@ const makeData = (
     matchEvents,
     disciplineDecisions,
     lineups,
-    news: newsInput.map((article) => ({
-      ...article,
-      seasonId: id,
-      imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
-    })),
+    news: newsInput.map((article) => {
+      const previewOverride = usePreviewData ? previewNewsArticleOverrides[article.id] : undefined;
+      const resolvedArticle = previewOverride ? { ...article, ...previewOverride } : article;
+
+      return {
+        ...resolvedArticle,
+        seasonId: id,
+        imageUrl: resolvedArticle.imageUrl ? assetUrl(resolvedArticle.imageUrl) : '',
+      };
+    }),
     media: mediaInput.map((item) => ({ ...item, thumbnail: assetUrl(item.thumbnail) })),
     albums: albumsInput.map((album) => ({ ...album, cover: assetUrl(album.cover) })),
   };

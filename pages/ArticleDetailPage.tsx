@@ -35,6 +35,14 @@ const isScoreLine = (line: string): boolean =>
 const MATCH_MOMENT_PATTERN =
   /^(開賽第\s*\d+\s*分鐘|開場第\s*\d+\s*分鐘|第\s*\d+\s*分鐘|下半場第\s*\d+\s*分鐘|下半場開賽僅\s*\d+\s*分鐘|上半場尾聲|半場前|下半場開始後|進入下半場後|比賽進入第\s*\d+\s*分鐘|比賽後段|比賽最後階段|比賽尾聲第\s*\d+\s*分鐘|終場前|最終)([，,:：]?)/;
 
+const isLikelyMatchSubtitle = (block: string): boolean => {
+  const lines = splitBlockLines(block);
+  if (lines.length !== 1 || block.length > 80) return false;
+  if (MATCH_MOMENT_PATTERN.test(block)) return false;
+
+  return !/^(賽前|比賽前段|本輪|上半場|下半場|進入下半場|最終|終場)/.test(block);
+};
+
 interface MatchReportContent {
   competitionLabel: string | null;
   paragraphs: string[];
@@ -42,10 +50,23 @@ interface MatchReportContent {
 
 const parseMatchReport = (article: NewsArticle): MatchReportContent => {
   const titleKey = normalizeComparableText(article.title);
+  const rawBlocks = splitArticleBlocks(article.content || article.summary || '');
+  const scoreBlockIndex = rawBlocks.findIndex((block) =>
+    splitBlockLines(block).some((line) => isScoreLine(line)),
+  );
+  const subtitleBlockIndex =
+    scoreBlockIndex >= 0 &&
+    scoreBlockIndex + 1 < rawBlocks.length &&
+    isLikelyMatchSubtitle(rawBlocks[scoreBlockIndex + 1])
+      ? scoreBlockIndex + 1
+      : -1;
+
   let competitionLabel: string | null = null;
 
-  const paragraphs = splitArticleBlocks(article.content || article.summary || '')
-    .map((block) => {
+  const paragraphs = rawBlocks
+    .map((block, blockIndex) => {
+      if (blockIndex === subtitleBlockIndex) return '';
+
       const remainingLines = splitBlockLines(block).filter((line) => {
         if (isDecorativeMatchLabel(line)) return false;
 
@@ -164,6 +185,24 @@ const ArticleMeta: React.FC<ArticleMetaProps> = ({ article, competitionLabel }) 
   );
 };
 
+const ArticleTitle: React.FC<{ title: string; className: string }> = ({ title, className }) => {
+  const parts = title.split(/(\d+\s*[-–—]\s*\d+)/);
+
+  return (
+    <h1 className={className}>
+      {parts.map((part, index) =>
+        /^\d+\s*[-–—]\s*\d+$/.test(part) ? (
+          <span key={`${index}-${part}`} className="whitespace-nowrap">
+            {part}
+          </span>
+        ) : (
+          <React.Fragment key={`${index}-${part}`}>{part}</React.Fragment>
+        ),
+      )}
+    </h1>
+  );
+};
+
 const ArticleBackLink: React.FC = () => (
   <Link
     to="/news"
@@ -275,7 +314,7 @@ const OfficialBlock: React.FC<{ block: string }> = ({ block }) => {
   }
 
   return (
-    <p className="mb-7 whitespace-pre-line text-[15px] font-normal leading-[1.95] text-neutral-700 md:mb-8 md:text-[16px] md:leading-[2]">
+    <p className="mb-6 whitespace-pre-line text-[15px] font-normal leading-[1.95] text-neutral-700 md:mb-7 md:text-[16px] md:leading-[2]">
       {block}
     </p>
   );
@@ -291,11 +330,12 @@ const OfficialArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
           <ArticleBackLink />
         </div>
 
-        <header className="mx-auto mb-9 max-w-[760px] md:mb-12">
+        <header className="mx-auto mb-9 max-w-[900px] md:mb-12">
           <ArticleMeta article={article} />
-          <h1 className="font-display text-[31px] font-bold leading-[1.14] tracking-[-0.025em] text-neutral-950 [text-wrap:balance] md:text-[46px]">
-            {article.title}
-          </h1>
+          <ArticleTitle
+            title={article.title}
+            className="font-display text-[30px] font-bold leading-[1.15] tracking-[-0.025em] text-neutral-950 [text-wrap:pretty] md:text-[38px] lg:text-[42px]"
+          />
           {article.summary && (
             <p className="mt-5 max-w-[700px] text-[15px] font-medium leading-[1.8] text-neutral-500 md:mt-6 md:text-[17px]">
               {article.summary}
@@ -317,11 +357,12 @@ const OfficialArticle: React.FC<{ article: NewsArticle }> = ({ article }) => {
   );
 };
 
-const MatchParagraph: React.FC<{ text: string; isFirst: boolean }> = ({ text, isFirst }) => {
+const MatchParagraph: React.FC<{ text: string }> = ({ text }) => {
   const match = text.match(MATCH_MOMENT_PATTERN);
-  const paragraphClass = isFirst
-    ? 'mb-8 whitespace-pre-line text-[15px] font-medium leading-[1.95] text-neutral-800 md:text-[16px] md:leading-[2]'
-    : 'mb-7 whitespace-pre-line text-[15px] font-normal leading-[1.95] text-neutral-700 md:mb-8 md:text-[16px] md:leading-[2]';
+  const isCompact = text.length <= 76 || match !== null;
+  const paragraphClass = isCompact
+    ? 'mb-4 whitespace-pre-line text-[15px] font-normal leading-[1.9] text-neutral-700 md:mb-5 md:text-[16px] md:leading-[1.95]'
+    : 'mb-5 whitespace-pre-line text-[15px] font-normal leading-[1.95] text-neutral-700 md:mb-6 md:text-[16px] md:leading-[2]';
 
   if (!match) return <p className={paragraphClass}>{text}</p>;
 
@@ -346,11 +387,12 @@ const MatchReportArticle: React.FC<{ article: NewsArticle }> = ({ article }) => 
           <ArticleBackLink />
         </div>
 
-        <header className="mx-auto mb-9 max-w-[820px] md:mb-12">
+        <header className="mx-auto mb-9 max-w-[960px] md:mb-12">
           <ArticleMeta article={article} competitionLabel={parsed.competitionLabel} />
-          <h1 className="font-display text-[31px] font-bold leading-[1.13] tracking-[-0.025em] text-neutral-950 [text-wrap:balance] md:text-[47px]">
-            {article.title}
-          </h1>
+          <ArticleTitle
+            title={article.title}
+            className="font-display text-[30px] font-bold leading-[1.14] tracking-[-0.025em] text-neutral-950 [text-wrap:pretty] md:text-[37px] lg:text-[40px]"
+          />
           {article.summary && (
             <p className="mt-5 max-w-[740px] text-[15px] font-medium leading-[1.8] text-neutral-500 md:mt-6 md:text-[17px]">
               {article.summary}
@@ -362,11 +404,7 @@ const MatchReportArticle: React.FC<{ article: NewsArticle }> = ({ article }) => 
 
         <div className="mx-auto max-w-[660px] text-left">
           {parsed.paragraphs.map((paragraph, index) => (
-            <MatchParagraph
-              key={`${index}-${paragraph.slice(0, 24)}`}
-              text={paragraph}
-              isFirst={index === 0}
-            />
+            <MatchParagraph key={`${index}-${paragraph.slice(0, 24)}`} text={paragraph} />
           ))}
         </div>
 

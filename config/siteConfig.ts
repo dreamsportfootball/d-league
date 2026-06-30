@@ -26,8 +26,8 @@ export const SHOW_REGISTRATION_NAV = true;
 export const D_LEAGUE_INSTAGRAM_URL = 'https://www.instagram.com/d.league_tw/';
 
 export const CURRENT_REGISTRATION_PROGRESS: RegistrationProgressConfig = {
-  receivedTeams: 12,
-  updatedAt: '2026-06-27',
+  receivedTeams: 13,
+  updatedAt: '2026-06-30',
   note: '報名隊數不代表最終錄取結果，正式參賽級別及錄取名單以主辦單位公告為準；若報名球隊數已達預定名額，主辦單位得提前截止報名',
 };
 

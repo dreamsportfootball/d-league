@@ -51,6 +51,14 @@
   scrollbar-width: none;
 }
 
+article.min-h-screen.bg-white > div.max-w-5xl > header,
+article.min-h-screen.bg-white > div.max-w-5xl > figure,
+article.min-h-screen.bg-white > div.max-w-5xl > footer,
+article.min-h-screen.bg-white > div.max-w-5xl > div[class*="max-w-[660px]"] {
+  margin-left: 0;
+  margin-right: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;

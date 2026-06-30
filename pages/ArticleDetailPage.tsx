@@ -201,7 +201,6 @@ const ArticleBody: React.FC<{
 
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-
   const article = useMemo(() => (id ? getNewsArticle(id) : null), [id]);
 
   if (!article) {

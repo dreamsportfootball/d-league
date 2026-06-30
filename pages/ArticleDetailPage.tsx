@@ -96,10 +96,10 @@ const renderInlineText = (text: string): React.ReactNode =>
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`${part}，另開新分頁`}
-        className="inline-flex items-baseline gap-1 break-all font-semibold text-brand-blue underline decoration-brand-blue/30 underline-offset-4 transition-colors hover:decoration-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+        className="break-all font-semibold text-brand-blue underline decoration-brand-blue/30 underline-offset-4 transition-colors hover:decoration-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
       >
         {part}
-        <ExternalLink className="inline h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <ExternalLink className="ml-1 inline h-3.5 w-3.5" aria-hidden="true" />
       </a>
     );
   });

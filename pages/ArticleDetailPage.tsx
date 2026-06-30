@@ -95,6 +95,7 @@ const renderInlineText = (text: string): React.ReactNode =>
         href={part}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label={`${part}，另開新分頁`}
         className="inline-flex items-baseline gap-1 break-all font-semibold text-brand-blue underline decoration-brand-blue/30 underline-offset-4 transition-colors hover:decoration-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
       >
         {part}

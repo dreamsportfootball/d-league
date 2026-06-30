@@ -27,7 +27,10 @@ const ORDERED_PATTERN = /^\d+[.、]\s*(.+)$/;
 const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
 const PARAGRAPH_START_PATTERN = /^(?:第\s*\d|開賽|賽前|上半場|下半場|半場前|進入|比賽|最終|經歷|主辦單位|D LEAGUE)/;
 
-const parseArticleBlock = (rawBlock: string): ArticleContentBlock => {
+const parseArticleBlock = (
+  rawBlock: string,
+  category: 'Match Report' | 'Official',
+): ArticleContentBlock => {
   const text = rawBlock.trim();
   const lines = text
     .split('\n')
@@ -55,6 +58,7 @@ const parseArticleBlock = (rawBlock: string): ArticleContentBlock => {
   }
 
   const looksLikeMatchInfo =
+    category === 'Match Report' &&
     lines.length >= 2 &&
     lines.length <= 4 &&
     (lines[0].startsWith('D LEAGUE｜') || lines.some((line) => /\d+\s*-\s*\d+/.test(line)));
@@ -64,6 +68,7 @@ const parseArticleBlock = (rawBlock: string): ArticleContentBlock => {
   }
 
   const isShortHeading =
+    category === 'Match Report' &&
     lines.length === 1 &&
     lines[0].length <= 38 &&
     !PARAGRAPH_START_PATTERN.test(lines[0]) &&
@@ -106,15 +111,18 @@ const renderMultilineText = (text: string): React.ReactNode[] =>
     </Fragment>
   ));
 
-const ArticleBody: React.FC<{ text: string }> = ({ text }) => {
+const ArticleBody: React.FC<{
+  text: string;
+  category: 'Match Report' | 'Official';
+}> = ({ text, category }) => {
   const blocks = useMemo(
     () =>
       text
         .split(/\n{2,}/)
         .map((block) => block.trim())
         .filter(Boolean)
-        .map(parseArticleBlock),
-    [text],
+        .map((block) => parseArticleBlock(block, category)),
+    [category, text],
   );
 
   if (blocks.length === 0) return null;
@@ -287,7 +295,7 @@ const ArticleDetailPage: React.FC = () => {
         )}
 
         <section className="mx-auto max-w-[720px]" aria-label="文章正文">
-          <ArticleBody text={contentText} />
+          <ArticleBody text={contentText} category={article.category} />
         </section>
 
         <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">

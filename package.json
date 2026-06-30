@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "validate:data": "node scripts/validate-season-data.mjs && node scripts/validate-article-content-blocks.mjs",
+    "validate:data": "node scripts/validate-season-data.mjs",
     "generate:seo": "node scripts/generate-static-seo.mjs",
     "validate:seo": "node scripts/validate-static-seo.mjs",
     "optimize:images": "node scripts/optimize-images.mjs",

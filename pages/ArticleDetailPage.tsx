@@ -1,8 +1,7 @@
 import React, { Fragment, useMemo } from 'react';
-import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
-import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
 import { getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
@@ -21,12 +20,10 @@ type ArticleContentBlock =
   | { type: 'heading'; text: string }
   | { type: 'info'; lines: string[] }
   | { type: 'list'; ordered: boolean; items: string[] }
-  | { type: 'cta'; href: string; label: string }
   | { type: 'paragraph'; text: string };
 
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
 const ORDERED_PATTERN = /^\d+[.、]\s*(.+)$/;
-const CTA_PATTERN = /^\[\[CTA:([^|\]]+)\|([^\]]+)\]\]$/;
 const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
 const PARAGRAPH_START_PATTERN = /^(?:第\s*\d|開賽|賽前|上半場|下半場|半場前|進入|比賽|最終|經歷|主辦單位|D LEAGUE)/;
 
@@ -42,22 +39,6 @@ const parseArticleBlock = (
 
   if (lines.length === 1 && /^【.+】$/.test(lines[0])) {
     return { type: 'label', text: lines[0] };
-  }
-
-  if (lines.length === 1) {
-    const explicitHeading = lines[0].match(/^##\s+(.+)$/);
-    if (explicitHeading) {
-      return { type: 'heading', text: explicitHeading[1].trim() };
-    }
-
-    const ctaMatch = lines[0].match(CTA_PATTERN);
-    if (ctaMatch) {
-      return {
-        type: 'cta',
-        href: ctaMatch[1].trim(),
-        label: ctaMatch[2].trim(),
-      };
-    }
   }
 
   if (lines.length > 0 && lines.every((line) => BULLET_PATTERN.test(line))) {
@@ -167,7 +148,7 @@ const ArticleBody: React.FC<{
           return (
             <h2
               key={key}
-              className="mb-5 mt-11 font-display text-2xl font-bold leading-snug tracking-tight text-brand-black first:mt-0 md:text-[28px]"
+              className="mb-5 mt-10 font-display text-2xl font-bold leading-snug tracking-tight text-brand-black first:mt-0 md:text-[28px]"
             >
               {renderInlineText(block.text)}
             </h2>
@@ -205,41 +186,6 @@ const ArticleBody: React.FC<{
                 </li>
               ))}
             </ListElement>
-          );
-        }
-
-        if (block.type === 'cta') {
-          if (block.href === '/registration' && !SHOW_REGISTRATION_NAV) return null;
-
-          const className =
-            'group inline-flex min-h-12 items-center justify-center rounded-sm bg-brand-blue px-6 py-3 text-sm font-bold tracking-[0.08em] text-white transition-colors hover:bg-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2';
-          const content = (
-            <>
-              {block.label}
-              <ArrowRight
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
-                aria-hidden="true"
-              />
-            </>
-          );
-
-          return (
-            <div key={key} className="mt-12 border-t border-neutral-200 pt-8">
-              {block.href.startsWith('/') ? (
-                <Link to={block.href} className={className}>
-                  {content}
-                </Link>
-              ) : (
-                <a
-                  href={block.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={className}
-                >
-                  {content}
-                </a>
-              )}
-            </div>
           );
         }
 
@@ -337,12 +283,12 @@ const ArticleDetailPage: React.FC = () => {
         </header>
 
         {article.imageUrl && (
-          <figure className="my-9 md:my-10">
-            <div className="flex w-full justify-center overflow-hidden">
+          <figure className="my-9 md:my-12">
+            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
               <img
                 src={article.imageUrl}
                 alt={article.title}
-                className="h-auto w-full max-w-[560px] object-contain"
+                className="h-auto max-h-[760px] w-auto max-w-full object-contain"
               />
             </div>
           </figure>

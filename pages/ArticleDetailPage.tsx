@@ -251,6 +251,7 @@ const ArticleDetailPage: React.FC = () => {
   }
 
   const contentText = article.content || article.summary || '';
+  const highlightText = article.highlight || article.summary;
   const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
   return (
@@ -315,10 +316,10 @@ const ArticleDetailPage: React.FC = () => {
             article.imageUrl ? 'mt-8 md:mt-10' : 'mt-9 md:mt-12'
           }`}
         >
-          {article.summary && <ArticleHighlight text={article.summary} />}
+          {highlightText && <ArticleHighlight text={highlightText} />}
 
           <section
-            className={article.summary ? 'mt-10 md:mt-12' : undefined}
+            className={highlightText ? 'mt-10 md:mt-12' : undefined}
             aria-label="文章正文"
           >
             <ArticleBody text={contentText} category={article.category} />

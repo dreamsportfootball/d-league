@@ -108,7 +108,7 @@ const VenueSection: React.FC = () => {
             </div>
             <h2 className="mb-6 font-display text-4xl font-black uppercase leading-none tracking-tight md:text-6xl">
               台南市立仁德文賢國中<br />
-              <span className="bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">人工草</span>
+              <span className="bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">人工草足球場</span>
             </h2>
             <div className="mb-10 max-w-md space-y-4">
               <p className="text-sm font-medium leading-relaxed text-neutral-400 md:text-base">

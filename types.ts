@@ -67,6 +67,7 @@ export interface NewsArticle {
   seasonId?: SeasonId;
   title: string;
   summary: string;
+  highlight?: string;
   content: string;
   category: 'Official' | 'Match Report';
   imageUrl: string;

@@ -1,4 +1,5 @@
 import { CURRENT_SEASON_ID, isSeasonId } from './siteManifest.js';
+import { MATCH_VENUE_NAME } from './siteConfig';
 import type { CompetitionRules, LeagueConfig, LeagueId, SeasonConfig, SeasonId } from '../types/season';
 
 const createUnavailableLeagueMap = (): Record<LeagueId, LeagueConfig | null> => ({
@@ -118,7 +119,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     shortName: '2025/26',
     status: 'completed',
     isDefault: false,
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     heroFallbackImage: 'banner.png',
     youtubePlaylistEmbedUrl: 'https://www.youtube.com/embed/videoseries?list=PLly5Ox2OW8PCiK_sny6DzH9EdA73qK7Hw',
     youtubePlaylistLabel: '2025/26 賽季完整賽事',
@@ -138,7 +139,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     isDefault: true,
     registrationStart: '2026-06-23',
     registrationEnd: '2026-07-20',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     registrationFormUrl: 'https://forms.gle/juLDiY73TdJGvWCj9',
     regulationsUrl: 'https://drive.google.com/file/d/1MIe3p4ielXLnJSnr_V8YNCFpvonlxxS4/view?usp=drive_link',
     heroImageDesktop: 'assets/seasons/2026-27/registration-poster-desktop.png',

@@ -2,7 +2,7 @@ import type { Match } from '../types';
 import { MatchStatus } from '../types';
 import { getTaipeiDateParts } from './dateFormat';
 
-const VENUE_SHORT_NAME = '仁德文賢國中';
+const VENUE_SHORT_NAME = '台南市立仁德文賢國中人工草';
 
 interface BuildMatchInfoTextParams {
   match: Match;

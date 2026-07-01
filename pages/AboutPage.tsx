@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, Navigation } from 'lucide-react';
+import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import { assetUrl } from '../services/seasonData';
 
 const OriginVisionSection: React.FC = () => (
@@ -92,7 +93,7 @@ const VenueSection: React.FC = () => {
             <div className="group relative aspect-[4/3] overflow-hidden rounded-sm border border-white/10 bg-neutral-900 p-2">
               <img
                 src={venueImage}
-                alt="仁德文賢國中人工草皮足球場"
+                alt={MATCH_VENUE_NAME}
                 className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 onError={handleImageError}
               />
@@ -106,12 +107,12 @@ const VenueSection: React.FC = () => {
               <span className="text-xs font-bold uppercase tracking-[0.3em] text-brand-accent">台南</span>
             </div>
             <h2 className="mb-6 font-display text-4xl font-black uppercase leading-none tracking-tight md:text-6xl">
-              仁德<br />
-              <span className="bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">文賢國中</span>
+              台南市立仁德文賢國中<br />
+              <span className="bg-gradient-to-r from-white to-neutral-500 bg-clip-text text-transparent">人工草</span>
             </h2>
             <div className="mb-10 max-w-md space-y-4">
               <p className="text-sm font-medium leading-relaxed text-neutral-400 md:text-base">
-                D LEAGUE 比賽場地<br />人工草皮足球場
+                D LEAGUE 比賽場地
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -134,7 +135,7 @@ const VenueSection: React.FC = () => {
             <div className="group relative aspect-[4/3] overflow-hidden rounded-sm border border-white/10">
               <img
                 src={venueImage}
-                alt="仁德文賢國中人工草皮足球場"
+                alt={MATCH_VENUE_NAME}
                 className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 onError={handleImageError}
               />

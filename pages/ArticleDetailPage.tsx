@@ -275,9 +275,14 @@ const ArticleDetailPage: React.FC = () => {
             </h1>
 
             {article.summary && (
-              <p className="mt-6 max-w-3xl text-[17px] font-medium leading-[1.75] text-neutral-600 md:text-xl md:leading-[1.7]">
-                {article.summary}
-              </p>
+              <blockquote
+                className="mt-7 max-w-4xl border-l-[3px] border-brand-blue pl-5 md:mt-8 md:pl-7"
+                aria-label="文章重點"
+              >
+                <p className="font-display text-[19px] font-semibold leading-[1.65] tracking-tight text-neutral-700 md:text-[22px] md:leading-[1.6]">
+                  {article.summary}
+                </p>
+              </blockquote>
             )}
           </div>
         </header>

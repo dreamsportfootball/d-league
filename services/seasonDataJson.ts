@@ -33,6 +33,7 @@ const matchEventsModules = import.meta.glob('../data/seasons/*/matchEvents.json'
 const disciplineModules = import.meta.glob('../data/seasons/*/disciplineDecisions.json', { eager: true, import: 'default' }) as JsonModuleMap;
 const lineupsModules = import.meta.glob('../data/seasons/*/lineups.json', { eager: true, import: 'default' }) as JsonModuleMap;
 const newsModules = import.meta.glob('../data/seasons/*/news.json', { eager: true, import: 'default' }) as JsonModuleMap;
+const highlightsModules = import.meta.glob('../data/seasons/*/highlights.json', { eager: true, import: 'default' }) as JsonModuleMap;
 const mediaModules = import.meta.glob('../data/seasons/*/media.json', { eager: true, import: 'default' }) as JsonModuleMap;
 const albumsModules = import.meta.glob('../data/seasons/*/albums.json', { eager: true, import: 'default' }) as JsonModuleMap;
 
@@ -75,6 +76,7 @@ const makeData = (
   disciplineDecisions: DisciplineDecision[],
   lineups: Record<string, MatchLineup>,
   newsInput: NewsArticle[],
+  highlights: Record<string, string>,
   mediaInput: Video[],
   albumsInput: MediaAlbum[],
 ): SeasonData => {
@@ -92,6 +94,7 @@ const makeData = (
       ...article,
       title: normalizeVenueText(article.title),
       summary: normalizeVenueText(article.summary),
+      highlight: normalizeVenueText(highlights[article.id] ?? article.summary),
       content: article.content ? normalizeVenueText(article.content) : article.content,
       seasonId: id,
       imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
@@ -116,6 +119,7 @@ const DATA = Object.fromEntries(
         getSeasonJson<DisciplineDecision[]>(disciplineModules, seasonId, 'disciplineDecisions.json'),
         getSeasonJson<Record<string, MatchLineup>>(lineupsModules, seasonId, 'lineups.json'),
         getSeasonJson<NewsArticle[]>(newsModules, seasonId, 'news.json'),
+        getSeasonJson<Record<string, string>>(highlightsModules, seasonId, 'highlights.json'),
         getSeasonJson<Video[]>(mediaModules, seasonId, 'media.json'),
         getSeasonJson<MediaAlbum[]>(albumsModules, seasonId, 'albums.json'),
       ),

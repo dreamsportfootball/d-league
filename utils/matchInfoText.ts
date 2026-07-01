@@ -1,8 +1,7 @@
+import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import type { Match } from '../types';
 import { MatchStatus } from '../types';
 import { getTaipeiDateParts } from './dateFormat';
-
-const VENUE_SHORT_NAME = '台南市立仁德文賢國中人工草';
 
 interface BuildMatchInfoTextParams {
   match: Match;
@@ -43,7 +42,7 @@ export const buildMatchInfoText = ({
     matchup,
     '',
     formatMatchDateTime(match.timestamp),
-    VENUE_SHORT_NAME,
+    MATCH_VENUE_NAME,
   ];
 
   if (match.administrativeNote) {

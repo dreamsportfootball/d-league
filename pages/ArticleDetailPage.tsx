@@ -112,19 +112,41 @@ const renderMultilineText = (text: string): React.ReactNode[] =>
     </Fragment>
   ));
 
+const ArticleHighlight: React.FC<{ text: string }> = ({ text }) => (
+  <blockquote
+    className="border-l-[3px] border-brand-blue pl-5 md:pl-7"
+    aria-label="文章重點"
+  >
+    <p className="text-[18px] font-semibold leading-[1.75] text-neutral-700 md:text-[21px] md:leading-[1.7]">
+      {text}
+    </p>
+  </blockquote>
+);
+
 const ArticleBody: React.FC<{
   text: string;
   category: 'Match Report' | 'Official';
 }> = ({ text, category }) => {
-  const blocks = useMemo(
-    () =>
-      text
-        .split(/\n{2,}/)
-        .map((block) => block.trim())
-        .filter(Boolean)
-        .map((block) => parseArticleBlock(block, category)),
-    [category, text],
-  );
+  const blocks = useMemo(() => {
+    const parsedBlocks = text
+      .split(/\n{2,}/)
+      .map((block) => block.trim())
+      .filter(Boolean)
+      .map((block) => parseArticleBlock(block, category));
+
+    if (category !== 'Match Report') return parsedBlocks;
+
+    let firstContentIndex = 0;
+    while (
+      firstContentIndex < parsedBlocks.length &&
+      (parsedBlocks[firstContentIndex].type === 'label' ||
+        parsedBlocks[firstContentIndex].type === 'info')
+    ) {
+      firstContentIndex += 1;
+    }
+
+    return parsedBlocks.slice(firstContentIndex);
+  }, [category, text]);
 
   if (blocks.length === 0) return null;
 
@@ -273,22 +295,11 @@ const ArticleDetailPage: React.FC = () => {
             <h1 className="mt-6 max-w-[980px] font-display text-[34px] font-bold leading-[1.16] tracking-tight text-brand-black md:text-5xl md:leading-[1.14] lg:text-[54px]">
               {article.title}
             </h1>
-
-            {article.summary && (
-              <blockquote
-                className="mt-7 max-w-4xl border-l-[3px] border-brand-blue pl-5 md:mt-8 md:pl-7"
-                aria-label="文章重點"
-              >
-                <p className="font-display text-[19px] font-semibold leading-[1.65] tracking-tight text-neutral-700 md:text-[22px] md:leading-[1.6]">
-                  {article.summary}
-                </p>
-              </blockquote>
-            )}
           </div>
         </header>
 
         {article.imageUrl && (
-          <figure className="my-9 md:my-12">
+          <figure className="mt-9 md:mt-12">
             <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
               <img
                 src={article.imageUrl}
@@ -299,9 +310,20 @@ const ArticleDetailPage: React.FC = () => {
           </figure>
         )}
 
-        <section className="mx-auto max-w-[720px]" aria-label="文章正文">
-          <ArticleBody text={contentText} category={article.category} />
-        </section>
+        <div
+          className={`mx-auto max-w-[720px] ${
+            article.imageUrl ? 'mt-8 md:mt-10' : 'mt-9 md:mt-12'
+          }`}
+        >
+          {article.summary && <ArticleHighlight text={article.summary} />}
+
+          <section
+            className={article.summary ? 'mt-10 md:mt-12' : undefined}
+            aria-label="文章正文"
+          >
+            <ArticleBody text={contentText} category={article.category} />
+          </section>
+        </div>
 
         <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">
           <Link

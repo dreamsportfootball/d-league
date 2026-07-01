@@ -1,3 +1,5 @@
+import { MATCH_VENUE_NAME } from './config/siteConfig';
+
 export type CupGroup = 'A' | 'B';
 export type CupCompetition = 'CUP' | 'PLATE';
 export type CupGroupTieBreakStatus = 'RESOLVED' | 'PENALTY_SHOOTOUT_REQUIRED';
@@ -92,7 +94,7 @@ export const CUP_EVENT: CupEventConfig = {
   name: '2026 台南夢達新春賀歲盃',
   shortName: '2026 新春賀歲盃',
   date: '2026-02-01T09:00:00+08:00',
-  venue: '台南市立仁德文賢國中',
+  venue: MATCH_VENUE_NAME,
   format: '五人制｜小組賽＋盃／盤賽',
   teamCount: 8,
   matchCount: 20,

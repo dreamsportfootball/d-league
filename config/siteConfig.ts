@@ -24,6 +24,7 @@ interface StaffPartnerTeamPopupConfig {
 export { CURRENT_SEASON_ID };
 export const SHOW_REGISTRATION_NAV = true;
 export const D_LEAGUE_INSTAGRAM_URL = 'https://www.instagram.com/d.league_tw/';
+export const MATCH_VENUE_NAME = '台南市立仁德文賢國中人工草';
 
 export const CURRENT_REGISTRATION_PROGRESS: RegistrationProgressConfig = {
   receivedTeams: 13,

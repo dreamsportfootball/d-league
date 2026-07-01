@@ -145,6 +145,10 @@ const ArticleBody: React.FC<{
       firstContentIndex += 1;
     }
 
+    if (parsedBlocks[firstContentIndex]?.type === 'heading') {
+      firstContentIndex += 1;
+    }
+
     return parsedBlocks.slice(firstContentIndex);
   }, [category, text]);
 

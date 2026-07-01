@@ -1,3 +1,4 @@
+import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 import { preview2026Matches, preview2026Teams } from '../data/previews/season2026Preview';
 import type { Match, NewsArticle, Video } from '../types';
@@ -36,6 +37,13 @@ const mediaModules = import.meta.glob('../data/seasons/*/media.json', { eager: t
 const albumsModules = import.meta.glob('../data/seasons/*/albums.json', { eager: true, import: 'default' }) as JsonModuleMap;
 
 const useOptimizedImages = import.meta.env.VITE_USE_OPTIMIZED_IMAGES === 'true';
+
+const normalizeVenueText = (value: string): string =>
+  value
+    .split('台南仁德文賢國中人工草皮球場')
+    .join(MATCH_VENUE_NAME)
+    .split('仁德文賢國中人工草皮球場')
+    .join(MATCH_VENUE_NAME);
 
 const getOptimizedAssetPath = (path: string): string => {
   if (!useOptimizedImages || !/\.(png|jpe?g)$/i.test(path)) return path;
@@ -76,12 +84,15 @@ const makeData = (
     teamMap: Object.fromEntries(teams.map((team) => [team.id, team])),
     players,
     playerImages: Object.fromEntries(Object.entries(imagesInput).map(([name, path]) => [name, assetUrl(path)])),
-    matches,
+    matches: matches.map((match) => ({ ...match, venue: MATCH_VENUE_NAME })),
     matchEvents,
     disciplineDecisions,
     lineups,
     news: newsInput.map((article) => ({
       ...article,
+      title: normalizeVenueText(article.title),
+      summary: normalizeVenueText(article.summary),
+      content: article.content ? normalizeVenueText(article.content) : article.content,
       seasonId: id,
       imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
     })),

@@ -1,3 +1,4 @@
+import { MATCH_VENUE_NAME } from '../../config/siteConfig';
 import { MatchStatus, type Match } from '../../types';
 import type { SeasonTeam } from '../../types/team';
 
@@ -80,7 +81,7 @@ export const preview2026Matches: Match[] = [
     awayScore: 2,
     status: MatchStatus.FINISHED,
     timestamp: '2026-10-18T10:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L1',
   },
   {
@@ -92,7 +93,7 @@ export const preview2026Matches: Match[] = [
     awayScore: 0,
     status: MatchStatus.FINISHED,
     timestamp: '2026-10-18T11:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L2',
   },
   {
@@ -104,7 +105,7 @@ export const preview2026Matches: Match[] = [
     awayScore: 2,
     status: MatchStatus.FINISHED,
     timestamp: '2026-10-18T13:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L3',
   },
   {
@@ -116,7 +117,7 @@ export const preview2026Matches: Match[] = [
     awayScore: null,
     status: MatchStatus.SCHEDULED,
     timestamp: '2026-11-01T10:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L1',
   },
   {
@@ -128,7 +129,7 @@ export const preview2026Matches: Match[] = [
     awayScore: null,
     status: MatchStatus.SCHEDULED,
     timestamp: '2026-11-01T11:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L2',
   },
   {
@@ -140,7 +141,7 @@ export const preview2026Matches: Match[] = [
     awayScore: 1,
     status: MatchStatus.FINISHED,
     timestamp: '2026-11-01T13:00:00+08:00',
-    venue: '台南市立仁德文賢國中人工草皮足球場',
+    venue: MATCH_VENUE_NAME,
     league: 'L3',
   },
 ];

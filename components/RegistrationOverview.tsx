@@ -22,21 +22,19 @@ const RegistrationOverview: React.FC = () => {
 
   const expectedTeamCount = leagueConfigs[0]?.expectedTeamCount;
   const leagueCount = activeSeason.enabledLeagues.length;
+  const leagueCountLabel = leagueCount === 3 ? '三級別' : `${leagueCount} 個級別`;
 
   return (
     <section className="bg-white py-14 md:py-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-5">
-            <span className="mb-3 block text-xs font-black uppercase tracking-[0.28em] text-brand-blue">
-              正式開放報名
-            </span>
             <h2 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-6xl">
               {activeSeason.shortName}
               <span className="block text-brand-blue">賽季報名</span>
             </h2>
             <p className="mt-6 max-w-xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
-              {activeSeason.enabledLeagues.join('、')} 共 {leagueCount} 個級別同步開放報名，各級別預計錄取 {expectedTeamCount ?? 0} 支球隊，並正式實施升降級制度
+              {activeSeason.enabledLeagues.join('、')} {leagueCountLabel}同步開放報名，正式實施升降級制度
             </p>
 
             <RegistrationProgress variant="compact" />

@@ -34,7 +34,7 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
 
   return (
     <section
-      className={`${compact ? 'mt-8 border-y border-neutral-200 py-5' : 'border-y border-neutral-200 bg-neutral-50 px-5 py-6 md:px-8 md:py-8'} ${className}`}
+      className={`${compact ? 'mt-8 border-y border-brand-black py-6' : 'border-y-2 border-brand-black bg-neutral-50 px-5 py-7 md:px-8 md:py-9'} ${className}`}
       aria-label="賽季報名動態"
     >
       <div className={`flex gap-5 ${compact ? 'flex-col' : 'flex-col md:flex-row md:items-end md:justify-between'}`}>
@@ -43,19 +43,37 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
             <UsersRound className="h-4 w-4" aria-hidden="true" />
             <p className="text-[10px] font-black uppercase tracking-[0.22em]">報名動態</p>
           </div>
-          <p className={`mt-2 font-black leading-tight text-brand-black ${compact ? 'text-lg' : 'text-xl md:text-2xl'}`}>
-            已有 {progress.receivedTeams} 支球隊完成正式報名
-          </p>
-          <p className="mt-2 text-sm font-bold text-brand-blue">
+
+          {compact ? (
+            <div className="mt-3 flex items-end gap-3">
+              <span className="font-display text-6xl font-black leading-none tracking-tighter text-brand-blue sm:text-7xl">
+                {progress.receivedTeams}
+              </span>
+              <p className="pb-1 text-base font-black leading-[1.25] text-brand-black sm:text-lg">
+                <span className="block">支球隊</span>
+                <span className="block">完成正式報名</span>
+              </p>
+            </div>
+          ) : (
+            <p className="mt-3 text-2xl font-black leading-tight text-brand-black md:text-3xl">
+              已有{' '}
+              <span className="font-display text-[1.35em] leading-none text-brand-blue">
+                {progress.receivedTeams}
+              </span>{' '}
+              支球隊完成正式報名
+            </p>
+          )}
+
+          <p className="mt-3 text-sm font-bold text-brand-blue">
             {activeSeason.shortName} 賽季持續接受報名中
           </p>
         </div>
 
         {!compact && (
           <div className="md:text-right">
-            <p className="font-display text-6xl font-black leading-none tracking-tight text-brand-black md:text-7xl">
+            <p className="font-display text-6xl font-black leading-none tracking-tight text-brand-blue md:text-7xl">
               {progress.receivedTeams}
-              <span className="ml-2 font-sans text-sm font-black tracking-widest text-neutral-400">支球隊</span>
+              <span className="ml-2 font-sans text-sm font-black tracking-widest text-brand-black">支球隊</span>
             </p>
             <p className="mt-2 text-xs font-medium text-neutral-400">
               更新至 {formatDate(progress.updatedAt)}
@@ -65,7 +83,7 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
       </div>
 
       {compact && (
-        <p className="mt-2 text-xs font-medium text-neutral-400">
+        <p className="mt-3 text-xs font-medium text-neutral-400">
           更新至 {formatDate(progress.updatedAt)}
         </p>
       )}

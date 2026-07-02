@@ -45,13 +45,12 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
           </div>
 
           {compact ? (
-            <div className="mt-3 flex items-end gap-3">
-              <span className="font-display text-6xl font-black leading-none tracking-tighter text-brand-blue sm:text-7xl">
+            <div className="mt-5">
+              <p className="font-display text-[104px] font-black leading-[0.78] tracking-[-0.055em] text-brand-blue tabular-nums sm:text-[124px]">
                 {progress.receivedTeams}
-              </span>
-              <p className="pb-1 text-base font-black leading-[1.25] text-brand-black sm:text-lg">
-                <span className="block">支球隊</span>
-                <span className="block">完成正式報名</span>
+              </p>
+              <p className="mt-4 font-display text-xl font-black leading-tight tracking-tight text-brand-black sm:text-2xl">
+                支球隊完成正式報名
               </p>
             </div>
           ) : (

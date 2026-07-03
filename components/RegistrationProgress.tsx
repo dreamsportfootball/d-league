@@ -19,15 +19,29 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
   const activeSeason = getSeasonConfig(CURRENT_SEASON_ID);
   const progress = CURRENT_REGISTRATION_PROGRESS;
 
-  const expectedTeamCount = useMemo(() => {
-    const counts = activeSeason.enabledLeagues
-      .map((leagueId) => activeSeason.leagues[leagueId]?.expectedTeamCount)
-      .filter((count): count is number => typeof count === 'number');
+  const expectedTeamCounts = useMemo(
+    () =>
+      activeSeason.enabledLeagues
+        .map((leagueId) => activeSeason.leagues[leagueId]?.expectedTeamCount)
+        .filter((count): count is number => typeof count === 'number'),
+    [activeSeason.enabledLeagues, activeSeason.leagues],
+  );
 
-    return counts.length > 0 && counts.every((count) => count === counts[0])
-      ? counts[0]
-      : null;
-  }, [activeSeason.enabledLeagues, activeSeason.leagues]);
+  const expectedTeamCount = useMemo(
+    () =>
+      expectedTeamCounts.length > 0 && expectedTeamCounts.every((count) => count === expectedTeamCounts[0])
+        ? expectedTeamCounts[0]
+        : null,
+    [expectedTeamCounts],
+  );
+
+  const totalExpectedTeamCount = useMemo(
+    () =>
+      expectedTeamCounts.length === activeSeason.enabledLeagues.length
+        ? expectedTeamCounts.reduce((total, count) => total + count, 0)
+        : null,
+    [activeSeason.enabledLeagues.length, expectedTeamCounts],
+  );
 
   const compact = variant === 'compact';
   const leagueLabel = activeSeason.enabledLeagues.join('、');
@@ -46,8 +60,13 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
 
           {compact ? (
             <div className="mt-5">
-              <p className="font-display text-[104px] font-black leading-[0.78] tracking-[-0.055em] text-brand-blue tabular-nums sm:text-[124px]">
-                {progress.receivedTeams}
+              <p className="flex items-baseline font-display font-black leading-none tracking-[-0.055em] tabular-nums text-brand-blue">
+                <span className="text-[92px] sm:text-[112px]">{progress.receivedTeams}</span>
+                {totalExpectedTeamCount !== null && (
+                  <span className="ml-1 text-[42px] tracking-[-0.04em] text-neutral-300 sm:text-[52px]">
+                    /{totalExpectedTeamCount}
+                  </span>
+                )}
               </p>
               <p className="mt-4 font-display text-xl font-black leading-tight tracking-tight text-brand-black sm:text-2xl">
                 支球隊完成正式報名
@@ -70,9 +89,11 @@ const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
 
         {!compact && (
           <div className="md:text-right">
-            <p className="font-display text-6xl font-black leading-none tracking-tight text-brand-blue md:text-7xl">
-              {progress.receivedTeams}
-              <span className="ml-2 font-sans text-sm font-black tracking-widest text-brand-black">支球隊</span>
+            <p className="font-display font-black leading-none tracking-tight text-brand-blue tabular-nums">
+              <span className="text-6xl md:text-7xl">{progress.receivedTeams}</span>
+              {totalExpectedTeamCount !== null && (
+                <span className="ml-1 text-3xl text-neutral-300 md:text-4xl">/{totalExpectedTeamCount}</span>
+              )}
             </p>
             <p className="mt-2 text-xs font-medium text-neutral-400">
               更新至 {formatDate(progress.updatedAt)}

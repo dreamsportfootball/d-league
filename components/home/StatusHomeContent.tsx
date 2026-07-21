@@ -48,8 +48,11 @@ const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
 
   return (
     <>
+      <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
+        <NewsSection />
+      </section>
       {registrationResults ? (
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white pb-12 md:pb-16">
           <div className="container mx-auto max-w-7xl px-4 md:px-6">
             <RegistrationResults results={registrationResults} />
           </div>
@@ -57,9 +60,6 @@ const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
       ) : (
         <StatusOverview status={status} />
       )}
-      <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
-        <NewsSection />
-      </section>
       <BrandStory />
     </>
   );

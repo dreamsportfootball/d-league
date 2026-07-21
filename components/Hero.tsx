@@ -113,7 +113,7 @@ const Hero: React.FC = () => {
               </Link>
             )}
 
-            {activeSeason.regulationsUrl && (
+            {!resultsPublished && activeSeason.regulationsUrl && (
               <a
                 href={activeSeason.regulationsUrl}
                 target="_blank"

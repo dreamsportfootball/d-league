@@ -49,6 +49,7 @@ jobs:
           VITE_ANALYTICS_DISABLED: 'true'
         run: npx vite build --base=/d-league/preview/season-2026-27/
 
+      # A push to season/2026-27 always rebuilds the complete preview.
       - name: Publish preview without replacing production
         uses: peaceiris/actions-gh-pages@v4
         with:

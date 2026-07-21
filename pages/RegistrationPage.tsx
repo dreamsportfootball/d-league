@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import RegistrationProgress from '../components/RegistrationProgress';
 import { useSeason } from '../hooks/useSeason';
-import type { RegistrationContentConfig } from '../types/season';
+import type { RegistrationContentConfig, RegistrationResultsConfig } from '../types/season';
 
 const formatDate = (value?: string): string => {
   if (!value) return '尚未公布';
@@ -36,6 +36,8 @@ const createFallbackContent = (): RegistrationContentConfig => ({
 const RegistrationPage: React.FC = () => {
   const { activeSeason } = useSeason();
   const registrationContent = activeSeason.registrationContent ?? createFallbackContent();
+  const registrationResults = activeSeason.registrationResults;
+  const resultsPublished = Boolean(registrationResults);
 
   const leagueConfigs = useMemo(
     () =>
@@ -74,21 +76,29 @@ const RegistrationPage: React.FC = () => {
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="border-b border-neutral-200 pb-10 md:pb-14">
           <span className="mb-3 block text-xs font-black uppercase tracking-[0.3em] text-brand-blue">
-            賽季報名
+            {resultsPublished ? '錄取公告' : '賽季報名'}
           </span>
           <h1 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-7xl">
             {activeSeason.displayName}
-            <span className="block text-brand-blue">報名詳情</span>
+            <span className="block text-brand-blue">{resultsPublished ? '錄取名單' : '報名詳情'}</span>
           </h1>
           <p className="mt-6 max-w-3xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
             {registrationContent.intro}
           </p>
-          <span className={`mt-6 inline-flex rounded-full px-4 py-2 text-xs font-black ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-600'}`}>
-            {registrationOpen ? `報名期間至 ${formatDate(activeSeason.registrationEnd)}` : '目前未開放報名'}
+          <span className={`mt-6 inline-flex px-4 py-2 text-xs font-black ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-700'}`}>
+            {resultsPublished
+              ? `名單公布於 ${formatDate(registrationResults?.announcedAt)}`
+              : registrationOpen
+                ? `報名期間至 ${formatDate(activeSeason.registrationEnd)}`
+                : '目前未開放報名'}
           </span>
         </div>
 
-        <RegistrationProgress className="mt-8" />
+        {registrationResults ? (
+          <RegistrationResults results={registrationResults} />
+        ) : (
+          <RegistrationProgress className="mt-8" />
+        )}
 
         <div className="grid grid-cols-1 gap-12 py-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
@@ -107,7 +117,7 @@ const RegistrationPage: React.FC = () => {
               <div className="mb-6 flex items-center">
                 <ClipboardCheck className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
                 <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
-                  報名流程
+                  {resultsPublished ? '後續流程' : '報名流程'}
                 </h2>
               </div>
               <ol className="grid gap-3 sm:grid-cols-2">
@@ -190,7 +200,9 @@ const RegistrationPage: React.FC = () => {
             <div className="sticky top-24 border border-neutral-200 bg-brand-black p-6 text-white md:p-8">
               <div className="mb-6 flex items-center">
                 <ShieldCheck className="mr-3 h-6 w-6 text-brand-accent" aria-hidden="true" />
-                <h2 className="font-display text-2xl font-black uppercase tracking-tight">審核與分級</h2>
+                <h2 className="font-display text-2xl font-black uppercase tracking-tight">
+                  {resultsPublished ? '參賽確認' : '審核與分級'}
+                </h2>
               </div>
 
               <p className="text-sm font-medium leading-7 text-white/75">
@@ -248,6 +260,59 @@ const RegistrationPage: React.FC = () => {
     </div>
   );
 };
+
+const RegistrationResults: React.FC<{ results: RegistrationResultsConfig }> = ({ results }) => (
+  <section className="mt-8 border-y-2 border-brand-black py-8 md:mt-10 md:py-10" aria-labelledby="registration-results-title">
+    <div className="flex flex-col gap-3 border-b border-neutral-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-brand-blue">Official Selection</p>
+        <h2 id="registration-results-title" className="mt-2 font-display text-3xl font-black uppercase tracking-tight text-brand-black md:text-5xl">
+          正式錄取隊伍
+        </h2>
+      </div>
+      <p className="font-display text-2xl font-black text-brand-blue">共 {results.acceptedTeams.length} 隊</p>
+    </div>
+
+    <ol className="grid grid-cols-1 border-x border-b border-neutral-200 sm:grid-cols-2 lg:grid-cols-3">
+      {results.acceptedTeams.map((team, index) => (
+        <li key={team} className="flex min-h-16 items-center border-b border-neutral-200 px-4 py-4 last:border-b-0 sm:border-r sm:px-5 lg:min-h-20">
+          <span className="mr-4 w-7 shrink-0 font-display text-lg font-black tabular-nums text-brand-blue">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span className="text-sm font-black leading-6 text-brand-black md:text-base">{team}</span>
+        </li>
+      ))}
+    </ol>
+
+    {results.waitlistedTeams.length > 0 && (
+      <div className="mt-8 border border-neutral-300 bg-neutral-50 p-5 md:p-7">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="font-display text-2xl font-black uppercase tracking-tight text-brand-black">備取隊伍</h3>
+          <span className="text-xs font-black uppercase tracking-widest text-neutral-500">共 {results.waitlistedTeams.length} 隊</span>
+        </div>
+        <ol className="mt-5 divide-y divide-neutral-200 border-y border-neutral-200">
+          {results.waitlistedTeams.map((team, index) => (
+            <li key={team} className="flex min-h-14 items-center py-3">
+              <span className="mr-4 w-7 shrink-0 font-display text-lg font-black tabular-nums text-neutral-400">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <span className="text-sm font-black leading-6 text-brand-black md:text-base">{team}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )}
+
+    <div className="mt-8 grid gap-4 md:grid-cols-2">
+      <p className="border-l-2 border-brand-blue pl-4 text-xs font-bold leading-6 text-neutral-600 md:text-sm">
+        {results.note}
+      </p>
+      <p className="border-l-2 border-brand-accent bg-brand-black px-4 py-3 text-xs font-bold leading-6 text-white md:text-sm">
+        {results.groupingNote}
+      </p>
+    </div>
+  </section>
+);
 
 const InfoBlock: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="bg-white p-6 md:p-8">

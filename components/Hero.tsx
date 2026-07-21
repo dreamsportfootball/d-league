@@ -82,26 +82,16 @@ const Hero: React.FC = () => {
 
         <div className="border-t border-white/10 bg-brand-black">
           <div className="container mx-auto grid grid-cols-1 gap-3 px-4 py-4 sm:flex sm:items-center sm:justify-center md:px-6 md:py-5">
-            {resultsPublished ? (
-              <Link
-                to="/registration"
+            {!resultsPublished && activeSeason.registrationFormUrl && (
+              <a
+                href={activeSeason.registrationFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
               >
-                查看錄取名單
+                立即報名
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            ) : (
-              activeSeason.registrationFormUrl && (
-                <a
-                  href={activeSeason.registrationFormUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
-                >
-                  立即報名
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </a>
-              )
+              </a>
             )}
 
             {!resultsPublished && (
@@ -113,7 +103,7 @@ const Hero: React.FC = () => {
               </Link>
             )}
 
-            {!resultsPublished && activeSeason.regulationsUrl && (
+            {activeSeason.regulationsUrl && (
               <a
                 href={activeSeason.regulationsUrl}
                 target="_blank"

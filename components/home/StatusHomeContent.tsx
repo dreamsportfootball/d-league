@@ -1,9 +1,10 @@
 import React from 'react';
 import { CheckCircle2, Clock3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSeason } from '../../hooks/useSeason';
 import BrandStory from '../BrandStory';
-import ClubGrid from '../ClubGrid';
 import NewsSection from '../NewsSection';
+import RegistrationResults from '../RegistrationResults';
 
 interface StatusHomeContentProps {
   status: 'review' | 'upcoming';
@@ -41,17 +42,27 @@ const StatusOverview: React.FC<StatusHomeContentProps> = ({ status }) => {
   );
 };
 
-const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => (
-  <>
-    <StatusOverview status={status} />
-    <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
-      <NewsSection />
-    </section>
-    <div id="teams">
-      <ClubGrid />
-    </div>
-    <BrandStory />
-  </>
-);
+const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
+  const { activeSeason } = useSeason();
+  const registrationResults = activeSeason.registrationResults;
+
+  return (
+    <>
+      {registrationResults ? (
+        <section className="bg-white py-12 md:py-16">
+          <div className="container mx-auto max-w-7xl px-4 md:px-6">
+            <RegistrationResults results={registrationResults} />
+          </div>
+        </section>
+      ) : (
+        <StatusOverview status={status} />
+      )}
+      <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
+        <NewsSection />
+      </section>
+      <BrandStory />
+    </>
+  );
+};
 
 export default StatusHomeContent;

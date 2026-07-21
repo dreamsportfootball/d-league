@@ -6,6 +6,14 @@ interface RegistrationResultsProps {
   className?: string;
 }
 
+const formatDeadline = (value: string): string => {
+  const [datePart, timePart = ''] = value.split('T');
+  const formattedDate = datePart.replaceAll('-', '/');
+  const formattedTime = timePart.slice(0, 5);
+
+  return formattedTime ? `${formattedDate} ${formattedTime} 前` : `${formattedDate} 前`;
+};
+
 const RegistrationResults: React.FC<RegistrationResultsProps> = ({
   results,
   className = '',
@@ -74,6 +82,23 @@ const RegistrationResults: React.FC<RegistrationResultsProps> = ({
       </p>
       <p className="border-l-2 border-brand-accent bg-brand-black px-4 py-3 text-xs font-bold leading-6 text-white md:text-sm">
         {results.groupingNote}
+      </p>
+    </div>
+
+    <div className="mt-8 border-t border-neutral-200 pt-8">
+      <p className="text-xs font-black uppercase tracking-[0.24em] text-brand-blue">重要期限</p>
+      <div className="mt-4 grid gap-px border border-neutral-200 bg-neutral-200 md:grid-cols-2">
+        {results.deadlines.map((item) => (
+          <div key={item.label} className="bg-white p-5 md:p-6">
+            <p className="text-xs font-black tracking-widest text-neutral-500">{item.label}</p>
+            <p className="mt-2 font-display text-2xl font-black leading-tight text-brand-black md:text-3xl">
+              {formatDeadline(item.deadline)}
+            </p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-5 border-l-2 border-brand-blue pl-4 text-xs font-bold leading-6 text-neutral-600 md:text-sm">
+        {results.detailsNote}
       </p>
     </div>
   </section>

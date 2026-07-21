@@ -140,7 +140,6 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     registrationStart: '2026-06-23',
     registrationEnd: '2026-07-20',
     venue: MATCH_VENUE_NAME,
-    registrationFormUrl: 'https://forms.gle/juLDiY73TdJGvWCj9',
     regulationsUrl: 'https://drive.google.com/file/d/1MIe3p4ielXLnJSnr_V8YNCFpvonlxxS4/view?usp=drive_link',
     heroImageDesktop: 'assets/seasons/2026-27/registration-poster-desktop.png',
     heroImageMobile: 'assets/seasons/2026-27/registration-poster-mobile.png',

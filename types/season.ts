@@ -61,12 +61,19 @@ export interface RegistrationContentConfig {
   reviewFeatures: string[];
 }
 
+export interface RegistrationDeadlineConfig {
+  label: string;
+  deadline: string;
+}
+
 export interface RegistrationResultsConfig {
   announcedAt: string;
   acceptedTeams: string[];
   waitlistedTeams: string[];
   note: string;
   groupingNote: string;
+  deadlines: RegistrationDeadlineConfig[];
+  detailsNote: string;
 }
 
 export interface RegistrationProgressConfig {

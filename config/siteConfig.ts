@@ -28,12 +28,12 @@ export const MATCH_VENUE_NAME = '台南市立仁德文賢國中人工草';
 
 export const CURRENT_REGISTRATION_PROGRESS: RegistrationProgressConfig = {
   receivedTeams: 18,
-  updatedAt: '2026-07-04',
-  note: '報名隊數不代表最終錄取結果，正式參賽級別及錄取名單以主辦單位公告為準；若報名球隊數已達預定名額，主辦單位得提前截止報名',
+  updatedAt: '2026-07-21',
+  note: '正式錄取及備取名單已公布；L1、L2、L3 正式分組將於完成繳費及參賽確認後另行公告',
 };
 
 export const STAFF_PARTNER_TEAM_POPUP: StaffPartnerTeamPopupConfig = {
-  enabled: true,
+  enabled: false,
   storageKey: 'dleague:staff-partner-team-popup:2026-27:v1',
   showDelayMs: 300,
   eyebrow: 'D LEAGUE 工作人員合作隊招募',

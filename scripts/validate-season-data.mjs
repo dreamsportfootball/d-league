@@ -258,10 +258,16 @@ for (const file of [
   if (count !== 0) fail(`${CURRENT_SEASON_ID} ${file}: must stay empty until official data is confirmed`);
 }
 
-const registrationNews = read(CURRENT_SEASON_ID, 'news.json');
-const registrationArticleId = `${CURRENT_SEASON_ID}-registration-open`;
-if (registrationNews.length !== 1 || registrationNews[0].id !== registrationArticleId) {
-  fail(`${CURRENT_SEASON_ID}: registration announcement is missing or duplicated`);
+const currentSeasonNews = read(CURRENT_SEASON_ID, 'news.json');
+const requiredCurrentSeasonNewsIds = [
+  `${CURRENT_SEASON_ID}-registration-open`,
+  `${CURRENT_SEASON_ID}-selection-announcement`,
+];
+const currentSeasonNewsIds = new Set(currentSeasonNews.map((article) => article.id));
+for (const articleId of requiredCurrentSeasonNewsIds) {
+  if (!currentSeasonNewsIds.has(articleId)) {
+    fail(`${CURRENT_SEASON_ID}: required announcement ${articleId} is missing`);
+  }
 }
 
 console.log('Season data validation passed');

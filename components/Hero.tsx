@@ -40,16 +40,17 @@ const Hero: React.FC = () => {
   ]);
 
   const isRegistration = activeSeason.status === 'registration';
-  const showRegistrationPoster =
-    isRegistration && Boolean(activeSeason.heroImageDesktop) && !imageFailed;
+  const resultsPublished = Boolean(activeSeason.registrationResults);
+  const showSeasonPoster =
+    (isRegistration || resultsPublished) && Boolean(activeSeason.heroImageDesktop) && !imageFailed;
   const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
   const leagueCount = activeSeason.enabledLeagues.length;
 
-  if (showRegistrationPoster) {
+  if (showSeasonPoster) {
     return (
-      <section className="bg-brand-black" aria-labelledby="registration-hero-title">
-        <h1 id="registration-hero-title" className="sr-only">
-          {activeSeason.registrationMessage ?? `${activeSeason.displayName} 正式開放報名`}
+      <section className="bg-brand-black" aria-labelledby="season-hero-title">
+        <h1 id="season-hero-title" className="sr-only">
+          {activeSeason.registrationMessage ?? `${activeSeason.displayName} 賽季資訊`}
         </h1>
 
         <picture className="block w-full">
@@ -64,7 +65,11 @@ const Hero: React.FC = () => {
           <img
             src={heroImages.desktop}
             onError={() => setImageFailed(true)}
-            alt={`${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
+            alt={
+              resultsPublished
+                ? `${activeSeason.displayName} 錄取名單已公布`
+                : `${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`
+            }
             width={1920}
             height={800}
             loading="eager"
@@ -77,7 +82,7 @@ const Hero: React.FC = () => {
 
         <div className="border-t border-white/10 bg-brand-black">
           <div className="container mx-auto grid grid-cols-1 gap-3 px-4 py-4 sm:flex sm:items-center sm:justify-center md:px-6 md:py-5">
-            {activeSeason.registrationFormUrl && (
+            {!resultsPublished && activeSeason.registrationFormUrl && (
               <a
                 href={activeSeason.registrationFormUrl}
                 target="_blank"
@@ -89,12 +94,14 @@ const Hero: React.FC = () => {
               </a>
             )}
 
-            <Link
-              to="/registration"
-              className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
-            >
-              報名詳情
-            </Link>
+            {!resultsPublished && (
+              <Link
+                to="/registration"
+                className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto"
+              >
+                報名詳情
+              </Link>
+            )}
 
             {activeSeason.regulationsUrl && (
               <a

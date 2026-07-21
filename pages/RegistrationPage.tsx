@@ -11,6 +11,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import RegistrationProgress from '../components/RegistrationProgress';
+import RegistrationResults from '../components/RegistrationResults';
 import { useSeason } from '../hooks/useSeason';
 import type { RegistrationContentConfig } from '../types/season';
 
@@ -36,6 +37,8 @@ const createFallbackContent = (): RegistrationContentConfig => ({
 const RegistrationPage: React.FC = () => {
   const { activeSeason } = useSeason();
   const registrationContent = activeSeason.registrationContent ?? createFallbackContent();
+  const registrationResults = activeSeason.registrationResults;
+  const resultsPublished = Boolean(registrationResults);
 
   const leagueConfigs = useMemo(
     () =>
@@ -74,21 +77,29 @@ const RegistrationPage: React.FC = () => {
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="border-b border-neutral-200 pb-10 md:pb-14">
           <span className="mb-3 block text-xs font-black uppercase tracking-[0.3em] text-brand-blue">
-            賽季報名
+            {resultsPublished ? '錄取公告' : '賽季報名'}
           </span>
           <h1 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-7xl">
             {activeSeason.displayName}
-            <span className="block text-brand-blue">報名詳情</span>
+            <span className="block text-brand-blue">{resultsPublished ? '錄取名單' : '報名詳情'}</span>
           </h1>
           <p className="mt-6 max-w-3xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
             {registrationContent.intro}
           </p>
-          <span className={`mt-6 inline-flex rounded-full px-4 py-2 text-xs font-black ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-600'}`}>
-            {registrationOpen ? `報名期間至 ${formatDate(activeSeason.registrationEnd)}` : '目前未開放報名'}
+          <span className={`mt-6 inline-flex px-4 py-2 text-xs font-black ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-700'}`}>
+            {resultsPublished
+              ? `名單公布於 ${formatDate(registrationResults?.announcedAt)}`
+              : registrationOpen
+                ? `報名期間至 ${formatDate(activeSeason.registrationEnd)}`
+                : '目前未開放報名'}
           </span>
         </div>
 
-        <RegistrationProgress className="mt-8" />
+        {registrationResults ? (
+          <RegistrationResults results={registrationResults} className="mt-8 md:mt-10" />
+        ) : (
+          <RegistrationProgress className="mt-8" />
+        )}
 
         <div className="grid grid-cols-1 gap-12 py-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
@@ -107,7 +118,7 @@ const RegistrationPage: React.FC = () => {
               <div className="mb-6 flex items-center">
                 <ClipboardCheck className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
                 <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
-                  報名流程
+                  {resultsPublished ? '後續流程' : '報名流程'}
                 </h2>
               </div>
               <ol className="grid gap-3 sm:grid-cols-2">
@@ -190,7 +201,9 @@ const RegistrationPage: React.FC = () => {
             <div className="sticky top-24 border border-neutral-200 bg-brand-black p-6 text-white md:p-8">
               <div className="mb-6 flex items-center">
                 <ShieldCheck className="mr-3 h-6 w-6 text-brand-accent" aria-hidden="true" />
-                <h2 className="font-display text-2xl font-black uppercase tracking-tight">審核與分級</h2>
+                <h2 className="font-display text-2xl font-black uppercase tracking-tight">
+                  {resultsPublished ? '參賽確認' : '審核與分級'}
+                </h2>
               </div>
 
               <p className="text-sm font-medium leading-7 text-white/75">

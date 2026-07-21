@@ -61,6 +61,14 @@ export interface RegistrationContentConfig {
   reviewFeatures: string[];
 }
 
+export interface RegistrationResultsConfig {
+  announcedAt: string;
+  acceptedTeams: string[];
+  waitlistedTeams: string[];
+  note: string;
+  groupingNote: string;
+}
+
 export interface RegistrationProgressConfig {
   receivedTeams: number;
   updatedAt: string;
@@ -100,6 +108,7 @@ export interface SeasonConfig {
   enabledLeagues: LeagueId[];
   registrationMessage?: string;
   registrationContent?: RegistrationContentConfig;
+  registrationResults?: RegistrationResultsConfig;
   rules: CompetitionRules;
   standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;

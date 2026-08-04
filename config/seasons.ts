@@ -207,7 +207,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
         '屏東野狼足球俱樂部',
         '阿蓮FC',
         '台南鳥仕足球俱樂部',
-        '嘉義諸羅山FC',
+        '嘉義 235 FC',
         '黑狼FC',
         '石門聯隊',
         '高雄香港人足球俱樂部',

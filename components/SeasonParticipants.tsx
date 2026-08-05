@@ -89,7 +89,7 @@ const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({
       </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <p className="border-l-2 border-brand-blue pl-4 text-xs font-bold leading-6 text-neutral-600 md:text-sm">
+        <p className="flex items-center border-l-2 border-brand-blue pl-4 text-xs font-bold leading-6 text-neutral-600 md:text-sm">
           {participants.note}
         </p>
         <p className="border-l-2 border-brand-accent bg-brand-black px-4 py-3 text-xs font-bold leading-6 text-white md:text-sm">

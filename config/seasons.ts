@@ -1,6 +1,14 @@
+import season2026Participants from '../data/seasons/2026-27/participants.json';
+import type {
+  CompetitionRules,
+  LeagueConfig,
+  LeagueId,
+  SeasonConfig,
+  SeasonId,
+  SeasonParticipantsConfig,
+} from '../types/season';
 import { CURRENT_SEASON_ID, isSeasonId } from './siteManifest.js';
 import { MATCH_VENUE_NAME } from './siteConfig';
-import type { CompetitionRules, LeagueConfig, LeagueId, SeasonConfig, SeasonId } from '../types/season';
 
 const createUnavailableLeagueMap = (): Record<LeagueId, LeagueConfig | null> => ({
   L1: null,
@@ -135,7 +143,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     id: '2026-27',
     displayName: 'D LEAGUE 2026/27',
     shortName: '2026/27',
-    status: 'review',
+    status: 'upcoming',
     isDefault: true,
     registrationStart: '2026-06-23',
     registrationEnd: '2026-07-20',
@@ -145,9 +153,9 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     heroImageMobile: 'assets/seasons/2026-27/registration-poster-mobile.png',
     heroFallbackImage: 'banner.png',
     enabledLeagues: ['L1', 'L2', 'L3'],
-    registrationMessage: 'D LEAGUE 2026/27 錄取名單已公布',
+    registrationMessage: 'D LEAGUE 2026/27 正式參賽隊伍及分級已公布',
     registrationContent: {
-      intro: 'D LEAGUE 2026/27 賽季正式錄取及備取名單已公布，錄取球隊請依個別通知於指定期限內完成繳費及參賽確認',
+      intro: 'D LEAGUE 2026/27 賽季共 18 支球隊完成參賽確認，L1、L2、L3 各 6 隊，正式分級名單如下',
       ageReferenceDate: '2026-11-01',
       minimumAge: 15,
       minimumPlayers: 12,
@@ -156,20 +164,16 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
       staffDescription: '可包含領隊、教練及管理等職務，其中領隊為必登職務',
       steps: [
         '完成正式報名',
-        '主辦單位審核球隊資料與實力',
-        '公布錄取及備取名單',
-        '錄取球隊完成繳費與參賽確認',
+        '完成球隊審核與初步錄取',
+        '完成參賽確認及備取遞補',
+        '公布 L1、L2、L3 正式分級',
         '提交球員及隊職員登錄資料',
-        '公布正式分組與賽程',
+        '公布完整賽程及賽事資訊',
       ],
       faqItems: [
         {
-          question: '列入正式錄取名單就完成參賽確認了嗎？',
-          answer: '尚未。錄取球隊仍須依個別通知於指定期限內完成報名費、保證金及相關程序，完成後才視為確認參賽',
-        },
-        {
-          question: 'L1、L2、L3 正式分組何時公布？',
-          answer: '正式分組將於錄取球隊完成繳費及參賽確認、備取遞補程序結束後，由主辦單位統一公告',
+          question: '正式參賽隊伍及分級是否已確定？',
+          answer: '是。2026/27 賽季共 18 支球隊完成參賽確認，L1、L2、L3 各 6 隊，正式分級已公布',
         },
         {
           question: '球員年齡及登錄人數有什麼限制？',
@@ -181,62 +185,26 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
         },
         {
           question: '每隊可以踢幾場比賽？',
-          answer: '目前規劃 L1、L2、L3 均採雙循環，每隊共進行 10 場正式比賽',
+          answer: 'L1、L2、L3 均採雙循環，每隊共進行 10 場正式比賽',
         },
         {
-          question: '備取球隊如何遞補？',
-          answer: '如有錄取球隊未於期限內完成參賽確認或退出，主辦單位將依整體分組及賽事安排通知備取球隊辦理遞補',
+          question: '球員及隊職員登錄何時截止？',
+          answer: '球員及隊職員登錄截止為 2026/08/31 23:59；資料格式及提交方式請依主辦單位通知辦理',
         },
         {
-          question: '報名費及後續期限在哪裡查看？',
-          answer: '繳費及參賽確認截止為 2026/07/28 23:59，球員及隊職員登錄截止為 2026/08/31 23:59；各隊錄取級別、匯款資訊、附件及個別程序請以主辦單位寄發的錄取 Email 為準',
+          question: '完整賽程何時公布？',
+          answer: '主辦單位將於球員登錄及賽程編排作業完成後統一公布，請留意官網及官方社群最新消息',
         },
       ],
-      reviewDescription: '錄取球隊須依通知期限完成繳費、保證金及參賽確認；正式分組將於確認最終參賽隊伍後另行公告',
+      reviewDescription: '18 支球隊已完成參賽確認，後續進入球員及隊職員登錄、資料審核與賽程編排階段',
       reviewFeatures: [
-        '依錄取通知完成繳費與保證金',
-        '完成球員及隊職員登錄程序',
-        'L1、L2、L3 正式分組另行公告',
-        '未於期限內完成者得由備取球隊遞補',
+        'L1、L2、L3 各 6 支球隊',
+        '正式參賽分級已公布',
+        '球員及隊職員登錄至 8 月 31 日',
+        '完整賽程及領隊會議資訊另行公告',
       ],
     },
-    registrationResults: {
-      announcedAt: '2026-07-21',
-      acceptedTeams: [
-        'Wanderers',
-        '屏東野狼足球俱樂部',
-        '阿蓮FC',
-        '台南鳥仕足球俱樂部',
-        '嘉義 235 FC',
-        '黑狼FC',
-        '石門聯隊',
-        '高雄香港人足球俱樂部',
-        '南州陳公舘',
-        'SF足球俱樂部',
-        '台南長青足球俱樂部',
-        'Kuromi',
-        '聖騎士足球俱樂部',
-        '鹿逐俱樂部',
-        'SOUTHBOYS FC',
-        '高雄業餘足球俱樂部',
-        '銅雀俱樂部',
-        '屏東野猿足球俱樂部',
-      ],
-      waitlistedTeams: ['高雄黑騎士足球隊'],
-      note: '名單排序不代表錄取順位、級別或最終分組。錄取球隊如未於繳費期限內完成參賽確認，且未事先與主辦單位聯繫，主辦單位得取消其錄取資格並通知備取球隊遞補。',
-      groupingNote: 'L1、L2、L3 正式分組將於錄取球隊完成繳費及參賽確認後另行公告。',
-      deadlines: [
-        {
-          label: '繳費及參賽確認截止',
-          deadline: '2026-07-28T23:59:00+08:00',
-        },
-        {
-          label: '球員及隊職員登錄截止',
-          deadline: '2026-08-31T23:59:00+08:00',
-        },
-      ],
-      detailsNote: '各隊錄取級別、繳費資訊及相關附件，請以主辦單位寄發之個別錄取 Email 為準。',
-    },
+    seasonParticipants: season2026Participants as SeasonParticipantsConfig,
     rules: season2026Rules,
     standingsDisplay: {
       showPointsSummary: true,

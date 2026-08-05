@@ -5,6 +5,7 @@ import { useSeason } from '../../hooks/useSeason';
 import BrandStory from '../BrandStory';
 import NewsSection from '../NewsSection';
 import RegistrationResults from '../RegistrationResults';
+import SeasonParticipants from '../SeasonParticipants';
 
 interface StatusHomeContentProps {
   status: 'review' | 'upcoming';
@@ -44,11 +45,18 @@ const StatusOverview: React.FC<StatusHomeContentProps> = ({ status }) => {
 
 const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
   const { activeSeason } = useSeason();
+  const seasonParticipants = activeSeason.seasonParticipants;
   const registrationResults = activeSeason.registrationResults;
 
   return (
     <>
-      {registrationResults ? (
+      {seasonParticipants ? (
+        <section className="bg-white pb-12 pt-12 md:pb-16 md:pt-16">
+          <div className="container mx-auto max-w-7xl px-4 md:px-6">
+            <SeasonParticipants participants={seasonParticipants} />
+          </div>
+        </section>
+      ) : registrationResults ? (
         <section className="bg-white pb-12 pt-12 md:pb-16 md:pt-16">
           <div className="container mx-auto max-w-7xl px-4 md:px-6">
             <RegistrationResults results={registrationResults} />

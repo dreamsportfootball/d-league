@@ -76,6 +76,15 @@ export interface RegistrationResultsConfig {
   detailsNote: string;
 }
 
+export interface SeasonParticipantsConfig {
+  confirmedAt: string;
+  leagues: Record<LeagueId, string[]>;
+  note: string;
+  nextStep: string;
+  deadlines: RegistrationDeadlineConfig[];
+  detailsNote: string;
+}
+
 export interface RegistrationProgressConfig {
   receivedTeams: number;
   updatedAt: string;
@@ -116,6 +125,7 @@ export interface SeasonConfig {
   registrationMessage?: string;
   registrationContent?: RegistrationContentConfig;
   registrationResults?: RegistrationResultsConfig;
+  seasonParticipants?: SeasonParticipantsConfig;
   rules: CompetitionRules;
   standingsDisplay: StandingsDisplayConfig;
   leagues: Record<LeagueId, LeagueConfig | null>;

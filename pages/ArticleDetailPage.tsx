@@ -15,20 +15,6 @@ const getBadgeStyle = (category: 'Match Report' | 'Official') =>
     ? 'bg-brand-accent text-brand-black'
     : 'bg-brand-blue text-white';
 
-const resolveArticleImageUrl = (imageUrl: string): string => {
-  const normalizedImageUrl = imageUrl.trim();
-
-  if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(normalizedImageUrl)) {
-    return normalizedImageUrl;
-  }
-
-  const baseUrl = import.meta.env.BASE_URL.endsWith('/')
-    ? import.meta.env.BASE_URL
-    : `${import.meta.env.BASE_URL}/`;
-
-  return `${baseUrl}${normalizedImageUrl.replace(/^\/+/, '')}`;
-};
-
 type ArticleContentBlock =
   | { type: 'label'; text: string }
   | { type: 'heading'; text: string }
@@ -321,7 +307,7 @@ const ArticleDetailPage: React.FC = () => {
           <figure className="mt-9 md:mt-12">
             <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
               <img
-                src={resolveArticleImageUrl(article.imageUrl)}
+                src={article.imageUrl}
                 alt={article.title}
                 className="h-auto max-h-[760px] w-auto max-w-full object-contain"
               />

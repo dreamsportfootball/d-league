@@ -100,7 +100,11 @@ const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({
       {participants.deadlines.length > 0 && (
         <div className="mt-8 border-t border-neutral-200 pt-8">
           <p className="text-xs font-black uppercase tracking-[0.24em] text-brand-blue">重要期限</p>
-          <div className="mt-4 grid gap-px border border-neutral-200 bg-neutral-200 md:grid-cols-2">
+          <div
+            className={`mt-4 grid gap-px border border-neutral-200 bg-neutral-200 ${
+              participants.deadlines.length > 1 ? 'md:grid-cols-2' : ''
+            }`}
+          >
             {participants.deadlines.map((item) => (
               <div key={item.label} className="bg-white p-5 md:p-6">
                 <p className="text-xs font-black tracking-widest text-neutral-500">{item.label}</p>

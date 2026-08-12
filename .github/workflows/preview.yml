@@ -50,6 +50,7 @@ jobs:
         run: |
           npx vite build --base=/d-league/preview/season-2026-27/
           npm run generate:seo
+          npm run enrich:seo
           npm run validate:seo
 
       - name: Publish preview without replacing production

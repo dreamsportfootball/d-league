@@ -13,7 +13,12 @@ import {
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import { isSeasonId } from '../config/seasons';
-import { getMatchRecord, getRoundInsights, getTeamIdentity } from '../services/entityData';
+import {
+  getMatchRecord,
+  getPlayerIdentity,
+  getRoundInsights,
+  getTeamIdentity,
+} from '../services/entityData';
 import { MatchStatus } from '../types';
 import type { MatchEvent } from '../types/matchEvent';
 import { formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -58,6 +63,7 @@ const MatchPage: React.FC = () => {
 
   const { match, homeTeam, awayTeam, events, season, data } = record;
   const insights = getRoundInsights(record);
+  const roundUrl = `/rounds/${record.seasonId}/${match.league}/${encodeURIComponent(String(match.round))}`;
   const finished =
     match.status === MatchStatus.FINISHED &&
     match.homeScore !== null &&
@@ -85,15 +91,18 @@ const MatchPage: React.FC = () => {
 
   const renderEvent = (event: MatchEvent) => {
     const playerId = event.playerId ?? event.subjectId;
-    const playerExists = Boolean(playerId && data.players.some((player) => player.id === playerId));
+    const playerProfile = playerId ? data.players.find((player) => player.id === playerId) : undefined;
     return (
       <li key={event.id} className="grid grid-cols-[48px_28px_minmax(0,1fr)] items-start gap-3 border-b border-neutral-100 py-4 last:border-b-0">
         <span className="font-display text-sm font-black tabular-nums text-brand-blue">{event.minute}'</span>
         <span aria-hidden="true" className="text-base">{eventMarker(event)}</span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            {playerExists && playerId ? (
-              <Link to={`/players/${playerId}?season=${record.seasonId}`} className="font-black text-brand-black transition-colors hover:text-brand-blue">
+            {playerProfile ? (
+              <Link
+                to={`/players/${getPlayerIdentity(playerProfile)}?season=${record.seasonId}`}
+                className="font-black text-brand-black transition-colors hover:text-brand-blue"
+              >
                 {event.player}
               </Link>
             ) : (
@@ -107,6 +116,10 @@ const MatchPage: React.FC = () => {
     );
   };
 
+  const topScorerProfile = insights.topScorer?.playerId
+    ? data.players.find((player) => player.id === insights.topScorer?.playerId)
+    : undefined;
+
   return (
     <div className="min-h-screen bg-white pb-24">
       <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-14">
@@ -116,7 +129,8 @@ const MatchPage: React.FC = () => {
           </Link>
 
           <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-neutral-500">
-            <span>{season.displayName}</span><span>·</span><span>{match.league}</span><span>·</span><span>第 {match.round} 輪</span>
+            <span>{season.displayName}</span><span>·</span><span>{match.league}</span><span>·</span>
+            <Link to={roundUrl} className="text-brand-blue hover:underline">第 {match.round} 輪</Link>
           </div>
 
           <div className="mt-7 grid grid-cols-[minmax(0,1fr)_76px_minmax(0,1fr)] items-center gap-3 md:grid-cols-[minmax(0,1fr)_120px_minmax(0,1fr)] md:gap-8">
@@ -153,7 +167,10 @@ const MatchPage: React.FC = () => {
 
           {finished && (
             <section>
-              <div className="flex items-center border-b border-neutral-200 pb-3"><Trophy className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">第 {match.round} 輪數據洞察</h2></div>
+              <div className="flex items-center justify-between gap-4 border-b border-neutral-200 pb-3">
+                <div className="flex min-w-0 items-center"><Trophy className="mr-2 h-5 w-5 shrink-0 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">第 {match.round} 輪數據洞察</h2></div>
+                <Link to={roundUrl} className="shrink-0 text-xs font-black text-brand-blue hover:underline">完整本輪資料 →</Link>
+              </div>
               <div className="grid grid-cols-2 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-4">
                 {[
                   ['已完成比賽', `${insights.completedMatches}`],
@@ -164,7 +181,7 @@ const MatchPage: React.FC = () => {
                   <div key={label} className="bg-white p-5"><p className="text-[10px] font-black tracking-wider text-neutral-400">{label}</p><p className="mt-2 font-display text-3xl font-black tabular-nums text-brand-black">{value}</p></div>
                 ))}
               </div>
-              {insights.topScorer && <p className="mt-4 text-sm leading-6 text-neutral-600">本輪目前進球最多：{insights.topScorer.playerId ? <Link to={`/players/${insights.topScorer.playerId}?season=${record.seasonId}`} className="ml-1 font-black text-brand-blue">{insights.topScorer.name}（{insights.topScorer.goals} 球）</Link> : <span className="ml-1 font-black text-brand-black">{insights.topScorer.name}（{insights.topScorer.goals} 球）</span>}</p>}
+              {insights.topScorer && <p className="mt-4 text-sm leading-6 text-neutral-600">本輪目前進球最多：{topScorerProfile ? <Link to={`/players/${getPlayerIdentity(topScorerProfile)}?season=${record.seasonId}`} className="ml-1 font-black text-brand-blue">{insights.topScorer.name}（{insights.topScorer.goals} 球）</Link> : <span className="ml-1 font-black text-brand-black">{insights.topScorer.name}（{insights.topScorer.goals} 球）</span>}</p>}
             </section>
           )}
 
@@ -182,6 +199,7 @@ const MatchPage: React.FC = () => {
           <div className="border border-neutral-200 p-5">
             <p className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">官方資料</p>
             <div className="mt-4 space-y-2">
+              <Link to={roundUrl} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看本輪數據 <ChevronRight className="h-4 w-4" /></Link>
               <Link to={`/standings?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看積分榜 <ChevronRight className="h-4 w-4" /></Link>
               <Link to={`/stats?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看射手與紀律數據 <ChevronRight className="h-4 w-4" /></Link>
               {match.reportArticleId && <Link to={`/news/${match.reportArticleId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue"><span className="inline-flex items-center"><Newspaper className="mr-2 h-4 w-4 text-brand-blue" />賽事戰報</span><ChevronRight className="h-4 w-4" /></Link>}

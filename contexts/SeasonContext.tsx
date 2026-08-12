@@ -13,10 +13,11 @@ interface SeasonContextValue {
   setActiveSeason: (seasonId: SeasonId) => void;
 }
 
-const SEASON_AWARE_PATHS = ['/schedule', '/standings', '/stats', '/media'] as const;
+const CONTROLLED_SEASON_PATHS = ['/schedule', '/standings', '/stats', '/media'] as const;
+const ENTITY_PATHS = ['/teams', '/players', '/matches'] as const;
 
-const isSeasonAwarePath = (pathname: string): boolean =>
-  SEASON_AWARE_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+const matchesPath = (pathname: string, paths: readonly string[]): boolean =>
+  paths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 
 export const SeasonContext = createContext<SeasonContextValue | null>(null);
 
@@ -24,52 +25,66 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const querySeason = searchParams.get('season');
-  const seasonAware = isSeasonAwarePath(location.pathname);
+  const controlledSeason = matchesPath(location.pathname, CONTROLLED_SEASON_PATHS);
+  const entityPath = matchesPath(location.pathname, ENTITY_PATHS);
+  const keepsSeasonQuery = controlledSeason || entityPath;
 
   const [selectedSeasonId, setSelectedSeasonId] = useState<SeasonId>(() =>
-    seasonAware && isSeasonId(querySeason) ? querySeason : CURRENT_SEASON_ID,
+    keepsSeasonQuery && isSeasonId(querySeason) ? querySeason : CURRENT_SEASON_ID,
   );
 
   useEffect(() => {
-    if (!seasonAware) {
-      if (selectedSeasonId !== CURRENT_SEASON_ID) {
-        setSelectedSeasonId(CURRENT_SEASON_ID);
+    if (controlledSeason) {
+      if (isSeasonId(querySeason)) {
+        if (querySeason !== selectedSeasonId) setSelectedSeasonId(querySeason);
+        return;
       }
 
-      if (searchParams.has('season')) {
-        const nextParams = new URLSearchParams(searchParams);
-        nextParams.delete('season');
-        setSearchParams(nextParams, { replace: true });
-      }
+      if (selectedSeasonId !== CURRENT_SEASON_ID) setSelectedSeasonId(CURRENT_SEASON_ID);
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set('season', CURRENT_SEASON_ID);
+      setSearchParams(nextParams, { replace: true });
       return;
     }
 
-    if (isSeasonId(querySeason)) {
-      if (querySeason !== selectedSeasonId) setSelectedSeasonId(querySeason);
+    if (entityPath) {
+      const nextSeason = isSeasonId(querySeason) ? querySeason : CURRENT_SEASON_ID;
+      if (nextSeason !== selectedSeasonId) setSelectedSeasonId(nextSeason);
       return;
     }
 
-    const fallbackSeason = CURRENT_SEASON_ID;
-    if (fallbackSeason !== selectedSeasonId) setSelectedSeasonId(fallbackSeason);
-
-    const nextParams = new URLSearchParams(searchParams);
-    nextParams.set('season', fallbackSeason);
-    setSearchParams(nextParams, { replace: true });
-  }, [querySeason, searchParams, seasonAware, selectedSeasonId, setSearchParams]);
+    if (selectedSeasonId !== CURRENT_SEASON_ID) setSelectedSeasonId(CURRENT_SEASON_ID);
+    if (searchParams.has('season')) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('season');
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    controlledSeason,
+    entityPath,
+    querySeason,
+    searchParams,
+    selectedSeasonId,
+    setSearchParams,
+  ]);
 
   const setActiveSeason = useCallback(
     (seasonId: SeasonId) => {
-      if (!seasonAware) return;
-
+      if (!controlledSeason) return;
       setSelectedSeasonId(seasonId);
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set('season', seasonId);
       setSearchParams(nextParams, { replace: true });
     },
-    [searchParams, seasonAware, setSearchParams],
+    [controlledSeason, searchParams, setSearchParams],
   );
 
-  const activeSeasonId = seasonAware ? selectedSeasonId : CURRENT_SEASON_ID;
+  const activeSeasonId =
+    keepsSeasonQuery && isSeasonId(querySeason)
+      ? querySeason
+      : controlledSeason
+        ? selectedSeasonId
+        : CURRENT_SEASON_ID;
 
   const value = useMemo<SeasonContextValue>(
     () => ({

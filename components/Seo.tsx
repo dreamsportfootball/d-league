@@ -17,7 +17,7 @@ import {
   getTeamHistory,
   getTeamIdentity,
 } from '../services/entityData';
-import { getNewsArticle } from '../services/seasonDataJson';
+import { getNewsArticle, getSeasonData } from '../services/seasonDataJson';
 
 interface PageSeoEntry {
   label: string;
@@ -65,12 +65,42 @@ const Seo: React.FC = () => {
 
   const metadata = useMemo<PageMetadata>(() => {
     const pathname = location.pathname;
-    const routeId = decodeURIComponent(pathname.split('/').filter(Boolean)[1] ?? '');
+    const segments = pathname.split('/').filter(Boolean).map(decodeURIComponent);
+    const routeId = segments[1] ?? '';
     const searchParams = new URLSearchParams(location.search);
     const requestedSeason = searchParams.get('season');
     const preferredSeason = isSeasonId(requestedSeason) ? requestedSeason : undefined;
     const legacyMatchId = searchParams.get('match');
     const matchId = pathname.startsWith('/matches/') ? routeId : legacyMatchId;
+
+    if (pathname.startsWith('/rounds/')) {
+      const seasonId = segments[1];
+      const league = segments[2];
+      const round = segments[3];
+      if (isSeasonId(seasonId) && (league === 'L1' || league === 'L2' || league === 'L3') && round) {
+        const season = getSeasonConfig(seasonId);
+        const data = getSeasonData(seasonId);
+        const matches = data.matches.filter(
+          (match) => match.league === league && String(match.round) === round,
+        );
+        if (matches.length > 0) {
+          const completed = matches.filter(
+            (match) => match.homeScore !== null && match.awayScore !== null,
+          );
+          const totalGoals = completed.reduce(
+            (sum, match) => sum + (match.homeScore ?? 0) + (match.awayScore ?? 0),
+            0,
+          );
+          return {
+            title: `${season.shortName} ${league} 第 ${round} 輪｜D LEAGUE 官方數據｜${SITE_NAME}`,
+            description: `${season.displayName} ${league} 第 ${round} 輪官方賽程、賽果與數據洞察；已完成 ${completed.length} 場、本輪目前共 ${totalGoals} 球`,
+            image: absoluteAssetUrl(season.heroImageDesktop ?? season.heroFallbackImage),
+            type: 'website',
+            canonicalPath: `/rounds/${seasonId}/${league}/${encodeURIComponent(round)}`,
+          };
+        }
+      }
+    }
 
     if (matchId) {
       const record = getMatchRecord(matchId, preferredSeason);

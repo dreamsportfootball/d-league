@@ -18,6 +18,7 @@ import {
   getPlayerIdentity,
   getRoundInsights,
   getTeamIdentity,
+  resolveMatchEventPlayer,
 } from '../services/entityData';
 import { MatchStatus } from '../types';
 import type { MatchEvent } from '../types/matchEvent';
@@ -90,8 +91,7 @@ const MatchPage: React.FC = () => {
     .slice(0, 4);
 
   const renderEvent = (event: MatchEvent) => {
-    const playerId = event.playerId ?? event.subjectId;
-    const playerProfile = playerId ? data.players.find((player) => player.id === playerId) : undefined;
+    const playerProfile = resolveMatchEventPlayer(data, match, event);
     return (
       <li key={event.id} className="grid grid-cols-[48px_28px_minmax(0,1fr)] items-start gap-3 border-b border-neutral-100 py-4 last:border-b-0">
         <span className="font-display text-sm font-black tabular-nums text-brand-blue">{event.minute}'</span>

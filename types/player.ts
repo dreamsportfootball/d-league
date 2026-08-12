@@ -6,6 +6,7 @@ export interface PlayerRegistration {
 
 export interface PlayerProfile {
   id: string;
+  identityId?: string;
   teamId: string;
   name: string;
   englishName?: string;

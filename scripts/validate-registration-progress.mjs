@@ -2,17 +2,32 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
 const expectedMessages = [
-  '已有 13 支球隊完成正式報名',
-  '2026/27 賽季持續接受報名中',
-  'L1、L2、L3 各級別預計錄取 6 支球隊',
-  '更新至 2026/06/30',
-  '報名隊數不代表最終錄取結果',
-  '若報名球隊數已達預定名額，主辦單位得提前截止報名',
+  '正式參賽隊伍',
+  '正式分級公布於 2026/08/05',
+  '共 18 隊',
+  '本季共 18 支球隊完成參賽確認，L1、L2、L3 各 6 隊',
+  '後續將進行球員及隊職員登錄審核、賽程編排與賽季資料建置',
+  '球員及隊職員登錄截止',
+  '2026/08/31 23:59 前',
 ];
-const forbiddenMessages = ['10／18', '55.6%', '剩餘 8 隊', '名額即將額滿'];
+const expectedTeams = [
+  '南州陳公舘',
+  '高雄黑騎士足球隊',
+  '銅雀俱樂部',
+  'Wanderers',
+  '台南鳥仕足球俱樂部',
+];
+const forbiddenMessages = [
+  '賽季持續接受報名中',
+  '已有 13 支球隊完成正式報名',
+  '10／18',
+  '55.6%',
+  '剩餘 8 隊',
+  '名額即將額滿',
+];
 
 const fail = (message) => {
-  throw new Error(`Registration progress validation failed: ${message}`);
+  throw new Error(`Season participants validation failed: ${message}`);
 };
 
 const browser = await chromium.launch({ headless: true });
@@ -32,26 +47,30 @@ const validateRoute = async (route) => {
     await page.goto(`${baseUrl}/#${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForSelector('#root > *', { timeout: 12000 });
 
-    const progressSection = page.getByRole('region', { name: '賽季報名動態' });
-    await progressSection.waitFor({ state: 'visible' });
-    const text = (await progressSection.innerText()).replace(/\s+/g, ' ').trim();
+    const participantsSection = page.locator('section[aria-labelledby="season-participants-title"]').first();
+    await participantsSection.waitFor({ state: 'visible', timeout: 12000 });
+    const text = (await participantsSection.innerText()).replace(/\s+/g, ' ').trim();
 
     for (const expected of expectedMessages) {
       if (!text.includes(expected)) fail(`${route}: missing “${expected}”`);
     }
 
-    for (const forbidden of forbiddenMessages) {
-      if (text.includes(forbidden)) fail(`${route}: should not display “${forbidden}”`);
+    for (const team of expectedTeams) {
+      if (!text.includes(team)) fail(`${route}: missing confirmed team “${team}”`);
     }
 
-    if ((await progressSection.getByRole('progressbar').count()) !== 0) {
-      fail(`${route}: should not render a capacity progress bar`);
+    for (const forbidden of forbiddenMessages) {
+      if (text.includes(forbidden)) fail(`${route}: should not display obsolete registration text “${forbidden}”`);
+    }
+
+    if ((await participantsSection.getByRole('progressbar').count()) !== 0) {
+      fail(`${route}: should not render a registration-capacity progress bar after confirmed teams are published`);
     }
 
     const hasHorizontalOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     );
-    if (hasHorizontalOverflow) fail(`${route}: registration information causes horizontal overflow`);
+    if (hasHorizontalOverflow) fail(`${route}: confirmed participant information causes horizontal overflow`);
     if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
   } finally {
     await page.close();
@@ -61,7 +80,7 @@ const validateRoute = async (route) => {
 try {
   await validateRoute('/');
   await validateRoute('/registration');
-  console.log('Registration progress validation passed');
+  console.log('Season participants validation passed');
 } finally {
   await context.close();
   await browser.close();

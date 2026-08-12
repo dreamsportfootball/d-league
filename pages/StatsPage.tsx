@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -9,6 +10,7 @@ import Tabs from '../components/Tabs';
 import { useSeason } from '../hooks/useSeason';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
+import { getPlayerIdentity, getTeamIdentity } from '../services/entityData';
 import type { SuspensionReason } from '../types/discipline';
 import type { LeagueId, SeasonId } from '../types/season';
 import { formatTaipeiDate } from '../utils/dateFormat';
@@ -299,6 +301,7 @@ const StatsPage: React.FC = () => {
                   {activeSuspensions.map((suspension) => {
                     const summary = discipline.summaries.find((item) => item.subjectId === suspension.subjectId);
                     const team = seasonData.teamMap[summary?.currentTeamId ?? suspension.teamIdAtIssue];
+                    const playerProfile = seasonData.players.find((item) => item.id === suspension.subjectId);
                     const nextMatch = suspension.nextMatchId
                       ? seasonData.matches.find((match) => match.id === suspension.nextMatchId)
                       : undefined;
@@ -307,24 +310,29 @@ const StatsPage: React.FC = () => {
                         <div className="flex min-w-0 items-center gap-3">
                           {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
+                            {playerProfile ? (
+                              <Link to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`} className="truncate text-base font-black text-brand-black hover:text-brand-blue">
+                                {suspension.subjectName}
+                              </Link>
+                            ) : (
+                              <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
+                            )}
                             <div className="mt-1 flex min-w-0 items-center gap-1 text-xs font-bold text-neutral-400">
                               <div className="min-w-0 flex-1">
-                                <AutoFitText
-                                  text={team?.shortName ?? suspension.teamIdAtIssue}
-                                  maxFontSize={12}
-                                  minFontSize={6}
-                                  className="font-bold text-neutral-400"
-                                />
+                                {team ? (
+                                  <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="block hover:text-brand-blue">
+                                    <AutoFitText text={team.shortName} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-400" />
+                                  </Link>
+                                ) : (
+                                  <AutoFitText text={suspension.teamIdAtIssue} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-400" />
+                                )}
                               </div>
                               <span className="shrink-0">· {suspensionReasonLabel[suspension.reason]}</span>
                             </div>
                           </div>
                         </div>
                         <div className="text-left md:text-right">
-                          <p className="font-display text-2xl font-black text-brand-blue">
-                            剩餘 {suspension.remainingMatches} 場
-                          </p>
+                          <p className="font-display text-2xl font-black text-brand-blue">剩餘 {suspension.remainingMatches} 場</p>
                           <p className="mt-1 text-xs font-medium text-neutral-400">
                             {nextMatch ? `預計於 ${formatMatchLabel(nextMatch.timestamp)} 執行` : '下一場正式比賽執行'}
                           </p>
@@ -348,6 +356,9 @@ const StatsPage: React.FC = () => {
                       <p className="text-xs font-bold text-neutral-400">{formatMatchLabel(decision.issuedAt)}</p>
                       <p className="mt-1 text-sm font-bold text-brand-black">{decision.subjectName}</p>
                       <p className="mt-1 text-sm leading-6 text-neutral-600">{decision.publicSummary}</p>
+                      {decision.sourceMatchId && (
+                        <Link to={`/matches/${decision.sourceMatchId}?season=${activeSeasonId}`} className="mt-2 inline-block text-xs font-black text-brand-blue">查看來源比賽 →</Link>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -359,76 +370,50 @@ const StatsPage: React.FC = () => {
             {rankedList.map((player, index) => {
               const team = seasonData.teamMap[player.teamId];
               if (!team) return null;
+              const playerProfile = seasonData.players.find((item) => item.id === player.subjectId);
               const playerImage = seasonData.playerImages[player.name];
               const isTopScorer = activeTab === 'SCORERS' && index === 0;
+              const nameClass = `block break-words tracking-tight text-brand-black transition-colors hover:text-brand-blue ${isTopScorer ? 'font-display text-2xl font-black italic text-brand-blue md:text-3xl' : 'text-sm font-bold md:text-base'}`;
 
               return (
                 <div
                   key={`${player.subjectId}-${activeLeague}`}
-                  className={`group relative flex items-center border-b border-neutral-100 transition-colors ${
-                    isTopScorer ? 'bg-white py-6' : 'py-3.5 hover:bg-neutral-50'
-                  }`}
+                  className={`group relative flex items-center border-b border-neutral-100 transition-colors ${isTopScorer ? 'bg-white py-6' : 'py-3.5 hover:bg-neutral-50'}`}
                 >
                   <div className="mr-3 flex w-12 shrink-0 justify-center md:mr-4 md:w-16">
-                    <span className={`font-display font-black tracking-tighter ${isTopScorer ? 'text-4xl italic text-brand-blue' : 'text-xl text-brand-black'}`}>
-                      {player.rank}
-                    </span>
+                    <span className={`font-display font-black tracking-tighter ${isTopScorer ? 'text-4xl italic text-brand-blue' : 'text-xl text-brand-black'}`}>{player.rank}</span>
                   </div>
 
                   <div className="flex min-w-0 flex-1 items-center">
                     {activeTab === 'SCORERS' && (
                       <div className={`relative shrink-0 overflow-hidden rounded-full border border-neutral-100 bg-neutral-100 ${isTopScorer ? 'h-20 w-20 shadow-xl md:h-24 md:w-24' : 'h-10 w-10 md:h-11 md:w-11'}`}>
-                        {playerImage ? (
-                          <img src={playerImage} alt={player.name} className="h-full w-full object-cover object-top" />
-                        ) : (
-                          <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />
-                        )}
+                        {playerImage ? <img src={playerImage} alt={player.name} className="h-full w-full object-cover object-top" /> : <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />}
                       </div>
                     )}
 
                     <div className={`${activeTab === 'SCORERS' ? (isTopScorer ? 'ml-6 md:ml-8' : 'ml-4') : ''} min-w-0`}>
-                      <span className={`block break-words tracking-tight text-brand-black ${isTopScorer ? 'font-display text-2xl font-black italic text-brand-blue md:text-3xl' : 'text-sm font-bold md:text-base'}`}>
-                        {player.name}
-                      </span>
+                      {playerProfile ? (
+                        <Link to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`} className={nameClass}>{player.name}</Link>
+                      ) : (
+                        <span className={nameClass}>{player.name}</span>
+                      )}
                       <div className="mt-1 flex min-w-0 items-center">
                         <img src={team.logo} alt="" className="mr-2 h-4 w-4 shrink-0 object-contain" />
-                        <div className="min-w-0 flex-1">
-                          <AutoFitText
-                            text={team.shortName}
-                            maxFontSize={10}
-                            minFontSize={6}
-                            className="font-bold uppercase tracking-wide text-neutral-400"
-                          />
-                        </div>
+                        <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="min-w-0 flex-1 hover:text-brand-blue">
+                          <AutoFitText text={team.shortName} maxFontSize={10} minFontSize={6} className="font-bold uppercase tracking-wide text-neutral-400" />
+                        </Link>
                       </div>
                     </div>
                   </div>
 
                   <div className="min-w-[90px] shrink-0 pl-4 pr-2 text-right md:pr-4">
                     {activeTab === 'SCORERS' ? (
-                      <span className={`font-display font-black tabular-nums tracking-tighter ${isTopScorer ? 'text-5xl text-brand-blue md:text-6xl' : 'text-2xl text-brand-black md:text-3xl'}`}>
-                        {player.goals}
-                      </span>
+                      <span className={`font-display font-black tabular-nums tracking-tighter ${isTopScorer ? 'text-5xl text-brand-blue md:text-6xl' : 'text-2xl text-brand-black md:text-3xl'}`}>{player.goals}</span>
                     ) : (
                       <div className="flex items-center justify-end space-x-3">
-                        {player.directRedCards > 0 && (
-                          <div className="flex h-8 w-6 -skew-x-12 items-center justify-center rounded-sm bg-red-600 font-display text-sm font-black text-white shadow-sm">
-                            <span className="skew-x-12">{player.directRedCards}</span>
-                          </div>
-                        )}
-                        {player.secondYellowDismissals > 0 && (
-                          <div className="relative flex h-8 w-8 items-center justify-center" title="雙黃退場">
-                            <div className="absolute left-1 top-1 h-7 w-5 -rotate-6 rounded-sm bg-yellow-400 shadow-sm" />
-                            <div className="absolute right-1 top-0.5 flex h-7 w-5 rotate-3 items-center justify-center rounded-sm bg-red-600 font-display text-xs font-black text-white shadow-sm">
-                              {player.secondYellowDismissals}
-                            </div>
-                          </div>
-                        )}
-                        {player.yellowCards > 0 && (
-                          <div className="flex h-8 w-6 -skew-x-12 items-center justify-center rounded-sm bg-yellow-400 font-display text-sm font-black text-black shadow-sm">
-                            <span className="skew-x-12">{player.yellowCards}</span>
-                          </div>
-                        )}
+                        {player.directRedCards > 0 && <div className="flex h-8 w-6 -skew-x-12 items-center justify-center rounded-sm bg-red-600 font-display text-sm font-black text-white shadow-sm"><span className="skew-x-12">{player.directRedCards}</span></div>}
+                        {player.secondYellowDismissals > 0 && <div className="relative flex h-8 w-8 items-center justify-center" title="雙黃退場"><div className="absolute left-1 top-1 h-7 w-5 -rotate-6 rounded-sm bg-yellow-400 shadow-sm" /><div className="absolute right-1 top-0.5 flex h-7 w-5 rotate-3 items-center justify-center rounded-sm bg-red-600 font-display text-xs font-black text-white shadow-sm">{player.secondYellowDismissals}</div></div>}
+                        {player.yellowCards > 0 && <div className="flex h-8 w-6 -skew-x-12 items-center justify-center rounded-sm bg-yellow-400 font-display text-sm font-black text-black shadow-sm"><span className="skew-x-12">{player.yellowCards}</span></div>}
                       </div>
                     )}
                   </div>

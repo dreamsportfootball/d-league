@@ -127,6 +127,11 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/visual-audit.mjs
 
+      - name: Validate round entity page
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-round-page.mjs
+
       - name: Validate Lunar New Year Cup behavior
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

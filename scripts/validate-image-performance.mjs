@@ -68,7 +68,7 @@ const inspectRoute = async (context, route) => {
           transferSize: 'transferSize' in entry ? entry.transferSize : 0,
         })),
       registrationPictureClass:
-        document.querySelector('img[alt*="正式報名開放"]')?.parentElement?.getAttribute('class') ?? '',
+        document.querySelector('img[fetchpriority="high"][src*="registration-poster-"]')?.parentElement?.getAttribute('class') ?? '',
       images: [...document.images].map((image) => {
         const rect = image.getBoundingClientRect();
         return {
@@ -121,7 +121,9 @@ const inspectRoute = async (context, route) => {
 
 const validateHomeHero = (result, expectedFileName) => {
   const hero = result.images.find(
-    (image) => image.alt.includes('正式報名開放') || image.alt.includes('主視覺'),
+    (image) =>
+      image.fetchPriority === 'high' &&
+      image.currentSrc.includes('/assets/seasons/2026-27/registration-poster-'),
   );
   if (!hero) fail('homepage hero image was not found');
   if (!/\.webp(?:$|\?)/.test(hero.currentSrc)) fail(`homepage hero is not WebP: ${hero.currentSrc}`);

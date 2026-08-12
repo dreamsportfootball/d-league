@@ -11,7 +11,17 @@ const staticSeoContent = document.getElementById('static-seo-content');
 if (staticSeoContent) staticSeoContent.remove();
 
 const useHashRouter = import.meta.env.VITE_ROUTER_MODE === 'hash';
-const supportedPreviewRoutes = ['schedule', 'standings', 'stats', 'media', 'news', 'teams/', 'players/', 'matches/'];
+const supportedPreviewRoutes = [
+  'schedule',
+  'standings',
+  'stats',
+  'media',
+  'news',
+  'teams/',
+  'players/',
+  'matches/',
+  'rounds/',
+];
 
 if (useHashRouter && !window.location.hash) {
   const previewParams = new URLSearchParams(window.location.search);

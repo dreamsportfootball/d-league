@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: season-2026-27-preview
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy-preview:

@@ -1,189 +1,41 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {
-  CURRENT_SEASON_ID,
-  DEFAULT_DESCRIPTION,
-  DEFAULT_SOCIAL_IMAGE,
-  PAGE_SEO,
-  SEASON_IDS,
-  SITE_NAME,
-  SITE_SOCIAL_URLS,
-  SITE_URL,
-  getSeasonDisplayName,
-} from '../config/siteManifest.js';
+import { DEFAULT_DESCRIPTION, DEFAULT_SOCIAL_IMAGE, PAGE_SEO, SEASON_IDS, SITE_NAME, SITE_SOCIAL_URLS, SITE_URL, getSeasonDisplayName } from '../config/siteManifest.js';
 
 const root = process.cwd();
 const distDir = path.join(root, 'dist');
 const dataDir = path.join(root, 'data', 'seasons');
 const templatePath = path.join(distDir, 'index.html');
 const template = await fs.readFile(templatePath, 'utf8');
-
-const escapeHtml = (value) => String(value)
-  .replaceAll('&', '&amp;')
-  .replaceAll('"', '&quot;')
-  .replaceAll('<', '&lt;')
-  .replaceAll('>', '&gt;');
+const escapeHtml = (value) => String(value ?? '').replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const absoluteAssetUrl = (value) => {
-  const asset = value || DEFAULT_SOCIAL_IMAGE;
-  if (/^https?:\/\//.test(asset)) return asset;
-  return `${SITE_URL}/${asset.replace(/^\/+/, '').replace(/^d-league\//, '')}`;
-};
+const absoluteAssetUrl = (value) => { const asset = value || DEFAULT_SOCIAL_IMAGE; if (/^https?:\/\//.test(asset)) return asset; return `${SITE_URL}/${asset.replace(/^\/+/, '').replace(/^d-league\//, '')}`; };
 const routeUrl = (route) => `${SITE_URL}${route === '/' ? '/' : route}`;
+const upsertMeta = (html, attribute, key, value) => { const pattern = new RegExp(`<meta\\s+[^>]*${attribute}=["']${escapeRegExp(key)}["'][^>]*>`, 'i'); const tag = `<meta ${attribute}="${escapeHtml(key)}" content="${escapeHtml(value)}" />`; return pattern.test(html) ? html.replace(pattern, tag) : html.replace('</head>', `    ${tag}\n  </head>`); };
+const staticShell = (title, subtitle, body = '') => `\n  <main id="static-seo-content" style="max-width:960px;margin:0 auto;padding:48px 20px;font-family:system-ui,-apple-system,sans-serif;color:#111827">\n    <p style="font-size:12px;font-weight:700;color:#6b7280;margin:0 0 8px">D LEAGUE 官方資料</p>\n    <h1 style="font-size:32px;line-height:1.15;margin:0 0 12px">${escapeHtml(title)}</h1>\n    <p style="font-size:15px;line-height:1.7;color:#4b5563;margin:0 0 24px">${escapeHtml(subtitle)}</p>\n    ${body}\n  </main>`;
+const renderHtml = ({ route, title, description, image, type = 'website', schemas = [], staticContent = '' }) => { const canonical = routeUrl(route); let html = template.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`); html = upsertMeta(html, 'name', 'description', description); html = upsertMeta(html, 'property', 'og:title', title); html = upsertMeta(html, 'property', 'og:description', description); html = upsertMeta(html, 'property', 'og:image', image); html = upsertMeta(html, 'property', 'og:url', canonical); html = upsertMeta(html, 'property', 'og:type', type); html = upsertMeta(html, 'property', 'og:site_name', SITE_NAME); html = upsertMeta(html, 'name', 'twitter:card', 'summary_large_image'); html = upsertMeta(html, 'name', 'twitter:title', title); html = upsertMeta(html, 'name', 'twitter:description', description); html = upsertMeta(html, 'name', 'twitter:image', image); const canonicalTag = `<link rel="canonical" href="${escapeHtml(canonical)}" />`; const canonicalPattern = /<link\s+[^>]*rel=["']canonical["'][^>]*>/i; html = canonicalPattern.test(html) ? html.replace(canonicalPattern, canonicalTag) : html.replace('</head>', `    ${canonicalTag}\n  </head>`); html = html.replace(/\s*<script type="application\/ld\+json" data-static-seo>[\s\S]*?<\/script>/g, ''); const schemaTags = schemas.map((schema) => { const json = JSON.stringify(schema).replaceAll('<', '\\u003c'); return `    <script type="application/ld+json" data-static-seo>${json}</script>`; }).join('\n'); html = html.replace('</head>', `${schemaTags ? `${schemaTags}\n` : ''}  </head>`); if (staticContent) html = html.replace('<div id="root"></div>', `${staticContent}\n    <div id="root"></div>`); return html; };
+const writeRoute = async (route, html) => { const outputPath = route === '/' ? templatePath : path.join(distDir, route.replace(/^\//, ''), 'index.html'); await fs.mkdir(path.dirname(outputPath), { recursive: true }); await fs.writeFile(outputPath, html); };
+const organizationSchema = { '@context': 'https://schema.org', '@type': 'SportsOrganization', name: SITE_NAME, url: SITE_URL, sport: 'Association Football', sameAs: SITE_SOCIAL_URLS };
+const websiteSchema = { '@context': 'https://schema.org', '@type': 'WebSite', name: SITE_NAME, url: SITE_URL, inLanguage: 'zh-Hant' };
+const sitemapEntries = []; const addSitemapEntry = (route, lastmod) => sitemapEntries.push({ url: routeUrl(route), lastmod });
+const seasonPayloads = {};
+for (const seasonId of SEASON_IDS) { const readJson = async (fileName) => JSON.parse(await fs.readFile(path.join(dataDir, seasonId, fileName), 'utf8')); seasonPayloads[seasonId] = { teams: await readJson('teams.json'), players: await readJson('players.json'), matches: await readJson('matches.json'), events: await readJson('matchEvents.json'), news: await readJson('news.json') }; }
 
-const upsertMeta = (html, attribute, key, value) => {
-  const pattern = new RegExp(`<meta\\s+[^>]*${attribute}=["']${escapeRegExp(key)}["'][^>]*>`, 'i');
-  const tag = `<meta ${attribute}="${escapeHtml(key)}" content="${escapeHtml(value)}" />`;
-  return pattern.test(html)
-    ? html.replace(pattern, tag)
-    : html.replace('</head>', `    ${tag}\n  </head>`);
-};
+for (const [route, entry] of Object.entries(PAGE_SEO)) { const title = `${entry.label}｜${SITE_NAME}`; await writeRoute(route, renderHtml({ route, title, description: entry.description, image: absoluteAssetUrl(DEFAULT_SOCIAL_IMAGE), schemas: route === '/' ? [organizationSchema, websiteSchema] : [organizationSchema], staticContent: staticShell(entry.label, entry.description) })); addSitemapEntry(route); }
 
-const renderHtml = ({ route, title, description, image, type = 'website', schemas = [] }) => {
-  const canonical = routeUrl(route);
-  let html = template.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`);
-  html = upsertMeta(html, 'name', 'description', description);
-  html = upsertMeta(html, 'property', 'og:title', title);
-  html = upsertMeta(html, 'property', 'og:description', description);
-  html = upsertMeta(html, 'property', 'og:image', image);
-  html = upsertMeta(html, 'property', 'og:url', canonical);
-  html = upsertMeta(html, 'property', 'og:type', type);
-  html = upsertMeta(html, 'property', 'og:site_name', SITE_NAME);
-  html = upsertMeta(html, 'name', 'twitter:card', 'summary_large_image');
-  html = upsertMeta(html, 'name', 'twitter:title', title);
-  html = upsertMeta(html, 'name', 'twitter:description', description);
-  html = upsertMeta(html, 'name', 'twitter:image', image);
+for (const seasonId of SEASON_IDS) for (const article of seasonPayloads[seasonId].news) { if (!article.id || article.id.includes('/')) throw new Error(`Invalid news route id: ${article.id}`); const route = `/news/${article.id}`; const seasonDisplayName = getSeasonDisplayName(seasonId); const title = `${article.title}｜${seasonDisplayName}｜${SITE_NAME}`; const description = article.summary || DEFAULT_DESCRIPTION; const image = absoluteAssetUrl(article.imageUrl); const schema = { '@context': 'https://schema.org', '@type': 'NewsArticle', headline: article.title, description, image: [image], datePublished: article.timestamp, dateModified: article.timestamp, inLanguage: 'zh-Hant', mainEntityOfPage: routeUrl(route), author: organizationSchema, publisher: organizationSchema }; await writeRoute(route, renderHtml({ route, title, description, image, type: 'article', schemas: [schema], staticContent: staticShell(article.title, description) })); addSitemapEntry(route, article.timestamp?.slice(0, 10)); }
 
-  const canonicalTag = `<link rel="canonical" href="${escapeHtml(canonical)}" />`;
-  const canonicalPattern = /<link\s+[^>]*rel=["']canonical["'][^>]*>/i;
-  html = canonicalPattern.test(html)
-    ? html.replace(canonicalPattern, canonicalTag)
-    : html.replace('</head>', `    ${canonicalTag}\n  </head>`);
+const teamGroups = new Map();
+for (const seasonId of SEASON_IDS) for (const team of seasonPayloads[seasonId].teams) { const identity = team.identityId || team.id; const group = teamGroups.get(identity) || []; group.push({ seasonId, team }); teamGroups.set(identity, group); }
+for (const [identity, records] of teamGroups) { if (!identity || identity.includes('/')) throw new Error(`Invalid team route id: ${identity}`); records.sort((a, b) => b.seasonId.localeCompare(a.seasonId)); const latest = records[0]; const route = `/teams/${identity}`; const title = `${latest.team.name}｜D LEAGUE 球隊資料`; const description = `${latest.team.name} 的 D LEAGUE 歷年賽季、球員名單、賽程、賽果、積分與球隊數據`; const image = absoluteAssetUrl(latest.team.logo); const schema = { '@context': 'https://schema.org', '@type': 'SportsTeam', name: latest.team.name, alternateName: latest.team.shortName, sport: 'Association Football', url: routeUrl(route), logo: image, memberOf: organizationSchema }; const seasonsText = records.map((record) => `${record.seasonId.replace('-', '/')} ${record.team.leagueId}`).join('、'); await writeRoute(route, renderHtml({ route, title, description, image, schemas: [schema], staticContent: staticShell(latest.team.name, description, `<p style="line-height:1.7">參賽紀錄：${escapeHtml(seasonsText)}</p>`) })); addSitemapEntry(route); }
 
-  html = html.replace(/\s*<script type="application\/ld\+json" data-static-seo>[\s\S]*?<\/script>/g, '');
-  const schemaTags = schemas.map((schema) => {
-    const json = JSON.stringify(schema).replaceAll('<', '\\u003c');
-    return `    <script type="application/ld+json" data-static-seo>${json}</script>`;
-  }).join('\n');
-  return html.replace('</head>', `${schemaTags ? `${schemaTags}\n` : ''}  </head>`);
-};
+const playerGroups = new Map();
+for (const seasonId of SEASON_IDS) for (const player of seasonPayloads[seasonId].players) { const identity = player.identityId || player.id; const group = playerGroups.get(identity) || []; group.push({ seasonId, player }); playerGroups.set(identity, group); }
+for (const [identity, records] of playerGroups) { if (!identity || identity.includes('/')) throw new Error(`Invalid player route id: ${identity}`); records.sort((a, b) => b.seasonId.localeCompare(a.seasonId)); const latest = records[0]; const team = seasonPayloads[latest.seasonId].teams.find((candidate) => candidate.id === latest.player.teamId); const route = `/players/${identity}`; const title = `${latest.player.name}｜D LEAGUE 球員資料`; const description = `${latest.player.name} 的 D LEAGUE 歷年球隊、進球、紅黃牌與比賽事件`; const schema = { '@context': 'https://schema.org', '@type': 'Person', name: latest.player.name, alternateName: latest.player.englishName, nationality: latest.player.nationality, url: routeUrl(route), memberOf: team ? { '@type': 'SportsTeam', name: team.name, url: routeUrl(`/teams/${team.identityId || team.id}`) } : undefined }; await writeRoute(route, renderHtml({ route, title, description, image: absoluteAssetUrl(team?.logo), type: 'profile', schemas: [schema], staticContent: staticShell(latest.player.name, description, `<p style="line-height:1.7">最新登錄：${escapeHtml(team?.name || '未提供')} · ${escapeHtml(latest.seasonId.replace('-', '/'))}</p>`) })); addSitemapEntry(route); }
 
-const writeRoute = async (route, html) => {
-  const outputPath = route === '/'
-    ? templatePath
-    : path.join(distDir, route.replace(/^\//, ''), 'index.html');
-  await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await fs.writeFile(outputPath, html);
-};
+for (const seasonId of SEASON_IDS) { const payload = seasonPayloads[seasonId]; const teamMap = Object.fromEntries(payload.teams.map((team) => [team.id, team])); for (const match of payload.matches) { if (!match.id || match.id.includes('/')) throw new Error(`Invalid match route id: ${match.id}`); const home = teamMap[match.homeTeamId]; const away = teamMap[match.awayTeamId]; if (!home || !away) continue; const route = `/matches/${match.id}`; const hasScore = match.homeScore !== null && match.awayScore !== null; const score = hasScore ? `${match.homeScore}-${match.awayScore}` : 'vs'; const title = `${home.shortName} ${score} ${away.shortName}｜${getSeasonDisplayName(seasonId)}`; const description = `${getSeasonDisplayName(seasonId)} ${match.league} 第 ${match.round} 輪，${home.name} 對 ${away.name} 的時間、地點、比數與比賽事件`; const schema = { '@context': 'https://schema.org', '@type': 'SportsEvent', name: `${home.name} vs ${away.name}`, startDate: match.timestamp, eventStatus: match.status === 'FINISHED' ? 'https://schema.org/EventCompleted' : 'https://schema.org/EventScheduled', location: { '@type': 'Place', name: match.venue }, homeTeam: { '@type': 'SportsTeam', name: home.name, url: routeUrl(`/teams/${home.identityId || home.id}`) }, awayTeam: { '@type': 'SportsTeam', name: away.name, url: routeUrl(`/teams/${away.identityId || away.id}`) }, url: routeUrl(route), organizer: organizationSchema }; const events = payload.events[match.id] || []; const eventText = events.length ? events.slice(0, 12).map((event) => `${event.minute}' ${event.player} ${event.type}`).join('、') : '比賽事件尚未登錄'; await writeRoute(route, renderHtml({ route, title, description, image: absoluteAssetUrl(home.logo), schemas: [schema], staticContent: staticShell(`${home.name} ${score} ${away.name}`, description, `<p style="line-height:1.7">賽事事件：${escapeHtml(eventText)}</p>`) })); addSitemapEntry(route, match.timestamp?.slice(0, 10)); } }
 
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'SportsOrganization',
-  name: SITE_NAME,
-  url: SITE_URL,
-  sport: 'Association Football',
-  sameAs: SITE_SOCIAL_URLS,
-};
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: SITE_NAME,
-  url: SITE_URL,
-  inLanguage: 'zh-Hant',
-};
-
-const sitemapEntries = [];
-const addSitemapEntry = (route, lastmod) => {
-  sitemapEntries.push({ url: routeUrl(route), lastmod });
-};
-
-for (const [route, entry] of Object.entries(PAGE_SEO)) {
-  const title = `${entry.label}｜${SITE_NAME}`;
-  const html = renderHtml({
-    route,
-    title,
-    description: entry.description,
-    image: absoluteAssetUrl(DEFAULT_SOCIAL_IMAGE),
-    schemas: route === '/' ? [organizationSchema, websiteSchema] : [organizationSchema],
-  });
-  await writeRoute(route, html);
-  addSitemapEntry(route);
-}
-
-const articles = [];
-for (const seasonId of SEASON_IDS) {
-  const seasonNews = JSON.parse(
-    await fs.readFile(path.join(dataDir, seasonId, 'news.json'), 'utf8'),
-  );
-  for (const article of seasonNews) articles.push({ ...article, seasonId });
-}
-
-for (const article of articles) {
-  if (!article.id || article.id.includes('/')) throw new Error(`Invalid news route id: ${article.id}`);
-  const route = `/news/${article.id}`;
-  const seasonDisplayName = getSeasonDisplayName(article.seasonId);
-  const title = `${article.title}｜${seasonDisplayName}｜${SITE_NAME}`;
-  const description = article.summary || DEFAULT_DESCRIPTION;
-  const image = absoluteAssetUrl(article.imageUrl);
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
-    headline: article.title,
-    description,
-    image: [image],
-    datePublished: article.timestamp,
-    dateModified: article.timestamp,
-    inLanguage: 'zh-Hant',
-    mainEntityOfPage: routeUrl(route),
-    author: organizationSchema,
-    publisher: organizationSchema,
-  };
-  await writeRoute(route, renderHtml({
-    route,
-    title,
-    description,
-    image,
-    type: 'article',
-    schemas: [schema],
-  }));
-  addSitemapEntry(route, article.timestamp?.slice(0, 10));
-}
-
-const currentTeams = JSON.parse(
-  await fs.readFile(path.join(dataDir, CURRENT_SEASON_ID, 'teams.json'), 'utf8'),
-);
-for (const team of currentTeams) {
-  if (!team.id || team.id.includes('/')) throw new Error(`Invalid team route id: ${team.id}`);
-  const route = `/teams/${team.id}`;
-  const description = `${team.name}於 ${getSeasonDisplayName(CURRENT_SEASON_ID)} ${team.leagueId} 的球員名單、賽程、賽果及球隊數據`;
-  const image = absoluteAssetUrl(team.logo);
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'SportsTeam',
-    name: team.name,
-    alternateName: team.shortName,
-    sport: 'Association Football',
-    url: routeUrl(route),
-    logo: image,
-    memberOf: organizationSchema,
-  };
-  await writeRoute(route, renderHtml({
-    route,
-    title: `${team.name}｜${getSeasonDisplayName(CURRENT_SEASON_ID)}｜${SITE_NAME}`,
-    description,
-    image,
-    schemas: [schema],
-  }));
-  addSitemapEntry(route);
-}
-
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries
-  .map(({ url, lastmod }) => `  <url><loc>${escapeHtml(url)}</loc>${lastmod ? `<lastmod>${escapeHtml(lastmod)}</lastmod>` : ''}</url>`)
-  .join('\n')}\n</urlset>\n`;
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries.map(({ url, lastmod }) => `  <url><loc>${escapeHtml(url)}</loc>${lastmod ? `<lastmod>${escapeHtml(lastmod)}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`;
 await fs.writeFile(path.join(distDir, 'sitemap.xml'), sitemap);
-await fs.writeFile(
-  path.join(distDir, 'robots.txt'),
-  `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`,
-);
-
+await fs.writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 console.log(`Static SEO generated for ${sitemapEntries.length} routes`);

@@ -5,18 +5,18 @@ import App from './App';
 import './styles.css';
 
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error('Could not find root element to mount to');
-}
+if (!rootElement) throw new Error('Could not find root element to mount to');
+
+const staticSeoContent = document.getElementById('static-seo-content');
+if (staticSeoContent) staticSeoContent.remove();
 
 const useHashRouter = import.meta.env.VITE_ROUTER_MODE === 'hash';
-const previewRoutes = new Set(['schedule', 'standings', 'stats', 'media', 'news']);
+const supportedPreviewRoutes = ['schedule', 'standings', 'stats', 'media', 'news', 'teams/', 'players/', 'matches/'];
 
 if (useHashRouter && !window.location.hash) {
   const previewParams = new URLSearchParams(window.location.search);
   const route = previewParams.get('route');
-
-  if (route && previewRoutes.has(route)) {
+  if (route && supportedPreviewRoutes.some((supported) => supported.endsWith('/') ? route.startsWith(supported) : route === supported)) {
     const season = previewParams.get('season');
     const routeSearch = season ? `?season=${encodeURIComponent(season)}` : '';
     window.history.replaceState(null, '', window.location.pathname);
@@ -24,16 +24,5 @@ if (useHashRouter && !window.location.hash) {
   }
 }
 
-const app = useHashRouter ? (
-  <HashRouter>
-    <App />
-  </HashRouter>
-) : (
-  <BrowserRouter basename={import.meta.env.BASE_URL}>
-    <App />
-  </BrowserRouter>
-);
-
-ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>{app}</React.StrictMode>,
-);
+const app = useHashRouter ? <HashRouter><App /></HashRouter> : <BrowserRouter basename={import.meta.env.BASE_URL}><App /></BrowserRouter>;
+ReactDOM.createRoot(rootElement).render(<React.StrictMode>{app}</React.StrictMode>);

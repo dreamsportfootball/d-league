@@ -56,6 +56,20 @@ export const getPlayerIdentity = (player: PlayerProfile): string => player.ident
 
 const seasonSort = (a: SeasonId, b: SeasonId): number => b.localeCompare(a);
 
+export const resolveMatchEventPlayer = (
+  data: SeasonData,
+  match: Match,
+  event: MatchEvent,
+): PlayerProfile | undefined => {
+  const explicitId = event.playerId ?? event.subjectId;
+  if (explicitId) return data.players.find((player) => player.id === explicitId);
+
+  const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+  const candidates = data.players.filter((player) => player.name === event.player);
+  return candidates.find((player) => player.teamId === eventTeamId) ??
+    (candidates.length === 1 ? candidates[0] : undefined);
+};
+
 export const getTeamHistory = (entityOrTeamId: string): TeamSeasonRecord[] => {
   let identityId = entityOrTeamId;
 
@@ -155,13 +169,24 @@ export const getPlayerSeasonStats = (record: PlayerSeasonRecord): PlayerSeasonSt
   const matchIds = new Set<string>();
 
   Object.entries(record.data.matchEvents).forEach(([matchId, events]) => {
+    const match = record.data.matches.find((candidate) => candidate.id === matchId);
+    if (!match) return;
+
     events.forEach((event) => {
-      const subjectId = event.playerId ?? event.subjectId;
-      if (subjectId !== record.player.id) return;
+      const resolvedPlayer = resolveMatchEventPlayer(record.data, match, event);
+      if (resolvedPlayer?.id !== record.player.id) return;
       matchIds.add(matchId);
-      if (event.type === 'GOAL' && !event.isOwnGoal) goals += 1;
+      if (
+        event.type === 'GOAL' &&
+        !event.isOwnGoal &&
+        match.resultType !== 'VOID' &&
+        match.countsForPlayerStats !== false
+      ) goals += 1;
       if (event.type === 'YELLOW_CARD') yellowCards += 1;
-      if (event.type === 'SECOND_YELLOW') secondYellowDismissals += 1;
+      if (event.type === 'SECOND_YELLOW') {
+        yellowCards += 1;
+        secondYellowDismissals += 1;
+      }
       if (event.type === 'RED_CARD') directRedCards += 1;
     });
   });
@@ -181,8 +206,10 @@ export const getPlayerMatchRecords = (entityOrPlayerId: string): MatchRecord[] =
 
   history.forEach((record) => {
     Object.entries(record.data.matchEvents).forEach(([matchId, events]) => {
+      const match = record.data.matches.find((candidate) => candidate.id === matchId);
+      if (!match) return;
       const involved = events.some(
-        (event) => (event.playerId ?? event.subjectId) === record.player.id,
+        (event) => resolveMatchEventPlayer(record.data, match, event)?.id === record.player.id,
       );
       if (!involved) return;
       const matchRecord = getMatchRecord(matchId, record.seasonId);
@@ -223,14 +250,15 @@ export const getRoundInsights = (record: MatchRecord): RoundInsights => {
   matches.forEach((match) => {
     (record.data.matchEvents[match.id] ?? []).forEach((event) => {
       if (event.type !== 'GOAL' || event.isOwnGoal) return;
-      const key = event.playerId ?? event.subjectId ?? event.player;
+      const resolvedPlayer = resolveMatchEventPlayer(record.data, match, event);
+      const key = resolvedPlayer?.id ?? event.playerId ?? event.subjectId ?? event.player;
       const existing = scorerMap.get(key);
       if (existing) {
         existing.goals += 1;
       } else {
         scorerMap.set(key, {
-          playerId: event.playerId ?? event.subjectId,
-          name: event.player,
+          playerId: resolvedPlayer?.id ?? event.playerId ?? event.subjectId,
+          name: resolvedPlayer?.name ?? event.player,
           goals: 1,
         });
       }

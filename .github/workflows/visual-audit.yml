@@ -60,6 +60,8 @@ jobs:
           exit 1
 
       - name: Capture responsive screenshots and diagnostics
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173
         run: node scripts/visual-audit.mjs
 
       - name: Validate round entity page

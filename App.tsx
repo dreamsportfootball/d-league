@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
@@ -7,8 +7,6 @@ import Header from './components/Header';
 import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
 import MobileRegistrationBar from './components/MobileRegistrationBar';
 import Seo from './components/Seo';
-import { isSeasonId } from './config/seasons';
-import { CURRENT_SEASON_ID } from './config/siteConfig';
 import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
@@ -18,6 +16,8 @@ const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
+const PlayerPage = lazy(() => import('./pages/PlayerPage'));
+const MatchPage = lazy(() => import('./pages/MatchPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CupPage = lazy(() => import('./pages/CupPage'));
@@ -35,9 +35,7 @@ const PageSkeleton: React.FC = () => (
           <div className="mb-4 h-12 w-3/5 rounded bg-neutral-200 md:h-16" />
           <div className="h-5 w-4/5 rounded bg-neutral-100" />
         </div>
-        <div className="hidden h-9 w-[148px] rounded-lg bg-neutral-100 md:block" />
       </div>
-      <div className="mb-8 h-12 rounded-xl bg-neutral-100" />
       <div className="space-y-4">
         <div className="h-24 rounded-xl bg-neutral-100" />
         <div className="h-24 rounded-xl bg-neutral-100" />
@@ -57,16 +55,13 @@ const SectionAnchorNavigation: React.FC = () => {
         event.ctrlKey ||
         event.shiftKey ||
         event.altKey
-      ) {
-        return;
-      }
+      ) return;
 
       const target = event.target;
       const anchor = target instanceof Element
         ? target.closest<HTMLAnchorElement>('a[href^="#"]')
         : null;
       const href = anchor?.getAttribute('href');
-
       if (!href || href === '#' || href.startsWith('#/')) return;
 
       const sectionId = decodeURIComponent(href.slice(1));
@@ -76,10 +71,7 @@ const SectionAnchorNavigation: React.FC = () => {
       event.preventDefault();
       const headerHeight = sectionId === 'main-content' ? 0 : 64;
       const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: sectionTop - headerHeight,
-        behavior: preferredScrollBehavior(),
-      });
+      window.scrollTo({ top: sectionTop - headerHeight, behavior: preferredScrollBehavior() });
       if (sectionId === 'main-content') section.focus({ preventScroll: true });
     };
 
@@ -106,8 +98,6 @@ const ScrollMemory: React.FC = () => {
           return;
         }
       }
-      window.scrollTo(0, 0);
-      return;
     }
 
     if (hash) {
@@ -139,7 +129,7 @@ const ScrollMemory: React.FC = () => {
   return null;
 };
 
-const Site: React.FC = () => (
+const App: React.FC = () => (
   <SeasonProvider>
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <a
@@ -167,6 +157,8 @@ const Site: React.FC = () => (
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/news/:id" element={<ArticleDetailPage />} />
               <Route path="/teams/:id" element={<TeamPage />} />
+              <Route path="/players/:id" element={<PlayerPage />} />
+              <Route path="/matches/:id" element={<MatchPage />} />
               <Route path="/media" element={<MediaPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/cup" element={<CupPage />} />
@@ -181,21 +173,5 @@ const Site: React.FC = () => (
     </div>
   </SeasonProvider>
 );
-
-const App: React.FC = () => {
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const requestedSeason = searchParams.get('season');
-
-  if (
-    location.pathname.startsWith('/teams/') &&
-    isSeasonId(requestedSeason) &&
-    requestedSeason !== CURRENT_SEASON_ID
-  ) {
-    return <Navigate to={`/standings?season=${requestedSeason}`} replace />;
-  }
-
-  return <Site />;
-};
 
 export default App;

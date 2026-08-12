@@ -1,0 +1,211 @@
+import React, { useMemo } from 'react';
+import {
+  Activity,
+  ArrowLeft,
+  CalendarDays,
+  ChevronRight,
+  MapPin,
+  Newspaper,
+  Shield,
+  Trophy,
+  Video,
+} from 'lucide-react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import EmptyState from '../components/EmptyState';
+import { isSeasonId } from '../config/seasons';
+import { getMatchRecord, getRoundInsights, getTeamIdentity } from '../services/entityData';
+import { MatchStatus } from '../types';
+import type { MatchEvent } from '../types/matchEvent';
+import { formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
+
+const eventLabel = (event: MatchEvent): string => {
+  if (event.type === 'GOAL') {
+    if (event.isOwnGoal) return '烏龍球';
+    if (event.isPK) return '十二碼進球';
+    return '進球';
+  }
+  if (event.type === 'YELLOW_CARD') return '黃牌';
+  if (event.type === 'SECOND_YELLOW') return '雙黃退場';
+  return '紅牌';
+};
+
+const eventMarker = (event: MatchEvent): string => {
+  if (event.type === 'GOAL') return '⚽';
+  if (event.type === 'YELLOW_CARD') return '🟨';
+  if (event.type === 'SECOND_YELLOW') return '🟨🟥';
+  return '🟥';
+};
+
+const MatchPage: React.FC = () => {
+  const { id = '' } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const requestedSeason = searchParams.get('season');
+  const preferredSeason = isSeasonId(requestedSeason) ? requestedSeason : undefined;
+  const record = useMemo(() => getMatchRecord(id, preferredSeason), [id, preferredSeason]);
+
+  if (!record || !record.homeTeam || !record.awayTeam) {
+    return (
+      <div className="min-h-[75vh] bg-white px-4 py-16 md:py-28">
+        <div className="mx-auto max-w-5xl">
+          <EmptyState title="找不到此比賽" description="此比賽不存在、尚未公布，或網址已失效" />
+          <div className="mt-8 text-center">
+            <Link to="/schedule" className="text-sm font-black text-brand-blue">返回賽程</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { match, homeTeam, awayTeam, events, season, data } = record;
+  const insights = getRoundInsights(record);
+  const finished =
+    match.status === MatchStatus.FINISHED &&
+    match.homeScore !== null &&
+    match.awayScore !== null;
+  const scoreText = finished ? `${match.homeScore} - ${match.awayScore}` : 'VS';
+  const goals = events.filter((event) => event.type === 'GOAL');
+  const cards = events.filter((event) => event.type !== 'GOAL');
+
+  const relatedMatches = data.matches
+    .filter(
+      (candidate) =>
+        candidate.id !== match.id &&
+        candidate.league === match.league &&
+        (candidate.homeTeamId === homeTeam.id ||
+          candidate.awayTeamId === homeTeam.id ||
+          candidate.homeTeamId === awayTeam.id ||
+          candidate.awayTeamId === awayTeam.id),
+    )
+    .sort(
+      (a, b) =>
+        Math.abs(new Date(a.timestamp).getTime() - new Date(match.timestamp).getTime()) -
+        Math.abs(new Date(b.timestamp).getTime() - new Date(match.timestamp).getTime()),
+    )
+    .slice(0, 4);
+
+  const renderEvent = (event: MatchEvent) => {
+    const playerId = event.playerId ?? event.subjectId;
+    const playerExists = Boolean(playerId && data.players.some((player) => player.id === playerId));
+    return (
+      <li key={event.id} className="grid grid-cols-[48px_28px_minmax(0,1fr)] items-start gap-3 border-b border-neutral-100 py-4 last:border-b-0">
+        <span className="font-display text-sm font-black tabular-nums text-brand-blue">{event.minute}'</span>
+        <span aria-hidden="true" className="text-base">{eventMarker(event)}</span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            {playerExists && playerId ? (
+              <Link to={`/players/${playerId}?season=${record.seasonId}`} className="font-black text-brand-black transition-colors hover:text-brand-blue">
+                {event.player}
+              </Link>
+            ) : (
+              <span className="font-black text-brand-black">{event.player}</span>
+            )}
+            <span className="text-xs font-bold text-neutral-400">{eventLabel(event)}</span>
+          </div>
+          <p className="mt-1 text-[11px] font-bold text-neutral-400">{event.team === 'HOME' ? homeTeam.name : awayTeam.name}</p>
+        </div>
+      </li>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-white pb-24">
+      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-14">
+        <div className="mx-auto max-w-6xl">
+          <Link to={`/schedule?season=${record.seasonId}`} className="inline-flex min-h-11 items-center text-xs font-black text-neutral-500 transition-colors hover:text-brand-black">
+            <ArrowLeft className="mr-2 h-4 w-4" />返回賽程
+          </Link>
+
+          <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-neutral-500">
+            <span>{season.displayName}</span><span>·</span><span>{match.league}</span><span>·</span><span>第 {match.round} 輪</span>
+          </div>
+
+          <div className="mt-7 grid grid-cols-[minmax(0,1fr)_76px_minmax(0,1fr)] items-center gap-3 md:grid-cols-[minmax(0,1fr)_120px_minmax(0,1fr)] md:gap-8">
+            <Link to={`/teams/${getTeamIdentity(homeTeam)}?season=${record.seasonId}`} className="group flex min-w-0 flex-col items-center text-center">
+              <img src={homeTeam.logo} alt={`${homeTeam.name} 隊徽`} className="h-20 w-20 object-contain transition-transform group-hover:scale-105 md:h-28 md:w-28" />
+              <h1 className="mt-3 break-words text-sm font-black text-brand-black group-hover:text-brand-blue md:text-xl">{homeTeam.name}</h1>
+            </Link>
+
+            <div className="text-center">
+              <p className="font-display text-3xl font-black tracking-tight tabular-nums text-brand-black md:text-5xl">{scoreText}</p>
+              <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">{finished ? '比賽結束' : '尚未開賽'}</p>
+            </div>
+
+            <Link to={`/teams/${getTeamIdentity(awayTeam)}?season=${record.seasonId}`} className="group flex min-w-0 flex-col items-center text-center">
+              <img src={awayTeam.logo} alt={`${awayTeam.name} 隊徽`} className="h-20 w-20 object-contain transition-transform group-hover:scale-105 md:h-28 md:w-28" />
+              <p className="mt-3 break-words text-sm font-black text-brand-black group-hover:text-brand-blue md:text-xl">{awayTeam.name}</p>
+            </Link>
+          </div>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 border-t border-neutral-200 pt-5 text-xs font-bold text-neutral-500">
+            <span className="inline-flex items-center"><CalendarDays className="mr-2 h-4 w-4 text-brand-blue" />{formatTaipeiDateWithWeekday(match.timestamp)} {formatTaipeiTime(match.timestamp)}</span>
+            <span className="inline-flex items-center"><MapPin className="mr-2 h-4 w-4 text-brand-blue" />{match.venue}</span>
+          </div>
+          {match.administrativeNote && <p className="mt-5 border-l-4 border-amber-400 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800">{match.administrativeNote}</p>}
+        </div>
+      </section>
+
+      <main className="mx-auto grid max-w-6xl gap-12 px-4 py-10 md:px-12 md:py-14 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
+        <div className="space-y-12">
+          <section>
+            <div className="flex items-center border-b border-neutral-200 pb-3"><Activity className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">比賽事件</h2></div>
+            {events.length > 0 ? <ul>{events.map(renderEvent)}</ul> : <p className="border-b border-neutral-100 py-10 text-sm text-neutral-400">{finished ? '此場沒有已登錄的進球或紅黃牌事件' : '比賽事件將於賽後更新'}</p>}
+          </section>
+
+          {finished && (
+            <section>
+              <div className="flex items-center border-b border-neutral-200 pb-3"><Trophy className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">第 {match.round} 輪數據洞察</h2></div>
+              <div className="grid grid-cols-2 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-4">
+                {[
+                  ['已完成比賽', `${insights.completedMatches}`],
+                  ['本輪總進球', `${insights.totalGoals}`],
+                  ['場均進球', insights.averageGoals.toFixed(1)],
+                  ['最大勝差', `${insights.biggestMargin}`],
+                ].map(([label, value]) => (
+                  <div key={label} className="bg-white p-5"><p className="text-[10px] font-black tracking-wider text-neutral-400">{label}</p><p className="mt-2 font-display text-3xl font-black tabular-nums text-brand-black">{value}</p></div>
+                ))}
+              </div>
+              {insights.topScorer && <p className="mt-4 text-sm leading-6 text-neutral-600">本輪目前進球最多：{insights.topScorer.playerId ? <Link to={`/players/${insights.topScorer.playerId}?season=${record.seasonId}`} className="ml-1 font-black text-brand-blue">{insights.topScorer.name}（{insights.topScorer.goals} 球）</Link> : <span className="ml-1 font-black text-brand-black">{insights.topScorer.name}（{insights.topScorer.goals} 球）</span>}</p>}
+            </section>
+          )}
+
+          <section>
+            <div className="flex items-center border-b border-neutral-200 pb-3"><Shield className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">賽事摘要</h2></div>
+            <dl className="grid gap-4 py-5 sm:grid-cols-3">
+              <div><dt className="text-[10px] font-black text-neutral-400">進球事件</dt><dd className="mt-1 font-display text-2xl font-black text-brand-black">{goals.length}</dd></div>
+              <div><dt className="text-[10px] font-black text-neutral-400">紅黃牌事件</dt><dd className="mt-1 font-display text-2xl font-black text-brand-black">{cards.length}</dd></div>
+              <div><dt className="text-[10px] font-black text-neutral-400">賽事編號</dt><dd className="mt-1 break-all text-sm font-black text-brand-black">{match.id}</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <aside className="space-y-8">
+          <div className="border border-neutral-200 p-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">官方資料</p>
+            <div className="mt-4 space-y-2">
+              <Link to={`/standings?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看積分榜 <ChevronRight className="h-4 w-4" /></Link>
+              <Link to={`/stats?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看射手與紀律數據 <ChevronRight className="h-4 w-4" /></Link>
+              {match.reportArticleId && <Link to={`/news/${match.reportArticleId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue"><span className="inline-flex items-center"><Newspaper className="mr-2 h-4 w-4 text-brand-blue" />賽事戰報</span><ChevronRight className="h-4 w-4" /></Link>}
+              {match.videoUrl && <a href={match.videoUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-between text-sm font-black text-brand-black hover:text-brand-blue"><span className="inline-flex items-center"><Video className="mr-2 h-4 w-4 text-brand-blue" />比賽影片</span><ChevronRight className="h-4 w-4" /></a>}
+            </div>
+          </div>
+
+          {relatedMatches.length > 0 && (
+            <div>
+              <h2 className="border-b border-neutral-200 pb-3 font-display text-xl font-black text-brand-black">相關賽事</h2>
+              <div className="divide-y divide-neutral-100">
+                {relatedMatches.map((candidate) => {
+                  const home = data.teamMap[candidate.homeTeamId];
+                  const away = data.teamMap[candidate.awayTeamId];
+                  if (!home || !away) return null;
+                  return <Link key={candidate.id} to={`/matches/${candidate.id}?season=${record.seasonId}`} className="block py-4"><p className="text-[10px] font-black text-neutral-400">{candidate.league} 第 {candidate.round} 輪</p><p className="mt-1 text-sm font-black text-brand-black hover:text-brand-blue">{home.shortName} vs {away.shortName}</p></Link>;
+                })}
+              </div>
+            </div>
+          )}
+        </aside>
+      </main>
+    </div>
+  );
+};
+
+export default MatchPage;

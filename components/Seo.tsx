@@ -1,31 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getSeasonConfig } from '../config/seasons';
-import {
-  DEFAULT_DESCRIPTION,
-  DEFAULT_SOCIAL_IMAGE,
-  PAGE_SEO,
-  SITE_NAME,
-  SITE_URL,
-} from '../config/siteManifest.js';
+import { getSeasonConfig, isSeasonId } from '../config/seasons';
+import { DEFAULT_DESCRIPTION, DEFAULT_SOCIAL_IMAGE, PAGE_SEO, SITE_NAME, SITE_URL } from '../config/siteManifest.js';
 import { CUP_EVENT } from '../cupData';
-import { useSeason } from '../hooks/useSeason';
+import { getMatchRecord, getPlayerHistory, getTeamHistory } from '../services/entityData';
 import { getNewsArticle } from '../services/seasonDataJson';
 
-interface PageSeoEntry {
-  label: string;
-  description: string;
-}
-
+interface PageSeoEntry { label: string; description: string; }
 const pageSeo = PAGE_SEO as Record<string, PageSeoEntry>;
 
 const setMeta = (selector: string, attribute: 'name' | 'property', key: string, content: string) => {
   let element = document.head.querySelector<HTMLMetaElement>(selector);
-  if (!element) {
-    element = document.createElement('meta');
-    element.setAttribute(attribute, key);
-    document.head.appendChild(element);
-  }
+  if (!element) { element = document.createElement('meta'); element.setAttribute(attribute, key); document.head.appendChild(element); }
   element.content = content;
 };
 
@@ -38,77 +24,43 @@ const absoluteAssetUrl = (value?: string): string => {
 
 const Seo: React.FC = () => {
   const location = useLocation();
-  const { activeSeason, seasonData } = useSeason();
-
   const metadata = useMemo(() => {
     const pathname = location.pathname;
     const routeId = decodeURIComponent(pathname.split('/').filter(Boolean)[1] ?? '');
+    const query = new URLSearchParams(location.search);
+    const requestedSeason = query.get('season');
+    const preferredSeason = isSeasonId(requestedSeason) ? requestedSeason : undefined;
     const article = pathname.startsWith('/news/') ? getNewsArticle(routeId) : null;
-    const team = pathname.startsWith('/teams/')
-      ? seasonData.teamMap[routeId]
-      : undefined;
-    const matchId = new URLSearchParams(location.search).get('match');
-    const match = matchId ? seasonData.matches.find((item) => item.id === matchId) : undefined;
 
     if (article) {
-      const articleSeason = article.seasonId ? getSeasonConfig(article.seasonId) : activeSeason;
-      return {
-        title: `${article.title}｜${articleSeason.displayName}｜${SITE_NAME}`,
-        description: article.summary || DEFAULT_DESCRIPTION,
-        image: absoluteAssetUrl(
-          article.imageUrl || articleSeason.heroImageDesktop || articleSeason.heroFallbackImage,
-        ),
-        type: 'article',
-      };
+      const articleSeason = article.seasonId ? getSeasonConfig(article.seasonId) : undefined;
+      return { title: `${article.title}｜${articleSeason?.displayName ?? SITE_NAME}`, description: article.summary || DEFAULT_DESCRIPTION, image: absoluteAssetUrl(article.imageUrl), type: 'article', canonicalPath: pathname };
     }
 
-    if (team) {
-      return {
-        title: `${team.name}｜${activeSeason.displayName}｜${SITE_NAME}`,
-        description: `${team.name}於 ${activeSeason.displayName} ${team.leagueId} 的球員名單、賽程、賽果及球隊數據`,
-        image: absoluteAssetUrl(team.logo),
-        type: 'website',
-      };
+    if (pathname.startsWith('/matches/')) {
+      const record = getMatchRecord(routeId, preferredSeason);
+      if (record?.homeTeam && record.awayTeam) {
+        const score = record.match.homeScore !== null && record.match.awayScore !== null ? `${record.match.homeScore}-${record.match.awayScore}` : 'vs';
+        return { title: `${record.homeTeam.shortName} ${score} ${record.awayTeam.shortName}｜${record.season.displayName}`, description: `${record.season.displayName} ${record.match.league} 第 ${record.match.round} 輪，${record.homeTeam.name} 對 ${record.awayTeam.name} 的時間、地點、比數與比賽事件`, image: absoluteAssetUrl(record.homeTeam.logo), type: 'website', canonicalPath: pathname };
+      }
     }
 
-    if (match) {
-      const home = seasonData.teamMap[match.homeTeamId];
-      const away = seasonData.teamMap[match.awayTeamId];
-      return {
-        title: `${home?.shortName ?? match.homeTeamId} vs ${away?.shortName ?? match.awayTeamId}｜${activeSeason.displayName}`,
-        description: `${match.league} 第 ${match.round} 輪比賽詳情、時間、地點、比數及比賽事件`,
-        image: absoluteAssetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
-        type: 'website',
-      };
+    if (pathname.startsWith('/players/')) {
+      const history = getPlayerHistory(routeId);
+      const record = (preferredSeason ? history.find((candidate) => candidate.seasonId === preferredSeason) : undefined) ?? history[0];
+      if (record) return { title: `${record.player.name}｜D LEAGUE 球員資料`, description: `${record.player.name} 的 D LEAGUE 歷年球隊、進球、紅黃牌與比賽事件`, image: absoluteAssetUrl(record.data.playerImages[record.player.name]), type: 'profile', canonicalPath: pathname };
     }
 
-    if (pathname === '/cup') {
-      return {
-        title: `${CUP_EVENT.name}｜${SITE_NAME}`,
-        description: `${CUP_EVENT.name}完整賽果、冠亞季軍、參賽球隊及賽事影像`,
-        image: absoluteAssetUrl(CUP_EVENT.heroImage),
-        type: 'website',
-      };
+    if (pathname.startsWith('/teams/')) {
+      const history = getTeamHistory(routeId);
+      const record = (preferredSeason ? history.find((candidate) => candidate.seasonId === preferredSeason) : undefined) ?? history[0];
+      if (record) return { title: `${record.team.name}｜D LEAGUE 球隊資料`, description: `${record.team.name} 的 D LEAGUE 歷年賽季、球員名單、賽程、賽果、積分與球隊數據`, image: absoluteAssetUrl(record.team.logo), type: 'website', canonicalPath: pathname };
     }
 
-    const basePage = pageSeo[pathname] ?? {
-      label: '找不到此頁面',
-      description: DEFAULT_DESCRIPTION,
-    };
-    const seasonDescriptions: Record<string, string> = {
-      '/schedule': `${activeSeason.displayName} 完整賽程、比賽結果及事件詳情`,
-      '/standings': `${activeSeason.displayName} ${activeSeason.enabledLeagues.join('、')} 最新積分及排名`,
-      '/stats': `${activeSeason.displayName} 射手榜、紅黃牌、停賽與紀律資料`,
-      '/media': `${activeSeason.displayName} 比賽影片、相簿及賽事媒體內容`,
-    };
-
-    return {
-      title: `${basePage.label}｜${SITE_NAME}`,
-      description: seasonDescriptions[pathname] ?? basePage.description,
-      image: absoluteAssetUrl(activeSeason.heroImageDesktop ?? activeSeason.heroFallbackImage),
-      type: 'website',
-    };
-  }, [activeSeason, location.pathname, location.search, seasonData.matches, seasonData.teamMap]);
+    if (pathname === '/cup') return { title: `${CUP_EVENT.name}｜${SITE_NAME}`, description: `${CUP_EVENT.name}完整賽果、冠亞季軍、參賽球隊及賽事影像`, image: absoluteAssetUrl(CUP_EVENT.heroImage), type: 'website', canonicalPath: pathname };
+    const basePage = pageSeo[pathname] ?? { label: '找不到此頁面', description: DEFAULT_DESCRIPTION };
+    return { title: `${basePage.label}｜${SITE_NAME}`, description: basePage.description, image: absoluteAssetUrl(DEFAULT_SOCIAL_IMAGE), type: 'website', canonicalPath: pathname };
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     document.title = metadata.title;
@@ -122,17 +74,12 @@ const Seo: React.FC = () => {
     setMeta('meta[name="twitter:title"]', 'name', 'twitter:title', metadata.title);
     setMeta('meta[name="twitter:description"]', 'name', 'twitter:description', metadata.description);
     setMeta('meta[name="twitter:image"]', 'name', 'twitter:image', metadata.image);
-
-    const canonicalUrl = `${SITE_URL}${location.pathname === '/' ? '/' : location.pathname}${location.search}`;
+    const canonicalUrl = `${SITE_URL}${metadata.canonicalPath === '/' ? '/' : metadata.canonicalPath}`;
     setMeta('meta[property="og:url"]', 'property', 'og:url', canonicalUrl);
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      document.head.appendChild(canonical);
-    }
+    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
     canonical.href = canonicalUrl;
-  }, [location.pathname, location.search, metadata]);
+  }, [metadata]);
 
   return null;
 };

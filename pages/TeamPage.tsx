@@ -230,7 +230,7 @@ const TeamPage: React.FC = () => {
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">歷年 D LEAGUE</h2></div>
           <div className="divide-y divide-neutral-100">{history.map((record) => {
             const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-            return <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-black text-brand-black">{record.season.shortName}</span><span className="font-bold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-black text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-black text-brand-blue">{row?.points ?? 0} 分</span></Link>;
+            return <div key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-black text-brand-black">{record.season.shortName}</span><span className="font-bold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-black text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-black text-brand-blue">{row?.points ?? 0} 分</span></div>;
           })}</div>
         </section>
       </main>

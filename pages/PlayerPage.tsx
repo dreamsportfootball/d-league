@@ -1,8 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
-import { isSeasonId } from '../config/seasons';
+import MatchDialog from '../components/MatchDialog';
+import { getSeasonConfig, isSeasonId } from '../config/seasons';
+import { SeasonContext } from '../contexts/SeasonContext';
+import { useSeason } from '../hooks/useSeason';
 import {
   getPlayerHistory,
   getPlayerMatchRecords,
@@ -11,8 +14,9 @@ import {
   resolveMatchEventPlayer,
   type PlayerSeasonRecord,
 } from '../services/entityData';
+import { getSeasonData } from '../services/seasonDataJson';
+import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
-import { formatTaipeiDate } from '../utils/dateFormat';
 
 const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   const timeline: { teamId: string; timestamp: number }[] = [];
@@ -69,12 +73,67 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   });
 };
 
+const formatPlayerMatchDate = (timestamp: string): string => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(timestamp));
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}/${values.month}/${values.day}`;
+};
+
+type EventSeasonFilter = SeasonId | 'ALL';
+
+interface SelectedMatchState {
+  matchId: string;
+  seasonId: SeasonId;
+}
+
 const PlayerPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
+  const { availableSeasons } = useSeason();
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getPlayerHistory(id), [id]);
   const matchRecords = useMemo(() => getPlayerMatchRecords(id), [id]);
+  const [eventSeason, setEventSeason] = useState<EventSeasonFilter>('ALL');
+  const [selectedMatch, setSelectedMatch] = useState<SelectedMatchState | null>(null);
+
+  useEffect(() => {
+    setEventSeason('ALL');
+    setSelectedMatch(null);
+  }, [id]);
+
+  const filteredMatchRecords = useMemo(
+    () =>
+      eventSeason === 'ALL'
+        ? matchRecords
+        : matchRecords.filter((record) => record.seasonId === eventSeason),
+    [eventSeason, matchRecords],
+  );
+
+  const dialogSeasonContext = useMemo(() => {
+    if (!selectedMatch) return null;
+    return {
+      activeSeasonId: selectedMatch.seasonId,
+      activeSeason: getSeasonConfig(selectedMatch.seasonId),
+      seasonData: getSeasonData(selectedMatch.seasonId),
+      availableSeasons,
+      setActiveSeason: () => {},
+    };
+  }, [availableSeasons, selectedMatch]);
+
+  const dialogNavigationMatchIds = useMemo(
+    () =>
+      selectedMatch
+        ? filteredMatchRecords
+            .filter((record) => record.seasonId === selectedMatch.seasonId)
+            .map((record) => record.match.id)
+        : undefined,
+    [filteredMatchRecords, selectedMatch],
+  );
 
   if (history.length === 0) {
     return (
@@ -240,11 +299,30 @@ const PlayerPage: React.FC = () => {
         </section>
 
         <section>
-          <div className="flex items-center border-b border-neutral-200 pb-3">
-            <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
-            <h2 className="font-display text-2xl font-black text-brand-black">個人比賽事件</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
+            <div className="flex items-center">
+              <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
+              <h2 className="font-display text-2xl font-black text-brand-black">個人比賽事件</h2>
+            </div>
+            <label className="flex items-center gap-2 text-xs font-bold text-neutral-500">
+              <span>賽季</span>
+              <select
+                value={eventSeason}
+                onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
+                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-bold text-brand-black outline-none transition-colors focus:border-brand-blue"
+                aria-label="篩選個人比賽事件賽季"
+              >
+                <option value="ALL">全部賽季</option>
+                {history.map((record) => (
+                  <option key={record.seasonId} value={record.seasonId}>
+                    {record.season.shortName}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-          {matchRecords.length > 0 ? (
+
+          {filteredMatchRecords.length > 0 ? (
             <div className="overflow-x-auto">
               <div className="min-w-[620px]">
                 <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-black tracking-wider text-neutral-400">
@@ -254,7 +332,7 @@ const PlayerPage: React.FC = () => {
                   <span className="text-center">黃牌</span>
                   <span className="text-center">紅牌</span>
                 </div>
-                {matchRecords.map((record) => {
+                {filteredMatchRecords.map((record) => {
                   const home = record.homeTeam;
                   const away = record.awayTeam;
                   if (!home || !away) return null;
@@ -280,31 +358,46 @@ const PlayerPage: React.FC = () => {
                   ).length;
 
                   return (
-                    <Link
+                    <button
                       key={`${record.seasonId}-${record.match.id}`}
-                      to={`/schedule?season=${record.seasonId}&match=${record.match.id}`}
-                      className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 transition-colors hover:bg-neutral-50"
+                      type="button"
+                      onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                      className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
-                      <div className="text-xs font-bold text-neutral-400">
-                        <p>{formatTaipeiDate(record.match.timestamp)}</p>
-                        <p className="mt-1">{record.season.shortName} · {record.match.league}</p>
-                      </div>
-                      <p className="text-sm font-black text-brand-black">
+                      <span className="text-xs font-bold tabular-nums text-neutral-400">
+                        {formatPlayerMatchDate(record.match.timestamp)}
+                      </span>
+                      <span className="text-sm font-black text-brand-black">
                         {home.shortName} vs {away.shortName}
-                      </p>
+                      </span>
                       <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</span>
                       <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</span>
                       <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</span>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
             </div>
           ) : (
-            <p className="py-10 text-sm text-neutral-400">目前沒有可連結的個人比賽事件</p>
+            <p className="py-10 text-sm text-neutral-400">
+              {eventSeason === 'ALL' ? '目前沒有可連結的個人比賽事件' : '此賽季沒有個人比賽事件'}
+            </p>
           )}
         </section>
       </main>
+
+      {selectedMatch && dialogSeasonContext && (
+        <SeasonContext.Provider value={dialogSeasonContext}>
+          <MatchDialog
+            matchId={selectedMatch.matchId}
+            onClose={() => setSelectedMatch(null)}
+            onSelectMatch={(matchId) =>
+              setSelectedMatch((current) => (current ? { ...current, matchId } : current))
+            }
+            navigationMatchIds={dialogNavigationMatchIds}
+          />
+        </SeasonContext.Provider>
+      )}
     </div>
   );
 };

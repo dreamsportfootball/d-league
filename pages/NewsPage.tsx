@@ -49,16 +49,19 @@ const NewsFallbackCover: React.FC<{ article: NewsArticle }> = ({ article }) => {
 
 const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
   const seasonLabel = getArticleSeasonLabel(article);
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = Boolean(article.imageUrl) && !imageFailed;
 
   return (
     <Link to={`/news/${article.id}`} className="group flex h-full cursor-pointer flex-col">
       <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
-        {article.imageUrl ? (
+        {showImage ? (
           <img
             src={article.imageUrl}
             alt={article.title}
             loading="lazy"
             decoding="async"
+            onError={() => setImageFailed(true)}
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (

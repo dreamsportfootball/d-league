@@ -37,6 +37,12 @@ interface TeamSocialLinkItem {
   icon: React.ReactNode;
 }
 
+interface RgbColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
 const isResolvedMatch = (match: Match): boolean =>
   match.status === MatchStatus.FINISHED ||
   match.resultType === 'VOID' ||
@@ -54,6 +60,39 @@ const isSafeExternalUrl = (value: string): boolean => {
   } catch {
     return false;
   }
+};
+
+const parseHexColor = (value: string): RgbColor | null => {
+  const hex = value.trim().replace(/^#/, '');
+  const normalized = hex.length === 3
+    ? hex.split('').map((part) => `${part}${part}`).join('')
+    : hex;
+  if (!/^[0-9a-f]{6}$/i.test(normalized)) return null;
+  return {
+    r: Number.parseInt(normalized.slice(0, 2), 16),
+    g: Number.parseInt(normalized.slice(2, 4), 16),
+    b: Number.parseInt(normalized.slice(4, 6), 16),
+  };
+};
+
+const colorWithAlpha = (value: string, alpha: number): string => {
+  const rgb = parseHexColor(value);
+  return rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})` : value;
+};
+
+const readableAccentColor = (value: string): string => {
+  const rgb = parseHexColor(value);
+  if (!rgb) return value;
+  const luminance = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+  if (luminance <= 0.62) return value;
+  return `rgb(${Math.round(rgb.r * 0.68)}, ${Math.round(rgb.g * 0.68)}, ${Math.round(rgb.b * 0.68)})`;
+};
+
+const contrastTextColor = (value: string): string => {
+  const rgb = parseHexColor(value);
+  if (!rgb) return '#ffffff';
+  const luminance = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+  return luminance > 0.64 ? '#111827' : '#ffffff';
 };
 
 const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
@@ -109,6 +148,9 @@ const TeamPage: React.FC = () => {
   const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
     ? team.shortName.trim()
     : '';
+  const teamAccentColor = readableAccentColor(team.primaryColor);
+  const teamSecondaryColor = team.secondaryColor ?? '#ffffff';
+  const teamAccentTextColor = contrastTextColor(team.primaryColor);
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -182,22 +224,53 @@ const TeamPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
-        <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.08] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
+      <section
+        className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12"
+        style={{
+          backgroundImage: `radial-gradient(circle at 88% 22%, ${colorWithAlpha(team.primaryColor, 0.13)} 0, transparent 34%), radial-gradient(circle at 8% 90%, ${colorWithAlpha(teamSecondaryColor, 0.07)} 0, transparent 30%)`,
+        }}
+      >
+        <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.06] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
+        <div className="absolute inset-x-0 bottom-0 flex h-1" aria-hidden="true">
+          <span className="w-3/4" style={{ backgroundColor: team.primaryColor }} />
+          <span className="w-1/4 border-l border-black/10" style={{ backgroundColor: teamSecondaryColor }} />
+        </div>
+
         <div className="relative mx-auto max-w-7xl">
           <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
 
           <div className="mt-6 flex min-w-0 items-start gap-5 sm:items-center sm:gap-7 md:mt-4">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28"><img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" /></div>
+            <div className="relative flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28">
+              <span
+                className="absolute inset-1 rounded-full border border-white/80 shadow-sm"
+                style={{ backgroundColor: colorWithAlpha(team.primaryColor, 0.10) }}
+                aria-hidden="true"
+              />
+              <img src={team.logo} alt={`${team.name} 隊徽`} className="relative max-h-full max-w-full object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)]" />
+            </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10" style={{ backgroundColor: team.primaryColor }} aria-hidden="true" />
+                <span className="h-2.5 w-2.5 rounded-full ring-1 ring-black/15" style={{ backgroundColor: teamSecondaryColor }} aria-hidden="true" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
+              </div>
               <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
-              {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:border-brand-blue hover:text-brand-blue">{link.icon}</a>)}</div>}
+              {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border bg-white text-neutral-500 transition-colors hover:text-brand-black" style={{ borderColor: colorWithAlpha(team.primaryColor, 0.22) }}>{link.icon}</a>)}</div>}
             </div>
           </div>
 
-          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4">{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
+          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4">{history.map((record) => {
+            const isCurrentSeason = record.seasonId === seasonId;
+            return <Link
+              key={record.seasonId}
+              to={`/teams/${identityId}?season=${record.seasonId}`}
+              className={`rounded-full border px-4 py-2 text-xs font-bold transition-colors ${isCurrentSeason ? 'shadow-sm' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-black'}`}
+              style={isCurrentSeason ? { backgroundColor: team.primaryColor, borderColor: team.primaryColor, color: teamAccentTextColor } : undefined}
+            >
+              {record.season.shortName}
+            </Link>;
+          })}</div>}
 
           <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
             {[
@@ -205,32 +278,39 @@ const TeamPage: React.FC = () => {
               ['場次', standing?.played ?? 0],
               ['進球', standing?.gf ?? 0],
               ['積分', standing?.points ?? 0],
-            ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd></div>)}
+            ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums sm:text-3xl" style={label === '積分' ? { color: teamAccentColor } : { color: '#111827' }}>{value}</dd></div>)}
           </dl>
         </div>
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 md:space-y-14 md:px-12 md:py-14">
         <section>
-          <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
+          <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5" style={{ color: teamAccentColor }} /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
           {rankHistory.length > 0 ? <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} /> : <p className="py-10 text-sm text-neutral-400">{seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}</p>}
         </section>
 
         <section>
-          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-400">共 {teamMatches.length} 場</span></div>
+          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5" style={{ color: teamAccentColor }} /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-400">共 {teamMatches.length} 場</span></div>
           {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
         <section>
-          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">球員名單</h2></div>
-          {players.length > 0 ? <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50"><span className="font-display text-xl font-black tabular-nums text-brand-blue">{player.number}</span><div className="min-w-0"><p className="break-words text-sm font-bold text-brand-black">{player.name}</p>{player.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>}</div></Link>)}</div> : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5" style={{ color: teamAccentColor }} /><h2 className="font-display text-2xl font-extrabold text-brand-black">球員名單</h2></div>
+          {players.length > 0 ? <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50"><span className="font-display text-xl font-black tabular-nums" style={{ color: teamAccentColor }}>{player.number}</span><div className="min-w-0"><p className="break-words text-sm font-bold text-brand-black">{player.name}</p>{player.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>}</div></Link>)}</div> : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
         </section>
 
         <section>
-          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5" style={{ color: teamAccentColor }} /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
           <div className="divide-y divide-neutral-100">{history.map((record) => {
             const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-            return <div key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-bold text-brand-black">{record.season.shortName}</span><span className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-bold text-brand-blue">{row?.points ?? 0} 分</span></div>;
+            const isCurrentSeason = record.seasonId === seasonId;
+            return <div key={record.seasonId} className={`relative grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm ${isCurrentSeason ? 'bg-neutral-50/70 pl-3 pr-2' : ''}`}>
+              {isCurrentSeason && <span className="absolute bottom-2 left-0 top-2 w-1 rounded-full" style={{ backgroundColor: team.primaryColor }} aria-hidden="true" />}
+              <span className="font-bold" style={isCurrentSeason ? { color: teamAccentColor } : { color: '#111827' }}>{record.season.shortName}</span>
+              <span className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span>
+              <span className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span>
+              <span className="text-right font-bold" style={isCurrentSeason ? { color: teamAccentColor } : { color: '#2563eb' }}>{row?.points ?? 0} 分</span>
+            </div>;
           })}</div>
         </section>
       </main>

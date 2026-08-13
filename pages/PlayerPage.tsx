@@ -204,17 +204,15 @@ const PlayerPage: React.FC = () => {
                       <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
                       <td className="py-4 text-sm text-brand-black">
                         {seasonTeams.length > 0 ? (
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            {seasonTeams.map((team, index) => (
-                              <React.Fragment key={team.id}>
-                                {index > 0 && <span className="text-neutral-300">→</span>}
-                                <Link
-                                  to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
-                                  className="font-medium hover:text-brand-blue"
-                                >
-                                  {team.name}
-                                </Link>
-                              </React.Fragment>
+                          <div className="flex flex-col items-start gap-1">
+                            {seasonTeams.map((team) => (
+                              <Link
+                                key={team.id}
+                                to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                                className="font-medium hover:text-brand-blue"
+                              >
+                                {team.name}
+                              </Link>
                             ))}
                           </div>
                         ) : (
@@ -260,7 +258,7 @@ const PlayerPage: React.FC = () => {
                 return (
                   <Link
                     key={`${record.seasonId}-${record.match.id}`}
-                    to={`/matches/${record.match.id}?season=${record.seasonId}`}
+                    to={`/schedule?season=${record.seasonId}&match=${record.match.id}`}
                     className="grid gap-2 py-4 transition-colors hover:bg-neutral-50 sm:grid-cols-[120px_minmax(0,1fr)_auto]"
                   >
                     <div className="text-xs font-bold text-neutral-400">

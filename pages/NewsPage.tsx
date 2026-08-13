@@ -23,6 +23,30 @@ const TAG_COLOR_MAP: Record<NewsArticle['category'], string> = {
 const getArticleSeasonLabel = (article: NewsArticle): string | null =>
   article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
+const NewsFallbackCover: React.FC<{ article: NewsArticle }> = ({ article }) => {
+  const seasonLabel = getArticleSeasonLabel(article);
+  return (
+    <div className="relative flex h-full w-full overflow-hidden bg-brand-black p-5 text-white">
+      <div className="absolute -right-12 -top-16 h-44 w-44 rotate-12 bg-brand-blue/60" />
+      <div className="absolute -bottom-16 -left-12 h-40 w-40 -rotate-12 bg-brand-accent/90" />
+      <div className="relative z-10 flex w-full flex-col justify-between">
+        <div className="flex items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
+          <span>D LEAGUE</span>
+          {seasonLabel && <span>{seasonLabel}</span>}
+        </div>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-accent">
+            {CATEGORY_MAP[article.category]}
+          </p>
+          <p className="mt-2 max-w-[90%] font-display text-xl font-extrabold leading-tight text-white">
+            {article.title}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
   const seasonLabel = getArticleSeasonLabel(article);
 
@@ -34,12 +58,11 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
             src={article.imageUrl}
             alt={article.title}
             loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-neutral-100">
-            <Newspaper className="h-10 w-10 text-neutral-300" aria-hidden="true" />
-          </div>
+          <NewsFallbackCover article={article} />
         )}
         <div className="absolute inset-0 bg-white/0 transition-colors duration-300 group-hover:bg-white/10" />
       </div>
@@ -53,7 +76,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
               {CATEGORY_MAP[article.category]}
             </span>
             {seasonLabel && (
-              <span className="truncate text-[10px] font-black uppercase tracking-[0.15em] text-brand-blue">
+              <span className="truncate text-[10px] font-bold uppercase tracking-[0.15em] text-brand-blue">
                 {seasonLabel}
               </span>
             )}
@@ -149,7 +172,7 @@ const NewsPage: React.FC = () => {
     <div className="min-h-[80vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
         <div className="mb-8 border-b border-neutral-100 pb-8 md:mb-12">
-          <h1 className="mb-3 font-display text-4xl font-black uppercase tracking-tight text-brand-black [-webkit-text-stroke:.25px_currentColor] md:text-6xl md:font-extrabold md:[-webkit-text-stroke:0px]">
+          <h1 className="mb-3 whitespace-nowrap font-display text-[32px] font-extrabold uppercase leading-none tracking-tight text-brand-black md:text-6xl">
             最新 <span className="text-brand-blue">消息</span>
           </h1>
           <p className="text-sm font-medium uppercase tracking-[0.18em] text-neutral-400 md:text-base">
@@ -176,7 +199,7 @@ const NewsPage: React.FC = () => {
 
         {filteredNews.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+            <div className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
               {visibleNews.map((article) => (
                 <MinimalNewsCard key={`${article.seasonId ?? 'global'}-${article.id}`} article={article} />
               ))}
@@ -187,7 +210,7 @@ const NewsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={loadMoreNews}
-                  className="inline-flex min-h-12 items-center justify-center border border-neutral-300 bg-white px-7 text-sm font-black tracking-wide text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
+                  className="inline-flex min-h-12 items-center justify-center border border-neutral-300 bg-white px-7 text-sm font-bold tracking-wide text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
                 >
                   載入更多消息
                   <ChevronDown className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -198,7 +221,7 @@ const NewsPage: React.FC = () => {
         ) : (
           <div className="flex min-h-[360px] flex-col items-center justify-center border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
             <Newspaper className="mb-4 h-10 w-10 text-neutral-300" aria-hidden="true" />
-            <h2 className="font-display text-2xl font-black uppercase tracking-wide text-brand-black">
+            <h2 className="font-display text-2xl font-extrabold uppercase tracking-wide text-brand-black">
               目前尚無相關消息
             </h2>
             <p className="mt-3 text-sm font-medium text-neutral-500">

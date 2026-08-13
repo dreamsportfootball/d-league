@@ -193,7 +193,7 @@ const PlayerPage: React.FC = () => {
         <div className="mx-auto max-w-5xl">
           <EmptyState title="找不到此球員" description="此球員不存在、尚未登錄，或網址已失效" />
           <div className="mt-8 text-center">
-            <Link to="/stats" className="text-sm font-black text-brand-blue">
+            <Link to="/stats" className="text-sm font-bold text-brand-blue md:font-black">
               返回數據中心
             </Link>
           </div>
@@ -243,7 +243,7 @@ const PlayerPage: React.FC = () => {
         <div className="mx-auto max-w-6xl">
           <Link
             to={`/stats?season=${preferredRecord.seasonId}`}
-            className="inline-flex min-h-11 items-center text-xs font-black text-neutral-500 hover:text-brand-black"
+            className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black md:font-black"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             返回數據中心
@@ -258,24 +258,24 @@ const PlayerPage: React.FC = () => {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:font-black md:tracking-[0.18em]">
                 D LEAGUE PLAYER
               </p>
-              <h1 className="mt-2 break-words font-display text-4xl font-black tracking-tight text-brand-black md:text-6xl">
+              <h1 className="mt-2 break-words font-display text-4xl font-extrabold tracking-tight text-brand-black md:text-6xl md:font-black">
                 {player.name}
               </h1>
               {player.englishName && (
-                <p className="mt-2 break-words text-xs font-bold uppercase tracking-wider text-neutral-400">
+                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400 md:font-bold">
                   {player.englishName}
                 </p>
               )}
-              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-neutral-500">
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500 md:font-bold">
                 <span>#{player.number}</span>
                 <span>{player.nationality}</span>
                 {preferredRecord.team && (
                   <Link
                     to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="font-black text-brand-blue"
+                    className="font-bold text-brand-blue md:font-black"
                   >
                     {preferredRecord.team.name}
                   </Link>
@@ -284,7 +284,7 @@ const PlayerPage: React.FC = () => {
             </div>
           </div>
 
-          <p className="mt-9 text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
+          <p className="mt-9 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:font-black md:tracking-[0.18em]">
             D LEAGUE 生涯數據
           </p>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-5">
@@ -294,7 +294,7 @@ const PlayerPage: React.FC = () => {
               ['紅牌', totals.redCards],
             ].map(([label, value]) => (
               <div key={label} className="px-2 text-center md:px-6">
-                <dt className="text-[9px] font-black tracking-wider text-neutral-400 md:text-[10px]">
+                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px] md:font-black">
                   {label}
                 </dt>
                 <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black md:text-3xl">
@@ -310,7 +310,7 @@ const PlayerPage: React.FC = () => {
         <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
-            <h2 className="font-display text-2xl font-black text-brand-black">賽季紀錄</h2>
+            <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">賽季紀錄</h2>
           </div>
 
           <div className="divide-y divide-neutral-100 md:hidden">
@@ -318,8 +318,8 @@ const PlayerPage: React.FC = () => {
               <div key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="py-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-black text-neutral-400">{record.season.shortName}</p>
-                    <div className="mt-1 text-sm font-black text-brand-black">
+                    <p className="text-xs font-bold text-neutral-400">{record.season.shortName}</p>
+                    <div className="mt-1 text-sm font-bold text-brand-black">
                       {team ? (
                         <Link
                           to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
@@ -334,7 +334,7 @@ const PlayerPage: React.FC = () => {
                   </div>
                   <Link
                     to={`/stats?season=${record.seasonId}`}
-                    className="shrink-0 text-[11px] font-black text-brand-blue"
+                    className="shrink-0 text-[11px] font-bold text-brand-blue"
                   >
                     查看該季
                   </Link>
@@ -346,8 +346,8 @@ const PlayerPage: React.FC = () => {
                     ['紅牌', redCards],
                   ].map(([label, value]) => (
                     <div key={label} className="text-center">
-                      <p className="text-[9px] font-black text-neutral-400">{label}</p>
-                      <p className="mt-0.5 text-sm font-black tabular-nums text-brand-black">{value}</p>
+                      <p className="text-[9px] font-semibold text-neutral-400">{label}</p>
+                      <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -405,7 +405,7 @@ const PlayerPage: React.FC = () => {
           <section>
             <div className="flex items-center border-b border-neutral-200 pb-3">
               <ArrowRight className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-black text-brand-black">轉會紀錄</h2>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">轉會紀錄</h2>
             </div>
             <div className="divide-y divide-neutral-100">
               {transferRecords.map((transfer) => (
@@ -413,8 +413,8 @@ const PlayerPage: React.FC = () => {
                   key={`${transfer.seasonId}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
                   className="grid gap-2 py-4 sm:grid-cols-[90px_minmax(0,1fr)] sm:items-center"
                 >
-                  <span className="text-xs font-black text-neutral-400">{transfer.seasonName}</span>
-                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-black">
+                  <span className="text-xs font-bold text-neutral-400 md:font-black">{transfer.seasonName}</span>
+                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold md:font-black">
                     <Link
                       to={`/teams/${getTeamIdentity(transfer.fromTeam)}?season=${transfer.seasonId}`}
                       className="text-brand-black hover:text-brand-blue"
@@ -439,14 +439,14 @@ const PlayerPage: React.FC = () => {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
             <div className="flex items-center">
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-black text-brand-black">個人比賽事件</h2>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">個人比賽事件</h2>
             </div>
-            <label className="flex items-center gap-2 text-xs font-bold text-neutral-500">
+            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500 md:font-bold">
               <span>賽季</span>
               <select
                 value={eventSeason}
                 onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
-                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-bold text-brand-black outline-none transition-colors focus:border-brand-blue"
+                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue md:font-bold"
                 aria-label="篩選個人比賽事件賽季"
               >
                 <option value="ALL">全部賽季</option>
@@ -495,10 +495,10 @@ const PlayerPage: React.FC = () => {
                       className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <span className="text-xs font-bold tabular-nums text-neutral-400">
+                        <span className="text-xs font-semibold tabular-nums text-neutral-400">
                           {formatPlayerMatchDate(record.match.timestamp)}
                         </span>
-                        <span className="min-w-0 text-right text-sm font-black text-brand-black">
+                        <span className="min-w-0 text-right text-sm font-bold text-brand-black">
                           {home.shortName} vs {away.shortName}
                         </span>
                       </div>
@@ -509,8 +509,8 @@ const PlayerPage: React.FC = () => {
                           ['紅牌', redCards],
                         ].map(([label, value]) => (
                           <div key={label} className="text-center">
-                            <p className="text-[9px] font-black text-neutral-400">{label}</p>
-                            <p className="mt-0.5 text-sm font-black tabular-nums text-brand-black">{value}</p>
+                            <p className="text-[9px] font-semibold text-neutral-400">{label}</p>
+                            <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
                           </div>
                         ))}
                       </div>

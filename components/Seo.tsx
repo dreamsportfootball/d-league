@@ -93,7 +93,7 @@ const Seo: React.FC = () => {
           );
           return {
             title: `${season.shortName} ${league} 第 ${round} 輪｜D LEAGUE 官方數據｜${SITE_NAME}`,
-            description: `${season.displayName} ${league} 第 ${round} 輪官方賽程、賽果與數據洞察；已完成 ${completed.length} 場、本輪目前共 ${totalGoals} 球`,
+            description: `${season.displayName} ${league} 第 ${round} 輪官方賽程、賽果與本輪數據；已完成 ${completed.length} 場、本輪目前共 ${totalGoals} 球`,
             image: absoluteAssetUrl(season.heroImageDesktop ?? season.heroFallbackImage),
             type: 'website',
             canonicalPath: `/rounds/${seasonId}/${league}/${encodeURIComponent(round)}`,
@@ -105,7 +105,7 @@ const Seo: React.FC = () => {
     if (matchId) {
       const record = getMatchRecord(matchId, preferredSeason);
       if (record?.homeTeam && record.awayTeam) {
-        const { match, homeTeam, awayTeam, season } = record;
+        const { match, homeTeam, awayTeam, season, seasonId } = record;
         const score = match.homeScore !== null && match.awayScore !== null
           ? `${match.homeScore}-${match.awayScore}`
           : 'vs';
@@ -114,7 +114,7 @@ const Seo: React.FC = () => {
           description: `${season.displayName} ${match.league} 第 ${match.round} 輪：${homeTeam.name} 對 ${awayTeam.name}，比賽時間、地點、比數、進球與紅黃牌官方紀錄`,
           image: absoluteAssetUrl(season.heroImageDesktop ?? season.heroFallbackImage),
           type: 'website',
-          canonicalPath: `/matches/${encodeURIComponent(match.id)}`,
+          canonicalPath: `/schedule?season=${seasonId}`,
         };
       }
     }
@@ -135,7 +135,7 @@ const Seo: React.FC = () => {
         );
         return {
           title: `${record.player.name}｜D LEAGUE 官方球員資料｜${SITE_NAME}`,
-          description: `${record.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張及比賽事件`,
+          description: `${record.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張、紅牌 ${totals.redCards} 張及比賽事件`,
           image: absoluteAssetUrl(record.data.playerImages[record.player.name]),
           type: 'website',
           canonicalPath: `/players/${encodeURIComponent(record.player.identityId ?? record.player.id)}`,

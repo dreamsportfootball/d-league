@@ -313,46 +313,41 @@ const PlayerPage: React.FC = () => {
             <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">賽季紀錄</h2>
           </div>
 
-          <div className="divide-y divide-neutral-100 md:hidden">
-            {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
-              <div key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="py-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-neutral-400">{record.season.shortName}</p>
-                    <div className="mt-1 text-sm font-bold text-brand-black">
-                      {team ? (
-                        <Link
-                          to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
-                          className="hover:text-brand-blue"
-                        >
-                          {team.name}
-                        </Link>
-                      ) : (
-                        '—'
-                      )}
-                    </div>
+          <div className="md:hidden">
+            <div className="grid grid-cols-[58px_minmax(0,1fr)_32px_32px_32px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-400">
+              <span>賽季</span>
+              <span>球隊</span>
+              <span className="text-center">進</span>
+              <span className="text-center">黃</span>
+              <span className="text-center">紅</span>
+            </div>
+            <div className="divide-y divide-neutral-100">
+              {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
+                <div
+                  key={`${record.seasonId}-${team?.id ?? 'unknown'}`}
+                  className="grid min-h-12 grid-cols-[58px_minmax(0,1fr)_32px_32px_32px] items-center gap-1 py-2.5"
+                >
+                  <span className="text-[11px] font-semibold tabular-nums text-neutral-500">
+                    {record.season.shortName}
+                  </span>
+                  <div className="min-w-0 pr-1 text-[12px] font-bold text-brand-black">
+                    {team ? (
+                      <Link
+                        to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                        className="block truncate hover:text-brand-blue"
+                      >
+                        {team.name}
+                      </Link>
+                    ) : (
+                      '—'
+                    )}
                   </div>
-                  <Link
-                    to={`/stats?season=${record.seasonId}`}
-                    className="shrink-0 text-[11px] font-bold text-brand-blue"
-                  >
-                    查看該季
-                  </Link>
+                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{goals}</span>
+                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{yellowCards}</span>
+                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{redCards}</span>
                 </div>
-                <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-100 rounded-xl bg-neutral-50 py-2.5">
-                  {[
-                    ['進球', goals],
-                    ['黃牌', yellowCards],
-                    ['紅牌', redCards],
-                  ].map(([label, value]) => (
-                    <div key={label} className="text-center">
-                      <p className="text-[9px] font-semibold text-neutral-400">{label}</p>
-                      <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className="hidden overflow-x-auto md:block">

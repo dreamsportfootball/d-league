@@ -213,11 +213,10 @@ const PlayerPage: React.FC = () => {
       const stats = getPlayerSeasonStats(record);
       acc.goals += stats.goals;
       acc.yellowCards += stats.yellowCards;
-      acc.secondYellowDismissals += stats.secondYellowDismissals;
-      acc.directRedCards += stats.directRedCards;
+      acc.redCards += stats.directRedCards + stats.secondYellowDismissals;
       return acc;
     },
-    { goals: 0, yellowCards: 0, secondYellowDismissals: 0, directRedCards: 0 },
+    { goals: 0, yellowCards: 0, redCards: 0 },
   );
 
   const seasonRows = history.flatMap((record) => {
@@ -285,12 +284,14 @@ const PlayerPage: React.FC = () => {
             </div>
           </div>
 
-          <dl className="mt-9 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-5">
+          <p className="mt-9 text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">
+            D LEAGUE 生涯數據
+          </p>
+          <dl className="mt-3 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-5">
             {[
-              ['歷年進球', totals.goals],
+              ['進球', totals.goals],
               ['黃牌', totals.yellowCards],
-              ['雙黃', totals.secondYellowDismissals],
-              ['紅牌', totals.directRedCards],
+              ['紅牌', totals.redCards],
             ].map(([label, value]) => (
               <div key={label} className="px-2 text-center md:px-6">
                 <dt className="text-[9px] font-black tracking-wider text-neutral-400 md:text-[10px]">

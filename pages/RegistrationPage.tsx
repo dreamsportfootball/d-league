@@ -80,7 +80,7 @@ const RegistrationPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
-        <div className="pb-10 md:pb-14">
+        <div className="pb-4 md:pb-5">
           <span className="mb-3 block text-xs font-bold uppercase tracking-[0.3em] text-brand-blue">
             {participantsPublished ? '參賽隊伍公告' : resultsPublished ? '錄取公告' : '賽季報名'}
           </span>
@@ -106,11 +106,11 @@ const RegistrationPage: React.FC = () => {
 
         <section id="division" className="scroll-mt-24">
           {seasonParticipants ? (
-            <SeasonParticipants participants={seasonParticipants} className="mt-8 md:mt-10" />
+            <SeasonParticipants participants={seasonParticipants} className="mt-4 md:mt-5" />
           ) : registrationResults ? (
-            <RegistrationResults results={registrationResults} className="mt-8 md:mt-10" />
+            <RegistrationResults results={registrationResults} className="mt-4 md:mt-5" />
           ) : (
-            <RegistrationProgress className="mt-8" />
+            <RegistrationProgress className="mt-4 md:mt-5" />
           )}
         </section>
 

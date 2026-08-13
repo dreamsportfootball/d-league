@@ -117,14 +117,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`w-full border-b border-neutral-100 px-1.5 py-1.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
+                  className={`w-full border-b border-neutral-100 px-1.5 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
                 >
-                  <div className="grid min-h-11 grid-cols-[82px_minmax(0,1fr)_42px_minmax(0,1fr)] items-center gap-1">
+                  <div className="grid min-h-12 grid-cols-[80px_minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1">
                     <div className="flex min-w-0 flex-col items-start justify-center leading-none">
-                      <span className="whitespace-nowrap font-display text-[9px] font-black tracking-[0.02em] text-neutral-500">
+                      <span className="whitespace-nowrap font-display text-[9px] font-semibold tracking-[0.02em] text-neutral-500">
                         {mobileDateHeader}
                       </span>
-                      <span className="mt-1 whitespace-nowrap text-[8px] font-bold tracking-wide text-neutral-400">
+                      <span className="mt-1 whitespace-nowrap text-[8px] font-medium tracking-wide text-neutral-400">
                         {timeStr} · {match.league} 第{match.round}輪
                       </span>
                     </div>
@@ -133,10 +133,10 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       <div className="min-w-0 flex-1 text-right">
                         <AutoFitText
                           text={homeTeam.name}
-                          maxFontSize={13}
-                          minFontSize={8}
+                          maxFontSize={14}
+                          minFontSize={10}
                           fitPadding={1}
-                          className="font-semibold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                       <img
@@ -148,7 +148,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       />
                     </div>
 
-                    <div className="flex min-w-[42px] items-center justify-center text-center">
+                    <div className="flex min-w-[48px] items-center justify-center text-center">
                       {hasScore ? (
                         <span className="font-display text-[16px] font-black leading-none tracking-tight text-brand-black tabular-nums">
                           {match.homeScore} - {match.awayScore}
@@ -171,16 +171,16 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       <div className="min-w-0 flex-1 text-left">
                         <AutoFitText
                           text={awayTeam.name}
-                          maxFontSize={13}
-                          minFontSize={8}
+                          maxFontSize={14}
+                          minFontSize={10}
                           fitPadding={1}
-                          className="font-semibold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                     </div>
                   </div>
                   {administrativeNote && (
-                    <p className="mt-1 truncate pl-[83px] text-[9px] font-bold text-amber-700" title={administrativeNote}>
+                    <p className="mt-1 truncate pl-[81px] text-[9px] font-semibold text-amber-700" title={administrativeNote}>
                       {administrativeNote}
                     </p>
                   )}

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, CalendarDays, Target, UserRound } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
@@ -91,6 +91,45 @@ interface SelectedMatchState {
   seasonId: SeasonId;
 }
 
+interface PlayerTransferRecord {
+  seasonId: SeasonId;
+  seasonName: string;
+  effectiveFrom: string;
+  fromTeam: SeasonTeam;
+  toTeam: SeasonTeam;
+}
+
+const getPlayerTransfers = (history: PlayerSeasonRecord[]): PlayerTransferRecord[] =>
+  history.flatMap((record) => {
+    const registrations = (record.player.registrations ?? [])
+      .slice()
+      .sort(
+        (a, b) =>
+          new Date(a.effectiveFrom).getTime() - new Date(b.effectiveFrom).getTime(),
+      )
+      .filter((registration) => Boolean(record.data.teamMap[registration.teamId]));
+
+    const uniqueRegistrations = registrations.filter(
+      (registration, index) =>
+        index === 0 || registration.teamId !== registrations[index - 1].teamId,
+    );
+
+    return uniqueRegistrations.slice(1).flatMap((registration, index) => {
+      const previous = uniqueRegistrations[index];
+      const fromTeam = record.data.teamMap[previous.teamId];
+      const toTeam = record.data.teamMap[registration.teamId];
+      if (!fromTeam || !toTeam) return [];
+
+      return [{
+        seasonId: record.seasonId,
+        seasonName: record.season.shortName,
+        effectiveFrom: registration.effectiveFrom,
+        fromTeam,
+        toTeam,
+      }];
+    });
+  });
+
 const PlayerPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -98,6 +137,7 @@ const PlayerPage: React.FC = () => {
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getPlayerHistory(id), [id]);
   const matchRecords = useMemo(() => getPlayerMatchRecords(id), [id]);
+  const transferRecords = useMemo(() => getPlayerTransfers(history), [history]);
   const [eventSeason, setEventSeason] = useState<EventSeasonFilter>('ALL');
   const [selectedMatch, setSelectedMatch] = useState<SelectedMatchState | null>(null);
 
@@ -167,6 +207,24 @@ const PlayerPage: React.FC = () => {
     },
     { goals: 0, yellowCards: 0, secondYellowDismissals: 0, directRedCards: 0 },
   );
+
+  const seasonRows = history.flatMap((record) => {
+    const seasonTeams = getPlayerSeasonTeams(record);
+    const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
+      ? seasonTeams
+      : [undefined];
+
+    return rows.map((team) => {
+      const stats = getPlayerSeasonStats(record, team?.id);
+      return {
+        record,
+        team,
+        goals: stats.goals,
+        yellowCards: stats.yellowCards,
+        redCards: stats.directRedCards + stats.secondYellowDismissals,
+      };
+    });
+  });
 
   return (
     <div className="min-h-screen bg-white pb-24">
@@ -241,7 +299,50 @@ const PlayerPage: React.FC = () => {
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
             <h2 className="font-display text-2xl font-black text-brand-black">賽季紀錄</h2>
           </div>
-          <div className="overflow-x-auto">
+
+          <div className="divide-y divide-neutral-100 md:hidden">
+            {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
+              <div key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="py-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-neutral-400">{record.season.shortName}</p>
+                    <div className="mt-1 text-sm font-black text-brand-black">
+                      {team ? (
+                        <Link
+                          to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                          className="hover:text-brand-blue"
+                        >
+                          {team.name}
+                        </Link>
+                      ) : (
+                        '—'
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/stats?season=${record.seasonId}`}
+                    className="shrink-0 text-[11px] font-black text-brand-blue"
+                  >
+                    查看該季
+                  </Link>
+                </div>
+                <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-100 rounded-xl bg-neutral-50 py-2.5">
+                  {[
+                    ['進球', goals],
+                    ['黃牌', yellowCards],
+                    ['紅牌', redCards],
+                  ].map(([label, value]) => (
+                    <div key={label} className="text-center">
+                      <p className="text-[9px] font-black text-neutral-400">{label}</p>
+                      <p className="mt-0.5 text-sm font-black tabular-nums text-brand-black">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[600px] border-collapse">
               <thead className="border-b border-neutral-100 text-[10px] font-black tracking-wider text-neutral-400">
                 <tr>
@@ -254,49 +355,75 @@ const PlayerPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {history.flatMap((record) => {
-                  const seasonTeams = getPlayerSeasonTeams(record);
-                  const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
-                    ? seasonTeams
-                    : [undefined];
-
-                  return rows.map((team) => {
-                    const stats = getPlayerSeasonStats(record, team?.id);
-                    const redCards = stats.directRedCards + stats.secondYellowDismissals;
-                    return (
-                      <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
-                        <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
-                        <td className="py-4 text-sm text-brand-black">
-                          {team ? (
-                            <Link
-                              to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
-                              className="font-medium hover:text-brand-blue"
-                            >
-                              {team.name}
-                            </Link>
-                          ) : (
-                            '—'
-                          )}
-                        </td>
-                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{stats.goals}</td>
-                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{stats.yellowCards}</td>
-                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</td>
-                        <td className="py-4 text-right">
-                          <Link
-                            to={`/stats?season=${record.seasonId}`}
-                            className="text-xs font-black text-brand-blue"
-                          >
-                            查看該季
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  });
-                })}
+                {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
+                  <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
+                    <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
+                    <td className="py-4 text-sm text-brand-black">
+                      {team ? (
+                        <Link
+                          to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                          className="font-medium hover:text-brand-blue"
+                        >
+                          {team.name}
+                        </Link>
+                      ) : (
+                        '—'
+                      )}
+                    </td>
+                    <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</td>
+                    <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</td>
+                    <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</td>
+                    <td className="py-4 text-right">
+                      <Link
+                        to={`/stats?season=${record.seasonId}`}
+                        className="text-xs font-black text-brand-blue"
+                      >
+                        查看該季
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </section>
+
+        {transferRecords.length > 0 && (
+          <section>
+            <div className="flex items-center border-b border-neutral-200 pb-3">
+              <ArrowRight className="mr-2 h-5 w-5 text-brand-blue" />
+              <h2 className="font-display text-2xl font-black text-brand-black">轉會紀錄</h2>
+            </div>
+            <div className="divide-y divide-neutral-100">
+              {transferRecords.map((transfer) => (
+                <div
+                  key={`${transfer.seasonId}-${transfer.effectiveFrom}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
+                  className="grid gap-2 py-4 sm:grid-cols-[110px_90px_minmax(0,1fr)] sm:items-center"
+                >
+                  <span className="text-xs font-black tabular-nums text-neutral-400">
+                    {formatPlayerMatchDate(transfer.effectiveFrom)}
+                  </span>
+                  <span className="text-xs font-black text-neutral-400">{transfer.seasonName}</span>
+                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-black">
+                    <Link
+                      to={`/teams/${getTeamIdentity(transfer.fromTeam)}?season=${transfer.seasonId}`}
+                      className="text-brand-black hover:text-brand-blue"
+                    >
+                      {transfer.fromTeam.name}
+                    </Link>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300" />
+                    <Link
+                      to={`/teams/${getTeamIdentity(transfer.toTeam)}?season=${transfer.seasonId}`}
+                      className="text-brand-blue"
+                    >
+                      {transfer.toTeam.name}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
@@ -323,15 +450,8 @@ const PlayerPage: React.FC = () => {
           </div>
 
           {filteredMatchRecords.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="min-w-[620px]">
-                <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-black tracking-wider text-neutral-400">
-                  <span>日期</span>
-                  <span>比賽</span>
-                  <span className="text-center">進球</span>
-                  <span className="text-center">黃牌</span>
-                  <span className="text-center">紅牌</span>
-                </div>
+            <>
+              <div className="divide-y divide-neutral-100 md:hidden">
                 {filteredMatchRecords.map((record) => {
                   const home = record.homeTeam;
                   const away = record.awayTeam;
@@ -362,22 +482,89 @@ const PlayerPage: React.FC = () => {
                       key={`${record.seasonId}-${record.match.id}`}
                       type="button"
                       onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
-                      className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
-                      <span className="text-xs font-bold tabular-nums text-neutral-400">
-                        {formatPlayerMatchDate(record.match.timestamp)}
-                      </span>
-                      <span className="text-sm font-black text-brand-black">
-                        {home.shortName} vs {away.shortName}
-                      </span>
-                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</span>
-                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</span>
-                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</span>
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="text-xs font-bold tabular-nums text-neutral-400">
+                          {formatPlayerMatchDate(record.match.timestamp)}
+                        </span>
+                        <span className="min-w-0 text-right text-sm font-black text-brand-black">
+                          {home.shortName} vs {away.shortName}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-100 rounded-xl bg-neutral-50 py-2.5">
+                        {[
+                          ['進球', goals],
+                          ['黃牌', yellowCards],
+                          ['紅牌', redCards],
+                        ].map(([label, value]) => (
+                          <div key={label} className="text-center">
+                            <p className="text-[9px] font-black text-neutral-400">{label}</p>
+                            <p className="mt-0.5 text-sm font-black tabular-nums text-brand-black">{value}</p>
+                          </div>
+                        ))}
+                      </div>
                     </button>
                   );
                 })}
               </div>
-            </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <div className="min-w-[620px]">
+                  <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-black tracking-wider text-neutral-400">
+                    <span>日期</span>
+                    <span>比賽</span>
+                    <span className="text-center">進球</span>
+                    <span className="text-center">黃牌</span>
+                    <span className="text-center">紅牌</span>
+                  </div>
+                  {filteredMatchRecords.map((record) => {
+                    const home = record.homeTeam;
+                    const away = record.awayTeam;
+                    if (!home || !away) return null;
+                    const playerRecord = history.find((item) => item.seasonId === record.seasonId);
+                    if (!playerRecord) return null;
+
+                    const events = record.events.filter(
+                      (event) =>
+                        resolveMatchEventPlayer(record.data, record.match, event)?.id === playerRecord.player.id,
+                    );
+                    const goals = events.filter(
+                      (event) =>
+                        event.type === 'GOAL' &&
+                        !event.isOwnGoal &&
+                        record.match.resultType !== 'VOID' &&
+                        record.match.countsForPlayerStats !== false,
+                    ).length;
+                    const yellowCards = events.filter(
+                      (event) => event.type === 'YELLOW_CARD' || event.type === 'SECOND_YELLOW',
+                    ).length;
+                    const redCards = events.filter(
+                      (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
+                    ).length;
+
+                    return (
+                      <button
+                        key={`${record.seasonId}-${record.match.id}`}
+                        type="button"
+                        onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                        className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      >
+                        <span className="text-xs font-bold tabular-nums text-neutral-400">
+                          {formatPlayerMatchDate(record.match.timestamp)}
+                        </span>
+                        <span className="text-sm font-black text-brand-black">
+                          {home.shortName} vs {away.shortName}
+                        </span>
+                        <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</span>
+                        <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</span>
+                        <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
           ) : (
             <p className="py-10 text-sm text-neutral-400">
               {eventSeason === 'ALL' ? '目前沒有可連結的個人比賽事件' : '此賽季沒有個人比賽事件'}

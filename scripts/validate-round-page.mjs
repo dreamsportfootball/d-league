@@ -28,14 +28,13 @@ try {
     documentWidth: document.documentElement.scrollWidth,
     viewportWidth: window.innerWidth,
     matchLinks: document.querySelectorAll('main a[href*="/matches/"]').length,
-    playerLinks: document.querySelectorAll('main a[href*="/players/"]').length,
   }));
 
   const failures = [];
   if (!page.url().includes('#/rounds/2025-26/L1/1')) failures.push(`unexpected URL: ${page.url()}`);
   if (!diagnostics.bodyText.includes('2025/26 L1 第 1 輪')) failures.push('round title missing');
-  if (!diagnostics.bodyText.includes('本輪數據洞察')) failures.push('round insights missing');
   if (!diagnostics.bodyText.includes('本輪賽程與賽果')) failures.push('round schedule missing');
+  if (diagnostics.bodyText.includes('本輪數據洞察')) failures.push('removed round insights are still visible');
   if (diagnostics.matchLinks < 1) failures.push(`match links missing: ${diagnostics.matchLinks}`);
   if (diagnostics.documentWidth > diagnostics.viewportWidth + 1) {
     failures.push(`horizontal overflow: ${diagnostics.documentWidth}/${diagnostics.viewportWidth}`);
@@ -49,9 +48,7 @@ try {
   });
 
   if (failures.length > 0) throw new Error(failures.join('; '));
-  console.log(
-    `Round page validation passed: matches=${diagnostics.matchLinks}, players=${diagnostics.playerLinks}`,
-  );
+  console.log(`Round page validation passed: matches=${diagnostics.matchLinks}`);
 } finally {
   await page.close();
   await context.close();

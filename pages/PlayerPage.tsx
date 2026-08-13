@@ -1,16 +1,61 @@
 import React, { useMemo } from 'react';
-import { ArrowLeft, CalendarDays, Shield, Target, UserRound } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import { isSeasonId } from '../config/seasons';
 import {
   getPlayerHistory,
-  getPlayerIdentity,
   getPlayerMatchRecords,
   getPlayerSeasonStats,
   getTeamIdentity,
+  resolveMatchEventPlayer,
+  type PlayerSeasonRecord,
 } from '../services/entityData';
+import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDate } from '../utils/dateFormat';
+
+const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
+  const timeline: { teamId: string; timestamp: number }[] = [];
+  const addTeam = (teamId: string | undefined, timestamp: number) => {
+    if (!teamId || !record.data.teamMap[teamId]) return;
+    timeline.push({ teamId, timestamp });
+  };
+
+  if (record.player.registrations?.length) {
+    record.player.registrations.forEach((registration) => {
+      addTeam(registration.teamId, new Date(registration.effectiveFrom).getTime());
+    });
+  }
+
+  Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {
+    const match = record.data.matches.find((candidate) => candidate.id === matchId);
+    if (!match) return;
+    const timestamp = new Date(match.timestamp).getTime();
+    if (lineup.homePlayerIds.includes(record.player.id)) addTeam(match.homeTeamId, timestamp);
+    if (lineup.awayPlayerIds.includes(record.player.id)) addTeam(match.awayTeamId, timestamp);
+  });
+
+  Object.entries(record.data.matchEvents).forEach(([matchId, events]) => {
+    const match = record.data.matches.find((candidate) => candidate.id === matchId);
+    if (!match) return;
+    const timestamp = new Date(match.timestamp).getTime();
+    events.forEach((event) => {
+      if (resolveMatchEventPlayer(record.data, match, event)?.id !== record.player.id) return;
+      addTeam(event.team === 'HOME' ? match.homeTeamId : match.awayTeamId, timestamp);
+    });
+  });
+
+  addTeam(record.player.teamId, Number.POSITIVE_INFINITY);
+  timeline.sort((a, b) => a.timestamp - b.timestamp);
+
+  const seen = new Set<string>();
+  return timeline.flatMap(({ teamId }) => {
+    if (seen.has(teamId)) return [];
+    seen.add(teamId);
+    const team = record.data.teamMap[teamId];
+    return team ? [team] : [];
+  });
+};
 
 const PlayerPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
@@ -39,7 +84,6 @@ const PlayerPage: React.FC = () => {
       ? history.find((record) => record.seasonId === requestedSeason)
       : undefined) ?? history[0];
   const player = preferredRecord.player;
-  const playerIdentity = getPlayerIdentity(player);
   const image = preferredRecord.data.playerImages[player.name];
   const totals = history.reduce(
     (acc, record) => {
@@ -142,17 +186,25 @@ const PlayerPage: React.FC = () => {
               <tbody>
                 {history.map((record) => {
                   const stats = getPlayerSeasonStats(record);
+                  const seasonTeams = getPlayerSeasonTeams(record);
                   return (
                     <tr key={record.seasonId} className="border-b border-neutral-100">
                       <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
-                      <td className="py-4 text-sm font-bold text-brand-black">
-                        {record.team ? (
-                          <Link
-                            to={`/teams/${getTeamIdentity(record.team)}?season=${record.seasonId}`}
-                            className="hover:text-brand-blue"
-                          >
-                            {record.team.name}
-                          </Link>
+                      <td className="py-4 text-sm text-brand-black">
+                        {seasonTeams.length > 0 ? (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {seasonTeams.map((team, index) => (
+                              <React.Fragment key={team.id}>
+                                {index > 0 && <span className="text-neutral-300">→</span>}
+                                <Link
+                                  to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                                  className="font-medium hover:text-brand-blue"
+                                >
+                                  {team.name}
+                                </Link>
+                              </React.Fragment>
+                            ))}
+                          </div>
                         ) : (
                           '—'
                         )}
@@ -219,16 +271,6 @@ const PlayerPage: React.FC = () => {
           ) : (
             <p className="py-10 text-sm text-neutral-400">目前沒有可連結的個人比賽事件</p>
           )}
-        </section>
-
-        <section className="border-t border-neutral-200 pt-8">
-          <div className="flex flex-wrap items-center gap-4">
-            <Shield className="h-5 w-5 text-brand-blue" />
-            <p className="text-sm leading-6 text-neutral-500">
-              此頁資料由 D LEAGUE 官方賽事事件資料自動彙整。球員永久識別碼：
-              <span className="ml-1 font-mono text-xs text-neutral-400">{playerIdentity}</span>
-            </p>
-          </div>
         </section>
       </main>
     </div>

@@ -409,12 +409,9 @@ const PlayerPage: React.FC = () => {
             <div className="divide-y divide-neutral-100">
               {transferRecords.map((transfer) => (
                 <div
-                  key={`${transfer.seasonId}-${transfer.effectiveFrom ?? 'inferred'}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
-                  className="grid gap-2 py-4 sm:grid-cols-[110px_90px_minmax(0,1fr)] sm:items-center"
+                  key={`${transfer.seasonId}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
+                  className="grid gap-2 py-4 sm:grid-cols-[90px_minmax(0,1fr)] sm:items-center"
                 >
-                  <span className="text-xs font-black tabular-nums text-neutral-400">
-                    {transfer.effectiveFrom ? formatPlayerMatchDate(transfer.effectiveFrom) : '日期未記錄'}
-                  </span>
                   <span className="text-xs font-black text-neutral-400">{transfer.seasonName}</span>
                   <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-black">
                     <Link

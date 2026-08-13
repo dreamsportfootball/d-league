@@ -5,7 +5,6 @@ import AppErrorBoundary from './components/AppErrorBoundary';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
-import MobileRegistrationBar from './components/MobileRegistrationBar';
 import Seo from './components/Seo';
 import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
@@ -171,7 +170,6 @@ const App: React.FC = () => (
       </main>
 
       <Footer />
-      <MobileRegistrationBar />
     </div>
   </SeasonProvider>
 );

@@ -77,15 +77,6 @@ const RegistrationPage: React.FC = () => {
     ? `每隊 ${registrationContent.minimumPlayers}－${registrationContent.maximumPlayers} 人`
     : '依競賽規程公告';
 
-  const quickLinks = [
-    { id: 'division', label: participantsPublished ? '正式分級' : resultsPublished ? '錄取名單' : '報名進度' },
-    { id: 'overview', label: '重要資訊' },
-    { id: 'process', label: announcementPublished ? '後續流程' : '報名流程' },
-    { id: 'eligibility', label: '登錄資格' },
-    { id: 'promotion', label: '升降級' },
-    ...(registrationContent.faqItems.length > 0 ? [{ id: 'faq', label: '常見問題' }] : []),
-  ];
-
   return (
     <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
@@ -112,18 +103,6 @@ const RegistrationPage: React.FC = () => {
                   : '目前未開放報名'}
           </span>
         </div>
-
-        <nav aria-label="報名頁快速導覽" className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto border-b border-neutral-200 px-4 py-4 md:mx-0 md:flex-wrap md:px-0">
-          {quickLinks.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-neutral-200 bg-neutral-50 px-4 text-xs font-bold text-neutral-600 transition-colors hover:border-brand-blue hover:bg-white hover:text-brand-blue"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
 
         <section id="division" className="scroll-mt-24">
           {seasonParticipants ? (

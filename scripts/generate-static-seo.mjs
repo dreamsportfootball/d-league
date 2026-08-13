@@ -166,46 +166,6 @@ const playerStats = (payload, playerId) => {
   };
 };
 
-const getRoundInsights = (payload, targetMatch) => {
-  const matches = payload.matches.filter(
-    (match) =>
-      match.league === targetMatch.league &&
-      String(match.round) === String(targetMatch.round) &&
-      (match.status === 'FINISHED' || (match.homeScore !== null && match.awayScore !== null)) &&
-      match.homeScore !== null &&
-      match.awayScore !== null,
-  );
-  const totalGoals = matches.reduce((sum, match) => sum + match.homeScore + match.awayScore, 0);
-  const biggestMargin = matches.reduce(
-    (max, match) => Math.max(max, Math.abs(match.homeScore - match.awayScore)),
-    0,
-  );
-  const scorerMap = new Map();
-  matches.forEach((match) => {
-    (payload.events[match.id] ?? []).forEach((event) => {
-      if (event.type !== 'GOAL' || event.isOwnGoal) return;
-      const key = event.playerId ?? event.subjectId ?? event.player;
-      const current = scorerMap.get(key) ?? {
-        playerId: event.playerId ?? event.subjectId,
-        name: event.player,
-        goals: 0,
-      };
-      current.goals += 1;
-      scorerMap.set(key, current);
-    });
-  });
-  const topScorer = [...scorerMap.values()].sort(
-    (a, b) => b.goals - a.goals || String(a.name).localeCompare(String(b.name), 'zh-TW'),
-  )[0];
-  return {
-    completedMatches: matches.length,
-    totalGoals,
-    averageGoals: matches.length ? totalGoals / matches.length : 0,
-    biggestMargin,
-    topScorer,
-  };
-};
-
 for (const [route, entry] of Object.entries(PAGE_SEO)) {
   const title = `${entry.label}｜${SITE_NAME}`;
   await writeRoute(route, renderHtml({
@@ -351,8 +311,9 @@ for (const [identity, recordsInput] of playerGroups) {
     },
     { goals: 0, yellowCards: 0, secondYellowDismissals: 0, directRedCards: 0, eventMatches: 0 },
   );
+  const redCards = totals.directRedCards + totals.secondYellowDismissals;
   const title = `${latest.player.name}｜D LEAGUE 官方球員資料｜${SITE_NAME}`;
-  const description = `${latest.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張及比賽事件`;
+  const description = `${latest.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張、紅牌 ${redCards} 張及比賽事件`;
   const image = absoluteAssetUrl(latest.payload.playerImages[latest.player.name] || latest.team?.logo);
   const schema = {
     '@context': 'https://schema.org',
@@ -375,7 +336,8 @@ for (const [identity, recordsInput] of playerGroups) {
     const teamText = record.team
       ? `<a href="${escapeHtml(routeUrl(`/teams/${teamIdentity}`))}">${escapeHtml(record.team.name)}</a>`
       : '未指定球隊';
-    return `<li>${escapeHtml(getSeasonDisplayName(record.seasonId))}：${teamText}；進球 ${stats.goals}、黃牌 ${stats.yellowCards}、雙黃 ${stats.secondYellowDismissals}、紅牌 ${stats.directRedCards}</li>`;
+    const seasonRedCards = stats.directRedCards + stats.secondYellowDismissals;
+    return `<li>${escapeHtml(getSeasonDisplayName(record.seasonId))}：${teamText}；進球 ${stats.goals}、黃牌 ${stats.yellowCards}、紅牌 ${seasonRedCards}</li>`;
   }).join('');
   const recentEvents = [];
   for (const record of records) {
@@ -387,7 +349,6 @@ for (const [identity, recordsInput] of playerGroups) {
       const match = record.payload.matches.find((candidate) => candidate.id === matchId);
       if (!match) return;
       recentEvents.push({
-        seasonId: record.seasonId,
         match,
         text: ownEvents.map((event) => `${event.minute}' ${event.type}`).join('、'),
       });
@@ -396,14 +357,14 @@ for (const [identity, recordsInput] of playerGroups) {
   recentEvents.sort((a, b) => new Date(b.match.timestamp).getTime() - new Date(a.match.timestamp).getTime());
   const eventBody = recentEvents.length
     ? `<h2>個人比賽事件</h2><ul>${recentEvents.slice(0, 20).map((item) =>
-        `<li><a href="${escapeHtml(routeUrl(`/matches/${item.match.id}`))}">${escapeHtml(item.match.timestamp?.slice(0, 10))} ${escapeHtml(item.text)}</a></li>`
+        `<li>${escapeHtml(item.match.timestamp?.slice(0, 10))} ${escapeHtml(item.text)}</li>`
       ).join('')}</ul>`
     : '<p>目前沒有可連結的個人比賽事件。</p>';
 
   const staticContent = staticShell(
     latest.player.name,
     description,
-    `<p>歷年事件比賽 ${totals.eventMatches} 場；進球 ${totals.goals}；黃牌 ${totals.yellowCards}；雙黃 ${totals.secondYellowDismissals}；紅牌 ${totals.directRedCards}。</p>
+    `<p>歷年事件比賽 ${totals.eventMatches} 場；進球 ${totals.goals}；黃牌 ${totals.yellowCards}；紅牌 ${redCards}。</p>
      <h2>歷年賽季</h2><ul>${historyBody}</ul>${eventBody}`,
   );
   const routeIds = new Set([identity, ...records.map(({ player }) => safeEntityId(player.id, 'player'))]);
@@ -426,9 +387,6 @@ for (const [identity, recordsInput] of playerGroups) {
 const seenMatchIds = new Map();
 for (const seasonId of SEASON_IDS) {
   const payload = seasonPayloads[seasonId];
-  const teamMap = Object.fromEntries(payload.teams.map((team) => [team.id, team]));
-  const playerMap = Object.fromEntries(payload.players.map((player) => [player.id, player]));
-
   for (const match of payload.matches) {
     const matchId = safeEntityId(match.id, 'match');
     if (seenMatchIds.has(matchId)) {
@@ -436,80 +394,18 @@ for (const seasonId of SEASON_IDS) {
     }
     seenMatchIds.set(matchId, seasonId);
 
-    const home = teamMap[match.homeTeamId];
-    const away = teamMap[match.awayTeamId];
-    if (!home || !away) continue;
-
     const route = `/matches/${matchId}`;
-    const hasScore = match.homeScore !== null && match.awayScore !== null;
-    const score = hasScore ? `${match.homeScore}-${match.awayScore}` : 'vs';
-    const title = `${home.shortName} ${score} ${away.shortName}｜${getSeasonDisplayName(seasonId)}｜${SITE_NAME}`;
-    const description = `${getSeasonDisplayName(seasonId)} ${match.league} 第 ${match.round} 輪：${home.name} 對 ${away.name}，官方比賽時間、地點、比數、進球與紅黃牌紀錄`;
-    const image = absoluteAssetUrl(home.logo || DEFAULT_SOCIAL_IMAGE);
-
-    const teamSchema = (team) => ({
-      '@type': 'SportsTeam',
-      name: team.name,
-      url: routeUrl(`/teams/${team.identityId ?? team.id}`),
-    });
-    const schema = {
-      '@context': 'https://schema.org',
-      '@type': 'SportsEvent',
-      name: `${home.name} vs ${away.name}`,
-      description,
-      startDate: match.timestamp,
-      eventStatus: match.status === 'FINISHED' || hasScore
-        ? 'https://schema.org/EventCompleted'
-        : 'https://schema.org/EventScheduled',
-      location: { '@type': 'Place', name: match.venue },
-      homeTeam: teamSchema(home),
-      awayTeam: teamSchema(away),
-      competitor: [teamSchema(home), teamSchema(away)],
-      organizer: organizationReference,
-      url: routeUrl(route),
-    };
-
-    const insights = getRoundInsights(payload, match);
-    const topScorerText = insights.topScorer
-      ? `${insights.topScorer.name} ${insights.topScorer.goals} 球`
-      : '尚無進球資料';
-    const insightBody = `<h2>第 ${escapeHtml(match.round)} 輪數據洞察</h2>
-      <ul>
-        <li>已完成比賽：${insights.completedMatches}</li>
-        <li>本輪總進球：${insights.totalGoals}</li>
-        <li>場均進球：${insights.averageGoals.toFixed(1)}</li>
-        <li>最大勝差：${insights.biggestMargin}</li>
-        <li>本輪目前進球最多：${escapeHtml(topScorerText)}</li>
-      </ul>`;
-
-    const events = payload.events[match.id] ?? [];
-    const eventBody = events.length
-      ? `<h2>比賽事件</h2><ul>${events.map((event) => {
-          const playerId = event.playerId ?? event.subjectId;
-          const player = playerId ? playerMap[playerId] : undefined;
-          const playerIdentity = player ? safeEntityId(player.identityId ?? player.id, 'player') : null;
-          const playerText = playerIdentity
-            ? `<a href="${escapeHtml(routeUrl(`/players/${playerIdentity}`))}">${escapeHtml(event.player)}</a>`
-            : escapeHtml(event.player);
-          return `<li>${escapeHtml(event.minute)}' ${playerText} — ${escapeHtml(event.type)}</li>`;
-        }).join('')}</ul>`
-      : '<p>目前沒有已登錄的比賽事件。</p>';
-
-    const staticContent = staticShell(
-      `${home.name} ${score} ${away.name}`,
-      description,
-      `<p>${escapeHtml(match.timestamp)} · ${escapeHtml(match.venue)}</p>${insightBody}${eventBody}`,
-    );
-
-    await writeRoute(route, renderHtml({
+    const description = '此舊比賽網址保留作相容入口，開啟後會導向 D LEAGUE 賽程與結果並顯示該場比賽卡片';
+    let compatibilityHtml = renderHtml({
       route,
-      title,
+      canonicalRoute: '/schedule',
+      title: `賽程與結果｜${SITE_NAME}`,
       description,
-      image,
-      schemas: [schema],
-      staticContent,
-    }));
-    addSitemapEntry(route, match.timestamp?.slice(0, 10));
+      image: absoluteAssetUrl(DEFAULT_SOCIAL_IMAGE),
+      staticContent: staticShell('賽程與結果', description),
+    });
+    compatibilityHtml = upsertMeta(compatibilityHtml, 'name', 'robots', 'noindex,follow');
+    await writeRoute(route, compatibilityHtml);
   }
 }
 

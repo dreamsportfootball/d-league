@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
+import { getPlayerIdentity, resolveMatchEventPlayer } from '../services/entityData';
 import type { MatchEvent, MatchEventType } from '../types/matchEvent';
 
 const ICON_URLS = {
@@ -26,21 +28,31 @@ const getEventIcon = (type: MatchEventType) => {
   }
 };
 
-const TimelineRow: React.FC<{ event: MatchEvent }> = ({ event }) => {
+const TimelineRow: React.FC<{ event: MatchEvent; playerHref?: string }> = ({ event, playerHref }) => {
   const isHome = event.team === 'HOME';
   const isLongName = event.player.length > 12;
   const textSizeClass = isLongName ? 'text-[11px] leading-tight' : 'text-[13px] sm:text-sm';
   const extraText = event.isPK ? '（十二碼）' : event.isOwnGoal ? '（烏龍球）' : '';
+  const playerClass = `break-words font-semibold text-brand-black transition-colors ${textSizeClass} ${playerHref ? 'hover:text-brand-blue' : ''}`;
+
+  const playerName = playerHref ? (
+    <Link to={playerHref} className={playerClass}>
+      {event.player}
+      <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
+    </Link>
+  ) : (
+    <span className={playerClass}>
+      {event.player}
+      <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
+    </span>
+  );
 
   return (
     <div className="relative flex min-h-7 w-full items-center py-1.5">
       <div className="flex min-w-0 flex-1 justify-end pr-2.5 sm:pr-3">
         {isHome && (
           <div className="flex w-full items-center justify-end gap-2">
-            <span className={`break-words text-right font-semibold text-brand-black ${textSizeClass}`}>
-              {event.player}
-              <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
-            </span>
+            <div className="min-w-0 text-right">{playerName}</div>
             <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
           </div>
         )}
@@ -52,10 +64,7 @@ const TimelineRow: React.FC<{ event: MatchEvent }> = ({ event }) => {
         {!isHome && (
           <div className="flex w-full items-center gap-2">
             <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
-            <span className={`break-words text-left font-semibold text-brand-black ${textSizeClass}`}>
-              {event.player}
-              <span className="ml-1 text-[10px] font-normal text-neutral-400">{extraText}</span>
-            </span>
+            <div className="min-w-0 text-left">{playerName}</div>
           </div>
         )}
       </div>
@@ -64,8 +73,9 @@ const TimelineRow: React.FC<{ event: MatchEvent }> = ({ event }) => {
 };
 
 const MatchEvents: React.FC<{ matchId: string }> = ({ matchId }) => {
-  const { seasonData } = useSeason();
+  const { activeSeason, seasonData } = useSeason();
   const events = seasonData.matchEvents[matchId] ?? [];
+  const match = seasonData.matches.find((item) => item.id === matchId);
 
   if (events.length === 0) {
     return <p className="py-5 text-center text-sm font-medium text-neutral-400">目前沒有比賽事件</p>;
@@ -75,9 +85,13 @@ const MatchEvents: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   return (
     <div className="relative mx-auto mt-5 flex w-full max-w-lg flex-col sm:mt-6">
-      {sortedEvents.map((event) => (
-        <TimelineRow key={event.id} event={event} />
-      ))}
+      {sortedEvents.map((event) => {
+        const player = match ? resolveMatchEventPlayer(seasonData, match, event) : undefined;
+        const playerHref = player
+          ? `/players/${getPlayerIdentity(player)}?season=${activeSeason.id}`
+          : undefined;
+        return <TimelineRow key={event.id} event={event} playerHref={playerHref} />;
+      })}
     </div>
   );
 };

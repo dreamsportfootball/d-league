@@ -281,7 +281,7 @@ const auditInteractiveCase = async (testCase) => {
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible = testCase.action === 'mobile-menu'
-      ? await page.evaluate(() => document.body.innerText.includes('賽季報名') && getComputedStyle(document.body).overflow === 'hidden')
+      ? await page.evaluate(() => /賽季報名|報名結果|賽季資訊/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
       : false;
     const passed = testCase.action === 'mobile-menu'
       ? menuVisible

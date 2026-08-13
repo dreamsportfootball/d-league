@@ -184,6 +184,10 @@ const TeamPage: React.FC = () => {
     <div className="min-h-screen bg-white pb-24">
       <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
         <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.08] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-1" aria-hidden="true">
+          <span className="w-1/2" style={{ backgroundColor: team.primaryColor }} />
+          <span className="w-1/2" style={{ backgroundColor: team.secondaryColor ?? '#ffffff' }} />
+        </div>
         <div className="relative mx-auto max-w-7xl">
           <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
 

@@ -70,4 +70,38 @@
   button[aria-label^="開啟賽程篩選"] {
     border-top-width: 0;
   }
+
+  table[class~="min-w-[740px]"] {
+    width: 100%;
+    min-width: 0 !important;
+    table-layout: fixed;
+  }
+
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(4),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(5),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(6),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(7),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(8),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(11) {
+    display: none;
+  }
+
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(1) {
+    width: 3rem !important;
+  }
+
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(2) {
+    width: auto !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(3) {
+    width: 2.5rem !important;
+  }
+
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(9),
+  table[class~="min-w-[740px]"] :is(th, td):nth-child(10) {
+    width: 3rem !important;
+  }
 }

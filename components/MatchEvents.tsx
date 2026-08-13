@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import {
   getPlayerIdentity,
-  getTeamIdentity,
   resolveMatchEventPlayer,
 } from '../services/entityData';
 import type { MatchEvent, MatchEventType } from '../types/matchEvent';
@@ -35,16 +34,9 @@ const getEventIcon = (type: MatchEventType) => {
 interface TimelineRowProps {
   event: MatchEvent;
   playerHref?: string;
-  teamHref?: string;
-  teamName?: string;
 }
 
-const TimelineRow: React.FC<TimelineRowProps> = ({
-  event,
-  playerHref,
-  teamHref,
-  teamName,
-}) => {
+const TimelineRow: React.FC<TimelineRowProps> = ({ event, playerHref }) => {
   const isHome = event.team === 'HOME';
   const isLongName = event.player.length > 12;
   const textSizeClass = isLongName ? 'text-[11px] leading-tight' : 'text-[13px] sm:text-sm';
@@ -63,26 +55,12 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
     </span>
   );
 
-  const teamLabel = teamName && teamHref ? (
-    <Link
-      to={teamHref}
-      className="mt-0.5 block text-[10px] font-bold text-neutral-400 transition-colors hover:text-brand-blue"
-    >
-      {teamName}
-    </Link>
-  ) : teamName ? (
-    <span className="mt-0.5 block text-[10px] font-bold text-neutral-400">{teamName}</span>
-  ) : null;
-
   return (
     <div className="relative flex min-h-9 w-full items-center py-1.5">
       <div className="flex min-w-0 flex-1 justify-end pr-2.5 sm:pr-3">
         {isHome && (
           <div className="flex w-full items-center justify-end gap-2">
-            <div className="min-w-0 text-right">
-              {playerName}
-              {teamLabel}
-            </div>
+            <div className="min-w-0 text-right">{playerName}</div>
             <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
           </div>
         )}
@@ -94,10 +72,7 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
         {!isHome && (
           <div className="flex w-full items-center gap-2">
             <span className="w-7 shrink-0 text-center text-[11px] font-bold tabular-nums text-neutral-500">{event.minute}'</span>
-            <div className="min-w-0 text-left">
-              {playerName}
-              {teamLabel}
-            </div>
+            <div className="min-w-0 text-left">{playerName}</div>
           </div>
         )}
       </div>
@@ -120,14 +95,8 @@ const MatchEvents: React.FC<{ matchId: string }> = ({ matchId }) => {
     <div className="relative mx-auto mt-5 flex w-full max-w-lg flex-col sm:mt-6">
       {sortedEvents.map((event) => {
         const player = match ? resolveMatchEventPlayer(seasonData, match, event) : undefined;
-        const team = match
-          ? seasonData.teamMap[event.team === 'HOME' ? match.homeTeamId : match.awayTeamId]
-          : undefined;
         const playerHref = player
           ? `/players/${getPlayerIdentity(player)}?season=${activeSeason.id}`
-          : undefined;
-        const teamHref = team
-          ? `/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`
           : undefined;
 
         return (
@@ -135,8 +104,6 @@ const MatchEvents: React.FC<{ matchId: string }> = ({ matchId }) => {
             key={event.id}
             event={event}
             playerHref={playerHref}
-            teamHref={teamHref}
-            teamName={team?.shortName || team?.name}
           />
         );
       })}

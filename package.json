@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "validate:data": "node scripts/validate-season-data.mjs && node scripts/validate-participants.mjs && node scripts/validate-news-highlights.mjs",
     "generate:seo": "node scripts/generate-static-seo.mjs",
-    "enrich:seo": "node scripts/enrich-static-data-pages.mjs && node scripts/fix-legacy-static-entities.mjs",
+    "enrich:seo": "node scripts/enrich-static-data-pages.mjs && node scripts/fix-legacy-static-entities.mjs && node scripts/finalize-static-seo.mjs",
     "validate:seo": "node scripts/validate-static-seo.mjs && node scripts/validate-round-static-seo.mjs && node scripts/validate-data-static-seo.mjs",
     "optimize:images": "node scripts/optimize-images.mjs",
     "build:site": "vite build && npm run generate:seo && npm run enrich:seo && npm run validate:seo",

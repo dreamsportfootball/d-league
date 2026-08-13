@@ -161,7 +161,10 @@ export const getMatchRecord = (
   return null;
 };
 
-export const getPlayerSeasonStats = (record: PlayerSeasonRecord): PlayerSeasonStats => {
+export const getPlayerSeasonStats = (
+  record: PlayerSeasonRecord,
+  teamId?: string,
+): PlayerSeasonStats => {
   let goals = 0;
   let yellowCards = 0;
   let secondYellowDismissals = 0;
@@ -175,6 +178,10 @@ export const getPlayerSeasonStats = (record: PlayerSeasonRecord): PlayerSeasonSt
     events.forEach((event) => {
       const resolvedPlayer = resolveMatchEventPlayer(record.data, match, event);
       if (resolvedPlayer?.id !== record.player.id) return;
+
+      const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+      if (teamId && eventTeamId !== teamId) return;
+
       matchIds.add(matchId);
       if (
         event.type === 'GOAL' &&

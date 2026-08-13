@@ -54,18 +54,19 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
 
   return (
     <Link to={`/news/${article.id}`} className="group flex h-full cursor-pointer flex-col">
-      <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
-        {showImage ? (
+      <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-brand-black">
+        <div className="absolute inset-0">
+          <NewsFallbackCover article={article} />
+        </div>
+        {showImage && (
           <img
             src={article.imageUrl}
             alt={article.title}
             loading="lazy"
             decoding="async"
             onError={() => setImageFailed(true)}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
-        ) : (
-          <NewsFallbackCover article={article} />
         )}
         <div className="absolute inset-0 bg-white/0 transition-colors duration-300 group-hover:bg-white/10" />
       </div>

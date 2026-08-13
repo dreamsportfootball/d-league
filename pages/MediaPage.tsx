@@ -21,7 +21,6 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
         src={album.cover}
         alt={album.title}
         loading="lazy"
-        decoding="async"
         className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
       />
     </div>
@@ -51,7 +50,6 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
         src={video.thumbnail}
         alt={video.title || 'D LEAGUE 賽事精華'}
         loading="lazy"
-        decoding="async"
         className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
       />
       <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
@@ -70,30 +68,6 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
   </a>
 );
 
-const PlaylistPoster: React.FC<{ label: string; onPlay: () => void }> = ({ label, onPlay }) => (
-  <button
-    type="button"
-    onClick={onPlay}
-    className="group relative flex aspect-video w-full overflow-hidden bg-brand-black text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-    aria-label={`播放 ${label}`}
-  >
-    <div className="absolute -right-16 -top-24 h-72 w-72 rotate-12 bg-brand-blue/55" />
-    <div className="absolute -bottom-24 -left-16 h-64 w-64 -rotate-12 bg-brand-accent/90" />
-    <div className="relative z-10 flex w-full items-center justify-between gap-8 p-6 md:p-10">
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/55">D LEAGUE FULL MATCH</p>
-        <p className="mt-3 max-w-2xl font-display text-2xl font-extrabold leading-tight text-white md:text-4xl">
-          {label}
-        </p>
-        <p className="mt-3 text-xs font-medium text-white/60 md:text-sm">按下播放後載入 YouTube 播放清單</p>
-      </div>
-      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white text-brand-black shadow-xl transition-transform group-hover:scale-105 md:h-16 md:w-16">
-        <Play className="ml-1 h-6 w-6 fill-current" aria-hidden="true" />
-      </span>
-    </div>
-  </button>
-);
-
 const MediaPage: React.FC = () => {
   const {
     activeSeasonId,
@@ -107,7 +81,6 @@ const MediaPage: React.FC = () => {
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [playlistOpen, setPlaylistOpen] = useState(false);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -143,10 +116,6 @@ const MediaPage: React.FC = () => {
     };
   }, [reversedAlbums]);
 
-  useEffect(() => {
-    setPlaylistOpen(false);
-  }, [activeSeasonId]);
-
   const scrollGallery = (direction: 'left' | 'right') => {
     const container = galleryRef.current;
     if (!container) return;
@@ -180,8 +149,6 @@ const MediaPage: React.FC = () => {
     if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
     setFiltersOpen(false);
   };
-
-  const playlistLabel = activeSeason.youtubePlaylistLabel ?? `${activeSeason.shortName} 賽季完整賽事`;
 
   return (
     <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
@@ -286,22 +253,19 @@ const MediaPage: React.FC = () => {
                 </div>
 
                 <div className="w-full">
-                  <div className="relative mb-4 aspect-video overflow-hidden bg-neutral-100">
-                    {playlistOpen ? (
-                      <iframe
-                        className="h-full w-full"
-                        src={activeSeason.youtubePlaylistEmbedUrl}
-                        title={`${activeSeason.displayName} 比賽影片`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <PlaylistPoster label={playlistLabel} onPlay={() => setPlaylistOpen(true)} />
-                    )}
+                  <div className="relative mb-4 aspect-video bg-neutral-100">
+                    <iframe
+                      className="h-full w-full"
+                      src={activeSeason.youtubePlaylistEmbedUrl}
+                      title={`${activeSeason.displayName} 比賽影片`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      loading="lazy"
+                    />
                   </div>
                   <div className="flex flex-col">
                     <h3 className="font-display text-2xl font-bold uppercase leading-tight text-brand-black">
-                      {playlistLabel}
+                      {activeSeason.youtubePlaylistLabel ?? `${activeSeason.shortName} 賽季完整賽事`}
                     </h3>
                   </div>
                 </div>

@@ -407,7 +407,7 @@ const CupPage: React.FC = () => {
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               index="01"
-              title="賽事榮譽"
+              title="最終排名"
               description="完整記錄首屆新春賀歲盃的盃賽與盤賽名次"
             />
 
@@ -481,7 +481,7 @@ const CupPage: React.FC = () => {
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               index="02"
-              title="淘汰賽結果"
+              title="排名賽賽果"
               description="由準決賽至決賽，完整呈現盃賽與盤賽的最終結果"
             />
             <div className="grid gap-8 lg:grid-cols-2">

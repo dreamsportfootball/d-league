@@ -41,43 +41,10 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
     })}</div>;
   }
 
-  return (
-    <div className="w-full">
-      <div className="overflow-x-auto md:hidden">
-        <table className="w-full min-w-[720px] border-collapse">
-          <thead className="border-b border-neutral-200 text-[10px] font-bold tracking-widest text-neutral-500">
-            <tr>
-              <th className="w-8 px-1 py-3 text-left">名次</th>
-              <th className="w-[140px] py-3 pl-2 pr-2 text-left">球隊</th>
-              <th className="w-10 px-1 py-3 text-center">場次</th>
-              <th className="w-12 px-1 py-3 text-center">淨勝</th>
-              <th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th>
-              <th className="w-10 px-1 py-3 text-center">勝</th>
-              <th className="w-10 px-1 py-3 text-center">和</th>
-              <th className="w-10 px-1 py-3 text-center">敗</th>
-              <th className="w-10 px-1 py-3 text-center">進球</th>
-              <th className="w-10 px-1 py-3 text-center">失球</th>
-              <th className="w-[50px] px-1 py-3 text-left">近況</th>
-            </tr>
-          </thead>
-          <tbody>{displayed.map((row) => {
-            const team = seasonData.teamMap[row.teamId]; if (!team) return null;
-            return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span></div></td><td className="py-1.5 pl-2 pr-2"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} compact /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums text-brand-blue">{row.points}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.ga}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
-          })}</tbody>
-        </table>
-      </div>
-
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full border-collapse">
-          <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-widest text-neutral-500"><tr><th className="w-10 px-1 py-3 text-left">名次</th><th className="w-[220px] px-4 py-3 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th></tr></thead>
-          <tbody>{displayed.map((row) => {
-            const team = seasonData.teamMap[row.teamId]; if (!team) return null;
-            return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-sm font-bold tabular-nums">{row.rank}</span></div></td><td className="px-4 py-1.5"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-8 w-8 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.ga}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-sm font-semibold tabular-nums">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
-          })}</tbody>
-        </table>
-      </div>
-    </div>
-  );
+  return <div className="w-full overflow-x-auto"><table className="w-full min-w-[740px] border-collapse md:min-w-0"><thead className="border-b border-neutral-200 text-[10px] font-bold tracking-widest text-neutral-500 md:text-[11px]"><tr><th className="w-8 px-1 py-3 text-left md:w-10">名次</th><th className="w-[140px] py-3 pl-2 pr-2 text-left md:w-[220px] md:px-4">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th></tr></thead><tbody>{displayed.map((row) => {
+    const team = seasonData.teamMap[row.teamId]; if (!team) return null;
+    return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums md:text-sm">{row.rank}</span></div></td><td className="py-1.5 pl-2 pr-2 md:px-4"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain md:h-8 md:w-8" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.won}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.drawn}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.lost}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.gf}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.ga}</td><td className="px-1 py-3 text-center text-xs tabular-nums md:text-sm">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums md:text-sm">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
+  })}</tbody></table></div>;
 };
 
 export default Standings;

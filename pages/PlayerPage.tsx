@@ -94,7 +94,7 @@ interface SelectedMatchState {
 interface PlayerTransferRecord {
   seasonId: SeasonId;
   seasonName: string;
-  effectiveFrom: string;
+  effectiveFrom?: string;
   fromTeam: SeasonTeam;
   toTeam: SeasonTeam;
 }
@@ -114,20 +114,32 @@ const getPlayerTransfers = (history: PlayerSeasonRecord[]): PlayerTransferRecord
         index === 0 || registration.teamId !== registrations[index - 1].teamId,
     );
 
-    return uniqueRegistrations.slice(1).flatMap((registration, index) => {
-      const previous = uniqueRegistrations[index];
-      const fromTeam = record.data.teamMap[previous.teamId];
-      const toTeam = record.data.teamMap[registration.teamId];
-      if (!fromTeam || !toTeam) return [];
+    if (uniqueRegistrations.length >= 2) {
+      return uniqueRegistrations.slice(1).flatMap((registration, index) => {
+        const previous = uniqueRegistrations[index];
+        const fromTeam = record.data.teamMap[previous.teamId];
+        const toTeam = record.data.teamMap[registration.teamId];
+        if (!fromTeam || !toTeam) return [];
 
-      return [{
-        seasonId: record.seasonId,
-        seasonName: record.season.shortName,
-        effectiveFrom: registration.effectiveFrom,
-        fromTeam,
-        toTeam,
-      }];
-    });
+        return [{
+          seasonId: record.seasonId,
+          seasonName: record.season.shortName,
+          effectiveFrom: registration.effectiveFrom,
+          fromTeam,
+          toTeam,
+        }];
+      });
+    }
+
+    const inferredTeams = getPlayerSeasonTeams(record);
+    if (inferredTeams.length < 2) return [];
+
+    return inferredTeams.slice(1).map((toTeam, index) => ({
+      seasonId: record.seasonId,
+      seasonName: record.season.shortName,
+      fromTeam: inferredTeams[index],
+      toTeam,
+    }));
   });
 
 const PlayerPage: React.FC = () => {
@@ -397,11 +409,11 @@ const PlayerPage: React.FC = () => {
             <div className="divide-y divide-neutral-100">
               {transferRecords.map((transfer) => (
                 <div
-                  key={`${transfer.seasonId}-${transfer.effectiveFrom}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
+                  key={`${transfer.seasonId}-${transfer.effectiveFrom ?? 'inferred'}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
                   className="grid gap-2 py-4 sm:grid-cols-[110px_90px_minmax(0,1fr)] sm:items-center"
                 >
                   <span className="text-xs font-black tabular-nums text-neutral-400">
-                    {formatPlayerMatchDate(transfer.effectiveFrom)}
+                    {transfer.effectiveFrom ? formatPlayerMatchDate(transfer.effectiveFrom) : '日期未記錄'}
                   </span>
                   <span className="text-xs font-black text-neutral-400">{transfer.seasonName}</span>
                   <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-black">

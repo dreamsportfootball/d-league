@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
@@ -12,6 +12,7 @@ const isLeagueId = (value: string | undefined): value is LeagueId =>
 
 const RoundPage: React.FC = () => {
   const params = useParams<{ seasonId: string; league: string; round: string }>();
+  const navigate = useNavigate();
   const seasonId = isSeasonId(params.seasonId) ? params.seasonId : undefined;
   const league = isLeagueId(params.league) ? params.league : undefined;
   const round = params.round ? decodeURIComponent(params.round) : '';
@@ -65,7 +66,7 @@ const RoundPage: React.FC = () => {
             {season.shortName} {league} 第 {round} 輪
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-neutral-500">
-            本輪官方賽程與賽果，可直接進入單場比賽頁查看比數、事件與相關賽事資料。
+            本輪官方賽程與賽果，點擊比賽可查看原本的比賽詳情卡片。
           </p>
         </div>
       </section>
@@ -82,7 +83,7 @@ const RoundPage: React.FC = () => {
             matches={matches}
             teamMap={data.teamMap}
             leagueFilter="ALL"
-            onMatchClick={() => undefined}
+            onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)}
           />
         </section>
 

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
+import MatchDialog from '../components/MatchDialog';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
@@ -67,6 +68,7 @@ const StatsPage: React.FC = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -78,6 +80,7 @@ const StatsPage: React.FC = () => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
       setActiveLeague(activeSeason.enabledLeagues[0]);
     }
+    setSelectedMatchId(null);
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
 
   const playerTeamStats = useMemo(
@@ -357,7 +360,13 @@ const StatsPage: React.FC = () => {
                       <p className="mt-1 text-sm font-bold text-brand-black">{decision.subjectName}</p>
                       <p className="mt-1 text-sm leading-6 text-neutral-600">{decision.publicSummary}</p>
                       {decision.sourceMatchId && (
-                        <Link to={`/matches/${decision.sourceMatchId}?season=${activeSeasonId}`} className="mt-2 inline-block text-xs font-black text-brand-blue">查看來源比賽 →</Link>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedMatchId(decision.sourceMatchId ?? null)}
+                          className="mt-2 inline-block text-xs font-black text-brand-blue"
+                        >
+                          查看來源比賽 →
+                        </button>
                       )}
                     </div>
                   ))}
@@ -423,6 +432,17 @@ const StatsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {selectedMatchId && (
+        <MatchDialog
+          matchId={selectedMatchId}
+          onClose={() => setSelectedMatchId(null)}
+          onSelectMatch={setSelectedMatchId}
+          navigationMatchIds={seasonData.matches
+            .filter((match) => match.league === activeLeague)
+            .map((match) => match.id)}
+        />
+      )}
 
       <ResponsiveFilterDrawer
         open={filtersOpen}

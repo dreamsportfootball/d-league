@@ -43,8 +43,14 @@ for (const seasonId of SEASON_IDS) {
     if (!html.includes('id="static-seo-content"')) {
       fail(`${route}: static readable body missing`);
     }
-    if (!html.includes(`第 ${match.round} 輪`) || !html.includes('本輪數據洞察')) {
-      fail(`${route}: round insight content missing`);
+    if (!html.includes(`第 ${match.round} 輪`) || !html.includes('本輪數據')) {
+      fail(`${route}: round data content missing`);
+    }
+    if (html.includes(`${SITE_URL}/matches/`)) {
+      fail(`${route}: round page must not link to compatibility match URLs`);
+    }
+    if (html.includes('數據洞察')) {
+      fail(`${route}: legacy insight wording remains`);
     }
     if (html.includes('%BASE_URL%')) {
       fail(`${route}: unresolved Vite placeholder`);

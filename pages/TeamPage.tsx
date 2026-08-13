@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
@@ -10,12 +10,15 @@ import {
   UserRound,
   Youtube,
 } from 'lucide-react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { isSeasonId } from '../config/seasons';
+import { SeasonContext } from '../contexts/SeasonContext';
+import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
@@ -78,7 +81,8 @@ const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
 const TeamPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const { availableSeasons } = useSeason();
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getTeamHistory(id), [id]);
 
@@ -111,6 +115,13 @@ const TeamPage: React.FC = () => {
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  const dialogSeasonContext = {
+    activeSeasonId: seasonId,
+    activeSeason: season,
+    seasonData: data,
+    availableSeasons,
+    setActiveSeason: () => {},
+  };
 
   const leagueConfig = season.leagues[team.leagueId];
   const standings = calculateLeagueTable({
@@ -207,7 +218,7 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span></div>
-          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
+          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
         <section>
@@ -223,6 +234,17 @@ const TeamPage: React.FC = () => {
           })}</div>
         </section>
       </main>
+
+      {selectedMatchId && (
+        <SeasonContext.Provider value={dialogSeasonContext}>
+          <MatchDialog
+            matchId={selectedMatchId}
+            onClose={() => setSelectedMatchId(null)}
+            onSelectMatch={setSelectedMatchId}
+            navigationMatchIds={teamMatches.map((match) => match.id)}
+          />
+        </SeasonContext.Provider>
+      )}
     </div>
   );
 };

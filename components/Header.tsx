@@ -28,12 +28,14 @@ const NAV_ITEMS: NavItem[] = [
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
+  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
 
   useEffect(() => {
     setMobileMenuOpen(false);
     setMobileDropdownOpen(null);
+    setDesktopDropdownOpen(null);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -46,6 +48,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
+      setDesktopDropdownOpen(null);
       setMobileDropdownOpen(null);
       setMobileMenuOpen(false);
       if (
@@ -85,6 +88,7 @@ const Header: React.FC = () => {
             className="group flex items-center"
             onClick={() => {
               closeMobileMenu();
+              setDesktopDropdownOpen(null);
               handleHomeScroll('/');
             }}
           >
@@ -105,60 +109,97 @@ const Header: React.FC = () => {
         </div>
 
         <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7" aria-label="主要導覽">
-          {NAV_ITEMS.map((item) => (
-            <div key={item.name} className="group relative flex h-16 items-center">
-              {item.children ? (
-                <>
-                  <button
-                    type="button"
-                    aria-haspopup="menu"
-                    className="flex items-center transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40"
+          {NAV_ITEMS.map((item) => {
+            const desktopExpanded = desktopDropdownOpen === item.name;
+            const childActive = item.children?.some((child) => isPathActive(child.href)) ?? false;
+
+            return (
+              <div
+                key={item.name}
+                className="relative flex h-16 items-center"
+                onMouseEnter={() => {
+                  if (item.children) setDesktopDropdownOpen(item.name);
+                }}
+                onMouseLeave={() => {
+                  if (item.children) setDesktopDropdownOpen(null);
+                }}
+                onFocusCapture={() => {
+                  if (item.children) setDesktopDropdownOpen(item.name);
+                }}
+                onBlurCapture={(event) => {
+                  if (!item.children) return;
+                  const nextTarget = event.relatedTarget;
+                  if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+                    setDesktopDropdownOpen(null);
+                  }
+                }}
+              >
+                {item.children ? (
+                  <>
+                    <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={desktopExpanded}
+                      onClick={() => setDesktopDropdownOpen(desktopExpanded ? null : item.name)}
+                      className={`flex items-center transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 ${
+                        childActive ? 'text-brand-blue' : ''
+                      }`}
+                    >
+                      {item.name}
+                      <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${desktopExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div
+                      role="menu"
+                      className={`absolute left-0 top-16 w-56 overflow-hidden rounded-b-lg border border-neutral-100 bg-white shadow-xl transition-all duration-200 ${
+                        desktopExpanded
+                          ? 'visible translate-y-0 opacity-100'
+                          : 'invisible translate-y-2 opacity-0'
+                      }`}
+                    >
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.name}
+                          to={child.href}
+                          role="menuitem"
+                          aria-current={isPathActive(child.href) ? 'page' : undefined}
+                          className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue focus:bg-neutral-50 focus:text-brand-blue focus:outline-none"
+                          onClick={() => setDesktopDropdownOpen(null)}
+                        >
+                          {child.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center transition-colors hover:text-brand-blue"
                   >
                     {item.name}
-                    <ChevronDown className="ml-1 h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
-                  </button>
-                  <div
-                    role="menu"
-                    className="invisible absolute left-0 top-16 w-56 translate-y-2 overflow-hidden rounded-b-lg border border-neutral-100 bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    aria-current={isPathActive(item.href) ? 'page' : undefined}
+                    className={`relative flex h-full items-center transition-colors ${
+                      isPathActive(item.href) ? 'text-brand-blue' : 'hover:text-brand-blue'
+                    }`}
+                    onClick={() => {
+                      setDesktopDropdownOpen(null);
+                      handleHomeScroll(item.href);
+                    }}
                   >
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.name}
-                        to={child.href}
-                        role="menuitem"
-                        className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue focus:bg-neutral-50 focus:text-brand-blue focus:outline-none"
-                      >
-                        {child.name}
-                      </Link>
-                    ))}
-                  </div>
-                </>
-              ) : item.external ? (
-                <a
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center transition-colors hover:text-brand-blue"
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  to={item.href}
-                  aria-current={isPathActive(item.href) ? 'page' : undefined}
-                  className={`relative flex h-full items-center transition-colors ${
-                    isPathActive(item.href) ? 'text-brand-blue' : 'hover:text-brand-blue'
-                  }`}
-                  onClick={() => handleHomeScroll(item.href)}
-                >
-                  {item.name}
-                  {isPathActive(item.href) && (
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />
-                  )}
-                </Link>
-              )}
-            </div>
-          ))}
+                    {item.name}
+                    {isPathActive(item.href) && (
+                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />
+                    )}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         <button

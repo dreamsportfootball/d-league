@@ -37,12 +37,6 @@ interface TeamSocialLinkItem {
   icon: React.ReactNode;
 }
 
-interface RgbColor {
-  r: number;
-  g: number;
-  b: number;
-}
-
 const isResolvedMatch = (match: Match): boolean =>
   match.status === MatchStatus.FINISHED ||
   match.resultType === 'VOID' ||
@@ -60,26 +54,6 @@ const isSafeExternalUrl = (value: string): boolean => {
   } catch {
     return false;
   }
-};
-
-const parseHexColor = (value: string): RgbColor | null => {
-  const hex = value.trim().replace(/^#/, '');
-  const normalized = hex.length === 3
-    ? hex.split('').map((part) => `${part}${part}`).join('')
-    : hex;
-  if (!/^[0-9a-f]{6}$/i.test(normalized)) return null;
-  return {
-    r: Number.parseInt(normalized.slice(0, 2), 16),
-    g: Number.parseInt(normalized.slice(2, 4), 16),
-    b: Number.parseInt(normalized.slice(4, 6), 16),
-  };
-};
-
-const isLightColor = (value: string): boolean => {
-  const rgb = parseHexColor(value);
-  if (!rgb) return false;
-  const luminance = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
-  return luminance > 0.62;
 };
 
 const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
@@ -135,13 +109,6 @@ const TeamPage: React.FC = () => {
   const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
     ? team.shortName.trim()
     : '';
-  const lightHero = isLightColor(team.primaryColor);
-  const heroTextColor = lightHero ? '#111827' : '#ffffff';
-  const heroMutedColor = lightHero ? 'rgba(17, 24, 39, 0.64)' : 'rgba(255, 255, 255, 0.72)';
-  const heroBorderColor = lightHero ? 'rgba(17, 24, 39, 0.16)' : 'rgba(255, 255, 255, 0.24)';
-  const heroSurfaceColor = lightHero ? 'rgba(255, 255, 255, 0.42)' : 'rgba(255, 255, 255, 0.10)';
-  const activeSeasonBackground = heroTextColor;
-  const activeSeasonText = lightHero ? '#ffffff' : team.primaryColor;
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -215,100 +182,30 @@ const TeamPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section
-        className="relative overflow-hidden px-4 py-10 md:px-12 md:py-12"
-        style={{ backgroundColor: team.primaryColor, borderBottom: `1px solid ${heroBorderColor}` }}
-      >
+      <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
+        <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.08] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
         <div className="relative mx-auto max-w-7xl">
-          <Link
-            to={`/standings?season=${seasonId}`}
-            className="inline-flex min-h-11 items-center text-xs font-bold transition-opacity hover:opacity-70"
-            style={{ color: heroMutedColor }}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />返回積分榜
-          </Link>
+          <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
 
           <div className="mt-6 flex min-w-0 items-start gap-5 sm:items-center sm:gap-7 md:mt-4">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28">
-              <img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" />
-            </div>
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28"><img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" /></div>
             <div className="min-w-0 flex-1">
-              <p
-                className="text-[10px] font-bold uppercase tracking-[0.14em] md:tracking-[0.18em]"
-                style={{ color: heroMutedColor }}
-              >
-                {team.leagueId} · {season.shortName}
-              </p>
-              <h1 className="mt-3">
-                <AutoFitText
-                  text={team.name}
-                  minFontSize={16}
-                  lineHeight={0.98}
-                  className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl"
-                  style={{ color: heroTextColor }}
-                />
-              </h1>
-              {displayShortName && (
-                <p className="mt-2 text-xs font-semibold" style={{ color: heroMutedColor }}>
-                  球隊簡稱 <span className="ml-2 font-bold" style={{ color: heroTextColor }}>{displayShortName}</span>
-                </p>
-              )}
-              {socialLinks.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link.platform}
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`前往 ${team.name} ${link.label}`}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border transition-opacity hover:opacity-70"
-                      style={{ borderColor: heroBorderColor, backgroundColor: heroSurfaceColor, color: heroTextColor }}
-                    >
-                      {link.icon}
-                    </a>
-                  ))}
-                </div>
-              )}
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
+              <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
+              {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
+              {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:border-brand-blue hover:text-brand-blue">{link.icon}</a>)}</div>}
             </div>
           </div>
 
-          {history.length > 1 && (
-            <div className="mt-6 flex flex-wrap gap-2 border-t pt-4" style={{ borderColor: heroBorderColor }}>
-              {history.map((record) => {
-                const isCurrentSeason = record.seasonId === seasonId;
-                return (
-                  <Link
-                    key={record.seasonId}
-                    to={`/teams/${identityId}?season=${record.seasonId}`}
-                    className="rounded-full border px-4 py-2 text-xs font-bold transition-opacity hover:opacity-75"
-                    style={isCurrentSeason
-                      ? { borderColor: activeSeasonBackground, backgroundColor: activeSeasonBackground, color: activeSeasonText }
-                      : { borderColor: heroBorderColor, backgroundColor: heroSurfaceColor, color: heroMutedColor }}
-                  >
-                    {record.season.shortName}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4">{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
 
-          <dl className="mt-7 grid grid-cols-4 border-t pt-4 md:mt-6" style={{ borderColor: heroBorderColor }}>
+          <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
             {[
               ['排名', seasonHasStarted && standing ? standing.rank : '—'],
               ['場次', standing?.played ?? 0],
               ['進球', standing?.gf ?? 0],
               ['積分', standing?.points ?? 0],
-            ].map(([label, value], index) => (
-              <div
-                key={label}
-                className="px-2 text-center sm:px-6"
-                style={index > 0 ? { borderLeft: `1px solid ${heroBorderColor}` } : undefined}
-              >
-                <dt className="text-[10px] font-semibold tracking-wider" style={{ color: heroMutedColor }}>{label}</dt>
-                <dd className="mt-1 font-display text-2xl font-black tabular-nums sm:text-3xl" style={{ color: heroTextColor }}>{value}</dd>
-              </div>
-            ))}
+            ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd></div>)}
           </dl>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
 import type { LeagueId, SeasonParticipantsConfig } from '../types/season';
+import type { SeasonTeam } from '../types/team';
 
 interface SeasonParticipantsProps {
   participants: SeasonParticipantsConfig;
@@ -23,7 +24,9 @@ const formatDeadline = (value: string): string => {
 const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({ participants, className = '' }) => {
   const { activeSeasonId, seasonData } = useSeason();
   const totalTeams = LEAGUE_ORDER.reduce((total, leagueId) => total + participants.leagues[leagueId].length, 0);
-  const publishedTeamByName = new Map(seasonData.teams.map((team) => [team.name, team]));
+  const publishedTeamByName = new Map<string, SeasonTeam>(
+    seasonData.teams.map((team): [string, SeasonTeam] => [team.name, team]),
+  );
 
   return (
     <section className={`border-y-2 border-brand-black py-8 md:py-10 ${className}`} aria-labelledby="season-participants-title">

@@ -102,6 +102,9 @@ const TeamPage: React.FC = () => {
   const { team, data, season, seasonId } = selectedRecord;
   const identityId = getTeamIdentity(team);
   const socialLinks = getTeamSocialLinks(team);
+  const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
+    ? team.shortName.trim()
+    : '';
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -178,7 +181,7 @@ const TeamPage: React.FC = () => {
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">{team.leagueId} · {season.shortName}</p>
               <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-black tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
-              {team.shortName?.trim() && <p className="mt-2 text-xs font-bold text-neutral-500">球隊簡稱 <span className="ml-2 text-brand-black">{team.shortName}</span></p>}
+              {displayShortName && <p className="mt-2 text-xs font-bold text-neutral-500">球隊簡稱 <span className="ml-2 text-brand-black">{displayShortName}</span></p>}
               {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:border-brand-blue hover:text-brand-blue">{link.icon}</a>)}</div>}
             </div>
           </div>

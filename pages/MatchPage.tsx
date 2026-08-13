@@ -52,7 +52,7 @@ const MatchPage: React.FC = () => {
         <div className="mx-auto max-w-5xl">
           <EmptyState title="找不到此比賽" description="此比賽不存在、尚未公布，或網址已失效" />
           <div className="mt-8 text-center">
-            <Link to="/schedule" className="text-sm font-semibold text-brand-blue">返回賽程</Link>
+            <Link to="/schedule" className="text-sm font-black text-brand-blue">返回賽程</Link>
           </div>
         </div>
       </div>
@@ -87,29 +87,24 @@ const MatchPage: React.FC = () => {
   const renderEvent = (event: MatchEvent) => {
     const playerProfile = resolveMatchEventPlayer(data, match, event);
     return (
-      <li
-        key={event.id}
-        className="grid grid-cols-[44px_26px_minmax(0,1fr)] items-start gap-3 border-b border-neutral-100 py-4 last:border-b-0"
-      >
-        <span className="font-display text-sm font-semibold tabular-nums text-brand-blue">{event.minute}'</span>
+      <li key={event.id} className="grid grid-cols-[48px_28px_minmax(0,1fr)] items-start gap-3 border-b border-neutral-100 py-4 last:border-b-0">
+        <span className="font-display text-sm font-black tabular-nums text-brand-blue">{event.minute}'</span>
         <span aria-hidden="true" className="text-base">{eventMarker(event)}</span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             {playerProfile ? (
               <Link
                 to={`/players/${getPlayerIdentity(playerProfile)}?season=${record.seasonId}`}
-                className="font-semibold text-brand-black transition-colors hover:text-brand-blue"
+                className="font-black text-brand-black transition-colors hover:text-brand-blue"
               >
                 {event.player}
               </Link>
             ) : (
-              <span className="font-semibold text-brand-black">{event.player}</span>
+              <span className="font-black text-brand-black">{event.player}</span>
             )}
-            <span className="text-xs font-medium text-neutral-400">{eventLabel(event)}</span>
+            <span className="text-xs font-bold text-neutral-400">{eventLabel(event)}</span>
           </div>
-          <p className="mt-1 text-[11px] font-medium text-neutral-400">
-            {event.team === 'HOME' ? homeTeam.name : awayTeam.name}
-          </p>
+          <p className="mt-1 text-[11px] font-bold text-neutral-400">{event.team === 'HOME' ? homeTeam.name : awayTeam.name}</p>
         </div>
       </li>
     );
@@ -117,167 +112,71 @@ const MatchPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="border-b border-neutral-200 bg-white px-4 py-8 md:px-12 md:py-14">
+      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-14">
         <div className="mx-auto max-w-6xl">
-          <Link
-            to={`/schedule?season=${record.seasonId}`}
-            className="inline-flex min-h-11 items-center text-xs font-semibold text-neutral-500 transition-colors hover:text-brand-black"
-          >
+          <Link to={`/schedule?season=${record.seasonId}`} className="inline-flex min-h-11 items-center text-xs font-black text-neutral-500 transition-colors hover:text-brand-black">
             <ArrowLeft className="mr-2 h-4 w-4" />返回賽程
           </Link>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-neutral-400">
+          <div className="mt-6 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.12em] text-neutral-500">
             <span>{season.displayName}</span><span>·</span><span>{match.league}</span><span>·</span>
-            <Link to={roundUrl} className="text-neutral-600 transition-colors hover:text-brand-blue">
-              第 {match.round} 輪
+            <Link to={roundUrl} className="text-brand-blue hover:underline">第 {match.round} 輪</Link>
+          </div>
+
+          <div className="mt-7 grid grid-cols-[minmax(0,1fr)_76px_minmax(0,1fr)] items-center gap-3 md:grid-cols-[minmax(0,1fr)_120px_minmax(0,1fr)] md:gap-8">
+            <Link to={`/teams/${getTeamIdentity(homeTeam)}?season=${record.seasonId}`} className="group flex min-w-0 flex-col items-center text-center">
+              <img src={homeTeam.logo} alt={`${homeTeam.name} 隊徽`} className="h-20 w-20 object-contain transition-transform group-hover:scale-105 md:h-28 md:w-28" />
+              <h1 className="mt-3 break-words text-sm font-black text-brand-black group-hover:text-brand-blue md:text-xl">{homeTeam.name}</h1>
+            </Link>
+
+            <div className="text-center">
+              <p className="font-display text-3xl font-black tracking-tight tabular-nums text-brand-black md:text-5xl">{scoreText}</p>
+              <p className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">{finished ? '比賽結束' : '尚未開賽'}</p>
+            </div>
+
+            <Link to={`/teams/${getTeamIdentity(awayTeam)}?season=${record.seasonId}`} className="group flex min-w-0 flex-col items-center text-center">
+              <img src={awayTeam.logo} alt={`${awayTeam.name} 隊徽`} className="h-20 w-20 object-contain transition-transform group-hover:scale-105 md:h-28 md:w-28" />
+              <p className="mt-3 break-words text-sm font-black text-brand-black group-hover:text-brand-blue md:text-xl">{awayTeam.name}</p>
             </Link>
           </div>
 
-          <div className="mx-auto mt-8 max-w-4xl">
-            <div className="grid grid-cols-[minmax(0,1fr)_82px_minmax(0,1fr)] items-center gap-3 md:grid-cols-[minmax(0,1fr)_150px_minmax(0,1fr)] md:gap-10">
-              <Link
-                to={`/teams/${getTeamIdentity(homeTeam)}?season=${record.seasonId}`}
-                className="group flex min-w-0 flex-col items-center text-center"
-              >
-                <img
-                  src={homeTeam.logo}
-                  alt={`${homeTeam.name} 隊徽`}
-                  className="h-16 w-16 object-contain transition-transform group-hover:scale-[1.03] md:h-24 md:w-24"
-                />
-                <h1 className="mt-3 break-words text-sm font-semibold leading-snug text-brand-black transition-colors group-hover:text-brand-blue md:text-lg">
-                  {homeTeam.name}
-                </h1>
-              </Link>
-
-              <div className="text-center">
-                <p className="font-display text-3xl font-medium tracking-tight tabular-nums text-brand-black md:text-5xl">
-                  {scoreText}
-                </p>
-                <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">
-                  {finished ? '比賽結束' : '尚未開賽'}
-                </p>
-              </div>
-
-              <Link
-                to={`/teams/${getTeamIdentity(awayTeam)}?season=${record.seasonId}`}
-                className="group flex min-w-0 flex-col items-center text-center"
-              >
-                <img
-                  src={awayTeam.logo}
-                  alt={`${awayTeam.name} 隊徽`}
-                  className="h-16 w-16 object-contain transition-transform group-hover:scale-[1.03] md:h-24 md:w-24"
-                />
-                <p className="mt-3 break-words text-sm font-semibold leading-snug text-brand-black transition-colors group-hover:text-brand-blue md:text-lg">
-                  {awayTeam.name}
-                </p>
-              </Link>
-            </div>
-
-            <div className="mt-8 grid gap-3 border-y border-neutral-200 py-4 text-xs text-neutral-500 sm:grid-cols-2">
-              <span className="inline-flex items-center justify-center sm:justify-start">
-                <CalendarDays className="mr-2 h-4 w-4 text-brand-blue" />
-                {formatTaipeiDateWithWeekday(match.timestamp)} {formatTaipeiTime(match.timestamp)}
-              </span>
-              <span className="inline-flex items-center justify-center sm:justify-end">
-                <MapPin className="mr-2 h-4 w-4 text-brand-blue" />
-                {match.venue}
-              </span>
-            </div>
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 border-t border-neutral-200 pt-5 text-xs font-bold text-neutral-500">
+            <span className="inline-flex items-center"><CalendarDays className="mr-2 h-4 w-4 text-brand-blue" />{formatTaipeiDateWithWeekday(match.timestamp)} {formatTaipeiTime(match.timestamp)}</span>
+            <span className="inline-flex items-center"><MapPin className="mr-2 h-4 w-4 text-brand-blue" />{match.venue}</span>
           </div>
-
-          {match.administrativeNote && (
-            <p className="mx-auto mt-5 max-w-4xl border-l-2 border-amber-400 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
-              {match.administrativeNote}
-            </p>
-          )}
+          {match.administrativeNote && <p className="mt-5 border-l-4 border-amber-400 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-800">{match.administrativeNote}</p>}
         </div>
       </section>
 
-      <main className="mx-auto grid max-w-6xl gap-10 px-4 py-10 md:px-12 md:py-14 lg:grid-cols-[minmax(0,1.55fr)_minmax(270px,0.7fr)] lg:gap-14">
-        <section>
-          <div className="flex items-center border-b border-neutral-200 pb-3">
-            <Activity className="mr-2 h-5 w-5 text-brand-blue" />
-            <h2 className="font-display text-xl font-semibold text-brand-black md:text-2xl">比賽事件</h2>
-          </div>
-          {events.length > 0 ? (
-            <ul>{events.map(renderEvent)}</ul>
-          ) : (
-            <p className="border-b border-neutral-100 py-10 text-sm text-neutral-400">
-              {finished ? '此場沒有已登錄的進球或紅黃牌事件' : '比賽事件將於賽後更新'}
-            </p>
-          )}
-        </section>
+      <main className="mx-auto grid max-w-6xl gap-12 px-4 py-10 md:px-12 md:py-14 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)]">
+        <div className="space-y-12">
+          <section className="border border-neutral-200 bg-white p-5 md:p-7">
+            <div className="flex items-center border-b border-neutral-200 pb-3"><Activity className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">比賽事件</h2></div>
+            {events.length > 0 ? <ul>{events.map(renderEvent)}</ul> : <p className="py-10 text-sm text-neutral-400">{finished ? '此場沒有已登錄的進球或紅黃牌事件' : '比賽事件將於賽後更新'}</p>}
+          </section>
+        </div>
 
-        <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
-          <div className="border border-neutral-200 p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">比賽資訊</p>
-            <dl className="mt-4 divide-y divide-neutral-100 text-sm">
-              <div className="flex items-center justify-between gap-4 py-3 first:pt-0">
-                <dt className="text-neutral-400">賽季</dt>
-                <dd className="font-medium text-brand-black">{season.shortName}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-neutral-400">級別</dt>
-                <dd className="font-medium text-brand-black">{match.league}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3 last:pb-0">
-                <dt className="text-neutral-400">輪次</dt>
-                <dd>
-                  <Link to={roundUrl} className="font-medium text-brand-blue hover:underline">
-                    第 {match.round} 輪
-                  </Link>
-                </dd>
-              </div>
-            </dl>
-          </div>
-
-          <div className="border border-neutral-200 p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-400">官方資料</p>
-            <div className="mt-3 divide-y divide-neutral-100">
-              <Link to={roundUrl} className="flex min-h-11 items-center justify-between text-sm font-medium text-brand-black hover:text-brand-blue">
-                本輪賽程與賽果 <ChevronRight className="h-4 w-4" />
-              </Link>
-              <Link to={`/standings?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between text-sm font-medium text-brand-black hover:text-brand-blue">
-                查看積分榜 <ChevronRight className="h-4 w-4" />
-              </Link>
-              <Link to={`/stats?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between text-sm font-medium text-brand-black hover:text-brand-blue">
-                射手與紀律數據 <ChevronRight className="h-4 w-4" />
-              </Link>
-              {match.reportArticleId && (
-                <Link to={`/news/${match.reportArticleId}`} className="flex min-h-11 items-center justify-between text-sm font-medium text-brand-black hover:text-brand-blue">
-                  <span className="inline-flex items-center"><Newspaper className="mr-2 h-4 w-4 text-brand-blue" />賽事戰報</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              )}
-              {match.videoUrl && (
-                <a href={match.videoUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-between text-sm font-medium text-brand-black hover:text-brand-blue">
-                  <span className="inline-flex items-center"><Video className="mr-2 h-4 w-4 text-brand-blue" />比賽影片</span>
-                  <ChevronRight className="h-4 w-4" />
-                </a>
-              )}
+        <aside className="space-y-8">
+          <div className="border border-neutral-200 bg-white p-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">官方資料</p>
+            <div className="mt-4 space-y-2">
+              <Link to={roundUrl} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">本輪賽程與賽果 <ChevronRight className="h-4 w-4" /></Link>
+              <Link to={`/standings?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看積分榜 <ChevronRight className="h-4 w-4" /></Link>
+              <Link to={`/stats?season=${record.seasonId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue">查看射手與紀律數據 <ChevronRight className="h-4 w-4" /></Link>
+              {match.reportArticleId && <Link to={`/news/${match.reportArticleId}`} className="flex min-h-11 items-center justify-between border-b border-neutral-100 text-sm font-black text-brand-black hover:text-brand-blue"><span className="inline-flex items-center"><Newspaper className="mr-2 h-4 w-4 text-brand-blue" />賽事戰報</span><ChevronRight className="h-4 w-4" /></Link>}
+              {match.videoUrl && <a href={match.videoUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-between text-sm font-black text-brand-black hover:text-brand-blue"><span className="inline-flex items-center"><Video className="mr-2 h-4 w-4 text-brand-blue" />比賽影片</span><ChevronRight className="h-4 w-4" /></a>}
             </div>
           </div>
 
           {relatedMatches.length > 0 && (
-            <div>
-              <h2 className="border-b border-neutral-200 pb-3 font-display text-lg font-semibold text-brand-black">相關賽事</h2>
+            <div className="border border-neutral-200 bg-white p-5">
+              <h2 className="border-b border-neutral-200 pb-3 font-display text-xl font-black text-brand-black">相關賽事</h2>
               <div className="divide-y divide-neutral-100">
                 {relatedMatches.map((candidate) => {
                   const home = data.teamMap[candidate.homeTeamId];
                   const away = data.teamMap[candidate.awayTeamId];
                   if (!home || !away) return null;
-                  return (
-                    <Link
-                      key={candidate.id}
-                      to={`/matches/${candidate.id}?season=${record.seasonId}`}
-                      className="block py-4"
-                    >
-                      <p className="text-[10px] font-semibold text-neutral-400">{candidate.league} 第 {candidate.round} 輪</p>
-                      <p className="mt-1 text-sm font-medium text-brand-black transition-colors hover:text-brand-blue">
-                        {home.shortName} vs {away.shortName}
-                      </p>
-                    </Link>
-                  );
+                  return <Link key={candidate.id} to={`/matches/${candidate.id}?season=${record.seasonId}`} className="block py-4"><p className="text-[10px] font-black text-neutral-400">{candidate.league} 第 {candidate.round} 輪</p><p className="mt-1 text-sm font-black text-brand-black hover:text-brand-blue">{home.shortName} vs {away.shortName}</p></Link>;
                 })}
               </div>
             </div>

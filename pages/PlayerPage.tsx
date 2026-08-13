@@ -27,6 +27,18 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
     });
   }
 
+  const playerImage = record.data.playerImages[record.player.name];
+  if (playerImage) {
+    const pathParts = playerImage.split('/').filter(Boolean);
+    const imageTeamName = pathParts[pathParts.length - 2];
+    const imageTeam = imageTeamName
+      ? record.data.teams.find(
+          (team) => team.name === imageTeamName || team.shortName === imageTeamName,
+        )
+      : undefined;
+    if (imageTeam) addTeam(imageTeam.id, Number.NEGATIVE_INFINITY);
+  }
+
   Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {
     const match = record.data.matches.find((candidate) => candidate.id === matchId);
     if (!match) return;

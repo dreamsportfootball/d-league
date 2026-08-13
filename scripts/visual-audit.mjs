@@ -41,7 +41,7 @@ const interactiveCases = [
   { name: 'media-mobile-filter', path: '/media', viewport: 'mobile-390', action: 'filter' },
   { name: 'news-mobile-load-more', path: '/news', viewport: 'mobile-390', action: 'load-more' },
   { name: 'team-mobile-match-dialog', path: '/teams/t_chiayi?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
-  { name: 'player-mobile-match-dialog', path: '/players/cy-01?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
+  { name: 'player-mobile-match-dialog', path: '/players/lz-10?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
   { name: 'schedule-desktop-filter', path: '/schedule?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'standings-desktop-filter', path: '/standings?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'stats-desktop-filter', path: '/stats?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
@@ -163,134 +163,53 @@ const auditViewport = async (viewport) => {
           elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
         );
         const filterControlVisible = await page.getByRole('button', { name: '篩選積分榜' }).isVisible();
-        assert(
-          'standings-shows-season-league-summary',
-          diagnostics.bodyText.includes(expectedStatusLabel),
-          `Expected ${expectedStatusLabel}`,
-        );
+        assert('standings-shows-season-league-summary', diagnostics.bodyText.includes(expectedStatusLabel), `Expected ${expectedStatusLabel}`);
         assert('standings-shows-filter-control', filterControlVisible, 'Expected visible standings filter control');
-        assert(
-          'standings-hides-inline-league-tabs',
-          visibleLeagueTabs === 0,
-          `Expected league controls inside filter drawer, found ${visibleLeagueTabs} visible tab(s)`,
-        );
-        assert(
-          'standings-summary-hides-team-count',
-          !diagnostics.bodyText.includes('支球隊'),
-          'Team count must not appear',
-        );
+        assert('standings-hides-inline-league-tabs', visibleLeagueTabs === 0, `Found ${visibleLeagueTabs} visible tab(s)`);
+        assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }
 
       if (route.name === 'stats-2026') {
-        assert(
-          'stats-summary-has-season-league',
-          diagnostics.bodyText.includes('2026/27 · L1'),
-          'Expected 2026/27 · L1',
-        );
-        assert(
-          'stats-inline-league-row-removed',
-          !diagnostics.bodyText.includes('選擇聯賽'),
-          'League selector must stay inside drawer',
-        );
+        assert('stats-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        assert('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selector must stay inside drawer');
       }
 
       if (route.name === 'stats-2025') {
-        assert(
-          'historical-stats-resolve',
-          diagnostics.bodyText.includes('2025/26') && !diagnostics.bodyText.includes('找不到'),
-          'Expected historical stats page',
-        );
-        assert(
-          'historical-stats-links-player-entities',
-          diagnostics.playerLinkCount > 0,
-          `Expected player entity links, found ${diagnostics.playerLinkCount}`,
-        );
+        assert('historical-stats-resolve', diagnostics.bodyText.includes('2025/26') && !diagnostics.bodyText.includes('找不到'), 'Expected historical stats page');
+        assert('historical-stats-links-player-entities', diagnostics.playerLinkCount > 0, `Found ${diagnostics.playerLinkCount} player link(s)`);
       }
 
       if (route.name === 'news') {
         assert('news-has-no-season-control', !diagnostics.hasSeasonControl, 'News must not expose season selector');
-        assert(
-          'news-has-global-tabs',
-          diagnostics.bodyText.includes('全部消息') &&
-            diagnostics.bodyText.includes('賽事戰報') &&
-            diagnostics.bodyText.includes('官方公告'),
-          'Expected global news tabs',
-        );
+        assert('news-has-global-tabs', diagnostics.bodyText.includes('全部消息') && diagnostics.bodyText.includes('賽事戰報') && diagnostics.bodyText.includes('官方公告'), 'Expected global news tabs');
         assert('news-initial-batch-limited', diagnostics.newsCardCount <= 9, `Rendered ${diagnostics.newsCardCount} cards`);
         assert('news-load-more-visible', diagnostics.loadMoreVisible, 'Expected load more control');
       }
 
       if (route.name === 'article-detail') {
-        assert(
-          'article-detail-resolves',
-          diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') &&
-            !diagnostics.bodyText.includes('文章不存在'),
-          'Expected registration article',
-        );
-        assert(
-          'article-date-uses-taipei-timezone',
-          diagnostics.bodyText.includes('2026.06.23'),
-          'Expected 2026.06.23 even under UTC browser timezone',
-        );
+        assert('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article');
+        assert('article-date-uses-taipei-timezone', diagnostics.bodyText.includes('2026.06.23'), 'Expected 2026.06.23 under UTC browser timezone');
       }
 
       if (route.name === 'team-detail') {
-        assert(
-          'historical-team-keeps-permanent-page',
-          page.url().includes('#/teams/t_chiayi?season=2025-26') &&
-            diagnostics.bodyText.includes('2025/26') &&
-            diagnostics.bodyText.includes('嘉義諸羅山FC'),
-          `Expected permanent 2025/26 team page, resolved ${page.url()}`,
-        );
-        assert(
-          'team-page-has-official-sections',
-          diagnostics.bodyText.includes('賽程與賽果') &&
-            diagnostics.bodyText.includes('球員名單') &&
-            diagnostics.bodyText.includes('歷年 D LEAGUE'),
-          'Expected schedule, squad and history sections',
-        );
-        assert(
-          'team-page-links-player-entities',
-          diagnostics.playerLinkCount > 0,
-          `Expected player links, found ${diagnostics.playerLinkCount}`,
-        );
-        assert(
-          'team-page-has-match-dialog-buttons',
-          diagnostics.matchOpenButtonCount > 0,
-          `Expected match dialog buttons, found ${diagnostics.matchOpenButtonCount}`,
-        );
+        assert('historical-team-keeps-permanent-page', page.url().includes('#/teams/t_chiayi?season=2025-26') && diagnostics.bodyText.includes('2025/26') && diagnostics.bodyText.includes('嘉義諸羅山FC'), `Resolved ${page.url()}`);
+        assert('team-page-has-official-sections', diagnostics.bodyText.includes('賽程與賽果') && diagnostics.bodyText.includes('球員名單') && diagnostics.bodyText.includes('歷年 D LEAGUE'), 'Expected schedule, squad and history sections');
+        assert('team-page-links-player-entities', diagnostics.playerLinkCount > 0, `Found ${diagnostics.playerLinkCount} player link(s)`);
+        assert('team-page-has-match-dialog-buttons', diagnostics.matchOpenButtonCount > 0, `Found ${diagnostics.matchOpenButtonCount} match button(s)`);
       }
 
       if (route.name === 'player-detail') {
-        assert(
-          'player-page-resolves',
-          page.url().includes('#/players/cy-01?season=2025-26') &&
-            diagnostics.bodyText.includes('陳日揚') &&
-            diagnostics.bodyText.includes('賽季紀錄'),
-          `Expected official player page, resolved ${page.url()}`,
-        );
-        assert(
-          'player-page-links-team-entity',
-          diagnostics.teamLinkCount > 0,
-          `Expected team links, found ${diagnostics.teamLinkCount}`,
-        );
+        assert('player-page-resolves', page.url().includes('#/players/cy-01?season=2025-26') && diagnostics.bodyText.includes('陳日揚') && diagnostics.bodyText.includes('賽季紀錄'), `Resolved ${page.url()}`);
+        assert('player-page-links-team-entity', diagnostics.teamLinkCount > 0, `Found ${diagnostics.teamLinkCount} team link(s)`);
       }
 
       if (route.name === 'match-compat') {
         const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
-        assert(
-          'legacy-match-url-redirects-to-schedule-dialog',
-          page.url().includes('#/schedule?season=2025-26&match=m1') && dialogVisible,
-          `Expected schedule dialog compatibility route, resolved ${page.url()}, dialog=${dialogVisible}`,
-        );
+        assert('legacy-match-url-redirects-to-schedule-dialog', page.url().includes('#/schedule?season=2025-26&match=m1') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
       }
 
       if (route.name === 'media-default') {
-        assert(
-          'media-defaults-current-season',
-          diagnostics.bodyText.includes('D LEAGUE 2026/27'),
-          'Media must default to 2026/27',
-        );
+        assert('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
       }
 
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
@@ -300,25 +219,10 @@ const auditViewport = async (viewport) => {
         animations: 'disabled',
       });
 
-      report.pages.push({
-        viewport: viewport.name,
-        route: route.name,
-        url: page.url(),
-        screenshot: screenshotPath,
-        diagnostics,
-        assertions,
-        consoleErrors,
-        pageErrors,
-      });
+      report.pages.push({ viewport: viewport.name, route: route.name, url: page.url(), screenshot: screenshotPath, diagnostics, assertions, consoleErrors, pageErrors });
     } catch (error) {
       addFailure(viewport.name, route.name, 'audit-execution', error.message);
-      report.pages.push({
-        viewport: viewport.name,
-        route: route.name,
-        error: error.message,
-        consoleErrors,
-        pageErrors,
-      });
+      report.pages.push({ viewport: viewport.name, route: route.name, error: error.message, consoleErrors, pageErrors });
     } finally {
       await page.close();
     }
@@ -370,53 +274,32 @@ const auditInteractiveCase = async (testCase) => {
       await page.getByRole('button', { name: /播放.*賽季完整賽事/ }).click();
       await page.waitForTimeout(350);
     } else {
-      await page
-        .getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i })
-        .first()
-        .click();
+      await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i }).first().click();
     }
 
     await page.waitForTimeout(250);
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
-    const menuVisible =
-      testCase.action === 'mobile-menu'
-        ? await page.evaluate(
-            () => document.body.innerText.includes('賽季報名') && getComputedStyle(document.body).overflow === 'hidden',
-          )
-        : false;
-    const passed =
-      testCase.action === 'mobile-menu'
-        ? menuVisible
-        : testCase.action === 'load-more'
-          ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
-          : testCase.action === 'match-dialog'
-            ? dialogVisible
-            : testCase.action === 'playlist'
-              ? playlistVisible
-              : dialogVisible;
+    const menuVisible = testCase.action === 'mobile-menu'
+      ? await page.evaluate(() => document.body.innerText.includes('賽季報名') && getComputedStyle(document.body).overflow === 'hidden')
+      : false;
+    const passed = testCase.action === 'mobile-menu'
+      ? menuVisible
+      : testCase.action === 'load-more'
+        ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
+        : testCase.action === 'match-dialog'
+          ? dialogVisible
+          : testCase.action === 'playlist'
+            ? playlistVisible
+            : dialogVisible;
 
     if (!passed) {
-      addFailure(
-        testCase.viewport,
-        testCase.name,
-        'interactive-state',
-        JSON.stringify({ dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount }),
-      );
+      addFailure(testCase.viewport, testCase.name, 'interactive-state', JSON.stringify({ dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount }));
     }
 
     const screenshotPath = path.join(outputDir, 'screenshots', `${testCase.viewport}__${testCase.name}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false, animations: 'disabled' });
-    report.interactive.push({
-      ...testCase,
-      screenshot: screenshotPath,
-      dialogVisible,
-      playlistVisible,
-      menuVisible,
-      beforeCount,
-      afterCount,
-      passed,
-    });
+    report.interactive.push({ ...testCase, screenshot: screenshotPath, dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount, passed });
   } catch (error) {
     addFailure(testCase.viewport, testCase.name, 'interactive-audit', error.message);
     report.interactive.push({ ...testCase, error: error.message, passed: false });
@@ -437,13 +320,9 @@ await fs.writeFile(
     `Pages checked: ${report.pages.length}`,
     `Interactive states checked: ${report.interactive.length}`,
     `Failures: ${report.failures.length}`,
-    ...report.failures.map(
-      (failure) => `- ${failure.viewport} / ${failure.route} / ${failure.name}: ${failure.detail}`,
-    ),
+    ...report.failures.map((failure) => `- ${failure.viewport} / ${failure.route} / ${failure.name}: ${failure.detail}`),
   ].join('\n'),
 );
 
-console.log(
-  `Visual audit complete: ${report.pages.length} pages, ${report.interactive.length} states, ${report.failures.length} failure(s).`,
-);
+console.log(`Visual audit complete: ${report.pages.length} pages, ${report.interactive.length} states, ${report.failures.length} failure(s).`);
 if (report.failures.length > 0) process.exitCode = 1;

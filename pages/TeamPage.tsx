@@ -204,11 +204,7 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span></div>
-          {teamMatches.length > 0 ? (
-            <div className="[&_.font-bold]:font-black [&_.font-display]:font-sans">
-              <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)} />
-            </div>
-          ) : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
+          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
         <section>

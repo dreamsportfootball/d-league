@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
+import ExperienceEnhancements from './components/ExperienceEnhancements';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
@@ -146,6 +147,7 @@ const App: React.FC = () => (
       <Analytics />
 
       <main id="main-content" tabIndex={-1} className="w-full flex-grow pt-16 outline-none">
+        <ExperienceEnhancements />
         <AppErrorBoundary>
           <Suspense fallback={<PageSkeleton />}>
             <Routes>

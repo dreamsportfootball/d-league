@@ -24,7 +24,9 @@ const getStatusLabel = (match: Match): string => {
 
 const Score: React.FC<{ match: Match }> = ({ match }) => {
   const hasScore = match.status === MatchStatus.FINISHED && match.homeScore !== null && match.awayScore !== null;
-  return hasScore ? <span className="font-display text-xl font-black tracking-tight tabular-nums text-brand-black md:text-2xl">{match.homeScore} - {match.awayScore}</span> : <span className="font-display text-[10px] font-black uppercase tracking-[0.16em] text-neutral-300">VS</span>;
+  return hasScore
+    ? <span className="font-display text-xl font-medium tracking-tight tabular-nums text-brand-black md:text-2xl">{match.homeScore} - {match.awayScore}</span>
+    : <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">VS</span>;
 };
 
 const FullSchedule: React.FC<FullScheduleProps> = ({ matches, teamMap, onMatchClick: _onMatchClick, leagueFilter, variant = 'default' }) => {
@@ -54,9 +56,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({ matches, teamMap, onMatchCl
             <Link to={`/matches/${match.id}?season=${seasonId}`} data-analytics-event="match_open" data-analytics-label={match.id} aria-label={`${home.name} 對 ${away.name}，${status}`} className={`group block border-b border-neutral-100 px-1.5 py-3 transition-colors hover:bg-neutral-100 ${rowBackground}`}>
               <div className="grid min-h-14 grid-cols-[82px_minmax(0,1fr)_52px_minmax(0,1fr)] items-center gap-1 md:grid-cols-[142px_minmax(0,1fr)_78px_minmax(0,1fr)_92px] md:gap-3">
                 <div className="min-w-0"><p className="whitespace-nowrap font-display text-[9px] font-black text-neutral-500 md:text-[11px]">{variant === 'team' ? mobileDate : formatTaipeiTime(match.timestamp)}</p><p className="mt-1 whitespace-nowrap text-[8px] font-bold text-neutral-400 md:text-[9px]">{variant === 'team' ? `${formatTaipeiTime(match.timestamp)} · ` : ''}{match.league} 第 {match.round} 輪</p></div>
-                <div className="flex min-w-0 items-center justify-end gap-1.5 md:gap-3"><div className="min-w-0 flex-1 text-right"><AutoFitText text={home.name} maxFontSize={16} minFontSize={8} className="font-black text-brand-black" /></div><img src={home.logo} alt={home.name} loading="lazy" decoding="async" className="h-7 w-7 shrink-0 object-contain md:h-9 md:w-9" /></div>
+                <div className="flex min-w-0 items-center justify-end gap-1.5 md:gap-3"><div className="min-w-0 flex-1 text-right"><AutoFitText text={home.name} maxFontSize={16} minFontSize={8} className="font-medium text-brand-black" /></div><img src={home.logo} alt={home.name} loading="lazy" decoding="async" className="h-7 w-7 shrink-0 object-contain md:h-9 md:w-9" /></div>
                 <div className="text-center"><Score match={match} /></div>
-                <div className="flex min-w-0 items-center justify-start gap-1.5 md:gap-3"><img src={away.logo} alt={away.name} loading="lazy" decoding="async" className="h-7 w-7 shrink-0 object-contain md:h-9 md:w-9" /><div className="min-w-0 flex-1"><AutoFitText text={away.name} maxFontSize={16} minFontSize={8} className="font-black text-brand-black" /></div></div>
+                <div className="flex min-w-0 items-center justify-start gap-1.5 md:gap-3"><img src={away.logo} alt={away.name} loading="lazy" decoding="async" className="h-7 w-7 shrink-0 object-contain md:h-9 md:w-9" /><div className="min-w-0 flex-1"><AutoFitText text={away.name} maxFontSize={16} minFontSize={8} className="font-medium text-brand-black" /></div></div>
                 <div className="hidden text-right md:block">{match.administrativeNote && <p className="truncate text-[9px] font-bold text-amber-700" title={match.administrativeNote}>{match.administrativeNote}</p>}<p className="mt-1 text-[9px] font-black uppercase tracking-wider text-brand-blue">完整比賽頁 →</p></div>
               </div>
             </Link>

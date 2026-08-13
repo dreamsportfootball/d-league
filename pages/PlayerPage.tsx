@@ -183,14 +183,13 @@ const PlayerPage: React.FC = () => {
             <h2 className="font-display text-2xl font-black text-brand-black">賽季紀錄</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[660px] border-collapse">
+            <table className="w-full min-w-[600px] border-collapse">
               <thead className="border-b border-neutral-100 text-[10px] font-black tracking-wider text-neutral-400">
                 <tr>
                   <th className="py-3 text-left">賽季</th>
                   <th className="py-3 text-left">球隊</th>
                   <th className="py-3 text-center">進球</th>
                   <th className="py-3 text-center">黃牌</th>
-                  <th className="py-3 text-center">雙黃</th>
                   <th className="py-3 text-center">紅牌</th>
                   <th className="py-3 text-right">官方數據</th>
                 </tr>
@@ -204,6 +203,7 @@ const PlayerPage: React.FC = () => {
 
                   return rows.map((team) => {
                     const stats = getPlayerSeasonStats(record, team?.id);
+                    const redCards = stats.directRedCards + stats.secondYellowDismissals;
                     return (
                       <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
                         <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
@@ -219,10 +219,9 @@ const PlayerPage: React.FC = () => {
                             '—'
                           )}
                         </td>
-                        <td className="py-4 text-center font-display text-lg font-black tabular-nums">{stats.goals}</td>
-                        <td className="py-4 text-center tabular-nums">{stats.yellowCards}</td>
-                        <td className="py-4 text-center tabular-nums">{stats.secondYellowDismissals}</td>
-                        <td className="py-4 text-center tabular-nums">{stats.directRedCards}</td>
+                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{stats.goals}</td>
+                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{stats.yellowCards}</td>
+                        <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</td>
                         <td className="py-4 text-right">
                           <Link
                             to={`/stats?season=${record.seasonId}`}
@@ -246,38 +245,60 @@ const PlayerPage: React.FC = () => {
             <h2 className="font-display text-2xl font-black text-brand-black">個人比賽事件</h2>
           </div>
           {matchRecords.length > 0 ? (
-            <div className="divide-y divide-neutral-100">
-              {matchRecords.map((record) => {
-                const home = record.homeTeam;
-                const away = record.awayTeam;
-                if (!home || !away) return null;
-                const playerRecord = history.find((item) => item.seasonId === record.seasonId);
-                const playerId = playerRecord?.player.id;
-                const events = record.events.filter(
-                  (event) => (event.playerId ?? event.subjectId) === playerId,
-                );
-                return (
-                  <Link
-                    key={`${record.seasonId}-${record.match.id}`}
-                    to={`/schedule?season=${record.seasonId}&match=${record.match.id}`}
-                    className="grid gap-2 py-4 transition-colors hover:bg-neutral-50 sm:grid-cols-[120px_minmax(0,1fr)_auto]"
-                  >
-                    <div className="text-xs font-bold text-neutral-400">
-                      <p>{formatTaipeiDate(record.match.timestamp)}</p>
-                      <p className="mt-1">{record.season.shortName} · {record.match.league}</p>
-                    </div>
-                    <div>
+            <div className="overflow-x-auto">
+              <div className="min-w-[620px]">
+                <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-black tracking-wider text-neutral-400">
+                  <span>日期</span>
+                  <span>比賽</span>
+                  <span className="text-center">進球</span>
+                  <span className="text-center">黃牌</span>
+                  <span className="text-center">紅牌</span>
+                </div>
+                {matchRecords.map((record) => {
+                  const home = record.homeTeam;
+                  const away = record.awayTeam;
+                  if (!home || !away) return null;
+                  const playerRecord = history.find((item) => item.seasonId === record.seasonId);
+                  if (!playerRecord) return null;
+
+                  const events = record.events.filter(
+                    (event) =>
+                      resolveMatchEventPlayer(record.data, record.match, event)?.id === playerRecord.player.id,
+                  );
+                  const goals = events.filter(
+                    (event) =>
+                      event.type === 'GOAL' &&
+                      !event.isOwnGoal &&
+                      record.match.resultType !== 'VOID' &&
+                      record.match.countsForPlayerStats !== false,
+                  ).length;
+                  const yellowCards = events.filter(
+                    (event) => event.type === 'YELLOW_CARD' || event.type === 'SECOND_YELLOW',
+                  ).length;
+                  const redCards = events.filter(
+                    (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
+                  ).length;
+
+                  return (
+                    <Link
+                      key={`${record.seasonId}-${record.match.id}`}
+                      to={`/schedule?season=${record.seasonId}&match=${record.match.id}`}
+                      className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 transition-colors hover:bg-neutral-50"
+                    >
+                      <div className="text-xs font-bold text-neutral-400">
+                        <p>{formatTaipeiDate(record.match.timestamp)}</p>
+                        <p className="mt-1">{record.season.shortName} · {record.match.league}</p>
+                      </div>
                       <p className="text-sm font-black text-brand-black">
                         {home.shortName} vs {away.shortName}
                       </p>
-                      <p className="mt-1 text-xs font-bold text-neutral-500">
-                        {events.map((event) => `${event.minute}' ${event.type === 'GOAL' ? '進球' : event.type === 'YELLOW_CARD' ? '黃牌' : event.type === 'SECOND_YELLOW' ? '雙黃' : '紅牌'}`).join(' · ')}
-                      </p>
-                    </div>
-                    <div className="text-xs font-black text-brand-blue">比賽詳情 →</div>
-                  </Link>
-                );
-              })}
+                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</span>
+                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</span>
+                      <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <p className="py-10 text-sm text-neutral-400">目前沒有可連結的個人比賽事件</p>

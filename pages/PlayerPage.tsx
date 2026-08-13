@@ -196,43 +196,44 @@ const PlayerPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {history.map((record) => {
-                  const stats = getPlayerSeasonStats(record);
+                {history.flatMap((record) => {
                   const seasonTeams = getPlayerSeasonTeams(record);
-                  return (
-                    <tr key={record.seasonId} className="border-b border-neutral-100">
-                      <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
-                      <td className="py-4 text-sm text-brand-black">
-                        {seasonTeams.length > 0 ? (
-                          <div className="flex flex-col items-start gap-1">
-                            {seasonTeams.map((team) => (
-                              <Link
-                                key={team.id}
-                                to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
-                                className="font-medium hover:text-brand-blue"
-                              >
-                                {team.name}
-                              </Link>
-                            ))}
-                          </div>
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-                      <td className="py-4 text-center font-display text-lg font-black tabular-nums">{stats.goals}</td>
-                      <td className="py-4 text-center tabular-nums">{stats.yellowCards}</td>
-                      <td className="py-4 text-center tabular-nums">{stats.secondYellowDismissals}</td>
-                      <td className="py-4 text-center tabular-nums">{stats.directRedCards}</td>
-                      <td className="py-4 text-right">
-                        <Link
-                          to={`/stats?season=${record.seasonId}`}
-                          className="text-xs font-black text-brand-blue"
-                        >
-                          查看該季
-                        </Link>
-                      </td>
-                    </tr>
-                  );
+                  const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
+                    ? seasonTeams
+                    : [undefined];
+
+                  return rows.map((team) => {
+                    const stats = getPlayerSeasonStats(record, team?.id);
+                    return (
+                      <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
+                        <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
+                        <td className="py-4 text-sm text-brand-black">
+                          {team ? (
+                            <Link
+                              to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
+                              className="font-medium hover:text-brand-blue"
+                            >
+                              {team.name}
+                            </Link>
+                          ) : (
+                            '—'
+                          )}
+                        </td>
+                        <td className="py-4 text-center font-display text-lg font-black tabular-nums">{stats.goals}</td>
+                        <td className="py-4 text-center tabular-nums">{stats.yellowCards}</td>
+                        <td className="py-4 text-center tabular-nums">{stats.secondYellowDismissals}</td>
+                        <td className="py-4 text-center tabular-nums">{stats.directRedCards}</td>
+                        <td className="py-4 text-right">
+                          <Link
+                            to={`/stats?season=${record.seasonId}`}
+                            className="text-xs font-black text-brand-blue"
+                          >
+                            查看該季
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  });
                 })}
               </tbody>
             </table>

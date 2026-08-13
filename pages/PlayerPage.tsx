@@ -193,7 +193,7 @@ const PlayerPage: React.FC = () => {
         <div className="mx-auto max-w-5xl">
           <EmptyState title="找不到此球員" description="此球員不存在、尚未登錄，或網址已失效" />
           <div className="mt-8 text-center">
-            <Link to="/stats" className="text-sm font-bold text-brand-blue md:font-black">
+            <Link to="/stats" className="text-sm font-bold text-brand-blue">
               返回數據中心
             </Link>
           </div>
@@ -239,18 +239,18 @@ const PlayerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-16">
+      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
         <div className="mx-auto max-w-6xl">
           <Link
             to={`/stats?season=${preferredRecord.seasonId}`}
-            className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black md:font-black"
+            className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             返回數據中心
           </Link>
 
-          <div className="mt-7 flex items-center gap-5 md:gap-8">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 md:h-32 md:w-32">
+          <div className="mt-7 flex items-center gap-5 md:mt-5 md:gap-7">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 md:h-28 md:w-28">
               {image ? (
                 <img src={image} alt={player.name} className="h-full w-full object-cover" />
               ) : (
@@ -258,24 +258,24 @@ const PlayerPage: React.FC = () => {
               )}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:font-black md:tracking-[0.18em]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:tracking-[0.18em]">
                 D LEAGUE PLAYER
               </p>
-              <h1 className="mt-2 break-words font-display text-4xl font-extrabold tracking-tight text-brand-black md:text-6xl md:font-black">
+              <h1 className="mt-2 break-words font-display text-4xl font-extrabold tracking-tight text-brand-black md:text-6xl">
                 {player.name}
               </h1>
               {player.englishName && (
-                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400 md:font-bold">
+                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400">
                   {player.englishName}
                 </p>
               )}
-              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500 md:font-bold">
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500">
                 <span>#{player.number}</span>
                 <span>{player.nationality}</span>
                 {preferredRecord.team && (
                   <Link
                     to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="font-bold text-brand-blue md:font-black"
+                    className="font-bold text-brand-blue"
                   >
                     {preferredRecord.team.name}
                   </Link>
@@ -284,17 +284,17 @@ const PlayerPage: React.FC = () => {
             </div>
           </div>
 
-          <p className="mt-9 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:font-black md:tracking-[0.18em]">
+          <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:mt-6 md:tracking-[0.18em]">
             D LEAGUE 生涯數據
           </p>
-          <dl className="mt-3 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-5">
+          <dl className="mt-2 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-4">
             {[
               ['進球', totals.goals],
               ['黃牌', totals.yellowCards],
               ['紅牌', totals.redCards],
             ].map(([label, value]) => (
               <div key={label} className="px-2 text-center md:px-6">
-                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px] md:font-black">
+                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px]">
                   {label}
                 </dt>
                 <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black md:text-3xl">
@@ -306,11 +306,11 @@ const PlayerPage: React.FC = () => {
         </div>
       </section>
 
-      <main className="mx-auto max-w-6xl space-y-14 px-4 py-10 md:px-12 md:py-14">
+      <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
         <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
-            <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">賽季紀錄</h2>
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">賽季紀錄</h2>
           </div>
 
           <div className="md:hidden">
@@ -351,21 +351,20 @@ const PlayerPage: React.FC = () => {
           </div>
 
           <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[600px] border-collapse">
-              <thead className="border-b border-neutral-100 text-[10px] font-black tracking-wider text-neutral-400">
+            <table className="w-full min-w-[520px] border-collapse">
+              <thead className="border-b border-neutral-100 text-[10px] font-bold tracking-wider text-neutral-400">
                 <tr>
                   <th className="py-3 text-left">賽季</th>
                   <th className="py-3 text-left">球隊</th>
                   <th className="py-3 text-center">進球</th>
                   <th className="py-3 text-center">黃牌</th>
                   <th className="py-3 text-center">紅牌</th>
-                  <th className="py-3 text-right">官方數據</th>
                 </tr>
               </thead>
               <tbody>
                 {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                   <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
-                    <td className="py-4 text-sm font-black text-brand-black">{record.season.shortName}</td>
+                    <td className="py-4 text-sm font-bold text-brand-black">{record.season.shortName}</td>
                     <td className="py-4 text-sm text-brand-black">
                       {team ? (
                         <Link
@@ -381,14 +380,6 @@ const PlayerPage: React.FC = () => {
                     <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</td>
                     <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{yellowCards}</td>
                     <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{redCards}</td>
-                    <td className="py-4 text-right">
-                      <Link
-                        to={`/stats?season=${record.seasonId}`}
-                        className="text-xs font-black text-brand-blue"
-                      >
-                        查看該季
-                      </Link>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -400,7 +391,7 @@ const PlayerPage: React.FC = () => {
           <section>
             <div className="flex items-center border-b border-neutral-200 pb-3">
               <ArrowRight className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">轉會紀錄</h2>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">轉會紀錄</h2>
             </div>
             <div className="divide-y divide-neutral-100">
               {transferRecords.map((transfer) => (
@@ -408,8 +399,8 @@ const PlayerPage: React.FC = () => {
                   key={`${transfer.seasonId}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
                   className="grid gap-2 py-4 sm:grid-cols-[90px_minmax(0,1fr)] sm:items-center"
                 >
-                  <span className="text-xs font-bold text-neutral-400 md:font-black">{transfer.seasonName}</span>
-                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold md:font-black">
+                  <span className="text-xs font-bold text-neutral-400">{transfer.seasonName}</span>
+                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold">
                     <Link
                       to={`/teams/${getTeamIdentity(transfer.fromTeam)}?season=${transfer.seasonId}`}
                       className="text-brand-black hover:text-brand-blue"
@@ -434,14 +425,14 @@ const PlayerPage: React.FC = () => {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
             <div className="flex items-center">
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-extrabold text-brand-black md:font-black">個人比賽事件</h2>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">個人比賽事件</h2>
             </div>
-            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500 md:font-bold">
+            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
               <span>賽季</span>
               <select
                 value={eventSeason}
                 onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
-                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue md:font-bold"
+                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
                 aria-label="篩選個人比賽事件賽季"
               >
                 <option value="ALL">全部賽季</option>
@@ -516,7 +507,7 @@ const PlayerPage: React.FC = () => {
 
               <div className="hidden overflow-x-auto md:block">
                 <div className="min-w-[620px]">
-                  <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-black tracking-wider text-neutral-400">
+                  <div className="grid grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] border-b border-neutral-100 py-3 text-[10px] font-bold tracking-wider text-neutral-400">
                     <span>日期</span>
                     <span>比賽</span>
                     <span className="text-center">進球</span>
@@ -555,10 +546,10 @@ const PlayerPage: React.FC = () => {
                         onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
                         className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                       >
-                        <span className="text-xs font-bold tabular-nums text-neutral-400">
+                        <span className="text-xs font-semibold tabular-nums text-neutral-400">
                           {formatPlayerMatchDate(record.match.timestamp)}
                         </span>
-                        <span className="text-sm font-black text-brand-black">
+                        <span className="text-sm font-bold text-brand-black">
                           {home.shortName} vs {away.shortName}
                         </span>
                         <span className="text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</span>

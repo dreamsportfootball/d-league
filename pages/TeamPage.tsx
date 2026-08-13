@@ -56,6 +56,20 @@ const isSafeExternalUrl = (value: string): boolean => {
   }
 };
 
+const getContrastTextColor = (backgroundColor: string): '#111827' | '#ffffff' => {
+  const raw = backgroundColor.trim().replace(/^#/, '');
+  const hex = raw.length === 3
+    ? raw.split('').map((part) => `${part}${part}`).join('')
+    : raw;
+  if (!/^[0-9a-f]{6}$/i.test(hex)) return '#ffffff';
+
+  const r = Number.parseInt(hex.slice(0, 2), 16);
+  const g = Number.parseInt(hex.slice(2, 4), 16);
+  const b = Number.parseInt(hex.slice(4, 6), 16);
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luminance > 0.62 ? '#111827' : '#ffffff';
+};
+
 const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
   const links = team.socialLinks;
   if (!links) return [];
@@ -109,7 +123,8 @@ const TeamPage: React.FC = () => {
   const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
     ? team.shortName.trim()
     : '';
-  const heroTextColor = team.secondaryColor ?? '#ffffff';
+  const heroTextColor = getContrastTextColor(team.primaryColor);
+  const heroUsesDarkText = heroTextColor === '#111827';
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -200,9 +215,9 @@ const TeamPage: React.FC = () => {
             </div>
           </div>
 
-          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-white/30 pt-4">{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
+          {history.length > 1 && <div className={`mt-6 flex flex-wrap gap-2 border-t pt-4 ${heroUsesDarkText ? 'border-black/20' : 'border-white/30'}`}>{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
 
-          <dl className="mt-7 grid grid-cols-4 divide-x divide-white/30 border-t border-white/30 pt-4 md:mt-6">
+          <dl className={`mt-7 grid grid-cols-4 border-t pt-4 md:mt-6 ${heroUsesDarkText ? 'divide-x divide-black/20 border-black/20' : 'divide-x divide-white/30 border-white/30'}`}>
             {[
               ['排名', seasonHasStarted && standing ? standing.rank : '—'],
               ['場次', standing?.played ?? 0],

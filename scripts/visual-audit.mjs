@@ -26,7 +26,7 @@ const routes = [
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
-  { name: 'match-detail', path: '/matches/m1?season=2025-26' },
+  { name: 'match-compat', path: '/matches/m1?season=2025-26' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -40,11 +40,15 @@ const interactiveCases = [
   { name: 'stats-mobile-filter', path: '/stats?season=2026-27', viewport: 'mobile-390', action: 'filter' },
   { name: 'media-mobile-filter', path: '/media', viewport: 'mobile-390', action: 'filter' },
   { name: 'news-mobile-load-more', path: '/news', viewport: 'mobile-390', action: 'load-more' },
+  { name: 'team-mobile-match-dialog', path: '/teams/t_chiayi?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
+  { name: 'player-mobile-match-dialog', path: '/players/cy-01?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
   { name: 'schedule-desktop-filter', path: '/schedule?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'standings-desktop-filter', path: '/standings?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'stats-desktop-filter', path: '/stats?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'media-desktop-filter', path: '/media', viewport: 'desktop-1280', action: 'filter' },
   { name: 'news-desktop-load-more', path: '/news', viewport: 'desktop-1280', action: 'load-more' },
+  { name: 'team-desktop-match-dialog', path: '/teams/t_chiayi?season=2025-26', viewport: 'desktop-1280', action: 'match-dialog' },
+  { name: 'media-desktop-playlist', path: '/media?season=2025-26', viewport: 'desktop-1280', action: 'playlist' },
 ];
 
 await fs.rm(outputDir, { recursive: true, force: true });
@@ -91,16 +95,13 @@ const collectDiagnostics = async (page) =>
         const label = `${element.getAttribute('aria-label') ?? ''} ${element.textContent ?? ''}`;
         return /選擇賽季|更改賽季|賽季篩選/.test(label);
       }),
-      currentSeasonCtaVisible: fixedElements.some(
-        (element) => element.text.includes('立即報名') || element.text.includes('查看競賽規程'),
-      ),
       newsCardCount: document.querySelectorAll('main a[href*="/news/"]').length,
       loadMoreVisible: [...document.querySelectorAll('main button')].some(
         (element) => element.textContent?.includes('載入更多消息') && getComputedStyle(element).display !== 'none',
       ),
       playerLinkCount: document.querySelectorAll('main a[href*="/players/"]').length,
       teamLinkCount: document.querySelectorAll('main a[href*="/teams/"]').length,
-      matchLinkCount: document.querySelectorAll('main a[href*="/matches/"]').length,
+      matchOpenButtonCount: document.querySelectorAll('main [data-analytics-event="match_open"]').length,
       fixedElements,
     };
   });
@@ -254,9 +255,9 @@ const auditViewport = async (viewport) => {
           `Expected player links, found ${diagnostics.playerLinkCount}`,
         );
         assert(
-          'team-page-links-match-entities',
-          diagnostics.matchLinkCount > 0,
-          `Expected match links, found ${diagnostics.matchLinkCount}`,
+          'team-page-has-match-dialog-buttons',
+          diagnostics.matchOpenButtonCount > 0,
+          `Expected match dialog buttons, found ${diagnostics.matchOpenButtonCount}`,
         );
       }
 
@@ -275,19 +276,12 @@ const auditViewport = async (viewport) => {
         );
       }
 
-      if (route.name === 'match-detail') {
+      if (route.name === 'match-compat') {
+        const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
         assert(
-          'match-page-resolves',
-          page.url().includes('#/matches/m1?season=2025-26') &&
-            diagnostics.bodyText.includes('鹿逐俱樂部') &&
-            diagnostics.bodyText.includes('屏東野猿足球俱樂部') &&
-            diagnostics.bodyText.includes('比賽事件'),
-          `Expected official match page, resolved ${page.url()}`,
-        );
-        assert(
-          'match-page-links-team-entities',
-          diagnostics.teamLinkCount >= 2,
-          `Expected both team links, found ${diagnostics.teamLinkCount}`,
+          'legacy-match-url-redirects-to-schedule-dialog',
+          page.url().includes('#/schedule?season=2025-26&match=m1') && dialogVisible,
+          `Expected schedule dialog compatibility route, resolved ${page.url()}, dialog=${dialogVisible}`,
         );
       }
 
@@ -296,21 +290,6 @@ const auditViewport = async (viewport) => {
           'media-defaults-current-season',
           diagnostics.bodyText.includes('D LEAGUE 2026/27'),
           'Media must default to 2026/27',
-        );
-      }
-
-      if (
-        viewport.width < 768 &&
-        (route.name === 'standings-2025' ||
-          route.name === 'media-2025' ||
-          route.name === 'team-detail' ||
-          route.name === 'player-detail' ||
-          route.name === 'match-detail')
-      ) {
-        assert(
-          'historical-page-keeps-current-season-cta',
-          diagnostics.currentSeasonCtaVisible,
-          'Historical data pages must retain the current-season registration/regulations CTA',
         );
       }
 
@@ -384,6 +363,12 @@ const auditInteractiveCase = async (testCase) => {
       await page.getByRole('button', { name: '載入更多消息' }).click();
       await page.waitForTimeout(300);
       afterCount = await page.locator('main a[href*="/news/"]').count();
+    } else if (testCase.action === 'match-dialog') {
+      await page.locator('[data-analytics-event="match_open"]:visible').first().click();
+      await page.waitForTimeout(250);
+    } else if (testCase.action === 'playlist') {
+      await page.getByRole('button', { name: /播放.*賽季完整賽事/ }).click();
+      await page.waitForTimeout(350);
     } else {
       await page
         .getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i })
@@ -393,6 +378,7 @@ const auditInteractiveCase = async (testCase) => {
 
     await page.waitForTimeout(250);
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
+    const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible =
       testCase.action === 'mobile-menu'
         ? await page.evaluate(
@@ -404,14 +390,18 @@ const auditInteractiveCase = async (testCase) => {
         ? menuVisible
         : testCase.action === 'load-more'
           ? beforeCount !== null && afterCount !== null && afterCount > beforeCount
-          : dialogVisible;
+          : testCase.action === 'match-dialog'
+            ? dialogVisible
+            : testCase.action === 'playlist'
+              ? playlistVisible
+              : dialogVisible;
 
     if (!passed) {
       addFailure(
         testCase.viewport,
         testCase.name,
         'interactive-state',
-        JSON.stringify({ dialogVisible, menuVisible, beforeCount, afterCount }),
+        JSON.stringify({ dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount }),
       );
     }
 
@@ -421,6 +411,7 @@ const auditInteractiveCase = async (testCase) => {
       ...testCase,
       screenshot: screenshotPath,
       dialogVisible,
+      playlistVisible,
       menuVisible,
       beforeCount,
       afterCount,

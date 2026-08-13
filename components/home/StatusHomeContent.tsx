@@ -11,6 +11,13 @@ interface StatusHomeContentProps {
   status: 'review' | 'upcoming';
 }
 
+const formatDeadline = (value: string): string => {
+  const [datePart, timePart = ''] = value.split('T');
+  const date = datePart.replaceAll('-', '/');
+  const time = timePart.slice(0, 5);
+  return time ? `${date} ${time}` : date;
+};
+
 const StatusOverview: React.FC<StatusHomeContentProps> = ({ status }) => {
   const review = status === 'review';
   return (
@@ -47,17 +54,41 @@ const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
   const { activeSeason } = useSeason();
   const seasonParticipants = activeSeason.seasonParticipants;
   const registrationResults = activeSeason.registrationResults;
+  const primaryDeadline = seasonParticipants?.deadlines[0];
 
   return (
     <>
+      {seasonParticipants && (
+        <section className="border-b border-neutral-200 bg-neutral-950 text-white">
+          <div className="container mx-auto grid max-w-7xl gap-px bg-white/10 md:grid-cols-[1fr_auto_1fr]">
+            <div className="bg-neutral-950 px-5 py-5 md:px-7 md:py-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-accent">目前階段</p>
+              <p className="mt-2 font-display text-xl font-black md:text-2xl">球員及隊職員登錄</p>
+            </div>
+            {primaryDeadline && (
+              <div className="bg-neutral-950 px-5 py-5 md:min-w-[280px] md:px-7 md:py-6">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/45">{primaryDeadline.label}</p>
+                <p className="mt-2 font-display text-xl font-black tabular-nums text-brand-accent md:text-2xl">
+                  {formatDeadline(primaryDeadline.deadline)}
+                </p>
+              </div>
+            )}
+            <div className="bg-neutral-950 px-5 py-5 md:px-7 md:py-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/45">下一步</p>
+              <p className="mt-2 text-sm font-bold leading-6 text-white/85">完整賽程、領隊會議及其他賽季資訊將另行公告</p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {seasonParticipants ? (
-        <section className="bg-white pb-12 pt-12 md:pb-16 md:pt-16">
+        <section id="teams" className="scroll-mt-20 bg-white pb-12 pt-12 md:pb-16 md:pt-16">
           <div className="container mx-auto max-w-7xl px-4 md:px-6">
             <SeasonParticipants participants={seasonParticipants} />
           </div>
         </section>
       ) : registrationResults ? (
-        <section className="bg-white pb-12 pt-12 md:pb-16 md:pt-16">
+        <section id="teams" className="scroll-mt-20 bg-white pb-12 pt-12 md:pb-16 md:pt-16">
           <div className="container mx-auto max-w-7xl px-4 md:px-6">
             <RegistrationResults results={registrationResults} />
           </div>

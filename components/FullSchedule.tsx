@@ -26,10 +26,12 @@ const renderScore = (match: Match, compact = false) => {
     return (
       <span
         className={compact
-          ? 'font-sans text-lg font-bold tracking-tight text-brand-black tabular-nums md:text-xl'
+          ? 'font-display text-[18px] font-black leading-none tracking-tight text-brand-black tabular-nums'
           : 'font-display text-xl font-black tracking-tight text-brand-black tabular-nums md:text-2xl'}
       >
-        {match.homeScore} - {match.awayScore}
+        {compact
+          ? `${match.homeScore}–${match.awayScore}`
+          : `${match.homeScore} - ${match.awayScore}`}
       </span>
     );
   }
@@ -37,7 +39,7 @@ const renderScore = (match: Match, compact = false) => {
   return (
     <span
       className={compact
-        ? 'font-sans text-[10px] font-medium uppercase tracking-widest text-neutral-300'
+        ? 'font-display text-[10px] font-medium uppercase tracking-widest text-neutral-300'
         : 'font-display text-xs font-medium uppercase tracking-widest text-neutral-300'}
     >
       VS
@@ -150,11 +152,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
                     <div className="flex min-w-[42px] items-center justify-center text-center">
                       {hasScore ? (
-                        <span className="font-sans text-[15px] font-bold tracking-tight text-brand-black tabular-nums">
-                          {match.homeScore} - {match.awayScore}
+                        <span className="font-display text-[16px] font-black leading-none tracking-tight text-brand-black tabular-nums">
+                          {match.homeScore}–{match.awayScore}
                         </span>
                       ) : (
-                        <span className="font-sans text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">
+                        <span className="font-display text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">
                           VS
                         </span>
                       )}

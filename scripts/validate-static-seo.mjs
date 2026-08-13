@@ -15,14 +15,20 @@ const readJson = async (seasonId, fileName) =>
 const checkHtml = async (
   route,
   expectedText,
-  { canonicalRoute = route, requireStaticBody = true, schemaType } = {},
+  {
+    canonicalRoute = route,
+    requireStaticBody = true,
+    requireSchema = true,
+    schemaType,
+  } = {},
 ) => {
   const html = await fs.readFile(routeFile(route), 'utf8');
   const canonicalUrl = `${SITE_URL}${canonicalRoute === '/' ? '/' : canonicalRoute}`;
   if (!html.includes(`<link rel="canonical" href="${canonicalUrl}"`)) {
     fail(`${route}: canonical URL missing or incorrect (expected ${canonicalRoute})`);
   }
-  if (!html.includes('data-static-seo')) fail(`${route}: JSON-LD missing`);
+  if (requireSchema && !html.includes('data-static-seo')) fail(`${route}: JSON-LD missing`);
+  if (!requireSchema && html.includes('data-static-seo')) fail(`${route}: unexpected JSON-LD on compatibility route`);
   if (schemaType && !html.includes(`"@type":"${schemaType}"`)) {
     fail(`${route}: ${schemaType} schema missing`);
   }
@@ -32,6 +38,7 @@ const checkHtml = async (
     fail(`${route}: static readable body missing`);
   }
   if (html.includes('%BASE_URL%')) fail(`${route}: unresolved Vite placeholder`);
+  return html;
 };
 
 for (const [route, entry] of Object.entries(PAGE_SEO)) {
@@ -81,13 +88,16 @@ for (const seasonId of SEASON_IDS) {
   for (const match of matches) {
     if (matchIds.has(match.id)) fail(`duplicate match id across seasons: ${match.id}`);
     matchIds.add(match.id);
-    const home = teams.find((team) => team.id === match.homeTeamId);
-    const away = teams.find((team) => team.id === match.awayTeamId);
-    if (!home || !away) continue;
-    await checkHtml(`/matches/${match.id}`, `${home.name}`, { schemaType: 'SportsEvent' });
-    const matchHtml = await fs.readFile(routeFile(`/matches/${match.id}`), 'utf8');
-    if (!matchHtml.includes(`第 ${match.round} 輪數據洞察`)) {
-      fail(`/matches/${match.id}: round insights missing from static body`);
+    const route = `/matches/${match.id}`;
+    const html = await checkHtml(route, '賽程與結果', {
+      canonicalRoute: '/schedule',
+      requireSchema: false,
+    });
+    if (!html.includes('name="robots" content="noindex,follow"')) {
+      fail(`${route}: compatibility route must be noindex,follow`);
+    }
+    if (html.includes('SportsEvent') || html.includes('數據洞察')) {
+      fail(`${route}: standalone match SEO content must not be restored`);
     }
   }
 }
@@ -108,8 +118,8 @@ for (const id of playerCanonicalIds) {
   }
 }
 for (const id of matchIds) {
-  if (!sitemap.includes(`<loc>${SITE_URL}/matches/${id}</loc>`)) {
-    fail(`sitemap.xml: match ${id} missing`);
+  if (sitemap.includes(`<loc>${SITE_URL}/matches/${id}</loc>`)) {
+    fail(`sitemap.xml: compatibility match ${id} must not be indexed`);
   }
 }
 

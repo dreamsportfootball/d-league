@@ -12,8 +12,8 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
+import { getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -159,7 +159,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
-  const teamProfilesEnabled = activeSeason.id === CURRENT_SEASON_ID;
   const matchInfoText = buildMatchInfoText({
     match,
     seasonShortName: activeSeason.shortName,
@@ -220,16 +219,14 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
       </>
     );
 
-    return teamProfilesEnabled ? (
+    return (
       <Link
-        to={`/teams/${team.id}?season=${activeSeason.id}`}
+        to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
         onClick={onClose}
         className="group flex min-w-0 flex-col items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
       >
         {content}
       </Link>
-    ) : (
-      <div className="group flex min-w-0 flex-col items-center">{content}</div>
     );
   };
 

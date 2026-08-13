@@ -29,9 +29,7 @@ const renderScore = (match: Match, compact = false) => {
           ? 'font-display text-[18px] font-black leading-none tracking-tight text-brand-black tabular-nums'
           : 'font-display text-xl font-black tracking-tight text-brand-black tabular-nums md:text-2xl'}
       >
-        {compact
-          ? `${match.homeScore}–${match.awayScore}`
-          : `${match.homeScore} - ${match.awayScore}`}
+        {`${match.homeScore} - ${match.awayScore}`}
       </span>
     );
   }
@@ -153,7 +151,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     <div className="flex min-w-[42px] items-center justify-center text-center">
                       {hasScore ? (
                         <span className="font-display text-[16px] font-black leading-none tracking-tight text-brand-black tabular-nums">
-                          {match.homeScore}–{match.awayScore}
+                          {match.homeScore} - {match.awayScore}
                         </span>
                       ) : (
                         <span className="font-display text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">

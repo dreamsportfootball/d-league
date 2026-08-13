@@ -39,6 +39,11 @@ const isResolvedMatch = (match: Match): boolean =>
   match.resultType === 'VOID' ||
   (match.homeScore !== null && match.awayScore !== null);
 
+const formatLeagueName = (leagueId: string): string => {
+  const match = /^L(\d+)$/i.exec(leagueId);
+  return match ? `LEAGUE ${match[1]}` : leagueId;
+};
+
 const isSafeExternalUrl = (value: string): boolean => {
   try {
     const url = new URL(value);
@@ -199,7 +204,11 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-bold text-neutral-400">共 {teamMatches.length} 場</span></div>
-          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
+          {teamMatches.length > 0 ? (
+            <div className="[&_.font-bold]:font-black [&_.font-display]:font-sans">
+              <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)} />
+            </div>
+          ) : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
         <section>
@@ -211,11 +220,9 @@ const TeamPage: React.FC = () => {
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-black text-brand-black">歷年 D LEAGUE</h2></div>
           <div className="divide-y divide-neutral-100">{history.map((record) => {
             const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-            return <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-black text-brand-black">{record.season.shortName}</span><span className="font-bold text-neutral-500">{record.team.leagueId}</span><span className="text-center font-black text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-black text-brand-blue">{row?.points ?? 0} 分</span></Link>;
+            return <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-black text-brand-black">{record.season.shortName}</span><span className="font-bold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-black text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-black text-brand-blue">{row?.points ?? 0} 分</span></Link>;
           })}</div>
         </section>
-
-        <div className="border-t border-neutral-200 pt-8 text-xs leading-6 text-neutral-400">永久球隊識別碼：<span className="font-mono">{identityId}</span></div>
       </main>
     </div>
   );

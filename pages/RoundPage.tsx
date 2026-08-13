@@ -1,9 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import MatchDialog from '../components/MatchDialog';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
+import { SeasonContext } from '../contexts/SeasonContext';
+import { useSeason } from '../hooks/useSeason';
 import { getSeasonData } from '../services/seasonDataJson';
 import type { LeagueId } from '../types/season';
 
@@ -12,7 +15,8 @@ const isLeagueId = (value: string | undefined): value is LeagueId =>
 
 const RoundPage: React.FC = () => {
   const params = useParams<{ seasonId: string; league: string; round: string }>();
-  const navigate = useNavigate();
+  const { availableSeasons } = useSeason();
+  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const seasonId = isSeasonId(params.seasonId) ? params.seasonId : undefined;
   const league = isLeagueId(params.league) ? params.league : undefined;
   const round = params.round ? decodeURIComponent(params.round) : '';
@@ -46,6 +50,13 @@ const RoundPage: React.FC = () => {
   }
 
   const { season, data, matches } = payload;
+  const dialogSeasonContext = {
+    activeSeasonId: seasonId,
+    activeSeason: season,
+    seasonData: data,
+    availableSeasons,
+    setActiveSeason: () => {},
+  };
 
   return (
     <div className="min-h-screen bg-white pb-24">
@@ -66,7 +77,7 @@ const RoundPage: React.FC = () => {
             {season.shortName} {league} 第 {round} 輪
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-neutral-500">
-            本輪官方賽程與賽果，點擊比賽可查看原本的比賽詳情卡片。
+            本輪官方賽程與賽果，點擊比賽可直接查看比賽詳情卡片。
           </p>
         </div>
       </section>
@@ -83,7 +94,7 @@ const RoundPage: React.FC = () => {
             matches={matches}
             teamMap={data.teamMap}
             leagueFilter="ALL"
-            onMatchClick={(matchId) => navigate(`/schedule?season=${seasonId}&match=${matchId}`)}
+            onMatchClick={setSelectedMatchId}
           />
         </section>
 
@@ -102,6 +113,17 @@ const RoundPage: React.FC = () => {
           </Link>
         </section>
       </main>
+
+      {selectedMatchId && (
+        <SeasonContext.Provider value={dialogSeasonContext}>
+          <MatchDialog
+            matchId={selectedMatchId}
+            onClose={() => setSelectedMatchId(null)}
+            onSelectMatch={setSelectedMatchId}
+            navigationMatchIds={matches.map((match) => match.id)}
+          />
+        </SeasonContext.Provider>
+      )}
     </div>
   );
 };

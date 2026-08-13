@@ -10,16 +10,9 @@ export interface TeamRankPoint {
 interface TeamRankChartProps {
   points: TeamRankPoint[];
   teamCount: number;
-  accentColor?: string;
-  secondaryColor?: string;
 }
 
-const TeamRankChart: React.FC<TeamRankChartProps> = ({
-  points,
-  teamCount,
-  accentColor,
-  secondaryColor,
-}) => {
+const TeamRankChart: React.FC<TeamRankChartProps> = ({ points, teamCount }) => {
   const [activePointIndex, setActivePointIndex] = useState<number | null>(null);
 
   if (points.length === 0 || teamCount <= 0) return null;
@@ -86,12 +79,12 @@ const TeamRankChart: React.FC<TeamRankChartProps> = ({
             <polyline
               points={linePoints}
               fill="none"
-              stroke={accentColor ?? 'currentColor'}
+              stroke="currentColor"
               strokeWidth="0.9"
               vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={accentColor ? undefined : 'text-brand-blue'}
+              className="text-brand-blue"
             />
           )}
         </svg>
@@ -126,13 +119,7 @@ const TeamRankChart: React.FC<TeamRankChartProps> = ({
                   className="absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
                   style={{ left: `${x}%`, top: `${y}%` }}
                 >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full border-[3px] bg-white"
-                    style={{
-                      borderColor: accentColor,
-                      backgroundColor: isActive && secondaryColor ? secondaryColor : '#ffffff',
-                    }}
-                  />
+                  <span className="h-2.5 w-2.5 rounded-full border-[3px] border-brand-blue bg-white" />
                   <span className="sr-only">查看第 {point.round} 輪排名</span>
                   {isActive && (
                     <span
@@ -140,10 +127,7 @@ const TeamRankChart: React.FC<TeamRankChartProps> = ({
                         tooltipBelow ? 'top-[calc(100%+6px)]' : 'bottom-[calc(100%+6px)]'
                       }`}
                     >
-                      <span
-                        className="block text-[10px] font-black tracking-[0.12em]"
-                        style={accentColor ? { color: accentColor } : undefined}
-                      >
+                      <span className="block text-[10px] font-black tracking-[0.12em] text-brand-blue">
                         第 {point.round} 輪
                       </span>
                       <span className="mt-1 block text-xs font-bold text-brand-black">
@@ -157,8 +141,8 @@ const TeamRankChart: React.FC<TeamRankChartProps> = ({
                 </button>
               ) : (
                 <span
-                  className="pointer-events-none absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] bg-white"
-                  style={{ left: `${x}%`, top: `${y}%`, borderColor: accentColor }}
+                  className="pointer-events-none absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-brand-blue bg-white"
+                  style={{ left: `${x}%`, top: `${y}%` }}
                   aria-hidden="true"
                 />
               )}

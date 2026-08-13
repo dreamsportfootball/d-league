@@ -478,6 +478,8 @@ const PlayerPage: React.FC = () => {
                       key={`${record.seasonId}-${record.match.id}`}
                       type="button"
                       onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                      data-analytics-event="match_open"
+                      data-analytics-label={record.match.id}
                       className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -544,6 +546,8 @@ const PlayerPage: React.FC = () => {
                         key={`${record.seasonId}-${record.match.id}`}
                         type="button"
                         onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                        data-analytics-event="match_open"
+                        data-analytics-label={record.match.id}
                         className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                       >
                         <span className="text-xs font-semibold tabular-nums text-neutral-400">

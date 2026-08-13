@@ -77,14 +77,23 @@ const RegistrationPage: React.FC = () => {
     ? `每隊 ${registrationContent.minimumPlayers}－${registrationContent.maximumPlayers} 人`
     : '依競賽規程公告';
 
+  const quickLinks = [
+    { id: 'division', label: participantsPublished ? '正式分級' : resultsPublished ? '錄取名單' : '報名進度' },
+    { id: 'overview', label: '重要資訊' },
+    { id: 'process', label: announcementPublished ? '後續流程' : '報名流程' },
+    { id: 'eligibility', label: '登錄資格' },
+    { id: 'promotion', label: '升降級' },
+    ...(registrationContent.faqItems.length > 0 ? [{ id: 'faq', label: '常見問題' }] : []),
+  ];
+
   return (
     <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="border-b border-neutral-200 pb-10 md:pb-14">
-          <span className="mb-3 block text-xs font-black uppercase tracking-[0.3em] text-brand-blue">
+          <span className="mb-3 block text-xs font-bold uppercase tracking-[0.3em] text-brand-blue">
             {participantsPublished ? '參賽隊伍公告' : resultsPublished ? '錄取公告' : '賽季報名'}
           </span>
-          <h1 className="font-display text-4xl font-black uppercase leading-tight tracking-tight text-brand-black md:text-7xl">
+          <h1 className="font-display text-4xl font-extrabold uppercase leading-tight tracking-tight text-brand-black md:text-7xl">
             {activeSeason.displayName}
             <span className="block text-brand-blue">
               {participantsPublished ? '正式分級' : resultsPublished ? '錄取名單' : '報名詳情'}
@@ -93,7 +102,7 @@ const RegistrationPage: React.FC = () => {
           <p className="mt-6 max-w-3xl text-sm font-medium leading-7 text-neutral-600 md:text-base">
             {registrationContent.intro}
           </p>
-          <span className={`mt-6 inline-flex px-4 py-2 text-xs font-black ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-700'}`}>
+          <span className={`mt-6 inline-flex px-4 py-2 text-xs font-bold ${registrationOpen ? 'bg-brand-accent text-brand-black' : 'bg-neutral-200 text-neutral-700'}`}>
             {participantsPublished
               ? `分級公布於 ${formatDate(announcementDate)}`
               : resultsPublished
@@ -104,31 +113,47 @@ const RegistrationPage: React.FC = () => {
           </span>
         </div>
 
-        {seasonParticipants ? (
-          <SeasonParticipants participants={seasonParticipants} className="mt-8 md:mt-10" />
-        ) : registrationResults ? (
-          <RegistrationResults results={registrationResults} className="mt-8 md:mt-10" />
-        ) : (
-          <RegistrationProgress className="mt-8" />
-        )}
+        <nav aria-label="報名頁快速導覽" className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto border-b border-neutral-200 px-4 py-4 md:mx-0 md:flex-wrap md:px-0">
+          {quickLinks.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-neutral-200 bg-neutral-50 px-4 text-xs font-bold text-neutral-600 transition-colors hover:border-brand-blue hover:bg-white hover:text-brand-blue"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <section id="division" className="scroll-mt-24">
+          {seasonParticipants ? (
+            <SeasonParticipants participants={seasonParticipants} className="mt-8 md:mt-10" />
+          ) : registrationResults ? (
+            <RegistrationResults results={registrationResults} className="mt-8 md:mt-10" />
+          ) : (
+            <RegistrationProgress className="mt-8" />
+          )}
+        </section>
 
         <div className="grid grid-cols-1 gap-12 py-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
-            <div className="grid grid-cols-1 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-2">
-              <InfoBlock label="報名期間" value={`${formatDate(activeSeason.registrationStart)}－${formatDate(activeSeason.registrationEnd)}`} />
-              <InfoBlock label="比賽地點" value={activeSeason.venue} />
-              <InfoBlock label="賽事級別" value={activeSeason.enabledLeagues.join('／')} />
-              <InfoBlock label={participantsPublished ? '正式隊數' : '預計隊數'} value={teamCountLabel} />
-              <InfoBlock label="賽制" value={formatLabel} />
-              <InfoBlock label="每隊場數" value={matchCountLabel} />
-              <InfoBlock label="球員年齡" value={ageLabel} />
-              <InfoBlock label="球員人數" value={playerCountLabel} />
-            </div>
+            <section id="overview" className="scroll-mt-24">
+              <div className="grid grid-cols-1 gap-px overflow-hidden border border-neutral-200 bg-neutral-200 sm:grid-cols-2">
+                <InfoBlock label="報名期間" value={`${formatDate(activeSeason.registrationStart)}－${formatDate(activeSeason.registrationEnd)}`} />
+                <InfoBlock label="比賽地點" value={activeSeason.venue} />
+                <InfoBlock label="賽事級別" value={activeSeason.enabledLeagues.join('／')} />
+                <InfoBlock label={participantsPublished ? '正式隊數' : '預計隊數'} value={teamCountLabel} />
+                <InfoBlock label="賽制" value={formatLabel} />
+                <InfoBlock label="每隊場數" value={matchCountLabel} />
+                <InfoBlock label="球員年齡" value={ageLabel} />
+                <InfoBlock label="球員人數" value={playerCountLabel} />
+              </div>
+            </section>
 
-            <section className="mt-12">
+            <section id="process" className="mt-12 scroll-mt-24">
               <div className="mb-6 flex items-center">
                 <ClipboardCheck className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
-                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
+                <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-brand-black md:text-3xl">
                   {announcementPublished ? '後續流程' : '報名流程'}
                 </h2>
               </div>
@@ -142,10 +167,10 @@ const RegistrationPage: React.FC = () => {
               </ol>
             </section>
 
-            <section className="mt-12">
+            <section id="eligibility" className="mt-12 scroll-mt-24">
               <div className="mb-6 flex items-center">
                 <UsersRound className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
-                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
+                <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-brand-black md:text-3xl">
                   登錄資格
                 </h2>
               </div>
@@ -160,10 +185,10 @@ const RegistrationPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="mt-12">
+            <section id="promotion" className="mt-12 scroll-mt-24">
               <div className="mb-6 flex items-center">
                 <Trophy className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
-                <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
+                <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-brand-black md:text-3xl">
                   升降級制度
                 </h2>
               </div>
@@ -173,10 +198,10 @@ const RegistrationPage: React.FC = () => {
                   <div key={league.id} className="border border-neutral-200 bg-neutral-50 p-5 md:p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="font-display text-2xl font-black text-brand-black">{league.displayName}</p>
+                        <p className="font-display text-2xl font-extrabold text-brand-black">{league.displayName}</p>
                         <p className="mt-2 text-sm font-medium leading-6 text-neutral-600">{league.description}</p>
                       </div>
-                      <span className="shrink-0 bg-brand-black px-3 py-1 text-xs font-black tracking-widest text-white">
+                      <span className="shrink-0 bg-brand-black px-3 py-1 text-xs font-bold tracking-widest text-white">
                         {league.shortName}
                       </span>
                     </div>
@@ -186,17 +211,17 @@ const RegistrationPage: React.FC = () => {
             </section>
 
             {registrationContent.faqItems.length > 0 && (
-              <section className="mt-12">
+              <section id="faq" className="mt-12 scroll-mt-24">
                 <div className="mb-6 flex items-center">
                   <CircleHelp className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" />
-                  <h2 className="font-display text-3xl font-black uppercase tracking-tight text-brand-black">
+                  <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-brand-black md:text-3xl">
                     常見問題
                   </h2>
                 </div>
                 <div className="divide-y divide-neutral-200 border-y border-neutral-200">
                   {registrationContent.faqItems.map((item) => (
                     <details key={item.question} className="group py-5">
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-black text-brand-black">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-brand-black">
                         {item.question}
                         <span className="text-xl font-medium text-brand-blue transition-transform group-open:rotate-45">＋</span>
                       </summary>
@@ -212,7 +237,7 @@ const RegistrationPage: React.FC = () => {
             <div className="sticky top-24 border border-neutral-200 bg-brand-black p-6 text-white md:p-8">
               <div className="mb-6 flex items-center">
                 <ShieldCheck className="mr-3 h-6 w-6 text-brand-accent" aria-hidden="true" />
-                <h2 className="font-display text-2xl font-black uppercase tracking-tight">
+                <h2 className="font-display text-2xl font-extrabold uppercase tracking-tight">
                   {participantsPublished ? '後續作業' : resultsPublished ? '參賽確認' : '審核與分級'}
                 </h2>
               </div>
@@ -234,7 +259,7 @@ const RegistrationPage: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-analytics-event="registration_click"
-                    className="inline-flex min-h-12 items-center justify-center bg-brand-accent px-6 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black"
+                    className="inline-flex min-h-12 items-center justify-center bg-brand-accent px-6 py-3 text-sm font-bold uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black"
                   >
                     立即報名
                     <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
@@ -247,7 +272,7 @@ const RegistrationPage: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     data-analytics-event="regulations_click"
-                    className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-black uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black"
+                    className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black"
                   >
                     <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
                     查看競賽規程
@@ -259,7 +284,7 @@ const RegistrationPage: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-analytics-event="instagram_click"
-                  className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-black uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black"
+                  className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black"
                 >
                   <Instagram className="mr-2 h-4 w-4" aria-hidden="true" />
                   聯絡主辦單位
@@ -275,7 +300,7 @@ const RegistrationPage: React.FC = () => {
 
 const InfoBlock: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="bg-white p-6 md:p-8">
-    <p className="text-xs font-black uppercase tracking-widest text-neutral-400">{label}</p>
+    <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">{label}</p>
     <p className="mt-2 font-display text-xl font-bold leading-7 text-brand-black">{value}</p>
   </div>
 );

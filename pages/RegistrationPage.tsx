@@ -80,7 +80,7 @@ const RegistrationPage: React.FC = () => {
   return (
     <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
-        <div className="border-b border-neutral-200 pb-10 md:pb-14">
+        <div className="pb-10 md:pb-14">
           <span className="mb-3 block text-xs font-bold uppercase tracking-[0.3em] text-brand-blue">
             {participantsPublished ? '參賽隊伍公告' : resultsPublished ? '錄取公告' : '賽季報名'}
           </span>

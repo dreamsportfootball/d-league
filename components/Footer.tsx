@@ -39,14 +39,11 @@ const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, chi
 
 const Footer: React.FC = () => {
   const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
-  const hasMobileRegistrationBar =
-    SHOW_REGISTRATION_NAV &&
-    Boolean(currentSeason.registrationFormUrl || currentSeason.regulationsUrl);
 
   return (
-    <footer className={`relative border-t border-neutral-900 bg-neutral-950 pt-12 text-white md:pb-5 md:pt-20 ${hasMobileRegistrationBar ? 'pb-24' : 'pb-2'}`}>
+    <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-6 pt-10 text-white md:pb-5 md:pt-20">
       <div className="container relative z-10 mx-auto px-4 md:px-6">
-        <div className="mb-8 grid grid-cols-1 gap-10 md:mb-20 md:grid-cols-12 lg:gap-16">
+        <div className="mb-6 grid grid-cols-1 gap-8 md:mb-20 md:grid-cols-12 md:gap-10 lg:gap-16">
           <div className="flex flex-col items-start md:col-span-5">
             <div className="mb-1 md:mb-2">
               <span className="border-l-4 border-brand-accent pl-3 font-display text-2xl font-black uppercase tracking-widest text-white">
@@ -54,17 +51,17 @@ const Footer: React.FC = () => {
               </span>
             </div>
 
-            <h2 className="mb-4 font-display text-3xl font-black uppercase leading-tight tracking-wider text-white [-webkit-text-stroke:.5px_currentColor] md:text-4xl md:[-webkit-text-stroke:0px]">
+            <h2 className="mb-3 font-display text-3xl font-extrabold uppercase leading-tight tracking-wider text-white [-webkit-text-stroke:.5px_currentColor] md:mb-4 md:text-4xl md:font-black md:[-webkit-text-stroke:0px]">
               台南夢達七人足球聯賽
             </h2>
 
-            <p className="mb-6 max-w-sm text-sm font-medium leading-relaxed text-neutral-500">
+            <p className="mb-5 max-w-sm text-sm font-medium leading-relaxed text-neutral-500 md:mb-6">
               我們致力建立一個
               <span className="whitespace-nowrap">能讓更多人能夠踢、願意踢、</span>
               <span className="whitespace-nowrap">享受踢的草根聯賽</span>
             </p>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 md:space-x-4">
               <SocialButton icon={<Instagram className="h-5 w-5" />} href="https://www.instagram.com/d.league_tw/" label="Instagram" />
               <SocialButton icon={<Youtube className="h-5 w-5" />} href="https://www.youtube.com/@DreamSportFootball" label="YouTube" />
               <SocialButton icon={<Facebook className="h-5 w-5" />} href="https://www.facebook.com/profile.php?id=61576222172219" label="Facebook" />
@@ -72,7 +69,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="md:col-span-3">
-            <h4 className="mb-4 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
+            <h4 className="mb-3 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
               聯賽資訊
             </h4>
             <ul className="space-y-0 text-sm font-medium text-neutral-500">
@@ -100,7 +97,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="md:col-span-4">
-            <h4 className="mb-4 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
+            <h4 className="mb-3 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">
               官方合作夥伴
             </h4>
             <div className="flex max-w-sm items-center justify-start">

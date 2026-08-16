@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useSeason } from '../../hooks/useSeason';
 import BrandStory from '../BrandStory';
 import NewsSection from '../NewsSection';
+import PhotoCarousel from '../PhotoCarousel';
 import RegistrationResults from '../RegistrationResults';
 import SeasonParticipants from '../SeasonParticipants';
 
@@ -99,6 +100,7 @@ const StatusHomeContent: React.FC<StatusHomeContentProps> = ({ status }) => {
       <section className="container mx-auto px-4 py-12 md:px-6 md:py-16">
         <NewsSection />
       </section>
+      <PhotoCarousel />
       <BrandStory />
     </>
   );

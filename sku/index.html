@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#f6f7f9" />
+<title>Dreamsport SKU 查詢</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#111827;--muted:#667085;--line:#e4e7ec;--accent:#111827;--good:#067647;--warn:#b54708;--bad:#b42318}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.app{max-width:760px;margin:0 auto;padding:14px}.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 14px}.head h1{font-size:21px;margin:0}.sub{font-size:12px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}.card-hd{padding:12px 14px;font-weight:800;border-bottom:1px solid var(--line);background:#fcfcfd}.card-bd{padding:13px 14px}
+.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.grow{flex:1}.stack{display:grid;gap:9px}.label{font-size:12px;font-weight:700;color:#344054;margin-bottom:5px}.hint{font-size:12px;color:var(--muted);line-height:1.45}
+input[type=text],input[type=number]{width:100%;font-size:16px;border:1px solid #d0d5dd;border-radius:10px;padding:11px 12px;background:#fff;color:#111827;outline:none}input:focus{border-color:#667085;box-shadow:0 0 0 3px rgba(102,112,133,.12)}
+button,.filebtn{appearance:none;border:1px solid #d0d5dd;background:#fff;color:#111827;font-weight:750;border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer}.primary{background:#111827;color:#fff;border-color:#111827}.danger{color:var(--bad)}.file{display:none}
+.status{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.pill{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:11px;background:#fff;color:#475467}.pill.good{color:var(--good);border-color:#abefc6;background:#ecfdf3}.pill.warn{color:var(--warn);border-color:#fedf89;background:#fffaeb}
+.product h2{font-size:18px;line-height:1.3;margin:0 0 6px}.meta{display:flex;gap:7px;flex-wrap:wrap;font-size:12px;color:#475467}.chip{border:1px solid var(--line);border-radius:999px;padding:3px 7px;background:#f9fafb}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.kv{border:1px solid var(--line);border-radius:10px;padding:9px 10px}.kv .k{font-size:11px;color:var(--muted);margin-bottom:3px}.kv .v{font-size:15px;font-weight:800}
+.size-card{border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:9px}.size-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.size{font-size:18px;font-weight:900}.source{font-size:12px;font-weight:800}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}.cell{background:#f9fafb;border-radius:8px;padding:7px 8px}.cell .k{font-size:10px;color:var(--muted)}.cell .v{font-size:13px;font-weight:750;margin-top:2px;overflow-wrap:anywhere}.decision{margin-top:8px;padding:7px 9px;border-radius:8px;background:#f2f4f7;font-size:12px;font-weight:700}.decision.good{color:var(--good);background:#ecfdf3}.decision.warn{color:var(--warn);background:#fffaeb}
+a{color:#175cd3;text-decoration:none;font-weight:700}details{border-top:1px solid var(--line)}summary{padding:12px 14px;font-weight:800;cursor:pointer}.source-row{padding:10px 0;border-bottom:1px solid #f0f1f3}.source-row:last-child{border-bottom:0}.empty{padding:20px 10px;text-align:center;color:var(--muted)}.hidden{display:none!important}
+@media(max-width:420px){.app{padding:10px}.summary,.grid{grid-template-columns:1fr 1fr}.head h1{font-size:19px}.card{border-radius:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="head"><div><h1>Dreamsport SKU 查詢</h1><div class="sub">手機網址版｜讀取 MultiSite，可選 ES Export</div></div></div>
+
+  <div class="card">
+    <div class="card-hd">資料</div>
+    <div class="card-bd stack">
+      <div class="row">
+        <label class="filebtn primary grow">選擇 MultiSite Excel<input id="multiFile" class="file" type="file" accept=".xlsx,.xls,.xlsm" /></label>
+        <label class="filebtn grow">ES Export（可選）<input id="esFile" class="file" type="file" accept=".xlsx,.xls,.xlsm,.csv" /></label>
+      </div>
+      <div class="row">
+        <div class="grow"><div class="label">目前日圓 → 台幣匯率（真實價用）</div><input id="fx" type="number" inputmode="decimal" step="0.0001" min="0" placeholder="例如 0.2015" /></div>
+      </div>
+      <div id="dataStatus" class="status"><span class="pill warn">尚未載入 MultiSite</span></div>
+      <div class="row"><button id="clearCache" class="danger">清除手機已存資料</button></div>
+      <div class="hint">Excel 只在你的手機瀏覽器內解析，不會上傳到網站。載入後會把解析資料存在這台手機瀏覽器；有新爬蟲時再選新的 MultiSite 覆蓋即可。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-bd">
+      <div class="label">SKU</div>
+      <div class="row"><input id="sku" class="grow" type="text" autocomplete="off" autocapitalize="characters" placeholder="例如 IO8227-900" /><button id="search" class="primary">查詢</button></div>
+    </div>
+  </div>
+
+  <div id="result"></div>
+</div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const H=v=>v==null?'':String(v).trim();
+const N=v=>{const n=Number(String(v==null?'':v).replace(/[^\d.\-]/g,''));return Number.isFinite(n)?n:0};
+const money=n=>N(n)>0?'$'+Math.round(N(n)).toLocaleString('zh-TW'):'—';
+const jpy=n=>N(n)>0?'¥'+Math.round(N(n)).toLocaleString('zh-TW'):'—';
+const esc=s=>String(s==null?'':s).replace(/[&<>\"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const lowerRow=r=>{const o={};Object.keys(r||{}).forEach(k=>o[String(k).trim().toLowerCase()]=r[k]);return o};
+const pick=(r,names)=>{for(const n of names){const v=r[n]!==undefined?r[n]:r[String(n).toLowerCase()];if(v!==undefined&&H(v)!=='')return v}return ''};
+const C={sku:['sku','貨號','商品編號','型號','料號','編號'],title:['title','英文名','商品名','商品名稱','品名'],price:['我賣的售價','price','$','價格','售價','販売価格','現時售價'],hp:['hp','希望價格','メーカー希望価格','定価','原價','compare at price'],point:['point','點數','ポイント'],size:['尺寸','size','sizes'],category:['分類','category','商品類型'],adult:['成人/小童','成人小童','adult_child','adult/child'],source:['最低來源','來源網站','best_site','site'],url:['商品網址','url']};
+const E={handle:['handle','商品handle','網址別名','url handle'],title:['title','商品名稱','品名','product name','name'],vendor:['vendor','供應商','品牌','廠商','brand'],published:['published','是否發布','上架','published?'],enabled:['enabled','啟用','variant enabled','是否啟用','active'],price:['price','售價','價格','price (twd)','sale price'],compare:['compare at price','原價','compare-at-price','list price','msrp'],size:['option1 value','選項1 值','變體1 值','規格值','option value'],sku:['sku','貨號','商品編號','型號','料號','product sku']};
+function normSku(v){return H(v).toUpperCase().replace(/[\s\u3000_\-‐‑‒–—―]+/g,'')}
+function normSize(v){let s=H(v).replace(/cm$/i,'').trim();const n=Number(s);return Number.isFinite(n)&&/^\d+(?:\.\d+)?$/.test(s)?String(n):s}
+function enabled(v){return ['true','1','yes','y','是','啟用','已上架','上架','active'].includes(H(v).toLowerCase())}
+function rowEnabled(r){const e=H(pick(r,E.enabled));if(e!=='')return enabled(e);const p=H(pick(r,E.published));return p===''?true:enabled(p)}
+function isKemari(site){return /^(kemari\s*87|kishispo)$/i.test(H(site).replace(/\s+/g,' '))}
+function children(title,cat,adult){return /小童|兒童|junior|kids|\bjr\b/i.test(`${title||''} ${cat||''} ${adult||''}`.replace(/kidsuper/ig,'kid_super'))}
+function glove(title,cat,sizes){const s=`${title||''} ${cat||''}`.toLowerCase();if(/手套|glove|keeper|goalkeeper/.test(s))return true;return sizes.length>0&&sizes.every(x=>{const n=parseFloat(x);return !isNaN(n)&&n>=3&&n<=13})}
+function flat(title,cat){return /平底|室內|indoor|futsal|\bin\b/i.test(`${title||''} ${cat||''}`)}
+function childPrice(jpyv,fx){const base=Math.round((N(jpyv)*N(fx)*1.10735+680)/10)*10;return base>0&&base<1500?base+190:base}
+function slashPrice(jpyv,fx,flags){const n=N(jpyv);if(!n)return 0;if(flags.child)return childPrice(n,fx);return Math.round((n/4.14+(flags.glove?650:(flags.flat?800:1000)))/10)*10}
+function realPrice(jpyv,fx,flags){const n=N(jpyv),f=N(fx);if(!(n>0&&f>0))return 0;const markup=flags.child?400:(flags.glove?650:800);return Math.round((n*f*1.015*0.99+280+85+markup)/10)*10}
+function decision(es,slash,real){if(es>0&&slash>0&&Math.abs(slash-es)<=300)return [es,'第1關：保留 ES'];if(es>0&&real>0&&Math.abs(real-es)<=100)return [es,'第2關：保留 ES'];if(slash>0&&real>0&&(slash-real)>=0&&(slash-real)<=400)return [slash,'第3關：用 /4.14'];if(slash>0&&slash<=7000)return [slash,'≤ $7,000 自動'];if(!es&&real>0)return [real,'無 ES：真實價'];if(!es&&slash>0)return [slash,'無 ES：/4.14'];return [0,'價格確認']}
+function modePrice(rows){const m=new Map();rows.filter(rowEnabled).forEach(r=>{const p=Math.round(N(pick(r,E.price)));if(p>0)m.set(p,(m.get(p)||0)+1)});const arr=[...m].sort((a,b)=>b[1]-a[1]||a[0]-b[0]);if(!arr.length)return {status:'none',price:0};const max=arr[0][1],top=arr.filter(x=>x[1]===max);return top.length===1?{status:'ok',price:top[0][0]}:{status:'tie',price:0,candidates:top.map(x=>x[0])}}
+function sourceCost(r){const p=N(r.price),pt=N(r.point);return isKemari(r.site)?Math.max(0,p-pt):p}
+const state={best:new Map(),sources:new Map(),es:new Map(),multiName:'',esName:''};
+function add(map,key,val){if(!key)return;if(!map.has(key))map.set(key,[]);map.get(key).push(val)}
+function multiItem(raw){const r=lowerRow(raw),site=H(pick(r,C.source)),price=N(pick(r,C.price)),point=N(pick(r,C.point));return {sku:H(pick(r,C.sku)),title:H(pick(r,C.title)),size:normSize(pick(r,C.size)),site,price,point,hp:N(pick(r,C.hp)),category:H(pick(r,C.category)),adult:H(pick(r,C.adult)),url:H(pick(r,C.url))}}
+function chooseRows(wb,names){for(const n of names){if(wb.SheetNames.includes(n))return XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:''})}return []}
+async function readWorkbook(file){return XLSX.read(await file.arrayBuffer(),{type:'array'})}
+function exportState(){return {best:[...state.best],sources:[...state.sources],es:[...state.es],multiName:state.multiName,esName:state.esName,ts:Date.now()}}
+function importState(o){state.best=new Map(o.best||[]);state.sources=new Map(o.sources||[]);state.es=new Map(o.es||[]);state.multiName=o.multiName||'';state.esName=o.esName||''}
+const DB='dreamsport_mobile_sku',STORE='cache',KEY='latest';
+function dbOpen(){return new Promise((res,rej)=>{const q=indexedDB.open(DB,1);q.onupgradeneeded=()=>q.result.createObjectStore(STORE);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function saveCache(){try{const db=await dbOpen();await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(exportState(),KEY);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn(e)}}
+async function loadCache(){try{const db=await dbOpen();const o=await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readonly');const q=tx.objectStore(STORE).get(KEY);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});db.close();if(o){importState(o);return true}}catch(e){console.warn(e)}return false}
+async function clearCache(){try{const db=await dbOpen();await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(KEY);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){}state.best.clear();state.sources.clear();state.es.clear();state.multiName='';state.esName='';renderStatus();$('result').innerHTML=''}
+async function loadMulti(file){const wb=await readWorkbook(file);const best=chooseRows(wb,['MultiSite_Best','正式差異_Best含刪除','Updata_HTML_Input']);const src=chooseRows(wb,['All_Sources_By_Size','正式差異_AllSources含刪除']);if(!best.length)throw new Error('找不到 MultiSite_Best / 正式差異_Best 工作表');state.best.clear();state.sources.clear();best.forEach(r=>{const x=multiItem(r);add(state.best,normSku(x.sku),x)});src.forEach(r=>{const x=multiItem(r);add(state.sources,normSku(x.sku),x)});state.multiName=file.name;await saveCache();renderStatus()}
+async function loadEs(file){let rows=[];if(/\.csv$/i.test(file.name)){const txt=await file.text();const wb=XLSX.read(txt,{type:'string'});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}else{const wb=await readWorkbook(file);rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}state.es.clear();rows.forEach(raw=>{const r=lowerRow(raw),sku=H(pick(r,E.sku));if(sku)add(state.es,normSku(sku),r)});state.esName=file.name;await saveCache();renderStatus()}
+function renderStatus(){const p=[];p.push(state.best.size?`<span class="pill good">MultiSite：${esc(state.multiName||'已載入')}｜${state.best.size.toLocaleString()} SKU</span>`:'<span class="pill warn">尚未載入 MultiSite</span>');if(state.es.size)p.push(`<span class="pill good">ES：${esc(state.esName||'已載入')}</span>`);$('dataStatus').innerHTML=p.join('')}
+function sortSizes(a){return [...new Set(a.filter(Boolean))].sort((x,y)=>{const nx=Number(x),ny=Number(y);return Number.isFinite(nx)&&Number.isFinite(ny)?nx-ny:String(x).localeCompare(String(y),'zh-Hant',{numeric:true})})}
+function esVariants(rows){return (rows||[]).map(r=>({size:normSize(pick(r,E.size)),price:N(pick(r,E.price)),enabled:rowEnabled(r)})).sort((a,b)=>N(a.size)-N(b.size))}
+function search(){const raw=H($('sku').value),key=normSku(raw);if(!raw)return;$('sku').value=raw;const best=state.best.get(key)||[],sources=state.sources.get(key)||[],esRows=state.es.get(key)||[];if(!best.length&&!sources.length&&!esRows.length){$('result').innerHTML=`<div class="card"><div class="empty">查無 <b>${esc(raw)}</b><br><span class="hint">確認已載入最新 MultiSite，SKU 可忽略大小寫、空格與連字號。</span></div></div>`;return}
+const title=(best[0]||sources[0]||{}).title||raw,sizes=sortSizes(best.map(x=>x.size)),ev=esVariants(esRows),basis=modePrice(esRows);const fx=N($('fx').value);const f={child:children(title,best[0]?.category,best[0]?.adult),glove:glove(title,best[0]?.category,sizes),flat:flat(title,best[0]?.category)};const type=f.child?'小童':(f.glove?'手套':(f.flat?'平底/室內':'成人鞋'));
+let html=`<div class="card product"><div class="card-bd"><h2>${esc(title)}</h2><div class="meta"><span class="chip">SKU ${esc(raw)}</span><span class="chip">${esc(type)}</span></div><div class="summary"><div class="kv"><div class="k">ES 基準價</div><div class="v">${basis.status==='tie'?'並列':money(basis.price)}</div></div><div class="kv"><div class="k">可購尺寸</div><div class="v">${sizes.length?sizes.length:'—'}</div></div></div></div></div>`;
+if(best.length){html+=`<div class="card"><div class="card-hd">目前最低來源 / 尺寸</div><div class="card-bd">`;const unique=[];const seen=new Set();best.forEach(r=>{const k=[r.size,r.site,r.price,r.point].join('|');if(!seen.has(k)){seen.add(k);unique.push(r)}});unique.sort((a,b)=>N(a.size)-N(b.size));for(const r of unique){const sl=slashPrice(r.price,fx,f),real=realPrice(r.price,fx,f),d=decision(basis.status==='ok'?basis.price:0,sl,real),esv=ev.find(x=>normSize(x.size)===normSize(r.size));html+=`<div class="size-card"><div class="size-top"><div class="size">${esc(r.size||'—')}</div><div class="source">${esc(r.site||'—')}</div></div><div class="grid"><div class="cell"><div class="k">售價 JPY</div><div class="v">${jpy(r.price)}</div></div><div class="cell"><div class="k">點數</div><div class="v">${isKemari(r.site)?jpy(r.point):'—'}</div></div><div class="cell"><div class="k">比較成本 JPY</div><div class="v">${jpy(sourceCost(r))}</div></div><div class="cell"><div class="k">ES 尺寸售價</div><div class="v">${esv?money(esv.price):'—'}</div></div><div class="cell"><div class="k">/4.14 定價</div><div class="v">${money(sl)}</div></div><div class="cell"><div class="k">真實價</div><div class="v">${fx?money(real):'請填匯率'}</div></div></div><div class="decision ${d[1].includes('確認')?'warn':'good'}">${esc(d[1])}${d[0]>0?' → '+money(d[0]):''}</div>${r.url?`<div style="margin-top:8px"><a href="${esc(r.url)}" target="_blank" rel="noopener">開啟商品頁</a></div>`:''}</div>`}html+='</div></div>'}
+if(esRows.length){html+=`<div class="card"><div class="card-hd">ES Variant</div><div class="card-bd">${ev.map(x=>`<div class="source-row"><b>${esc(x.size||'—')}</b>　${money(x.price)}　<span style="color:${x.enabled?'var(--good)':'var(--bad)'}">${x.enabled?'開啟':'關閉'}</span></div>`).join('')}</div></div>`}
+if(sources.length){const group={};sources.forEach(r=>(group[r.size]||(group[r.size]=[])).push(r));html+=`<div class="card"><details><summary>所有網站來源（${sources.length}）</summary><div class="card-bd">${Object.keys(group).sort((a,b)=>N(a)-N(b)).map(sz=>`<div class="source-row"><div style="font-weight:900;margin-bottom:6px">尺寸 ${esc(sz)}</div>${group[sz].map(r=>`<div style="font-size:13px;line-height:1.7"><b>${esc(r.site||'—')}</b>　${jpy(r.price)}${isKemari(r.site)&&r.point?'　點數 '+jpy(r.point):''}${r.url?`　<a href="${esc(r.url)}" target="_blank" rel="noopener">商品頁</a>`:''}</div>`).join('')}</div>`).join('')}</div></details></div>`}
+$('result').innerHTML=html;window.scrollTo({top:$('result').offsetTop-8,behavior:'smooth'})}
+$('multiFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{await loadMulti(f);search()}catch(err){alert('MultiSite 讀取失敗：'+err.message)}});
+$('esFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{await loadEs(f);search()}catch(err){alert('ES 讀取失敗：'+err.message)}});
+$('search').addEventListener('click',search);$('sku').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();search()}});
+$('fx').value=localStorage.getItem('ds_mobile_fx')||'';$('fx').addEventListener('change',()=>{localStorage.setItem('ds_mobile_fx',$('fx').value);if(H($('sku').value))search()});
+$('clearCache').addEventListener('click',async()=>{if(confirm('清除這台手機已儲存的 MultiSite / ES 資料？'))await clearCache()});
+(async()=>{if(!window.XLSX){$('dataStatus').innerHTML='<span class="pill warn">SheetJS 載入失敗，請確認網路</span>';return}await loadCache();renderStatus()})();
+})();
+</script>
+</body>
+</html>

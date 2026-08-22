@@ -11,8 +11,8 @@ export interface PlayerProfile {
   name: string;
   englishName?: string;
   number: number;
-  gender: string;
-  nationality: string;
-  age: number;
+  gender?: string;
+  nationality?: string;
+  age?: number;
   registrations?: PlayerRegistration[];
 }

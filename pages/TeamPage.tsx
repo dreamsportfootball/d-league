@@ -33,6 +33,7 @@ interface RoundBucket {
 interface TeamSocialLinkItem {
   platform: keyof TeamSocialLinks;
   label: string;
+  displayLabel: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -56,22 +57,69 @@ const isSafeExternalUrl = (value: string): boolean => {
   }
 };
 
+const getInstagramHandle = (href: string): string => {
+  try {
+    const url = new URL(href);
+    const handle = url.pathname.split('/').filter(Boolean)[0];
+    return handle ? `@${handle}` : 'Instagram';
+  } catch {
+    return 'Instagram';
+  }
+};
+
+const isLightColor = (hex: string): boolean => {
+  const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!match) return false;
+
+  const value = match[1];
+  const channels = [0, 2, 4].map((offset) => parseInt(value.slice(offset, offset + 2), 16) / 255);
+  const linear = channels.map((channel) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  const luminance = 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  return luminance > 0.52;
+};
+
 const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
   const links = team.socialLinks;
   if (!links) return [];
 
   const candidates: Array<TeamSocialLinkItem | null> = [
     links.instagram && isSafeExternalUrl(links.instagram)
-      ? { platform: 'instagram', label: 'Instagram', href: links.instagram, icon: <Instagram className="h-4 w-4" /> }
+      ? {
+          platform: 'instagram',
+          label: 'Instagram',
+          displayLabel: getInstagramHandle(links.instagram),
+          href: links.instagram,
+          icon: <Instagram className="h-4 w-4" />,
+        }
       : null,
     links.facebook && isSafeExternalUrl(links.facebook)
-      ? { platform: 'facebook', label: 'Facebook', href: links.facebook, icon: <Facebook className="h-4 w-4" /> }
+      ? {
+          platform: 'facebook',
+          label: 'Facebook',
+          displayLabel: 'Facebook',
+          href: links.facebook,
+          icon: <Facebook className="h-4 w-4" />,
+        }
       : null,
     links.youtube && isSafeExternalUrl(links.youtube)
-      ? { platform: 'youtube', label: 'YouTube', href: links.youtube, icon: <Youtube className="h-4 w-4" /> }
+      ? {
+          platform: 'youtube',
+          label: 'YouTube',
+          displayLabel: 'YouTube',
+          href: links.youtube,
+          icon: <Youtube className="h-4 w-4" />,
+        }
       : null,
     links.website && isSafeExternalUrl(links.website)
-      ? { platform: 'website', label: '官方網站', href: links.website, icon: <Globe2 className="h-4 w-4" /> }
+      ? {
+          platform: 'website',
+          label: '官方網站',
+          displayLabel: '官方網站',
+          href: links.website,
+          icon: <Globe2 className="h-4 w-4" />,
+        }
       : null,
   ];
 
@@ -109,6 +157,17 @@ const TeamPage: React.FC = () => {
   const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
     ? team.shortName.trim()
     : '';
+  const heroUsesDarkText = isLightColor(team.primaryColor);
+  const heroTextClass = heroUsesDarkText ? 'text-brand-black' : 'text-white';
+  const heroMutedClass = heroUsesDarkText ? 'text-black/60' : 'text-white/70';
+  const heroBackClass = heroUsesDarkText
+    ? 'text-black/65 hover:text-brand-black'
+    : 'text-white/75 hover:text-white';
+  const heroSocialClass = heroUsesDarkText
+    ? 'border-black/20 bg-white/25 text-brand-black hover:bg-black/10'
+    : 'border-white/25 bg-black/10 text-white hover:bg-white/10';
+  const heroSwatchBorderClass = heroUsesDarkText ? 'border-black/20' : 'border-white/40';
+
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -180,81 +239,195 @@ const TeamPage: React.FC = () => {
     });
   })();
 
+  const renderSocialLinks = (mobile: boolean) => (
+    <div className={mobile ? 'mt-5 flex flex-wrap gap-2 sm:hidden' : 'hidden flex-wrap justify-end gap-2 sm:flex'}>
+      {socialLinks.map((link) => (
+        <a
+          key={link.platform}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`前往 ${team.name} ${link.label}`}
+          className={`inline-flex min-h-11 max-w-full items-center gap-2 rounded-lg border px-3.5 text-xs font-bold transition-colors ${heroSocialClass}`}
+        >
+          {link.icon}
+          <span>{link.label}</span>
+          {link.displayLabel !== link.label && (
+            <span className={heroMutedClass}>{link.displayLabel}</span>
+          )}
+        </a>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
-        <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.08] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-1" aria-hidden="true">
-          <span className="w-1/2" style={{ backgroundColor: team.primaryColor }} />
-          <span className="w-1/2" style={{ backgroundColor: team.secondaryColor ?? '#ffffff' }} />
-        </div>
-        <div className="relative mx-auto max-w-7xl">
-          <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
+      <section
+        className="relative overflow-hidden px-4 py-8 md:px-12 md:py-10"
+        style={{ backgroundColor: team.primaryColor }}
+      >
+        <div
+          className="pointer-events-none absolute -right-16 -top-32 h-[28rem] w-32 rotate-[-38deg] opacity-[0.13]"
+          style={{ backgroundColor: team.secondaryColor ?? '#ffffff' }}
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute right-40 top-20 h-80 w-20 rotate-[-38deg] opacity-[0.08]"
+          style={{ backgroundColor: team.secondaryColor ?? '#ffffff' }}
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1"
+          style={{ backgroundColor: team.secondaryColor ?? '#ffffff' }}
+          aria-hidden="true"
+        />
 
-          <div className="mt-6 flex min-w-0 items-start gap-5 sm:items-center sm:gap-7 md:mt-4">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28"><img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" /></div>
+        <div className="relative mx-auto max-w-7xl">
+          <div className="flex items-start justify-between gap-4">
+            <Link
+              to={`/standings?season=${seasonId}`}
+              className={`inline-flex min-h-11 items-center text-xs font-bold transition-colors ${heroBackClass}`}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              返回積分榜
+            </Link>
+            {socialLinks.length > 0 && renderSocialLinks(false)}
+          </div>
+
+          <div className="mt-5 flex min-w-0 items-center gap-4 sm:mt-6 sm:gap-7 lg:gap-9">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-white/95 p-2.5 ring-1 ring-black/10 sm:h-28 sm:w-28 sm:p-3 lg:h-32 lg:w-32">
+              <img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" />
+            </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
-              <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
-              {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
-              {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:border-brand-blue hover:text-brand-blue">{link.icon}</a>)}</div>}
+              <p className={`text-[10px] font-bold uppercase tracking-[0.16em] sm:text-xs ${heroMutedClass}`}>
+                {team.leagueId} · {season.shortName}
+              </p>
+              <h1 className="mt-2 sm:mt-3">
+                <AutoFitText
+                  text={team.name}
+                  minFontSize={18}
+                  lineHeight={0.98}
+                  className={`font-display text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl ${heroTextClass}`}
+                />
+              </h1>
+              {displayShortName && (
+                <p className={`mt-2 text-xs font-semibold ${heroMutedClass}`}>
+                  球隊簡稱 <span className={`ml-2 font-bold ${heroTextClass}`}>{displayShortName}</span>
+                </p>
+              )}
+
+              {team.kits && (
+                <div className={`mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold ${heroMutedClass}`}>
+                  {[
+                    ['主場', team.kits.home],
+                    ['客場', team.kits.away],
+                  ].map(([label, color]) => (
+                    <div key={label} className="flex items-center gap-2">
+                      <span
+                        className={`h-5 w-5 shrink-0 border ${heroSwatchBorderClass}`}
+                        style={{ backgroundColor: color }}
+                        aria-hidden="true"
+                      />
+                      <span>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4">{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
+          {socialLinks.length > 0 && renderSocialLinks(true)}
+        </div>
+      </section>
 
-          <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
+      <section className="border-b border-neutral-200 bg-white px-4 md:px-12">
+        <div className="mx-auto max-w-7xl">
+          <dl className="grid grid-cols-4 divide-x divide-neutral-200 py-5 sm:py-6">
             {[
               ['排名', seasonHasStarted && standing ? standing.rank : '—'],
               ['場次', seasonHasStarted && standing ? standing.played : '—'],
               ['進球', seasonHasStarted && standing ? standing.gf : '—'],
               ['積分', seasonHasStarted && standing ? standing.points : '—'],
-            ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd></div>)}
+            ].map(([label, value]) => (
+              <div key={label} className="px-2 text-center sm:px-6">
+                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 sm:text-[10px]">{label}</dt>
+                <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd>
+              </div>
+            ))}
           </dl>
+
+          {history.length > 1 && (
+            <div className="flex flex-wrap gap-2 border-t border-neutral-200 py-4">
+              {history.map((record) => (
+                <Link
+                  key={record.seasonId}
+                  to={`/teams/${identityId}?season=${record.seasonId}`}
+                  className={`border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}
+                >
+                  {record.season.shortName}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 md:space-y-14 md:px-12 md:py-14">
-        {team.kits && (
-          <section>
-            <div className="mb-5 border-b border-neutral-200 pb-3"><h2 className="font-display text-2xl font-extrabold text-brand-black">球衣</h2></div>
-            <div className="flex flex-wrap gap-x-12 gap-y-4">
-              {[
-                ['主場', team.kits.home],
-                ['客場', team.kits.away],
-              ].map(([label, color]) => (
-                <div key={label} className="flex min-w-36 items-center gap-3">
-                  <span className="h-9 w-9 shrink-0 border border-black/10" style={{ backgroundColor: color }} aria-hidden="true" />
-                  <div>
-                    <p className="text-xs font-bold text-brand-black">{label}</p>
-                    <p className="mt-0.5 font-mono text-[10px] uppercase text-neutral-400">{color}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         <section>
-          <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
-          {rankHistory.length > 0 ? <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} /> : <p className="py-10 text-sm text-neutral-400">{seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}</p>}
+          <div className="mb-3 flex items-center border-b border-neutral-200 pb-3">
+            <TrendingUp className="mr-2 h-5 w-5 text-brand-blue" />
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2>
+          </div>
+          {rankHistory.length > 0 ? (
+            <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} />
+          ) : (
+            <p className="py-10 text-sm text-neutral-400">
+              {seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}
+            </p>
+          )}
         </section>
 
         <section>
-          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-400">共 {teamMatches.length} 場</span></div>
-          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
+          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3">
+            <div className="flex items-center">
+              <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2>
+            </div>
+            <span className="text-[11px] font-semibold text-neutral-400">共 {teamMatches.length} 場</span>
+          </div>
+          {teamMatches.length > 0 ? (
+            <FullSchedule
+              matches={teamMatches}
+              teamMap={data.teamMap}
+              leagueFilter="ALL"
+              variant="team"
+              onMatchClick={setSelectedMatchId}
+            />
+          ) : (
+            <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>
+          )}
         </section>
 
         {team.staff && team.staff.length > 0 && (
           <section>
-            <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">隊職員</h2></div>
+            <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
+              <UserRound className="mr-2 h-5 w-5 text-brand-blue" />
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">隊職員</h2>
+            </div>
             <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">
               {team.staff.map((staff) => (
-                <div key={`${staff.role}-${staff.name}`} className="grid min-h-16 grid-cols-[4rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3">
+                <div
+                  key={`${staff.role}-${staff.name}`}
+                  className="grid min-h-16 grid-cols-[4rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3"
+                >
                   <span className="text-xs font-black tracking-wider text-brand-blue">{staff.role}</span>
                   <div className="min-w-0">
                     <p className="break-words text-sm font-bold text-brand-black">{staff.name}</p>
-                    {staff.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{staff.englishName}</p>}
+                    {staff.englishName && (
+                      <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">
+                        {staff.englishName}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -263,16 +436,63 @@ const TeamPage: React.FC = () => {
         )}
 
         <section>
-          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">球員名單</h2></div>
-          {players.length > 0 ? <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50"><span className="font-display text-xl font-black tabular-nums text-brand-blue">{player.number}</span><div className="min-w-0"><p className="break-words text-sm font-bold text-brand-black">{player.name}</p>{player.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>}</div></Link>)}</div> : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
+            <UserRound className="mr-2 h-5 w-5 text-brand-blue" />
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">球員名單</h2>
+          </div>
+          {players.length > 0 ? (
+            <div className="grid gap-x-6 sm:grid-cols-2 xl:grid-cols-3">
+              {players.map((player) => (
+                <Link
+                  key={player.id}
+                  to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`}
+                  className="group flex min-h-20 items-center gap-4 border-b border-neutral-100 py-4 transition-colors hover:border-neutral-200"
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center bg-neutral-100 font-display text-lg font-black tabular-nums text-brand-blue transition-colors group-hover:bg-brand-blue group-hover:text-white">
+                    {player.number}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-bold text-brand-black group-hover:text-brand-blue">{player.name}</p>
+                    {player.englishName && (
+                      <p className="mt-1 break-words text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>
+          )}
         </section>
 
         <section>
-          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
-          <div className="divide-y divide-neutral-100">{history.map((record) => {
-            const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-            return <div key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-bold text-brand-black">{record.season.shortName}</span><span className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '—'}</span></div>;
-          })}</div>
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3">
+            <History className="mr-2 h-5 w-5 text-brand-blue" />
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2>
+          </div>
+          <div className="divide-y divide-neutral-100">
+            {history.map((record) => {
+              const row = calculateLeagueTable({
+                league: record.team.leagueId,
+                teams: record.data.teams,
+                matches: record.data.matches,
+                matchEvents: record.data.matchEvents,
+                rules: record.season.rules,
+                leagueConfig: record.season.leagues[record.team.leagueId],
+              }).find((item) => item.teamId === record.team.id);
+              return (
+                <div
+                  key={record.seasonId}
+                  className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"
+                >
+                  <span className="font-bold text-brand-black">{record.season.shortName}</span>
+                  <span className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span>
+                  <span className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span>
+                  <span className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '—'}</span>
+                </div>
+              );
+            })}
+          </div>
         </section>
       </main>
 

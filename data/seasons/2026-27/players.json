@@ -1,1 +1,222 @@
-[]
+[
+  {
+    "id": "sf26-01",
+    "identityId": "chen-hsin-min",
+    "teamId": "t_sf_2026",
+    "number": 19,
+    "name": "陳欣敏",
+    "englishName": "CHEN, HSIN-MIN",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 17
+  },
+  {
+    "id": "sf26-02",
+    "identityId": "hsieh-hao-che",
+    "teamId": "t_sf_2026",
+    "number": 21,
+    "name": "謝昊哲",
+    "englishName": "HSIEH, HAO-CHE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 15
+  },
+  {
+    "id": "sf26-03",
+    "identityId": "lin-wei-hao-sf",
+    "teamId": "t_sf_2026",
+    "number": 17,
+    "name": "林暐濠",
+    "englishName": "LIN WEI HAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 15
+  },
+  {
+    "id": "sf26-04",
+    "identityId": "do-ruri-bo",
+    "teamId": "t_sf_2026",
+    "number": 48,
+    "name": "杜睿博",
+    "englishName": "DO,RURI-BO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 15
+  },
+  {
+    "id": "sf26-05",
+    "identityId": "liao-sin-kai",
+    "teamId": "t_sf_2026",
+    "number": 23,
+    "name": "廖新凱",
+    "englishName": "LIAO,SIN-KAI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-06",
+    "identityId": "chen-you-chen",
+    "teamId": "t_sf_2026",
+    "number": 3,
+    "name": "陳宥成",
+    "englishName": "Chen you Chen",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-07",
+    "identityId": "pan-li-yan",
+    "teamId": "t_sf_2026",
+    "number": 26,
+    "name": "潘俐言",
+    "englishName": "Pan Li-Yan",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 19
+  },
+  {
+    "id": "sf26-08",
+    "identityId": "huang-chen-wei",
+    "teamId": "t_sf_2026",
+    "number": 37,
+    "name": "黃晨崴",
+    "englishName": "Huang,Chen-Wei",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 15
+  },
+  {
+    "id": "sf26-09",
+    "identityId": "lin-po-yu",
+    "teamId": "t_sf_2026",
+    "number": 22,
+    "name": "林博宇",
+    "englishName": "LIN PO-YU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-10",
+    "identityId": "wei-hsin-yu",
+    "teamId": "t_sf_2026",
+    "number": 5,
+    "name": "魏信宇",
+    "englishName": "WEI HSIN-YU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-11",
+    "identityId": "tsai-chung-en",
+    "teamId": "t_sf_2026",
+    "number": 10,
+    "name": "蔡仲恩",
+    "englishName": "TSAI,CHUNG-EN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-12",
+    "identityId": "hung-chia-ting",
+    "teamId": "t_sf_2026",
+    "number": 89,
+    "name": "洪家庭",
+    "englishName": "HUNG,CHIA-TING",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 17
+  },
+  {
+    "id": "sf26-13",
+    "identityId": "chao-yi-hsiang",
+    "teamId": "t_sf_2026",
+    "number": 7,
+    "name": "趙苡翔",
+    "englishName": "CHAO,YI-HSIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 17
+  },
+  {
+    "id": "sf26-14",
+    "identityId": "huang-sung-wei",
+    "teamId": "t_sf_2026",
+    "number": 9,
+    "name": "黃嵩崴",
+    "englishName": "Huang Sung-Wei",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-15",
+    "identityId": "lin-liang-yun",
+    "teamId": "t_sf_2026",
+    "number": 13,
+    "name": "林亮昀",
+    "englishName": "Lin Liang Yun",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "sf26-16",
+    "identityId": "yang-che-ming",
+    "teamId": "t_sf_2026",
+    "number": 16,
+    "name": "楊哲銘",
+    "englishName": "YANGCHEMING",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 20
+  },
+  {
+    "id": "sf26-17",
+    "identityId": "kai-yu-hsu",
+    "teamId": "t_sf_2026",
+    "number": 6,
+    "name": "許凱昱",
+    "englishName": "KAI YU HSU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "sf26-18",
+    "identityId": "cheng-yung-han",
+    "teamId": "t_sf_2026",
+    "number": 12,
+    "name": "鄭詠翰",
+    "englishName": "CHENG, YUNG-HAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 30
+  },
+  {
+    "id": "sf26-19",
+    "identityId": "cai-ming-wei",
+    "teamId": "t_sf_2026",
+    "number": 82,
+    "name": "蔡銘洧",
+    "englishName": "CAI MING WEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 15
+  },
+  {
+    "id": "sf26-20",
+    "identityId": "lu-cheng-ye",
+    "teamId": "t_sf_2026",
+    "number": 11,
+    "name": "呂承燁",
+    "englishName": "LU CHENG YE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  }
+]

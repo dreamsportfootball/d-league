@@ -1,1 +1,31 @@
-[]
+[
+  {
+    "id": "t_sf_2026",
+    "identityId": "sf-football-club",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "SF足球俱樂部",
+    "shortName": "SF",
+    "logo": "assets/seasons/2026-27/teams/sf-football-club.png",
+    "primaryColor": "#025517",
+    "secondaryColor": "#bf8f06",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "吳孟容",
+        "englishName": "WU MENG RONG"
+      },
+      {
+        "role": "管理",
+        "name": "許凱昱",
+        "englishName": "KAI YU HSU"
+      },
+      {
+        "role": "教練",
+        "name": "鄭詠翰",
+        "englishName": "CHENG, YUNG-HAN"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  }
+]

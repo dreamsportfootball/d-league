@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
+  ExternalLink,
   Facebook,
   Globe2,
   History,
@@ -53,6 +54,16 @@ const isSafeExternalUrl = (value: string): boolean => {
     return url.protocol === 'https:' || url.protocol === 'http:';
   } catch {
     return false;
+  }
+};
+
+const getInstagramHandle = (href: string): string => {
+  try {
+    const url = new URL(href);
+    const handle = url.pathname.split('/').filter(Boolean)[0];
+    return handle ? `@${handle}` : 'Instagram';
+  } catch {
+    return 'Instagram';
   }
 };
 
@@ -197,7 +208,40 @@ const TeamPage: React.FC = () => {
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
               <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
-              {socialLinks.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{socialLinks.map((link) => <a key={link.platform} href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`前往 ${team.name} ${link.label}`} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 hover:border-brand-blue hover:text-brand-blue">{link.icon}</a>)}</div>}
+              {socialLinks.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
+                  {socialLinks.map((link) => {
+                    const detail = link.platform === 'instagram' ? getInstagramHandle(link.href) : link.label;
+                    const iconClass = link.platform === 'instagram'
+                      ? 'bg-[linear-gradient(135deg,#833ab4_0%,#fd1d1d_50%,#fcaf45_100%)] text-white'
+                      : 'border border-neutral-200 bg-white text-neutral-500';
+
+                    return (
+                      <a
+                        key={link.platform}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`前往 ${team.name} ${link.label}`}
+                        className="group inline-flex min-h-11 max-w-full items-center gap-3 text-left"
+                      >
+                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${iconClass}`}>
+                          {link.icon}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-400">
+                            {link.label}
+                          </span>
+                          <span className="mt-0.5 block max-w-[15rem] truncate text-xs font-bold text-brand-black transition-colors group-hover:text-brand-blue">
+                            {detail}
+                          </span>
+                        </span>
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-neutral-300 transition-colors group-hover:text-brand-blue" />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 

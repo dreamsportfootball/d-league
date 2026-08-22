@@ -5,10 +5,17 @@
     "seasonId": "2026-27",
     "leagueId": "L3",
     "name": "SF足球俱樂部",
-    "shortName": "SF",
+    "shortName": "SF足球俱樂部",
     "logo": "assets/seasons/2026-27/teams/sf-football-club.png",
     "primaryColor": "#025517",
     "secondaryColor": "#bf8f06",
+    "kits": {
+      "home": "#e187a1",
+      "away": "#173663"
+    },
+    "socialLinks": {
+      "instagram": "https://www.instagram.com/sf__footballclub/"
+    },
     "staff": [
       {
         "role": "領隊",

@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
-  ExternalLink,
   Facebook,
   Globe2,
   History,
@@ -34,6 +33,7 @@ interface RoundBucket {
 interface TeamSocialLinkItem {
   platform: keyof TeamSocialLinks;
   label: string;
+  displayLabel: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -73,16 +73,40 @@ const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
 
   const candidates: Array<TeamSocialLinkItem | null> = [
     links.instagram && isSafeExternalUrl(links.instagram)
-      ? { platform: 'instagram', label: 'Instagram', href: links.instagram, icon: <Instagram className="h-4 w-4" /> }
+      ? {
+          platform: 'instagram',
+          label: 'Instagram',
+          displayLabel: getInstagramHandle(links.instagram),
+          href: links.instagram,
+          icon: <Instagram className="h-4 w-4" />,
+        }
       : null,
     links.facebook && isSafeExternalUrl(links.facebook)
-      ? { platform: 'facebook', label: 'Facebook', href: links.facebook, icon: <Facebook className="h-4 w-4" /> }
+      ? {
+          platform: 'facebook',
+          label: 'Facebook',
+          displayLabel: 'Facebook',
+          href: links.facebook,
+          icon: <Facebook className="h-4 w-4" />,
+        }
       : null,
     links.youtube && isSafeExternalUrl(links.youtube)
-      ? { platform: 'youtube', label: 'YouTube', href: links.youtube, icon: <Youtube className="h-4 w-4" /> }
+      ? {
+          platform: 'youtube',
+          label: 'YouTube',
+          displayLabel: 'YouTube',
+          href: links.youtube,
+          icon: <Youtube className="h-4 w-4" />,
+        }
       : null,
     links.website && isSafeExternalUrl(links.website)
-      ? { platform: 'website', label: '官方網站', href: links.website, icon: <Globe2 className="h-4 w-4" /> }
+      ? {
+          platform: 'website',
+          label: '官方網站',
+          displayLabel: '官方網站',
+          href: links.website,
+          icon: <Globe2 className="h-4 w-4" />,
+        }
       : null,
   ];
 
@@ -191,6 +215,27 @@ const TeamPage: React.FC = () => {
     });
   })();
 
+  const renderSocialLinks = (mobile: boolean) => (
+    <div className={mobile ? 'mt-4 flex flex-wrap gap-2 sm:hidden' : 'hidden flex-wrap justify-end gap-2 sm:flex'}>
+      {socialLinks.map((link) => (
+        <a
+          key={link.platform}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`前往 ${team.name} ${link.label}`}
+          className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
+        >
+          {link.icon}
+          <span>{link.label}</span>
+          {link.displayLabel !== link.label && (
+            <span className="text-neutral-400">{link.displayLabel}</span>
+          )}
+        </a>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-white pb-24">
       <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
@@ -200,7 +245,10 @@ const TeamPage: React.FC = () => {
           <span className="w-1/2" style={{ backgroundColor: team.kits?.away ?? team.secondaryColor ?? '#ffffff' }} />
         </div>
         <div className="relative mx-auto max-w-7xl">
-          <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
+          <div className="flex items-start justify-between gap-4">
+            <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
+            {socialLinks.length > 0 && renderSocialLinks(false)}
+          </div>
 
           <div className="mt-6 flex min-w-0 items-start gap-5 sm:items-center sm:gap-7 md:mt-4">
             <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28"><img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" /></div>
@@ -208,40 +256,7 @@ const TeamPage: React.FC = () => {
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
               <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
-              {socialLinks.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3">
-                  {socialLinks.map((link) => {
-                    const detail = link.platform === 'instagram' ? getInstagramHandle(link.href) : link.label;
-                    const iconClass = link.platform === 'instagram'
-                      ? 'bg-[linear-gradient(135deg,#833ab4_0%,#fd1d1d_50%,#fcaf45_100%)] text-white'
-                      : 'border border-neutral-200 bg-white text-neutral-500';
-
-                    return (
-                      <a
-                        key={link.platform}
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`前往 ${team.name} ${link.label}`}
-                        className="group inline-flex min-h-11 max-w-full items-center gap-3 text-left"
-                      >
-                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${iconClass}`}>
-                          {link.icon}
-                        </span>
-                        <span className="min-w-0">
-                          <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-neutral-400">
-                            {link.label}
-                          </span>
-                          <span className="mt-0.5 block max-w-[15rem] truncate text-xs font-bold text-brand-black transition-colors group-hover:text-brand-blue">
-                            {detail}
-                          </span>
-                        </span>
-                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-neutral-300 transition-colors group-hover:text-brand-blue" />
-                      </a>
-                    );
-                  })}
-                </div>
-              )}
+              {socialLinks.length > 0 && renderSocialLinks(true)}
             </div>
           </div>
 
@@ -259,26 +274,6 @@ const TeamPage: React.FC = () => {
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 md:space-y-14 md:px-12 md:py-14">
-        {team.kits && (
-          <section>
-            <div className="mb-5 border-b border-neutral-200 pb-3"><h2 className="font-display text-2xl font-extrabold text-brand-black">球衣</h2></div>
-            <div className="flex flex-wrap gap-x-12 gap-y-4">
-              {[
-                ['主場', team.kits.home],
-                ['客場', team.kits.away],
-              ].map(([label, color]) => (
-                <div key={label} className="flex min-w-36 items-center gap-3">
-                  <span className="h-9 w-9 shrink-0 border border-black/10" style={{ backgroundColor: color }} aria-hidden="true" />
-                  <div>
-                    <p className="text-xs font-bold text-brand-black">{label}</p>
-                    <p className="mt-0.5 font-mono text-[10px] uppercase text-neutral-400">{color}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         <section>
           <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
           {rankHistory.length > 0 ? <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} /> : <p className="py-10 text-sm text-neutral-400">{seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}</p>}

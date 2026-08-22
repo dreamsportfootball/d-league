@@ -13,6 +13,12 @@ export interface TeamBrandingAsset {
   secondaryColor?: string;
 }
 
+export interface TeamStaffMember {
+  role: string;
+  name: string;
+  englishName?: string;
+}
+
 export interface SeasonTeam {
   id: string;
   identityId?: string;
@@ -24,6 +30,7 @@ export interface SeasonTeam {
   primaryColor: string;
   secondaryColor?: string;
   socialLinks?: TeamSocialLinks;
+  staff?: TeamStaffMember[];
   competitionStatus?: 'ACTIVE' | 'WITHDRAWN';
   pointsAdjustment?: number;
   pointsAdjustmentReason?: string;

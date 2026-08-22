@@ -215,6 +215,26 @@ const TeamPage: React.FC = () => {
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 py-12 md:space-y-14 md:px-12 md:py-14">
+        {team.kits && (
+          <section>
+            <div className="mb-5 border-b border-neutral-200 pb-3"><h2 className="font-display text-2xl font-extrabold text-brand-black">球衣</h2></div>
+            <div className="flex flex-wrap gap-x-12 gap-y-4">
+              {[
+                ['主場', team.kits.home],
+                ['客場', team.kits.away],
+              ].map(([label, color]) => (
+                <div key={label} className="flex min-w-36 items-center gap-3">
+                  <span className="h-9 w-9 shrink-0 border border-black/10" style={{ backgroundColor: color }} aria-hidden="true" />
+                  <div>
+                    <p className="text-xs font-bold text-brand-black">{label}</p>
+                    <p className="mt-0.5 font-mono text-[10px] uppercase text-neutral-400">{color}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section>
           <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
           {rankHistory.length > 0 ? <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} /> : <p className="py-10 text-sm text-neutral-400">{seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}</p>}

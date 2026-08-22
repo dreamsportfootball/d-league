@@ -31,18 +31,18 @@ const ParticipantTeamLogo: React.FC<ParticipantTeamLogoProps> = ({ seasonId, tea
   const [failed, setFailed] = useState(false);
   const logoUrl = getTeamLogoUrl(seasonId, teamName);
 
-  if (!logoUrl || failed) return null;
-
   return (
     <span className="mr-2 flex h-9 w-9 shrink-0 items-center justify-center md:h-10 md:w-10" aria-hidden="true">
-      <img
-        src={logoUrl}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        className="max-h-full max-w-full object-contain"
-        onError={() => setFailed(true)}
-      />
+      {logoUrl && !failed && (
+        <img
+          src={logoUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="max-h-full max-w-full object-contain"
+          onError={() => setFailed(true)}
+        />
+      )}
     </span>
   );
 };

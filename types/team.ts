@@ -19,6 +19,11 @@ export interface TeamStaffMember {
   englishName?: string;
 }
 
+export interface TeamKits {
+  home: string;
+  away: string;
+}
+
 export interface SeasonTeam {
   id: string;
   identityId?: string;
@@ -29,6 +34,7 @@ export interface SeasonTeam {
   logo: string;
   primaryColor: string;
   secondaryColor?: string;
+  kits?: TeamKits;
   socialLinks?: TeamSocialLinks;
   staff?: TeamStaffMember[];
   competitionStatus?: 'ACTIVE' | 'WITHDRAWN';

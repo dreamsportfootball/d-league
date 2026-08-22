@@ -34,7 +34,7 @@ const ParticipantTeamLogo: React.FC<ParticipantTeamLogoProps> = ({ seasonId, tea
   if (!logoUrl || failed) return null;
 
   return (
-    <span className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center lg:mr-4 lg:h-12 lg:w-12" aria-hidden="true">
+    <span className="mr-3 flex h-9 w-9 shrink-0 items-center justify-center md:mr-4 md:h-10 md:w-10" aria-hidden="true">
       <img
         src={logoUrl}
         alt=""

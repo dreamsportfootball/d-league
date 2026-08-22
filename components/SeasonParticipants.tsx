@@ -32,14 +32,14 @@ const ParticipantTeamLogo: React.FC<ParticipantTeamLogoProps> = ({ seasonId, tea
   const logoUrl = getTeamLogoUrl(seasonId, teamName);
 
   return (
-    <span className="mr-2 flex h-9 w-9 shrink-0 items-center justify-center md:h-10 md:w-10" aria-hidden="true">
+    <span className="relative mr-2 w-9 shrink-0 self-stretch md:w-10" aria-hidden="true">
       {logoUrl && !failed && (
         <img
           src={logoUrl}
           alt=""
           loading="lazy"
           decoding="async"
-          className="max-h-full max-w-full object-contain"
+          className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 object-contain md:h-10 md:w-10"
           onError={() => setFailed(true)}
         />
       )}

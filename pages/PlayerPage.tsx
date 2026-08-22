@@ -157,7 +157,6 @@ const PlayerPage: React.FC = () => {
     setEventSeason('ALL');
     setSelectedMatch(null);
   }, [id]);
-
   const filteredMatchRecords = useMemo(
     () =>
       eventSeason === 'ALL'
@@ -271,7 +270,9 @@ const PlayerPage: React.FC = () => {
               )}
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500">
                 <span>#{player.number}</span>
+                <span>{player.gender}</span>
                 <span>{player.nationality}</span>
+                <span>{player.age} 歲</span>
                 {preferredRecord.team && (
                   <Link
                     to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}

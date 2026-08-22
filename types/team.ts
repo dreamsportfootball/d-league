@@ -7,6 +7,12 @@ export interface TeamSocialLinks {
   website?: string;
 }
 
+export interface TeamBrandingAsset {
+  logoFile: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+}
+
 export interface SeasonTeam {
   id: string;
   identityId?: string;

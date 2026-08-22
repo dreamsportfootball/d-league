@@ -1,6 +1,5 @@
 import { MATCH_VENUE_NAME } from '../config/siteConfig';
-import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
-import { preview2026Matches, preview2026Teams } from '../data/previews/season2026Preview';
+import { SEASON_IDS } from '../config/siteManifest.js';
 import type { Match, NewsArticle, Video } from '../types';
 import type { DisciplineDecision, MatchLineup } from '../types/discipline';
 import type { MatchEvent } from '../types/matchEvent';
@@ -64,8 +63,6 @@ const getSeasonJson = <T,>(modules: JsonModuleMap, seasonId: SeasonId, fileName:
   return value as T;
 };
 
-const useCurrentSeasonPreviewData = import.meta.env.VITE_USE_PREVIEW_DATA === 'true';
-
 const makeData = (
   id: SeasonId,
   teamsInput: SeasonTeam[],
@@ -105,26 +102,23 @@ const makeData = (
 };
 
 const DATA = Object.fromEntries(
-  SEASON_IDS.map((seasonId) => {
-    const usePreview = useCurrentSeasonPreviewData && seasonId === CURRENT_SEASON_ID;
-    return [
+  SEASON_IDS.map((seasonId) => [
+    seasonId,
+    makeData(
       seasonId,
-      makeData(
-        seasonId,
-        usePreview ? preview2026Teams : getSeasonJson<SeasonTeam[]>(teamsModules, seasonId, 'teams.json'),
-        getSeasonJson<PlayerProfile[]>(playersModules, seasonId, 'players.json'),
-        getSeasonJson<Record<string, string>>(playerImagesModules, seasonId, 'playerImages.json'),
-        usePreview ? preview2026Matches : getSeasonJson<Match[]>(matchesModules, seasonId, 'matches.json'),
-        getSeasonJson<Record<string, MatchEvent[]>>(matchEventsModules, seasonId, 'matchEvents.json'),
-        getSeasonJson<DisciplineDecision[]>(disciplineModules, seasonId, 'disciplineDecisions.json'),
-        getSeasonJson<Record<string, MatchLineup>>(lineupsModules, seasonId, 'lineups.json'),
-        getSeasonJson<NewsArticle[]>(newsModules, seasonId, 'news.json'),
-        getSeasonJson<Record<string, string>>(highlightsModules, seasonId, 'highlights.json'),
-        getSeasonJson<Video[]>(mediaModules, seasonId, 'media.json'),
-        getSeasonJson<MediaAlbum[]>(albumsModules, seasonId, 'albums.json'),
-      ),
-    ];
-  }),
+      getSeasonJson<SeasonTeam[]>(teamsModules, seasonId, 'teams.json'),
+      getSeasonJson<PlayerProfile[]>(playersModules, seasonId, 'players.json'),
+      getSeasonJson<Record<string, string>>(playerImagesModules, seasonId, 'playerImages.json'),
+      getSeasonJson<Match[]>(matchesModules, seasonId, 'matches.json'),
+      getSeasonJson<Record<string, MatchEvent[]>>(matchEventsModules, seasonId, 'matchEvents.json'),
+      getSeasonJson<DisciplineDecision[]>(disciplineModules, seasonId, 'disciplineDecisions.json'),
+      getSeasonJson<Record<string, MatchLineup>>(lineupsModules, seasonId, 'lineups.json'),
+      getSeasonJson<NewsArticle[]>(newsModules, seasonId, 'news.json'),
+      getSeasonJson<Record<string, string>>(highlightsModules, seasonId, 'highlights.json'),
+      getSeasonJson<Video[]>(mediaModules, seasonId, 'media.json'),
+      getSeasonJson<MediaAlbum[]>(albumsModules, seasonId, 'albums.json'),
+    ),
+  ]),
 ) as Record<SeasonId, SeasonData>;
 
 const ALL_NEWS: NewsArticle[] = SEASON_IDS.flatMap((seasonId) => DATA[seasonId].news);

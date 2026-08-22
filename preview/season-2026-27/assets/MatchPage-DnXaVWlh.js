@@ -1,0 +1,1 @@
+import{l as o,a as n,j as c,N as m}from"./index-C9lZvUWd.js";const i=()=>{const{id:a=""}=o(),[r]=n(),s=new URLSearchParams,e=r.get("season");e&&s.set("season",e),a&&s.set("match",a);const t=s.toString();return c.jsx(m,{to:`/schedule${t?`?${t}`:""}`,replace:!0})};export{i as default};

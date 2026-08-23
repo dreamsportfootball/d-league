@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
-    "validate:data": "node scripts/validate-season-data.mjs && node scripts/validate-participants.mjs && node scripts/validate-news-highlights.mjs && node scripts/validate-team-kits.mjs",
+    "validate:data": "node scripts/validate-season-data.mjs && node scripts/validate-participants.mjs && node scripts/validate-news-highlights.mjs && node scripts/validate-team-kits.mjs && node scripts/validate-player-identities.mjs",
     "generate:seo": "node scripts/generate-static-seo.mjs",
     "enrich:seo": "node scripts/enrich-static-data-pages.mjs && node scripts/fix-legacy-static-entities.mjs && node scripts/finalize-static-seo.mjs",
     "validate:seo": "node scripts/validate-static-seo.mjs && node scripts/validate-round-static-seo.mjs && node scripts/validate-data-static-seo.mjs",

@@ -6,6 +6,7 @@ on:
       - season/2026-27
   workflow_dispatch:
 
+# Preview deployment is intentionally isolated from production.
 permissions:
   contents: write
 

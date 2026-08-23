@@ -353,11 +353,24 @@ const PlayerPage: React.FC = () => {
                 {preferredRecord.team && (
                   <Link
                     to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="mt-3 inline-flex min-h-11 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
+                    className="mt-3 inline-flex min-h-9 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
                   >
                     {preferredRecord.team.name}
                   </Link>
                 )}
+
+                <dl className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] sm:text-[11px]">
+                  {[
+                    ['國籍', player.nationality],
+                    ['年齡', `${player.age} 歲`],
+                    ['性別', player.gender],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-baseline gap-1.5 whitespace-nowrap">
+                      <dt className="font-semibold text-neutral-400">{label}</dt>
+                      <dd className="font-bold text-neutral-600">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
             </div>
 
@@ -387,33 +400,20 @@ const PlayerPage: React.FC = () => {
               </dl>
             </div>
           </div>
-
-          <dl className="mt-7 grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-300 pt-4 sm:mt-8 lg:mt-9">
-            {[
-              ['國籍', player.nationality],
-              ['年齡', `${player.age} 歲`],
-              ['性別', player.gender],
-            ].map(([label, value]) => (
-              <div key={label} className="min-w-0 px-3 first:pl-0 sm:px-6 lg:px-8 lg:first:pl-0">
-                <dt className="text-[9px] font-bold tracking-wider text-neutral-400 sm:text-[10px]">{label}</dt>
-                <dd className="mt-1 truncate text-sm font-bold text-brand-black sm:text-base">{value}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
 
       <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
-        {appearanceRecords.length > 0 && (
-          <section>
-            <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
-              <div>
-                <h2 className="font-display text-2xl font-extrabold text-brand-black">出場紀錄</h2>
-                <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
-              </div>
-              <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
+        <section>
+          <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
+            <div>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">個人紀錄</h2>
+              <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
             </div>
+            <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
+          </div>
 
+          {appearanceRecords.length > 0 ? (
             <div className="divide-y divide-neutral-100">
               {appearanceRecords.map(({ match, opponent, goals, yellowCards, redCards }) => {
                 const hasScore = match.homeScore !== null && match.awayScore !== null;
@@ -456,8 +456,12 @@ const PlayerPage: React.FC = () => {
                 );
               })}
             </div>
-          </section>
-        )}
+          ) : (
+            <p className="border-b border-neutral-100 py-8 text-sm text-neutral-400">
+              本賽季尚未有個人紀錄
+            </p>
+          )}
+        </section>
 
         <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">
@@ -581,7 +585,7 @@ const PlayerPage: React.FC = () => {
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
             <div className="flex items-center">
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-extrabold text-brand-black">個人比賽事件</h2>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">比賽事件</h2>
             </div>
             <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
               <span>賽季</span>
@@ -589,7 +593,7 @@ const PlayerPage: React.FC = () => {
                 value={eventSeason}
                 onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
                 className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
-                aria-label="篩選個人比賽事件賽季"
+                aria-label="篩選比賽事件賽季"
               >
                 <option value="ALL">全部賽季</option>
                 {history.map((record) => (
@@ -723,7 +727,7 @@ const PlayerPage: React.FC = () => {
             </>
           ) : (
             <p className="py-10 text-sm text-neutral-400">
-              {eventSeason === 'ALL' ? '目前沒有可連結的個人比賽事件' : '此賽季沒有個人比賽事件'}
+              {eventSeason === 'ALL' ? '目前沒有可連結的比賽事件' : '此賽季沒有比賽事件'}
             </p>
           )}
         </section>

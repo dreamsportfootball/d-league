@@ -18,6 +18,27 @@ import { getSeasonData } from '../services/seasonDataJson';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 
+type PlayerLineupSide = 'HOME' | 'AWAY';
+
+const getPlayerLineupSide = (lineup: unknown, playerId: string): PlayerLineupSide | null => {
+  if (!lineup || typeof lineup !== 'object') return null;
+
+  const candidate = lineup as {
+    homePlayerIds?: unknown;
+    awayPlayerIds?: unknown;
+  };
+  const homePlayerIds = Array.isArray(candidate.homePlayerIds)
+    ? candidate.homePlayerIds
+    : [];
+  const awayPlayerIds = Array.isArray(candidate.awayPlayerIds)
+    ? candidate.awayPlayerIds
+    : [];
+
+  if (homePlayerIds.includes(playerId)) return 'HOME';
+  if (awayPlayerIds.includes(playerId)) return 'AWAY';
+  return null;
+};
+
 const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   const timeline: { teamId: string; timestamp: number }[] = [];
   const addTeam = (teamId: string | undefined, timestamp: number) => {
@@ -46,9 +67,10 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {
     const match = record.data.matches.find((candidate) => candidate.id === matchId);
     if (!match) return;
+    const side = getPlayerLineupSide(lineup, record.player.id);
+    if (!side) return;
     const timestamp = new Date(match.timestamp).getTime();
-    if (lineup.homePlayerIds.includes(record.player.id)) addTeam(match.homeTeamId, timestamp);
-    if (lineup.awayPlayerIds.includes(record.player.id)) addTeam(match.awayTeamId, timestamp);
+    addTeam(side === 'HOME' ? match.homeTeamId : match.awayTeamId, timestamp);
   });
 
   Object.entries(record.data.matchEvents).forEach(([matchId, events]) => {
@@ -166,6 +188,7 @@ const PlayerPage: React.FC = () => {
   useEffect(() => {
     setSelectedMatch(null);
   }, [id]);
+
   const filteredMatchRecords = useMemo(
     () =>
       eventSeason === 'ALL'
@@ -191,10 +214,7 @@ const PlayerPage: React.FC = () => {
     if (!record) return undefined;
 
     const lineupMatchIds = Object.entries(record.data.lineups)
-      .filter(([, lineup]) =>
-        lineup.homePlayerIds.includes(record.player.id) ||
-        lineup.awayPlayerIds.includes(record.player.id),
-      )
+      .filter(([, lineup]) => Boolean(getPlayerLineupSide(lineup, record.player.id)))
       .map(([matchId]) => matchId);
     const eventMatchIds = filteredMatchRecords
       .filter((item) => item.seasonId === selectedMatch.seasonId)
@@ -238,11 +258,12 @@ const PlayerPage: React.FC = () => {
       const match = preferredRecord.data.matches.find((candidate) => candidate.id === matchId);
       if (!match) return [];
 
-      const isHome = lineup.homePlayerIds.includes(player.id);
-      const isAway = lineup.awayPlayerIds.includes(player.id);
-      if (!isHome && !isAway) return [];
+      const side = getPlayerLineupSide(lineup, player.id);
+      if (!side) return [];
 
-      const opponent = preferredRecord.data.teamMap[isHome ? match.awayTeamId : match.homeTeamId];
+      const opponent = preferredRecord.data.teamMap[
+        side === 'HOME' ? match.awayTeamId : match.homeTeamId
+      ];
       const playerEvents = (preferredRecord.data.matchEvents[match.id] ?? []).filter(
         (event) => resolveMatchEventPlayer(preferredRecord.data, match, event)?.id === player.id,
       );
@@ -351,13 +372,14 @@ const PlayerPage: React.FC = () => {
               </div>
             </div>
 
-            <dl className="mt-4 grid grid-cols-3 divide-x divide-neutral-300 border-y border-neutral-300 bg-white py-4 md:py-5">
+            <dl className="mt-4 grid grid-cols-4 divide-x divide-neutral-300 border-y border-neutral-300 bg-white py-4 md:py-5">
               {[
+                ['出賽', appearanceRecords.length],
                 ['進球', preferredSeasonStats.goals],
                 ['黃牌', preferredSeasonStats.yellowCards],
                 ['紅牌', preferredSeasonRedCards],
               ].map(([label, value]) => (
-                <div key={label} className="px-3 text-center md:px-8">
+                <div key={label} className="px-2 text-center md:px-8">
                   <dt className="text-[10px] font-semibold tracking-wider text-neutral-400">{label}</dt>
                   <dd className="mt-1 font-display text-3xl font-black tabular-nums text-brand-black md:text-4xl">
                     {value}
@@ -394,9 +416,7 @@ const PlayerPage: React.FC = () => {
               <h2 className="font-display text-2xl font-extrabold text-brand-black">出場紀錄</h2>
               <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
             </div>
-            {appearanceRecords.length > 0 && (
-              <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
-            )}
+            <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
           </div>
 
           {appearanceRecords.length > 0 ? (
@@ -444,9 +464,9 @@ const PlayerPage: React.FC = () => {
             </div>
           ) : (
             <div className="border-b border-neutral-200 py-8">
-              <p className="text-sm font-bold text-brand-black">本賽季尚未建立出場名單資料</p>
+              <p className="text-sm font-bold text-brand-black">本賽季尚未有出場紀錄</p>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
-                比賽名單資料完成後，這裡會顯示每場出場紀錄、對手、比分及個人事件；目前不以進球或牌卡事件推算出場次數。
+                賽事開始並完成比賽名單登錄後，這裡會顯示每場出場紀錄、對手、比分及個人事件。
               </p>
             </div>
           )}

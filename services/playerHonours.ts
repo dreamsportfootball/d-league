@@ -73,10 +73,10 @@ const getRepresentedTeamIds = (record: PlayerSeasonRecord): Set<string> => {
   return teamIds;
 };
 
-const getUniqueTopScorerId = (
+const getTopScorerIds = (
   record: PlayerSeasonRecord,
   leagueId: LeagueId,
-): string | undefined => {
+): Set<string> => {
   const stats = calculatePlayerCompetitionStats(
     leagueId,
     record.data.teams,
@@ -90,13 +90,14 @@ const getUniqueTopScorerId = (
     goalsByPlayer.set(row.subjectId, (goalsByPlayer.get(row.subjectId) ?? 0) + row.goals);
   });
 
-  const ranked = [...goalsByPlayer.entries()]
-    .filter(([, goals]) => goals > 0)
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const topGoalCount = Math.max(0, ...goalsByPlayer.values());
+  if (topGoalCount <= 0) return new Set<string>();
 
-  if (ranked.length === 0) return undefined;
-  if (ranked.length > 1 && ranked[0][1] === ranked[1][1]) return undefined;
-  return ranked[0][0];
+  return new Set(
+    [...goalsByPlayer.entries()]
+      .filter(([, goals]) => goals === topGoalCount)
+      .map(([playerId]) => playerId),
+  );
 };
 
 const honourPriority: Record<PlayerHonourKind, number> = {
@@ -154,7 +155,7 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
         });
       });
 
-      if (getUniqueTopScorerId(record, leagueId) === record.player.id) {
+      if (getTopScorerIds(record, leagueId).has(record.player.id)) {
         honours.push({
           id: `${record.seasonId}:${leagueId}:GOLDEN_BOOT:${record.player.id}`,
           seasonId: record.seasonId,

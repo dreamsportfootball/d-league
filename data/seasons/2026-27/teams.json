@@ -147,5 +147,34 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_pingtung_wild_ape_2026",
+    "identityId": "t_pingtung",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "屏東野猿足球俱樂部",
+    "shortName": "屏東野猿",
+    "logo": "assets/seasons/2026-27/teams/pingtung-wild-ape-fc.png",
+    "primaryColor": "#563e92",
+    "secondaryColor": "#ffffff",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "簡法亦",
+        "englishName": "CHIEN FA I"
+      },
+      {
+        "role": "管理",
+        "name": "林彥文",
+        "englishName": "LIN YEN WEN"
+      },
+      {
+        "role": "教練",
+        "name": "黃震浩",
+        "englishName": "HUANG JHEN HAO"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

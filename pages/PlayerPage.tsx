@@ -247,7 +247,7 @@ const PlayerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-10">
+      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
         <div className="mx-auto max-w-6xl">
           <Link
             to={`/stats?season=${preferredRecord.seasonId}`}
@@ -257,108 +257,62 @@ const PlayerPage: React.FC = () => {
             返回數據中心
           </Link>
 
-          <div
-            className="mt-4 overflow-hidden border border-neutral-200 border-t-4 bg-white"
-            style={{ borderTopColor: preferredRecord.team?.primaryColor ?? '#0067ff' }}
-          >
-            <div className="relative grid min-h-[248px] grid-cols-[minmax(0,1fr)_120px] sm:grid-cols-[minmax(0,1fr)_190px] md:min-h-[330px] md:grid-cols-[minmax(0,1fr)_300px]">
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -left-1 bottom-0 font-display text-[8rem] font-black leading-[0.78] text-neutral-950/[0.035] sm:text-[11rem] md:text-[16rem]"
-              >
-                {player.number}
-              </span>
-
-              <div className="relative z-10 flex min-w-0 flex-col justify-between p-5 sm:p-6 md:p-8">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400 md:tracking-[0.2em]">
-                  <span className="text-brand-blue">D LEAGUE PLAYER</span>
-                  <span aria-hidden="true" className="h-1 w-1 rounded-full bg-neutral-300" />
-                  <span>{preferredRecord.team?.leagueId ?? 'D LEAGUE'} · {preferredRecord.season.shortName}</span>
-                </div>
-
-                <div className="mt-8 min-w-0 md:mt-10">
-                  <div className="flex items-end gap-3 sm:gap-4">
-                    <span className="font-display text-4xl font-black leading-none tabular-nums text-brand-blue sm:text-5xl md:text-6xl">
-                      {player.number}
-                    </span>
-                    <h1 className="min-w-0 break-words font-display text-4xl font-black leading-none tracking-tight text-brand-black sm:text-5xl md:text-7xl">
-                      {player.name}
-                    </h1>
-                  </div>
-
-                  {player.englishName && (
-                    <p className="mt-2 break-words text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-400 sm:text-xs md:tracking-wider">
-                      {player.englishName}
-                    </p>
-                  )}
-
-                  <div className="mt-5 flex min-w-0 items-center gap-3">
-                    {preferredRecord.team?.logo && (
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center border border-neutral-200 bg-white p-1.5">
-                        <img
-                          src={preferredRecord.team.logo}
-                          alt={`${preferredRecord.team.name} 隊徽`}
-                          className="max-h-full max-w-full object-contain"
-                        />
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      {preferredRecord.team && (
-                        <Link
-                          to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                          className="block truncate text-sm font-black text-brand-black transition-colors hover:text-brand-blue sm:text-base"
-                        >
-                          {preferredRecord.team.name}
-                        </Link>
-                      )}
-                      <p className="mt-1 text-[10px] font-semibold text-neutral-500 sm:text-xs">
-                        {player.nationality} · {player.age} 歲 · {player.gender}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="relative z-10 flex min-h-full items-end justify-center border-l border-neutral-200 bg-neutral-100">
-                {image ? (
-                  <img
-                    src={image}
-                    alt={player.name}
-                    className="h-full max-h-[244px] w-full object-cover object-top md:max-h-[326px]"
-                  />
-                ) : (
-                  <UserRound className="mb-10 h-14 w-14 text-neutral-300 md:h-20 md:w-20" />
+          <div className="mt-7 flex items-center gap-5 md:mt-5 md:gap-7">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 md:h-28 md:w-28">
+              {image ? (
+                <img src={image} alt={player.name} className="h-full w-full object-cover" />
+              ) : (
+                <UserRound className="h-12 w-12 text-neutral-300" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:tracking-[0.18em]">
+                D LEAGUE PLAYER
+              </p>
+              <h1 className="mt-2 break-words font-display text-4xl font-extrabold tracking-tight text-brand-black md:text-6xl">
+                {player.name}
+              </h1>
+              {player.englishName && (
+                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  {player.englishName}
+                </p>
+              )}
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500">
+                <span>#{player.number}</span>
+                <span>{player.gender}</span>
+                <span>{player.nationality}</span>
+                <span>{player.age} 歲</span>
+                {preferredRecord.team && (
+                  <Link
+                    to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
+                    className="font-bold text-brand-blue"
+                  >
+                    {preferredRecord.team.name}
+                  </Link>
                 )}
               </div>
             </div>
-
-            <div className="border-t border-neutral-200 bg-white px-4 py-4 sm:px-6 md:px-8 md:py-5">
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:tracking-[0.18em]">
-                  D LEAGUE 生涯數據
-                </p>
-                <span className="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-brand-blue">
-                  Career Record
-                </span>
-              </div>
-              <dl className="mt-3 grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-200 pt-4">
-                {[
-                  ['進球', totals.goals],
-                  ['黃牌', totals.yellowCards],
-                  ['紅牌', totals.redCards],
-                ].map(([label, value]) => (
-                  <div key={label} className="px-2 text-center md:px-6">
-                    <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px]">
-                      {label}
-                    </dt>
-                    <dd className="mt-1 font-display text-3xl font-black tabular-nums text-brand-black md:text-4xl">
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
           </div>
+
+          <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:mt-6 md:tracking-[0.18em]">
+            D LEAGUE 生涯數據
+          </p>
+          <dl className="mt-2 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-4">
+            {[
+              ['進球', totals.goals],
+              ['黃牌', totals.yellowCards],
+              ['紅牌', totals.redCards],
+            ].map(([label, value]) => (
+              <div key={label} className="px-2 text-center md:px-6">
+                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px]">
+                  {label}
+                </dt>
+                <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black md:text-3xl">
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 

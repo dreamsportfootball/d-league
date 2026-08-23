@@ -185,15 +185,29 @@ const PlayerPage: React.FC = () => {
     };
   }, [availableSeasons, selectedMatch]);
 
-  const dialogNavigationMatchIds = useMemo(
-    () =>
-      selectedMatch
-        ? filteredMatchRecords
-            .filter((record) => record.seasonId === selectedMatch.seasonId)
-            .map((record) => record.match.id)
-        : undefined,
-    [filteredMatchRecords, selectedMatch],
-  );
+  const dialogNavigationMatchIds = useMemo(() => {
+    if (!selectedMatch) return undefined;
+    const record = history.find((item) => item.seasonId === selectedMatch.seasonId);
+    if (!record) return undefined;
+
+    const lineupMatchIds = Object.entries(record.data.lineups)
+      .filter(([, lineup]) =>
+        lineup.homePlayerIds.includes(record.player.id) ||
+        lineup.awayPlayerIds.includes(record.player.id),
+      )
+      .map(([matchId]) => matchId);
+    const eventMatchIds = filteredMatchRecords
+      .filter((item) => item.seasonId === selectedMatch.seasonId)
+      .map((item) => item.match.id);
+    const matchIds = [...new Set([...lineupMatchIds, ...eventMatchIds])];
+
+    return matchIds.sort((a, b) => {
+      const matchA = record.data.matches.find((match) => match.id === a);
+      const matchB = record.data.matches.find((match) => match.id === b);
+      if (!matchA || !matchB) return 0;
+      return new Date(matchB.timestamp).getTime() - new Date(matchA.timestamp).getTime();
+    });
+  }, [filteredMatchRecords, history, selectedMatch]);
 
   if (history.length === 0) {
     return (
@@ -216,16 +230,41 @@ const PlayerPage: React.FC = () => {
       : undefined) ?? history[0];
   const player = preferredRecord.player;
   const image = preferredRecord.data.playerImages[player.name];
-  const totals = history.reduce(
-    (acc, record) => {
-      const stats = getPlayerSeasonStats(record);
-      acc.goals += stats.goals;
-      acc.yellowCards += stats.yellowCards;
-      acc.redCards += stats.directRedCards + stats.secondYellowDismissals;
-      return acc;
-    },
-    { goals: 0, yellowCards: 0, redCards: 0 },
-  );
+  const preferredSeasonStats = getPlayerSeasonStats(preferredRecord);
+  const preferredSeasonRedCards =
+    preferredSeasonStats.directRedCards + preferredSeasonStats.secondYellowDismissals;
+  const appearanceRecords = Object.entries(preferredRecord.data.lineups)
+    .flatMap(([matchId, lineup]) => {
+      const match = preferredRecord.data.matches.find((candidate) => candidate.id === matchId);
+      if (!match) return [];
+
+      const isHome = lineup.homePlayerIds.includes(player.id);
+      const isAway = lineup.awayPlayerIds.includes(player.id);
+      if (!isHome && !isAway) return [];
+
+      const opponent = preferredRecord.data.teamMap[isHome ? match.awayTeamId : match.homeTeamId];
+      const playerEvents = (preferredRecord.data.matchEvents[match.id] ?? []).filter(
+        (event) => resolveMatchEventPlayer(preferredRecord.data, match, event)?.id === player.id,
+      );
+      const goals = playerEvents.filter(
+        (event) =>
+          event.type === 'GOAL' &&
+          !event.isOwnGoal &&
+          match.resultType !== 'VOID' &&
+          match.countsForPlayerStats !== false,
+      ).length;
+      const yellowCards = playerEvents.filter(
+        (event) => event.type === 'YELLOW_CARD' || event.type === 'SECOND_YELLOW',
+      ).length;
+      const redCards = playerEvents.filter(
+        (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
+      ).length;
+
+      return [{ match, opponent, goals, yellowCards, redCards }];
+    })
+    .sort(
+      (a, b) => new Date(b.match.timestamp).getTime() - new Date(a.match.timestamp).getTime(),
+    );
 
   const seasonRows = history.flatMap((record) => {
     const seasonTeams = getPlayerSeasonTeams(record);
@@ -247,7 +286,7 @@ const PlayerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white pb-24">
-      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
+      <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-9 md:px-12 md:py-12">
         <div className="mx-auto max-w-6xl">
           <Link
             to={`/stats?season=${preferredRecord.seasonId}`}
@@ -257,75 +296,172 @@ const PlayerPage: React.FC = () => {
             返回數據中心
           </Link>
 
-          <div className="mt-7 flex items-center gap-5 md:mt-5 md:gap-7">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 md:h-28 md:w-28">
+          <div className="mt-5 grid items-center gap-6 md:grid-cols-[160px_minmax(0,1fr)] md:gap-9">
+            <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 md:h-40 md:w-40">
               {image ? (
                 <img src={image} alt={player.name} className="h-full w-full object-cover" />
               ) : (
-                <UserRound className="h-12 w-12 text-neutral-300" />
+                <UserRound className="h-14 w-14 text-neutral-300 md:h-16 md:w-16" />
               )}
             </div>
+
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:tracking-[0.18em]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-brand-blue md:tracking-[0.2em]">
                 D LEAGUE PLAYER
+                <span className="ml-2 text-neutral-400">
+                  {preferredRecord.team?.leagueId ?? 'D LEAGUE'} · {preferredRecord.season.shortName}
+                </span>
               </p>
-              <h1 className="mt-2 break-words font-display text-4xl font-extrabold tracking-tight text-brand-black md:text-6xl">
-                {player.name}
-              </h1>
+
+              <div className="mt-3 flex items-baseline gap-3 md:gap-4">
+                <span className="shrink-0 font-display text-3xl font-black tabular-nums text-neutral-300 md:text-5xl">
+                  #{player.number}
+                </span>
+                <h1 className="min-w-0 break-words font-display text-4xl font-black leading-none tracking-tight text-brand-black md:text-7xl">
+                  {player.name}
+                </h1>
+              </div>
+
               {player.englishName && (
-                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                <p className="mt-2 break-words text-xs font-semibold uppercase tracking-wider text-neutral-400 md:text-sm">
                   {player.englishName}
                 </p>
               )}
-              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-neutral-500">
-                <span>#{player.number}</span>
-                <span>{player.gender}</span>
-                <span>{player.nationality}</span>
-                <span>{player.age} 歲</span>
-                {preferredRecord.team && (
-                  <Link
-                    to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="font-bold text-brand-blue"
-                  >
-                    {preferredRecord.team.name}
-                  </Link>
-                )}
-              </div>
+
+              {preferredRecord.team && (
+                <Link
+                  to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
+                  className="mt-5 inline-flex min-h-11 items-center text-base font-black text-brand-blue hover:text-brand-black md:text-lg"
+                >
+                  {preferredRecord.team.name}
+                </Link>
+              )}
             </div>
           </div>
 
-          <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-400 md:mt-6 md:tracking-[0.18em]">
-            D LEAGUE 生涯數據
-          </p>
-          <dl className="mt-2 grid grid-cols-3 divide-x divide-neutral-300 border-t border-neutral-300 pt-4">
-            {[
-              ['進球', totals.goals],
-              ['黃牌', totals.yellowCards],
-              ['紅牌', totals.redCards],
-            ].map(([label, value]) => (
-              <div key={label} className="px-2 text-center md:px-6">
-                <dt className="text-[9px] font-semibold tracking-wider text-neutral-400 md:text-[10px]">
-                  {label}
-                </dt>
-                <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black md:text-3xl">
-                  {value}
-                </dd>
+          <div className="mt-8 border-t border-neutral-300 pt-5 md:mt-9">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400">
+                  SEASON STATS
+                </p>
+                <h2 className="mt-1 font-display text-xl font-extrabold text-brand-black md:text-2xl">
+                  {preferredRecord.season.shortName} 賽季數據
+                </h2>
               </div>
-            ))}
-          </dl>
+            </div>
+
+            <dl className="mt-4 grid grid-cols-3 divide-x divide-neutral-300 border-y border-neutral-300 bg-white py-4 md:py-5">
+              {[
+                ['進球', preferredSeasonStats.goals],
+                ['黃牌', preferredSeasonStats.yellowCards],
+                ['紅牌', preferredSeasonRedCards],
+              ].map(([label, value]) => (
+                <div key={label} className="px-3 text-center md:px-8">
+                  <dt className="text-[10px] font-semibold tracking-wider text-neutral-400">{label}</dt>
+                  <dd className="mt-1 font-display text-3xl font-black tabular-nums text-brand-black md:text-4xl">
+                    {value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
 
       <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
         <section>
+          <div className="border-b border-neutral-200 pb-3">
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">球員資料</h2>
+          </div>
+          <dl className="grid grid-cols-3 divide-x divide-neutral-200 border-b border-neutral-200 py-5">
+            {[
+              ['國籍', player.nationality],
+              ['年齡', `${player.age} 歲`],
+              ['性別', player.gender],
+            ].map(([label, value]) => (
+              <div key={label} className="px-3 first:pl-0 md:px-8 md:first:pl-0">
+                <dt className="text-[10px] font-bold tracking-wider text-neutral-400">{label}</dt>
+                <dd className="mt-1.5 text-sm font-bold text-brand-black md:text-base">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section>
+          <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
+            <div>
+              <h2 className="font-display text-2xl font-extrabold text-brand-black">出場紀錄</h2>
+              <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
+            </div>
+            {appearanceRecords.length > 0 && (
+              <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
+            )}
+          </div>
+
+          {appearanceRecords.length > 0 ? (
+            <div className="divide-y divide-neutral-100">
+              {appearanceRecords.map(({ match, opponent, goals, yellowCards, redCards }) => {
+                const hasScore = match.homeScore !== null && match.awayScore !== null;
+                return (
+                  <button
+                    key={match.id}
+                    type="button"
+                    onClick={() => setSelectedMatch({ matchId: match.id, seasonId: preferredRecord.seasonId })}
+                    data-analytics-event="match_open"
+                    data-analytics-label={match.id}
+                    className="grid w-full grid-cols-[84px_minmax(0,1fr)_auto] items-center gap-3 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue md:grid-cols-[120px_minmax(0,1fr)_110px_180px]"
+                  >
+                    <span className="text-xs font-semibold tabular-nums text-neutral-400">
+                      {formatPlayerMatchDate(match.timestamp)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-black text-brand-black">
+                        vs {opponent?.name ?? '未知球隊'}
+                      </p>
+                      <p className="mt-1 text-[10px] font-semibold text-neutral-400 md:hidden">
+                        {goals} 球 · {yellowCards} 黃 · {redCards} 紅
+                      </p>
+                    </div>
+                    <span className="font-display text-lg font-black tabular-nums text-brand-black md:text-center">
+                      {hasScore ? `${match.homeScore}–${match.awayScore}` : '—'}
+                    </span>
+                    <div className="hidden grid-cols-3 divide-x divide-neutral-200 md:grid">
+                      {[
+                        ['進球', goals],
+                        ['黃', yellowCards],
+                        ['紅', redCards],
+                      ].map(([label, value]) => (
+                        <div key={label} className="text-center">
+                          <p className="text-[9px] font-semibold text-neutral-400">{label}</p>
+                          <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="border-b border-neutral-200 py-8">
+              <p className="text-sm font-bold text-brand-black">本賽季尚未建立出場名單資料</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
+                比賽名單資料完成後，這裡會顯示每場出場紀錄、對手、比分及個人事件；目前不以進球或牌卡事件推算出場次數。
+              </p>
+            </div>
+          )}
+        </section>
+
+        <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
-            <h2 className="font-display text-2xl font-extrabold text-brand-black">賽季紀錄</h2>
+            <h2 className="font-display text-2xl font-extrabold text-brand-black">D LEAGUE 生涯</h2>
           </div>
 
           <div className="md:hidden">
-            <div className="grid grid-cols-[58px_minmax(0,1fr)_32px_32px_32px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-400">
+            <div className="grid grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-400">
               <span>賽季</span>
+              <span>級別</span>
               <span>球隊</span>
               <span className="text-center">進</span>
               <span className="text-center">黃</span>
@@ -335,11 +471,12 @@ const PlayerPage: React.FC = () => {
               {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                 <div
                   key={`${record.seasonId}-${team?.id ?? 'unknown'}`}
-                  className="grid min-h-12 grid-cols-[58px_minmax(0,1fr)_32px_32px_32px] items-center gap-1 py-2.5"
+                  className="grid min-h-12 grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 py-2.5"
                 >
                   <span className="text-[11px] font-semibold tabular-nums text-neutral-500">
                     {record.season.shortName}
                   </span>
+                  <span className="text-[11px] font-bold text-brand-blue">{team?.leagueId ?? '—'}</span>
                   <div className="min-w-0 pr-1 text-[12px] font-bold text-brand-black">
                     {team ? (
                       <Link
@@ -361,10 +498,11 @@ const PlayerPage: React.FC = () => {
           </div>
 
           <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[520px] border-collapse">
+            <table className="w-full min-w-[620px] border-collapse">
               <thead className="border-b border-neutral-100 text-[10px] font-bold tracking-wider text-neutral-400">
                 <tr>
                   <th className="py-3 text-left">賽季</th>
+                  <th className="py-3 text-left">級別</th>
                   <th className="py-3 text-left">球隊</th>
                   <th className="py-3 text-center">進球</th>
                   <th className="py-3 text-center">黃牌</th>
@@ -375,6 +513,7 @@ const PlayerPage: React.FC = () => {
                 {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                   <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
                     <td className="py-4 text-sm font-bold text-brand-black">{record.season.shortName}</td>
+                    <td className="py-4 text-sm font-bold text-brand-blue">{team?.leagueId ?? '—'}</td>
                     <td className="py-4 text-sm text-brand-black">
                       {team ? (
                         <Link

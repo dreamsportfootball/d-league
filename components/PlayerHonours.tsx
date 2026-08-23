@@ -21,25 +21,43 @@ const PlayerHonours: React.FC<PlayerHonoursProps> = ({ playerId, className = '' 
 
       <div className="divide-y divide-neutral-100">
         {honours.map((honour) => (
-          <div
-            key={honour.id}
-            className="grid gap-1 py-4 sm:grid-cols-[92px_minmax(0,1fr)] sm:items-center sm:gap-4"
-          >
-            <span className="text-xs font-bold tabular-nums text-neutral-400">
-              {honour.seasonName}
-            </span>
-            <div className="min-w-0">
-              <div className="flex min-w-0 items-baseline gap-2">
-                <span className="shrink-0 text-xs font-black text-brand-blue">
-                  {honour.leagueId}
+          <div key={honour.id}>
+            <div className="flex min-w-0 items-baseline gap-2 py-4 sm:hidden">
+              <span className="shrink-0 text-[11px] font-bold tabular-nums text-neutral-400">
+                {honour.seasonName}
+              </span>
+              <span className="shrink-0 text-[11px] font-black text-brand-blue">
+                {honour.leagueId}
+              </span>
+              <span className="shrink-0 text-[12px] font-black text-brand-black">
+                {honour.title}
+              </span>
+              {honour.teamName && (
+                <span className="min-w-0 truncate text-[11px] font-semibold text-neutral-500">
+                  {honour.teamName}
                 </span>
-                <span className="truncate text-sm font-black text-brand-black sm:text-base">
-                  {honour.title}
-                </span>
+              )}
+            </div>
+
+            <div className="hidden gap-4 py-4 sm:grid sm:grid-cols-[92px_minmax(0,1fr)] sm:items-center">
+              <span className="text-xs font-bold tabular-nums text-neutral-400">
+                {honour.seasonName}
+              </span>
+              <div className="min-w-0">
+                <div className="flex min-w-0 items-baseline gap-2">
+                  <span className="shrink-0 text-xs font-black text-brand-blue">
+                    {honour.leagueId}
+                  </span>
+                  <span className="truncate text-base font-black text-brand-black">
+                    {honour.title}
+                  </span>
+                </div>
+                {honour.teamName && (
+                  <p className="mt-1 truncate text-xs font-medium text-neutral-400">
+                    {honour.teamName}
+                  </p>
+                )}
               </div>
-              <p className="mt-1 truncate text-xs font-medium text-neutral-400">
-                {honour.kind === 'GOLDEN_BOOT' ? '個人榮譽' : honour.teamName}
-              </p>
             </div>
           </div>
         ))}

@@ -48,8 +48,8 @@ const formatLeagueName = (leagueId: string): string => {
   return match ? `LEAGUE ${match[1]}` : leagueId;
 };
 
-const formatStatValue = (value: number | undefined): number | '—' =>
-  typeof value === 'number' && value !== 0 ? value : '—';
+const formatStatValue = (value: number | undefined): number | '-' =>
+  typeof value === 'number' && value !== 0 ? value : '-';
 
 const isSafeExternalUrl = (value: string): boolean => {
   try {
@@ -237,10 +237,10 @@ const TeamPage: React.FC = () => {
 
           <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
             {[
-              ['排名', seasonHasStarted && standing ? formatStatValue(standing.rank) : '—'],
-              ['場次', seasonHasStarted && standing ? formatStatValue(standing.played) : '—'],
-              ['進球', seasonHasStarted && standing ? formatStatValue(standing.gf) : '—'],
-              ['積分', seasonHasStarted && standing ? formatStatValue(standing.points) : '—'],
+              ['排名', seasonHasStarted && standing ? formatStatValue(standing.rank) : '-'],
+              ['場次', seasonHasStarted && standing ? formatStatValue(standing.played) : '-'],
+              ['進球', seasonHasStarted && standing ? formatStatValue(standing.gf) : '-'],
+              ['積分', seasonHasStarted && standing ? formatStatValue(standing.points) : '-'],
             ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd></div>)}
           </dl>
         </div>

@@ -336,8 +336,8 @@ const PlayerPage: React.FC = () => {
                 </p>
 
                 <div className="mt-2 flex min-w-0 items-baseline gap-2 sm:mt-3 sm:gap-3">
-                  <span className="shrink-0 font-display text-2xl font-black tabular-nums text-neutral-300 sm:text-3xl lg:text-4xl">
-                    #{player.number}
+                  <span className="shrink-0 font-display text-2xl font-black tabular-nums text-brand-blue sm:text-3xl lg:text-4xl">
+                    {player.number}
                   </span>
                   <h1 className="min-w-0 break-words font-display text-3xl font-black leading-none tracking-tight text-brand-black sm:text-5xl lg:text-6xl">
                     {player.name}
@@ -404,65 +404,6 @@ const PlayerPage: React.FC = () => {
       </section>
 
       <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
-        <section>
-          <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
-            <div>
-              <h2 className="font-display text-2xl font-extrabold text-brand-black">個人紀錄</h2>
-              <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
-            </div>
-            <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
-          </div>
-
-          {appearanceRecords.length > 0 ? (
-            <div className="divide-y divide-neutral-100">
-              {appearanceRecords.map(({ match, opponent, goals, yellowCards, redCards }) => {
-                const hasScore = match.homeScore !== null && match.awayScore !== null;
-                return (
-                  <button
-                    key={match.id}
-                    type="button"
-                    onClick={() => setSelectedMatch({ matchId: match.id, seasonId: preferredRecord.seasonId })}
-                    data-analytics-event="match_open"
-                    data-analytics-label={match.id}
-                    className="grid w-full grid-cols-[84px_minmax(0,1fr)_auto] items-center gap-3 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue md:grid-cols-[120px_minmax(0,1fr)_110px_180px]"
-                  >
-                    <span className="text-xs font-semibold tabular-nums text-neutral-400">
-                      {formatPlayerMatchDate(match.timestamp)}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-brand-black">
-                        vs {opponent?.name ?? '未知球隊'}
-                      </p>
-                      <p className="mt-1 text-[10px] font-semibold text-neutral-400 md:hidden">
-                        {goals} 球 · {yellowCards} 黃 · {redCards} 紅
-                      </p>
-                    </div>
-                    <span className="font-display text-lg font-black tabular-nums text-brand-black md:text-center">
-                      {hasScore ? `${match.homeScore}–${match.awayScore}` : '—'}
-                    </span>
-                    <div className="hidden grid-cols-3 divide-x divide-neutral-200 md:grid">
-                      {[
-                        ['進球', goals],
-                        ['黃', yellowCards],
-                        ['紅', redCards],
-                      ].map(([label, value]) => (
-                        <div key={label} className="text-center">
-                          <p className="text-[9px] font-semibold text-neutral-400">{label}</p>
-                          <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="border-b border-neutral-100 py-8 text-sm text-neutral-400">
-              本賽季尚未有個人紀錄
-            </p>
-          )}
-        </section>
-
         <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />

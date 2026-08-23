@@ -131,6 +131,32 @@ const DATA = Object.fromEntries(
   ]),
 ) as Record<SeasonId, SeasonData>;
 
+const applyPlayerImageFallbacks = (dataBySeason: Record<SeasonId, SeasonData>): void => {
+  const imageByIdentity = new Map<string, string>();
+
+  SEASON_IDS.forEach((seasonId) => {
+    const seasonData = dataBySeason[seasonId];
+    seasonData.players.forEach((player) => {
+      const image = seasonData.playerImages[player.name];
+      if (!image) return;
+      const identityId = player.identityId ?? player.id;
+      if (!imageByIdentity.has(identityId)) imageByIdentity.set(identityId, image);
+    });
+  });
+
+  SEASON_IDS.forEach((seasonId) => {
+    const seasonData = dataBySeason[seasonId];
+    seasonData.players.forEach((player) => {
+      if (seasonData.playerImages[player.name]) return;
+      const identityId = player.identityId ?? player.id;
+      const fallbackImage = imageByIdentity.get(identityId);
+      if (fallbackImage) seasonData.playerImages[player.name] = fallbackImage;
+    });
+  });
+};
+
+applyPlayerImageFallbacks(DATA);
+
 const ALL_NEWS: NewsArticle[] = SEASON_IDS.flatMap((seasonId) => DATA[seasonId].news);
 
 export const getSeasonData = (seasonId: SeasonId): SeasonData => DATA[seasonId];

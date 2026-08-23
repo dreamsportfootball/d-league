@@ -124,5 +124,28 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_kaohsiung_hk_2026",
+    "identityId": "kaohsiung-hong-kong-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "高雄香港人足球俱樂部",
+    "shortName": "高雄香港人足球俱樂部",
+    "logo": "",
+    "primaryColor": "#f2d600",
+    "secondaryColor": "#111111",
+    "kits": {
+      "home": "#f2d600",
+      "away": "#14251c"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "謝俊杰",
+        "englishName": "Tse Chun Kit"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

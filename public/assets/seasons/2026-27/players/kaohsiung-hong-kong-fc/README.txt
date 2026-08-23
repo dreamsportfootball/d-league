@@ -1,1 +1,0 @@
-Player registration headshots supplied in the official 2026/27 roster workbook.

@@ -350,15 +350,6 @@ const PlayerPage: React.FC = () => {
                   </p>
                 )}
 
-                {preferredRecord.team && (
-                  <Link
-                    to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="mt-3 inline-flex min-h-9 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
-                  >
-                    {preferredRecord.team.name}
-                  </Link>
-                )}
-
                 <dl className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] sm:text-[11px]">
                   {[
                     ['國籍', player.nationality],
@@ -371,6 +362,15 @@ const PlayerPage: React.FC = () => {
                     </div>
                   ))}
                 </dl>
+
+                {preferredRecord.team && (
+                  <Link
+                    to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
+                    className="mt-3 inline-flex min-h-9 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
+                  >
+                    {preferredRecord.team.name}
+                  </Link>
+                )}
               </div>
             </div>
 

@@ -48,6 +48,23 @@ for (const [route, entry] of Object.entries(PAGE_SEO)) {
 const teamCanonicalIds = new Set();
 const playerCanonicalIds = new Set();
 const matchIds = new Set();
+const latestTeamNameByCanonicalId = new Map();
+const latestPlayerNameByCanonicalId = new Map();
+
+// SEASON_IDS is ordered oldest to newest. Canonical entity pages are rendered
+// from the latest record in each identity group, so validation must expect the
+// latest public name rather than a historical name when route IDs collide.
+for (const seasonId of SEASON_IDS) {
+  const teams = await readJson(seasonId, 'teams.json');
+  const players = await readJson(seasonId, 'players.json');
+
+  for (const team of teams) {
+    latestTeamNameByCanonicalId.set(team.identityId ?? team.id, team.name);
+  }
+  for (const player of players) {
+    latestPlayerNameByCanonicalId.set(player.identityId ?? player.id, player.name);
+  }
+}
 
 for (const seasonId of SEASON_IDS) {
   const articles = await readJson(seasonId, 'news.json');
@@ -61,12 +78,13 @@ for (const seasonId of SEASON_IDS) {
 
   for (const team of teams) {
     const canonicalId = team.identityId ?? team.id;
+    const expectedTeamName = latestTeamNameByCanonicalId.get(canonicalId) ?? team.name;
     teamCanonicalIds.add(canonicalId);
-    await checkHtml(`/teams/${team.id}`, team.name, {
+    await checkHtml(`/teams/${team.id}`, expectedTeamName, {
       canonicalRoute: `/teams/${canonicalId}`,
       schemaType: 'SportsTeam',
     });
-    await checkHtml(`/teams/${canonicalId}`, team.name, {
+    await checkHtml(`/teams/${canonicalId}`, expectedTeamName, {
       canonicalRoute: `/teams/${canonicalId}`,
       schemaType: 'SportsTeam',
     });
@@ -74,12 +92,13 @@ for (const seasonId of SEASON_IDS) {
 
   for (const player of players) {
     const canonicalId = player.identityId ?? player.id;
+    const expectedPlayerName = latestPlayerNameByCanonicalId.get(canonicalId) ?? player.name;
     playerCanonicalIds.add(canonicalId);
-    await checkHtml(`/players/${player.id}`, player.name, {
+    await checkHtml(`/players/${player.id}`, expectedPlayerName, {
       canonicalRoute: `/players/${canonicalId}`,
       schemaType: 'Person',
     });
-    await checkHtml(`/players/${canonicalId}`, player.name, {
+    await checkHtml(`/players/${canonicalId}`, expectedPlayerName, {
       canonicalRoute: `/players/${canonicalId}`,
       schemaType: 'Person',
     });

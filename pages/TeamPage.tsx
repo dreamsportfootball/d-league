@@ -281,10 +281,18 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
-          <div className="divide-y divide-neutral-100">{history.map((record) => {
-            const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-            return <div key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span className="font-bold text-brand-black">{record.season.shortName}</span><span className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '—'}</span></div>;
-          })}</div>
+          <div role="table" aria-label="歷年 D LEAGUE">
+            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 border-b border-neutral-200 pb-2 text-[10px] font-bold tracking-wider text-neutral-400">
+              <span role="columnheader">賽季</span>
+              <span role="columnheader">級別</span>
+              <span role="columnheader" className="text-center">排名</span>
+              <span role="columnheader" className="text-right">積分</span>
+            </div>
+            <div className="divide-y divide-neutral-100">{history.map((record) => {
+              const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
+              return <div role="row" key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span role="cell" className="font-bold text-brand-black">{record.season.shortName}</span><span role="cell" className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span role="cell" className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '—'}</span><span role="cell" className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '—'}</span></div>;
+            })}</div>
+          </div>
         </section>
       </main>
 

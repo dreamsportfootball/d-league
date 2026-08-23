@@ -1,5 +1,6 @@
 import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import { SEASON_IDS } from '../config/siteManifest.js';
+import playerIdentityAliases from '../data/playerIdentityAliases.json';
 import type { Match, NewsArticle, Video } from '../types';
 import type { DisciplineDecision, MatchLineup } from '../types/discipline';
 import type { MatchEvent } from '../types/matchEvent';
@@ -23,6 +24,9 @@ export interface SeasonData {
 }
 
 type JsonModuleMap = Record<string, unknown>;
+type PlayerIdentityAliasMap = Partial<Record<SeasonId, Record<string, string>>>;
+
+const playerIdentityAliasMap = playerIdentityAliases as PlayerIdentityAliasMap;
 
 const teamsModules = import.meta.glob('../data/seasons/*/teams.json', { eager: true, import: 'default' }) as JsonModuleMap;
 const playersModules = import.meta.glob('../data/seasons/*/players.json', { eager: true, import: 'default' }) as JsonModuleMap;
@@ -66,7 +70,7 @@ const getSeasonJson = <T,>(modules: JsonModuleMap, seasonId: SeasonId, fileName:
 const makeData = (
   id: SeasonId,
   teamsInput: SeasonTeam[],
-  players: PlayerProfile[],
+  playersInput: PlayerProfile[],
   imagesInput: Record<string, string>,
   matches: Match[],
   matchEvents: Record<string, MatchEvent[]>,
@@ -78,6 +82,12 @@ const makeData = (
   albumsInput: MediaAlbum[],
 ): SeasonData => {
   const teams = teamsInput.map((team) => ({ ...team, logo: assetUrl(team.logo) }));
+  const playerAliases = playerIdentityAliasMap[id] ?? {};
+  const players = playersInput.map((player) => {
+    const identityId = playerAliases[player.id] ?? player.identityId;
+    return identityId ? { ...player, identityId } : player;
+  });
+
   return {
     teams,
     teamMap: Object.fromEntries(teams.map((team) => [team.id, team])),

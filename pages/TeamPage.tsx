@@ -49,7 +49,7 @@ const formatLeagueName = (leagueId: string): string => {
 };
 
 const formatStatValue = (value: number | undefined): number | '-' =>
-  typeof value === 'number' && value !== 0 ? value : '-';
+  typeof value === 'number' ? value : '-';
 
 const isSafeExternalUrl = (value: string): boolean => {
   try {

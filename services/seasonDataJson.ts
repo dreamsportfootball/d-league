@@ -134,7 +134,7 @@ const DATA = Object.fromEntries(
 const applyPlayerImageFallbacks = (dataBySeason: Record<SeasonId, SeasonData>): void => {
   const imageByIdentity = new Map<string, string>();
 
-  SEASON_IDS.forEach((seasonId) => {
+  [...SEASON_IDS].reverse().forEach((seasonId) => {
     const seasonData = dataBySeason[seasonId];
     seasonData.players.forEach((player) => {
       const image = seasonData.playerImages[player.name];

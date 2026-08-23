@@ -150,11 +150,20 @@ const PlayerPage: React.FC = () => {
   const history = useMemo(() => getPlayerHistory(id), [id]);
   const matchRecords = useMemo(() => getPlayerMatchRecords(id), [id]);
   const transferRecords = useMemo(() => getPlayerTransfers(history), [history]);
-  const [eventSeason, setEventSeason] = useState<EventSeasonFilter>('ALL');
+  const latestEventSeason = history[0]?.seasonId ?? 'ALL';
+  const [eventSeasonByPlayer, setEventSeasonByPlayer] = useState<{
+    playerId: string;
+    season: EventSeasonFilter;
+  }>(() => ({ playerId: id, season: latestEventSeason }));
+  const eventSeason = eventSeasonByPlayer.playerId === id
+    ? eventSeasonByPlayer.season
+    : latestEventSeason;
+  const setEventSeason = (season: EventSeasonFilter) => {
+    setEventSeasonByPlayer({ playerId: id, season });
+  };
   const [selectedMatch, setSelectedMatch] = useState<SelectedMatchState | null>(null);
 
   useEffect(() => {
-    setEventSeason('ALL');
     setSelectedMatch(null);
   }, [id]);
   const filteredMatchRecords = useMemo(

@@ -724,5 +724,170 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 19
+  },
+  {
+    "id": "khk26-01",
+    "identityId": "kemp-tai-wai-david",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 9,
+    "name": "葛大瑋",
+    "englishName": "KEMP TAI WAI DAVID",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 49
+  },
+  {
+    "id": "khk26-02",
+    "identityId": "ns-01",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 31,
+    "name": "謝俊杰",
+    "englishName": "Tse Chun Kit",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 28
+  },
+  {
+    "id": "khk26-03",
+    "identityId": "cheng-li",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 13,
+    "name": "鄭力",
+    "englishName": "Cheng Li",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 37
+  },
+  {
+    "id": "khk26-04",
+    "identityId": "po-ka-wai",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 18,
+    "name": "蒲家威",
+    "englishName": "Po Ka Wai",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 42
+  },
+  {
+    "id": "khk26-05",
+    "identityId": "nguyen-van-nam",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 15,
+    "name": "阮文南",
+    "englishName": "NGUYEN VAN NAM",
+    "gender": "男",
+    "nationality": "越南",
+    "age": 26
+  },
+  {
+    "id": "khk26-06",
+    "identityId": "yu-tsung-wei",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 24,
+    "name": "游淙瑋",
+    "englishName": "YU TSUNG WEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "khk26-07",
+    "identityId": "ns-17",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 17,
+    "name": "高義莉",
+    "englishName": "Marie Theresa Gantner",
+    "gender": "女",
+    "nationality": "德國",
+    "age": 28
+  },
+  {
+    "id": "khk26-08",
+    "identityId": "ns-19",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 19,
+    "name": "陳遠泰",
+    "englishName": "Chen YuanTai",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 41
+  },
+  {
+    "id": "khk26-09",
+    "identityId": "lee-sai-ki",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 23,
+    "name": "李世琦",
+    "englishName": "Lee Sai Ki",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 40
+  },
+  {
+    "id": "khk26-10",
+    "identityId": "teppei-goto",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 10,
+    "name": "後藤鐵平",
+    "englishName": "TEPPEI GOTO",
+    "gender": "男",
+    "nationality": "日本",
+    "age": 48
+  },
+  {
+    "id": "khk26-11",
+    "identityId": "ns-26",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 26,
+    "name": "陳宇翔",
+    "englishName": "Tan Yu Xiang",
+    "gender": "男",
+    "nationality": "馬來西亞",
+    "age": 25
+  },
+  {
+    "id": "khk26-12",
+    "identityId": "chung-man-hei-gary",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 55,
+    "name": "鍾文熙",
+    "englishName": "Chung Man Hei Gary",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 26
+  },
+  {
+    "id": "khk26-13",
+    "identityId": "guan-songfeng",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 88,
+    "name": "關松峰",
+    "englishName": "Guan SongFeng",
+    "gender": "男",
+    "nationality": "中國",
+    "age": 32
+  },
+  {
+    "id": "khk26-14",
+    "identityId": "ns-27",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 27,
+    "name": "劉康任",
+    "englishName": "LIU KENG JEN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "khk26-15",
+    "identityId": "ar-soon",
+    "teamId": "t_kaohsiung_hk_2026",
+    "number": 30,
+    "name": "龐恩浩",
+    "englishName": "AR SOON",
+    "gender": "男",
+    "nationality": "緬甸",
+    "age": 29
   }
 ]

@@ -361,24 +361,25 @@ const PlayerPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="border-t border-neutral-300 pt-5 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+            <div className="pt-1 lg:pl-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400">
                 SEASON STATS
               </p>
               <h2 className="mt-1 font-display text-xl font-extrabold text-brand-black md:text-2xl">
                 {preferredRecord.season.shortName} 賽季數據
               </h2>
+              <div className="mt-3 h-0.5 w-10 bg-brand-blue" aria-hidden="true" />
 
-              <dl className="mt-4 grid grid-cols-4 divide-x divide-neutral-300 border-y border-neutral-300 bg-white py-4 lg:mt-5 lg:py-5">
+              <dl className="mt-5 grid grid-cols-4 divide-x divide-neutral-200">
                 {[
                   ['出賽', appearanceRecords.length],
                   ['進球', preferredSeasonStats.goals],
                   ['黃牌', preferredSeasonStats.yellowCards],
                   ['紅牌', preferredSeasonRedCards],
                 ].map(([label, value]) => (
-                  <div key={label} className="min-w-0 px-1 text-center sm:px-3 lg:px-4">
-                    <dt className="truncate text-[9px] font-semibold tracking-wider text-neutral-400 sm:text-[10px]">{label}</dt>
-                    <dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl lg:text-4xl">
+                  <div key={label} className="min-w-0 px-2 text-center first:pl-0 sm:px-4 lg:px-5">
+                    <dt className="truncate text-[9px] font-bold tracking-[0.12em] text-neutral-400 sm:text-[10px]">{label}</dt>
+                    <dd className="mt-2 font-display text-3xl font-black leading-none tabular-nums text-brand-black sm:text-4xl lg:text-[42px]">
                       {value}
                     </dd>
                   </div>
@@ -403,16 +404,16 @@ const PlayerPage: React.FC = () => {
       </section>
 
       <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
-        <section>
-          <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
-            <div>
-              <h2 className="font-display text-2xl font-extrabold text-brand-black">出場紀錄</h2>
-              <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
+        {appearanceRecords.length > 0 && (
+          <section>
+            <div className="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 pb-3">
+              <div>
+                <h2 className="font-display text-2xl font-extrabold text-brand-black">出場紀錄</h2>
+                <p className="mt-1 text-xs text-neutral-400">{preferredRecord.season.shortName}</p>
+              </div>
+              <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
             </div>
-            <span className="text-xs font-bold text-neutral-500">共 {appearanceRecords.length} 場</span>
-          </div>
 
-          {appearanceRecords.length > 0 ? (
             <div className="divide-y divide-neutral-100">
               {appearanceRecords.map(({ match, opponent, goals, yellowCards, redCards }) => {
                 const hasScore = match.homeScore !== null && match.awayScore !== null;
@@ -455,15 +456,8 @@ const PlayerPage: React.FC = () => {
                 );
               })}
             </div>
-          ) : (
-            <div className="border-b border-neutral-200 py-8">
-              <p className="text-sm font-bold text-brand-black">本賽季尚未有出場紀錄</p>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
-                賽事開始並完成比賽名單登錄後，這裡會顯示每場出場紀錄、對手、比分及個人事件。
-              </p>
-            </div>
-          )}
-        </section>
+          </section>
+        )}
 
         <section>
           <div className="flex items-center border-b border-neutral-200 pb-3">

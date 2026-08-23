@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Target, UserRound } from 'lucide-r
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
+import PlayerHonours from '../components/PlayerHonours';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
@@ -261,9 +262,6 @@ const PlayerPage: React.FC = () => {
       const side = getPlayerLineupSide(lineup, player.id);
       if (!side) return [];
 
-      const opponent = preferredRecord.data.teamMap[
-        side === 'HOME' ? match.awayTeamId : match.homeTeamId
-      ];
       const playerEvents = (preferredRecord.data.matchEvents[match.id] ?? []).filter(
         (event) => resolveMatchEventPlayer(preferredRecord.data, match, event)?.id === player.id,
       );
@@ -281,7 +279,7 @@ const PlayerPage: React.FC = () => {
         (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
       ).length;
 
-      return [{ match, opponent, goals, yellowCards, redCards }];
+      return [{ match, goals, yellowCards, redCards }];
     })
     .sort(
       (a, b) => new Date(b.match.timestamp).getTime() - new Date(a.match.timestamp).getTime(),
@@ -403,8 +401,8 @@ const PlayerPage: React.FC = () => {
         </div>
       </section>
 
-      <main className="mx-auto max-w-6xl space-y-12 px-4 py-10 md:space-y-14 md:px-12 md:py-14">
-        <section>
+      <main className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-10 md:gap-14 md:px-12 md:py-14">
+        <section className="order-3">
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
             <h2 className="font-display text-2xl font-extrabold text-brand-black">D LEAGUE 生涯</h2>
@@ -488,8 +486,10 @@ const PlayerPage: React.FC = () => {
           </div>
         </section>
 
+        <PlayerHonours playerId={id} className="order-2" />
+
         {transferRecords.length > 0 && (
-          <section>
+          <section className="order-4">
             <div className="flex items-center border-b border-neutral-200 pb-3">
               <ArrowRight className="mr-2 h-5 w-5 text-brand-blue" />
               <h2 className="font-display text-2xl font-extrabold text-brand-black">轉會紀錄</h2>
@@ -522,7 +522,7 @@ const PlayerPage: React.FC = () => {
           </section>
         )}
 
-        <section>
+        <section className="order-1">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
             <div className="flex items-center">
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />

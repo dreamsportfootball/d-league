@@ -84,6 +84,7 @@ const TeamPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { availableSeasons } = useSeason();
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const [failedTeamLogo, setFailedTeamLogo] = useState<string | null>(null);
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getTeamHistory(id), [id]);
 
@@ -215,7 +216,16 @@ const TeamPage: React.FC = () => {
           </div>
 
           <div className="mt-6 flex min-w-0 items-start gap-5 sm:items-center sm:gap-7 md:mt-4">
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28"><img src={team.logo} alt={`${team.name} 隊徽`} className="max-h-full max-w-full object-contain" /></div>
+            {team.logo && failedTeamLogo !== team.logo && (
+              <div className="flex h-24 w-24 shrink-0 items-center justify-center md:h-28 md:w-28">
+                <img
+                  src={team.logo}
+                  alt={`${team.name} 隊徽`}
+                  className="max-h-full max-w-full object-contain"
+                  onError={() => setFailedTeamLogo(team.logo)}
+                />
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
               <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>

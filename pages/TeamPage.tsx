@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CalendarDays,
+  ExternalLink,
   Facebook,
   Globe2,
   History,
@@ -33,7 +34,6 @@ interface RoundBucket {
 interface TeamSocialLinkItem {
   platform: keyof TeamSocialLinks;
   label: string;
-  displayLabel: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -57,56 +57,22 @@ const isSafeExternalUrl = (value: string): boolean => {
   }
 };
 
-const getInstagramHandle = (href: string): string => {
-  try {
-    const url = new URL(href);
-    const handle = url.pathname.split('/').filter(Boolean)[0];
-    return handle ? `@${handle}` : 'Instagram';
-  } catch {
-    return 'Instagram';
-  }
-};
-
 const getTeamSocialLinks = (team: SeasonTeam): TeamSocialLinkItem[] => {
   const links = team.socialLinks;
   if (!links) return [];
 
   const candidates: Array<TeamSocialLinkItem | null> = [
     links.instagram && isSafeExternalUrl(links.instagram)
-      ? {
-          platform: 'instagram',
-          label: 'Instagram',
-          displayLabel: getInstagramHandle(links.instagram),
-          href: links.instagram,
-          icon: <Instagram className="h-4 w-4" />,
-        }
+      ? { platform: 'instagram', label: 'Instagram', href: links.instagram, icon: <Instagram className="h-4 w-4" /> }
       : null,
     links.facebook && isSafeExternalUrl(links.facebook)
-      ? {
-          platform: 'facebook',
-          label: 'Facebook',
-          displayLabel: 'Facebook',
-          href: links.facebook,
-          icon: <Facebook className="h-4 w-4" />,
-        }
+      ? { platform: 'facebook', label: 'Facebook', href: links.facebook, icon: <Facebook className="h-4 w-4" /> }
       : null,
     links.youtube && isSafeExternalUrl(links.youtube)
-      ? {
-          platform: 'youtube',
-          label: 'YouTube',
-          displayLabel: 'YouTube',
-          href: links.youtube,
-          icon: <Youtube className="h-4 w-4" />,
-        }
+      ? { platform: 'youtube', label: 'YouTube', href: links.youtube, icon: <Youtube className="h-4 w-4" /> }
       : null,
     links.website && isSafeExternalUrl(links.website)
-      ? {
-          platform: 'website',
-          label: '官方網站',
-          displayLabel: '官方網站',
-          href: links.website,
-          icon: <Globe2 className="h-4 w-4" />,
-        }
+      ? { platform: 'website', label: '官方網站', href: links.website, icon: <Globe2 className="h-4 w-4" /> }
       : null,
   ];
 
@@ -216,7 +182,7 @@ const TeamPage: React.FC = () => {
   })();
 
   const renderSocialLinks = (mobile: boolean) => (
-    <div className={mobile ? 'mt-4 flex flex-wrap gap-2 sm:hidden' : 'hidden flex-wrap justify-end gap-2 sm:flex'}>
+    <div className={mobile ? 'mt-4 flex flex-wrap gap-x-5 gap-y-2 sm:hidden' : 'hidden flex-wrap justify-end gap-x-5 gap-y-2 sm:flex'}>
       {socialLinks.map((link) => (
         <a
           key={link.platform}
@@ -224,13 +190,11 @@ const TeamPage: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`前往 ${team.name} ${link.label}`}
-          className="inline-flex min-h-11 max-w-full items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3.5 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
+          className="group inline-flex min-h-11 items-center gap-2 text-xs font-bold text-neutral-500 transition-colors hover:text-brand-blue"
         >
           {link.icon}
           <span>{link.label}</span>
-          {link.displayLabel !== link.label && (
-            <span className="text-neutral-400">{link.displayLabel}</span>
-          )}
+          <ExternalLink className="h-3.5 w-3.5 text-neutral-300 transition-colors group-hover:text-brand-blue" />
         </a>
       ))}
     </div>

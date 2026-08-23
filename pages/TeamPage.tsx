@@ -21,7 +21,7 @@ import { isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
-import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
+import { getPlayerIdentity, getTeamHistory } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam, TeamSocialLinks } from '../types/team';
 
@@ -47,6 +47,9 @@ const formatLeagueName = (leagueId: string): string => {
   const match = /^L(\d+)$/i.exec(leagueId);
   return match ? `LEAGUE ${match[1]}` : leagueId;
 };
+
+const formatStatValue = (value: number | undefined): number | '—' =>
+  typeof value === 'number' && value !== 0 ? value : '—';
 
 const isSafeExternalUrl = (value: string): boolean => {
   try {
@@ -106,7 +109,6 @@ const TeamPage: React.FC = () => {
       ? history.find((record) => record.seasonId === requestedSeason)
       : undefined) ?? history[0];
   const { team, data, season, seasonId } = selectedRecord;
-  const identityId = getTeamIdentity(team);
   const socialLinks = getTeamSocialLinks(team);
   const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
     ? team.shortName.trim()
@@ -227,21 +229,18 @@ const TeamPage: React.FC = () => {
               </div>
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 md:tracking-[0.18em]">{team.leagueId} · {season.shortName}</p>
-              <h1 className="mt-3"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
+              <h1><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
               {socialLinks.length > 0 && renderSocialLinks(true)}
             </div>
           </div>
 
-          {history.length > 1 && <div className="mt-6 flex flex-wrap gap-2 border-t border-neutral-200 pt-4">{history.map((record) => <Link key={record.seasonId} to={`/teams/${identityId}?season=${record.seasonId}`} className={`rounded-full border px-4 py-2 text-xs font-bold ${record.seasonId === seasonId ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-500 hover:text-brand-blue'}`}>{record.season.shortName}</Link>)}</div>}
-
           <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
             {[
-              ['排名', seasonHasStarted && standing ? standing.rank : '—'],
-              ['場次', seasonHasStarted && standing ? standing.played : '—'],
-              ['進球', seasonHasStarted && standing ? standing.gf : '—'],
-              ['積分', seasonHasStarted && standing ? standing.points : '—'],
+              ['排名', seasonHasStarted && standing ? formatStatValue(standing.rank) : '—'],
+              ['場次', seasonHasStarted && standing ? formatStatValue(standing.played) : '—'],
+              ['進球', seasonHasStarted && standing ? formatStatValue(standing.gf) : '—'],
+              ['積分', seasonHasStarted && standing ? formatStatValue(standing.points) : '—'],
             ].map(([label, value]) => <div key={label} className="px-2 text-center sm:px-6"><dt className="text-[10px] font-semibold tracking-wider text-neutral-500">{label}</dt><dd className="mt-1 font-display text-2xl font-black tabular-nums text-brand-black sm:text-3xl">{value}</dd></div>)}
           </dl>
         </div>

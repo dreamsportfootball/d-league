@@ -282,7 +282,7 @@ const TeamPage: React.FC = () => {
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
           <div role="table" aria-label="歷年 D LEAGUE">
-            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 border-b border-neutral-200 pb-2 text-[10px] font-bold tracking-wider text-neutral-400">
+            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-400">
               <span role="columnheader">賽季</span>
               <span role="columnheader">級別</span>
               <span role="columnheader" className="text-center">排名</span>

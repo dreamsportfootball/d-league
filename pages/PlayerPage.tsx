@@ -3,7 +3,6 @@ import { ArrowLeft, ArrowRight, CalendarDays, Target, UserRound } from 'lucide-r
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
-import PlayerEventSeasonFilter from '../components/PlayerEventSeasonFilter';
 import PlayerHonours from '../components/PlayerHonours';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
@@ -529,14 +528,22 @@ const PlayerPage: React.FC = () => {
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
               <h2 className="font-display text-2xl font-extrabold text-brand-black">比賽事件</h2>
             </div>
-            <PlayerEventSeasonFilter
-              value={eventSeason}
-              options={history.map((record) => ({
-                id: record.seasonId,
-                label: record.season.shortName,
-              }))}
-              onChange={setEventSeason}
-            />
+            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
+              <span>賽季</span>
+              <select
+                value={eventSeason}
+                onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
+                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
+                aria-label="篩選比賽事件賽季"
+              >
+                <option value="ALL">全部賽季</option>
+                {history.map((record) => (
+                  <option key={record.seasonId} value={record.seasonId}>
+                    {record.season.shortName}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           {filteredMatchRecords.length > 0 ? (

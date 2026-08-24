@@ -7,6 +7,11 @@ interface PlayerHonoursProps {
   className?: string;
 }
 
+const formatHonourLeagueName = (leagueId: string): string => {
+  const match = /^L(\d+)$/.exec(leagueId);
+  return match ? `D LEAGUE ${match[1]}` : `D LEAGUE ${leagueId}`;
+};
+
 const PlayerHonours: React.FC<PlayerHonoursProps> = ({ playerId, className = '' }) => {
   const honours = useMemo(() => getPlayerHonours(playerId), [playerId]);
 
@@ -27,7 +32,7 @@ const PlayerHonours: React.FC<PlayerHonoursProps> = ({ playerId, className = '' 
                 {honour.seasonName}
               </span>
               <span className="shrink-0 text-[11px] font-black text-brand-blue">
-                {honour.leagueId}
+                {formatHonourLeagueName(honour.leagueId)}
               </span>
               <span className="shrink-0 text-[12px] font-black text-brand-black">
                 {honour.title}
@@ -46,7 +51,7 @@ const PlayerHonours: React.FC<PlayerHonoursProps> = ({ playerId, className = '' 
               <div className="min-w-0">
                 <div className="flex min-w-0 items-baseline gap-2">
                   <span className="shrink-0 text-xs font-black text-brand-blue">
-                    {honour.leagueId}
+                    {formatHonourLeagueName(honour.leagueId)}
                   </span>
                   <span className="truncate text-base font-black text-brand-black">
                     {honour.title}

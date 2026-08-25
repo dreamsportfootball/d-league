@@ -13,7 +13,7 @@ const expectedMessages = [
 const expectedTeams = [
   '南州陳公舘',
   '高雄黑騎士足球隊',
-  '銅雀俱樂部',
+  '銅雀',
   'Wanderers',
   '台南鳥仕足球俱樂部',
 ];

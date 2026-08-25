@@ -103,7 +103,7 @@
     "primaryColor": "#98a8d8",
     "secondaryColor": "#c83888",
     "kits": {
-      "home": "#98a8d8",
+      "home": "#ffffff",
       "away": "#c83888"
     },
     "staff": [

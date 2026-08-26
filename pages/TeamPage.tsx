@@ -97,7 +97,10 @@ const TeamPage: React.FC = () => {
         <div className="mx-auto max-w-5xl">
           <EmptyState title="找不到此球隊" description="此球隊不存在、尚未登錄，或網址已失效" />
           <div className="mt-8 text-center">
-            <Link to="/standings" className="text-sm font-bold text-brand-blue">返回積分榜</Link>
+            <BackButton
+              fallbackTo={isSeasonId(requestedSeason) ? `/standings?season=${requestedSeason}` : '/standings'}
+              className="inline-flex min-h-11 items-center text-sm font-bold text-brand-blue hover:text-brand-black"
+            />
           </div>
         </div>
       </div>

@@ -33,6 +33,10 @@ const StandingsPage: React.FC = () => {
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
+  const historicalSeason = useMemo(
+    () => sortedSeasons.find((season) => season.id !== activeSeasonId),
+    [activeSeasonId, sortedSeasons],
+  );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
   const currentSeason = availableSeasons.find((season) => season.id === CURRENT_SEASON_ID) ?? activeSeason;
   const defaultLeague = currentSeason.enabledLeagues[0];
@@ -167,6 +171,10 @@ const StandingsPage: React.FC = () => {
             title="新賽季尚未開始"
             description="積分榜將於首輪比賽完成後更新"
             showRegistrationLink={activeSeason.status === 'registration'}
+            primaryAction={historicalSeason ? {
+              label: `查看 ${historicalSeason.shortName} 積分榜`,
+              to: `/standings?season=${historicalSeason.id}`,
+            } : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 items-start gap-12 xl:grid-cols-12">

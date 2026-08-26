@@ -1318,5 +1318,181 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 45
+  },
+  {
+    "id": "bw26-01",
+    "identityId": "cl-06",
+    "teamId": "t_black_wolf_2026",
+    "number": 67,
+    "name": "王浩誠",
+    "englishName": "WANG,HAO-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "bw26-02",
+    "identityId": "wang-rui-yu",
+    "teamId": "t_black_wolf_2026",
+    "number": 9,
+    "name": "王瑞淯",
+    "englishName": "WANG,RUI-YU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "bw26-03",
+    "identityId": "cl-24",
+    "teamId": "t_black_wolf_2026",
+    "number": 18,
+    "name": "吳志華",
+    "englishName": "WU ZHIH HUA",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 32
+  },
+  {
+    "id": "bw26-04",
+    "identityId": "chen-jia-hsiang",
+    "teamId": "t_black_wolf_2026",
+    "number": 6,
+    "name": "陳家祥",
+    "englishName": "CHEN,JIA-HSIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 28
+  },
+  {
+    "id": "bw26-05",
+    "identityId": "shin-jae-seong",
+    "teamId": "t_black_wolf_2026",
+    "number": 14,
+    "name": "慎在成",
+    "englishName": "shin Jae seong",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 24
+  },
+  {
+    "id": "bw26-06",
+    "identityId": "yang-jen-hsun",
+    "teamId": "t_black_wolf_2026",
+    "number": 22,
+    "name": "楊仁勛",
+    "englishName": "YANG JEN HSUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "bw26-07",
+    "identityId": "chang-chih-yung",
+    "teamId": "t_black_wolf_2026",
+    "number": 7,
+    "name": "張智勇",
+    "englishName": "CHANH CHIH-YUNG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 18
+  },
+  {
+    "id": "bw26-08",
+    "identityId": "gao-li-zhong",
+    "teamId": "t_black_wolf_2026",
+    "number": 4,
+    "name": "高李忠",
+    "englishName": "GAO, LI-ZHONG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 36
+  },
+  {
+    "id": "bw26-09",
+    "identityId": "su-ching-tang",
+    "teamId": "t_black_wolf_2026",
+    "number": 99,
+    "name": "蘇靖棠",
+    "englishName": "SU CHING TANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 18
+  },
+  {
+    "id": "bw26-10",
+    "identityId": "chu-andrew",
+    "teamId": "t_black_wolf_2026",
+    "number": 20,
+    "name": "朱天灝",
+    "englishName": "Chu Andrew",
+    "gender": "男",
+    "nationality": "香港",
+    "age": 22
+  },
+  {
+    "id": "bw26-11",
+    "identityId": "chang-hom-kai",
+    "teamId": "t_black_wolf_2026",
+    "number": 12,
+    "name": "張閎凱",
+    "englishName": "Chang Hom-Kai",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  },
+  {
+    "id": "bw26-12",
+    "identityId": "li-bang-hu",
+    "teamId": "t_black_wolf_2026",
+    "number": 28,
+    "name": "胡立邦",
+    "englishName": "Li Bang Hu",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "bw26-13",
+    "identityId": "hu-sheng-wu",
+    "teamId": "t_black_wolf_2026",
+    "number": 8,
+    "name": "胡生武",
+    "englishName": "HU SHENHG WU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 19
+  },
+  {
+    "id": "bw26-14",
+    "identityId": "lai-ruiqian",
+    "teamId": "t_black_wolf_2026",
+    "number": 17,
+    "name": "賴瑞謙",
+    "englishName": "Lai Ruiqian",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 23
+  },
+  {
+    "id": "bw26-15",
+    "identityId": "kuong-lu-chun",
+    "teamId": "t_black_wolf_2026",
+    "number": 1,
+    "name": "鄺呂軍",
+    "englishName": "KUONG LU-CHUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 17
+  },
+  {
+    "id": "bw26-16",
+    "identityId": "wang-ting-fu",
+    "teamId": "t_black_wolf_2026",
+    "number": 10,
+    "name": "王廷夫",
+    "englishName": "WANG TING FU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
   }
 ]

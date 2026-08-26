@@ -51,6 +51,7 @@ export interface RegistrationContentConfig {
   intro: string;
   ageReferenceDate: string;
   minimumAge: number;
+  ageSummary?: string;
   minimumPlayers: number;
   maximumPlayers: number;
   maximumStaff: number;

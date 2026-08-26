@@ -78,6 +78,10 @@
     "logo": "assets/seasons/2026-27/teams/tongque-club.png",
     "primaryColor": "#2a2b30",
     "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#2a2b30",
+      "away": "#ffffff"
+    },
     "staff": [
       {
         "role": "領隊",

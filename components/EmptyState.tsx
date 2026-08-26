@@ -15,7 +15,7 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
-  showRegistrationLink = true,
+  showRegistrationLink = false,
   primaryAction,
 }) => (
   <div className="flex min-h-[360px] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">

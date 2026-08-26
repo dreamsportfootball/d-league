@@ -8,6 +8,7 @@ import MatchDialog from '../components/MatchDialog';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
@@ -75,7 +76,9 @@ const StatsPage: React.FC = () => {
     [availableSeasons],
   );
   const historicalSeason = useMemo(
-    () => sortedSeasons.find((season) => season.id !== activeSeasonId),
+    () => activeSeasonId === CURRENT_SEASON_ID
+      ? sortedSeasons.find((season) => season.id !== activeSeasonId)
+      : undefined,
     [activeSeasonId, sortedSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
@@ -328,14 +331,14 @@ const StatsPage: React.FC = () => {
                             ) : (
                               <p className="truncate text-base font-black text-brand-black">{suspension.subjectName}</p>
                             )}
-                            <div className="mt-1 flex min-w-0 items-center gap-1 text-xs font-bold text-neutral-400">
+                            <div className="mt-1 flex min-w-0 items-center gap-1 text-xs font-bold text-neutral-500">
                               <div className="min-w-0 flex-1">
                                 {team ? (
                                   <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="block hover:text-brand-blue">
-                                    <AutoFitText text={team.shortName} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-400" />
+                                    <AutoFitText text={team.shortName} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-500" />
                                   </Link>
                                 ) : (
-                                  <AutoFitText text={suspension.teamIdAtIssue} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-400" />
+                                  <AutoFitText text={suspension.teamIdAtIssue} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-500" />
                                 )}
                               </div>
                               <span className="shrink-0">· {suspensionReasonLabel[suspension.reason]}</span>
@@ -344,7 +347,7 @@ const StatsPage: React.FC = () => {
                         </div>
                         <div className="text-left md:text-right">
                           <p className="font-display text-2xl font-black text-brand-blue">剩餘 {suspension.remainingMatches} 場</p>
-                          <p className="mt-1 text-xs font-medium text-neutral-400">
+                          <p className="mt-1 text-xs font-medium text-neutral-500">
                             {nextMatch ? `預計於 ${formatMatchLabel(nextMatch.timestamp)} 執行` : '下一場正式比賽執行'}
                           </p>
                         </div>
@@ -364,7 +367,7 @@ const StatsPage: React.FC = () => {
                 <div className="space-y-4">
                   {publicDecisions.map((decision) => (
                     <div key={decision.id} className="border-b border-neutral-200 pb-4 last:border-0 last:pb-0">
-                      <p className="text-xs font-bold text-neutral-400">{formatMatchLabel(decision.issuedAt)}</p>
+                      <p className="text-xs font-bold text-neutral-500">{formatMatchLabel(decision.issuedAt)}</p>
                       <p className="mt-1 text-sm font-bold text-brand-black">{decision.subjectName}</p>
                       <p className="mt-1 text-sm leading-6 text-neutral-600">{decision.publicSummary}</p>
                       {decision.sourceMatchId && (
@@ -417,7 +420,7 @@ const StatsPage: React.FC = () => {
                       <div className="mt-1 flex min-w-0 items-center">
                         <img src={team.logo} alt="" className="mr-2 h-4 w-4 shrink-0 object-contain" />
                         <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="min-w-0 flex-1 hover:text-brand-blue">
-                          <AutoFitText text={team.shortName} maxFontSize={10} minFontSize={6} className="font-bold uppercase tracking-wide text-neutral-400" />
+                          <AutoFitText text={team.shortName} maxFontSize={10} minFontSize={6} className="font-bold uppercase tracking-wide text-neutral-500" />
                         </Link>
                       </div>
                     </div>

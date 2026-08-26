@@ -15,7 +15,7 @@ const PartnerLogo: React.FC<{ src: string; className?: string }> = ({ src, class
 );
 
 const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, children }) => (
-  <Link to={to} className="group flex min-h-9 items-center transition-colors hover:text-brand-accent">
+  <Link to={to} className="group flex min-h-11 items-center transition-colors hover:text-brand-accent">
     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
     {children}
   </Link>
@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
               {SHOW_REGISTRATION_NAV && <li><FooterLink to="/registration">賽季報名</FooterLink></li>}
               {currentSeason.regulationsUrl && (
                 <li>
-                  <a href={currentSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="group flex min-h-9 items-center transition-colors hover:text-brand-accent">
+                  <a href={currentSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="group flex min-h-11 items-center transition-colors hover:text-brand-accent">
                     <span className="mr-0 h-0.5 w-0 bg-brand-accent transition-all duration-300 group-hover:mr-2 group-hover:w-2" />
                     {currentSeason.shortName} 競賽規程
                     <ExternalLink className="ml-2 h-3.5 w-3.5" aria-hidden="true" />

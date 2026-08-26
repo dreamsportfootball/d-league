@@ -73,7 +73,7 @@ const RegistrationPage: React.FC = () => {
       : '依各級別公告';
   const registrationOpen = activeSeason.status === 'registration';
   const ageLabel = registrationContent.minimumAge > 0 ? `${formatDate(registrationContent.ageReferenceDate)} 當日年滿 ${registrationContent.minimumAge} 歲` : '依競賽規程公告';
-  const playerCountLabel = registrationContent.minimumPlayers > 0 ? `每隊 ${registrationContent.minimumPlayers}－${registrationContent.maximumPlayers} 人` : '依競賽規程公告';
+  const playerCountLabel = registrationContent.minimumPlayers > 0 ? `每隊 ${registrationContent.minimumPlayers}-${registrationContent.maximumPlayers} 人` : '依競賽規程公告';
 
   return (
     <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">

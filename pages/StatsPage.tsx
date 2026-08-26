@@ -298,7 +298,7 @@ const StatsPage: React.FC = () => {
                 : '射手榜及紅黃牌紀錄將於首輪比賽後更新'
             }
             showRegistrationLink={activeSeason.status === 'registration'}
-            primaryAction={activeTab !== 'SUSPENSIONS' && historicalSeason ? {
+            primaryAction={historicalSeason ? {
               label: `查看 ${historicalSeason.shortName} 數據`,
               to: `/stats?season=${historicalSeason.id}`,
             } : undefined}

@@ -74,6 +74,10 @@ const StatsPage: React.FC = () => {
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
+  const historicalSeason = useMemo(
+    () => sortedSeasons.find((season) => season.id !== activeSeasonId),
+    [activeSeasonId, sortedSeasons],
+  );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
 
   useEffect(() => {
@@ -291,6 +295,10 @@ const StatsPage: React.FC = () => {
                 : '射手榜及紅黃牌紀錄將於首輪比賽後更新'
             }
             showRegistrationLink={activeSeason.status === 'registration'}
+            primaryAction={activeTab !== 'SUSPENSIONS' && historicalSeason ? {
+              label: `查看 ${historicalSeason.shortName} 數據`,
+              to: `/stats?season=${historicalSeason.id}`,
+            } : undefined}
           />
         ) : activeTab === 'SUSPENSIONS' ? (
           <div className="space-y-10">

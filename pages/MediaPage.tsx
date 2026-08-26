@@ -29,7 +29,7 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
     </div>
 
     <div className="flex flex-col items-start">
-      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
+      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
         {formatMediaDate(album.date)}
       </span>
       <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
@@ -61,7 +61,7 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
         </span>
       </div>
     </div>
-    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400">
+    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
       <span>{formatMediaDate(video.date)}</span>
       <span>{video.duration}</span>
     </div>

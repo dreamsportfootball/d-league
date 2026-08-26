@@ -49,7 +49,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           type="button"
           onClick={() => setMobileExpanded((expanded) => !expanded)}
           aria-expanded={mobileExpanded}
-          className="min-h-10 rounded-sm px-2 text-xs font-bold text-brand-blue transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30"
+          className="min-h-11 rounded-sm px-2 text-xs font-bold text-brand-blue transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30"
         >
           {mobileExpanded ? '收起數據 ↑' : '查看完整數據 ↓'}
         </button>

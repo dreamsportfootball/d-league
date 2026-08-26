@@ -23,11 +23,6 @@ const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, chi
 
 const Footer: React.FC = () => {
   const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
-  const seasonInfoLabel = currentSeason.status === 'registration'
-    ? '賽季報名'
-    : currentSeason.status === 'review'
-      ? '報名結果'
-      : '賽季資訊';
 
   return (
     <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-6 pt-10 text-white md:pb-5 md:pt-20">
@@ -46,7 +41,7 @@ const Footer: React.FC = () => {
               <li><FooterLink to="/about">關於 D LEAGUE</FooterLink></li>
               <li><FooterLink to="/#teams">參賽球隊</FooterLink></li>
               <li><FooterLink to="/schedule">賽程與結果</FooterLink></li>
-              {SHOW_REGISTRATION_NAV && <li><FooterLink to="/registration">{seasonInfoLabel}</FooterLink></li>}
+              {SHOW_REGISTRATION_NAV && <li><FooterLink to="/registration">賽季報名</FooterLink></li>}
               {currentSeason.regulationsUrl && (
                 <li>
                   <a href={currentSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="group flex min-h-9 items-center transition-colors hover:text-brand-accent">

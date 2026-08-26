@@ -235,6 +235,9 @@ const TeamPage: React.FC = () => {
               </div>
             )}
             <div className="min-w-0 flex-1">
+              <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-brand-blue sm:text-xs">
+                {season.shortName} · {formatLeagueName(team.leagueId)}
+              </p>
               <h1><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
               {socialLinks.length > 0 && renderSocialLinks(true)}

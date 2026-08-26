@@ -29,6 +29,9 @@ const formatDeadline = (value?: string): string => {
   return time ? `${date} ${time}` : date;
 };
 
+const splitFaqAnswer = (answer: string): string[] =>
+  answer.match(/[^。]+。?/gu)?.map((part) => part.trim()).filter(Boolean) ?? [answer];
+
 const createFallbackContent = (): RegistrationContentConfig => ({
   intro: '正式報名資格、流程及錄取方式將由主辦單位依賽季公告',
   ageReferenceDate: '',
@@ -72,7 +75,10 @@ const RegistrationPage: React.FC = () => {
       ? '三循環'
       : '依各級別公告';
   const registrationOpen = activeSeason.status === 'registration';
-  const ageLabel = registrationContent.minimumAge > 0 ? `${formatDate(registrationContent.ageReferenceDate)} 當日年滿 ${registrationContent.minimumAge} 歲` : '依競賽規程公告';
+  const ageLabel = registrationContent.ageSummary
+    ?? (registrationContent.minimumAge > 0
+      ? `${formatDate(registrationContent.ageReferenceDate)} 當日年滿 ${registrationContent.minimumAge} 歲`
+      : '依競賽規程公告');
   const playerCountLabel = registrationContent.minimumPlayers > 0 ? `每隊 ${registrationContent.minimumPlayers}-${registrationContent.maximumPlayers} 人` : '依競賽規程公告';
 
   return (
@@ -146,7 +152,7 @@ const RegistrationPage: React.FC = () => {
             {registrationContent.faqItems.length > 0 && (
               <section id="faq" className="mt-12 scroll-mt-24">
                 <div className="mb-6 flex items-center"><CircleHelp className="mr-3 h-6 w-6 text-brand-blue" aria-hidden="true" /><h2 className="font-display text-2xl font-extrabold uppercase tracking-tight text-brand-black md:text-3xl">常見問題</h2></div>
-                <div className="divide-y divide-neutral-200 border-y border-neutral-200">{registrationContent.faqItems.map((item) => <details key={item.question} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold text-brand-black">{item.question}<span className="text-xl font-medium text-brand-blue transition-transform group-open:rotate-45">＋</span></summary><p className="mt-3 pr-8 text-sm font-medium leading-7 text-neutral-600">{item.answer}</p></details>)}</div>
+                <div className="divide-y divide-neutral-200 border-y border-neutral-200">{registrationContent.faqItems.map((item) => <details key={item.question} className="group py-3"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-2 text-sm font-bold text-brand-black">{item.question}<span className="text-xl font-medium text-brand-blue transition-transform group-open:rotate-45">＋</span></summary><div className="mt-2 space-y-2 pr-8 pb-2 text-sm font-medium leading-7 text-neutral-600">{splitFaqAnswer(item.answer).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></details>)}</div>
               </section>
             )}
           </div>

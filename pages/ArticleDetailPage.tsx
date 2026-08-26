@@ -1,6 +1,7 @@
 import React, { Fragment, useMemo } from 'react';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 import { getSeasonConfig } from '../config/seasons';
 import { getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
@@ -262,16 +263,11 @@ const ArticleDetailPage: React.FC = () => {
     <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
       <div className="mx-auto max-w-6xl px-5 md:px-10 lg:px-12">
         <nav className="mb-8 md:mb-12" aria-label="文章導覽">
-          <Link
-            to="/news"
+          <BackButton
+            fallbackTo="/news"
             className="group inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-neutral-500 transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            <ArrowLeft
-              className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-              aria-hidden="true"
-            />
-            返回最新消息
-          </Link>
+            iconClassName="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+          />
         </nav>
 
         <header className="border-b border-neutral-200 pb-9 md:pb-12">
@@ -331,16 +327,11 @@ const ArticleDetailPage: React.FC = () => {
         </div>
 
         <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">
-          <Link
-            to="/news"
+          <BackButton
+            fallbackTo="/news"
             className="group inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-brand-blue transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            <ArrowLeft
-              className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-              aria-hidden="true"
-            />
-            返回最新消息
-          </Link>
+            iconClassName="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+          />
         </footer>
       </div>
     </article>

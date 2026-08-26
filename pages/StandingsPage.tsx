@@ -34,7 +34,9 @@ const StandingsPage: React.FC = () => {
     [availableSeasons],
   );
   const historicalSeason = useMemo(
-    () => sortedSeasons.find((season) => season.id !== activeSeasonId),
+    () => activeSeasonId === CURRENT_SEASON_ID
+      ? sortedSeasons.find((season) => season.id !== activeSeasonId)
+      : undefined,
     [activeSeasonId, sortedSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;

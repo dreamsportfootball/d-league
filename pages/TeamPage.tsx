@@ -262,7 +262,7 @@ const TeamPage: React.FC = () => {
         </section>
 
         <section>
-          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-400">共 {teamMatches.length} 場</span></div>
+          <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-500">共 {teamMatches.length} 場</span></div>
           {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
@@ -275,7 +275,7 @@ const TeamPage: React.FC = () => {
                   <span className="text-xs font-black tracking-wider text-brand-blue">{staff.role}</span>
                   <div className="min-w-0">
                     <p className="break-words text-sm font-bold text-brand-black">{staff.name}</p>
-                    {staff.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{staff.englishName}</p>}
+                    {staff.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-500">{staff.englishName}</p>}
                   </div>
                 </div>
               ))}
@@ -285,13 +285,13 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">球員名單</h2></div>
-          {players.length > 0 ? <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50"><span className="font-display text-xl font-black tabular-nums text-brand-blue">{player.number}</span><div className="min-w-0"><p className="break-words text-sm font-bold text-brand-black">{player.name}</p>{player.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-400">{player.englishName}</p>}</div></Link>)}</div> : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
+          {players.length > 0 ? <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className="grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50"><span className="font-display text-xl font-black tabular-nums text-brand-blue">{player.number}</span><div className="min-w-0"><p className="break-words text-sm font-bold text-brand-black">{player.name}</p>{player.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-500">{player.englishName}</p>}</div></Link>)}</div> : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
         </section>
 
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
           <div role="table" aria-label="歷年 D LEAGUE">
-            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-400">
+            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500">
               <span role="columnheader">賽季</span>
               <span role="columnheader">級別</span>
               <span role="columnheader" className="text-center">排名</span>

@@ -480,6 +480,9 @@ const SchedulePage: React.FC = () => {
   };
 
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
+  const desktopLeagueSummary = filters.league === 'ALL'
+    ? '全部級別'
+    : activeSeason.leagues[filters.league]?.displayName ?? filters.league;
   const desktopActiveFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
   const desktopDraftFilterCount = Object.values(desktopDraft.filters).filter((value) => value !== 'ALL').length;
   const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
@@ -487,7 +490,7 @@ const SchedulePage: React.FC = () => {
 
   const desktopDraftLeagueSummary = desktopDraft.filters.league === 'ALL'
     ? '全部級別'
-    : desktopDraft.filters.league;
+    : desktopDraftSeason.leagues[desktopDraft.filters.league]?.displayName ?? desktopDraft.filters.league;
   const desktopDraftStatusSummary = getStatusSummary(desktopDraft.filters.status);
   const desktopDraftTeamSummary = desktopDraft.filters.team === 'ALL'
     ? '全部球隊'
@@ -530,7 +533,9 @@ const SchedulePage: React.FC = () => {
           selectedValue: desktopDraft.filters.league,
           options: (['ALL', ...desktopDraftSeason.enabledLeagues] as LeagueFilter[]).map((league) => ({
             value: league,
-            label: league === 'ALL' ? '全部級別' : league,
+            label: league === 'ALL'
+              ? '全部級別'
+              : desktopDraftSeason.leagues[league]?.displayName ?? league,
           })),
           onSelect: (value) => updateDesktopDraftFacet('league', value),
         }
@@ -679,7 +684,7 @@ const SchedulePage: React.FC = () => {
                 {filteredMatches.length} 場比賽
               </span>
               <span className="text-[11px] font-bold text-neutral-400">
-                {activeSeason.shortName} · {leagueSummary}
+                {activeSeason.shortName} · {desktopLeagueSummary}
               </span>
             </div>
             <button

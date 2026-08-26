@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo } from 'react';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import { getSeasonConfig } from '../config/seasons';
 import { getNewsArticle } from '../services/seasonDataJson';
@@ -243,13 +243,10 @@ const ArticleDetailPage: React.FC = () => {
           <p className="mt-4 text-sm leading-7 text-neutral-500">
             此文章可能已移除，或網址內容不正確
           </p>
-          <Link
-            to="/news"
+          <BackButton
+            fallbackTo="/news"
             className="mt-7 inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-brand-blue transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
-            返回最新消息
-          </Link>
+          />
         </div>
       </main>
     );

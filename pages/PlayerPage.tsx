@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, CalendarDays, Target, UserRound } from 'lucide-react';
+import { ArrowRight, CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
 import PlayerHonours from '../components/PlayerHonours';
@@ -307,13 +308,10 @@ const PlayerPage: React.FC = () => {
     <div className="min-h-screen bg-white pb-24">
       <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-10 lg:py-12">
         <div className="mx-auto max-w-6xl">
-          <Link
-            to={`/stats?season=${preferredRecord.seasonId}`}
+          <BackButton
+            fallbackTo={`/stats?season=${preferredRecord.seasonId}`}
             className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            返回數據中心
-          </Link>
+          />
 
           <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] lg:items-center lg:gap-10">
             <div className="grid min-w-0 grid-cols-[104px_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[128px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[160px_minmax(0,1fr)] lg:gap-8">

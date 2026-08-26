@@ -158,6 +158,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
       intro: 'D LEAGUE 2026/27 賽季共 18 支球隊完成參賽確認，L1、L2、L3 各 6 隊，正式分級名單如下',
       ageReferenceDate: '2026-11-01',
       minimumAge: 15,
+      ageSummary: '2026/11/01 基準；一般年滿 15 歲，L3 14-15 歲須審核',
       minimumPlayers: 12,
       maximumPlayers: 20,
       maximumStaff: 3,

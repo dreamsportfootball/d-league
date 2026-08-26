@@ -12,6 +12,7 @@ interface LeagueTableOptions {
   matchEvents: Record<string, MatchEvent[]>;
   rules: CompetitionRules;
   leagueConfig?: LeagueConfig | null;
+  isFinalStandings?: boolean;
 }
 
 interface MiniTableRow {
@@ -274,6 +275,7 @@ const isCriticalTie = (
   leagueConfig?: LeagueConfig | null,
 ): boolean => {
   if (startRank === 1) return true;
+
   const promotionPlaces = leagueConfig?.promotionPlaces ?? 0;
   if (promotionPlaces > 0 && startRank <= promotionPlaces && endRank > promotionPlaces) return true;
 
@@ -283,13 +285,18 @@ const isCriticalTie = (
     if (startRank < relegationStart && endRank >= relegationStart) return true;
   }
 
+  const replacementTiebreakRanks = leagueConfig?.replacementTiebreakRanks ?? [];
+  if (replacementTiebreakRanks.some((rank) => rank >= startRank && rank <= endRank)) return true;
+
   return false;
 };
 
 const assignRanks = (
   groups: Standing[][],
   teamsById: Record<string, SeasonTeam>,
+  rules: CompetitionRules,
   leagueConfig?: LeagueConfig | null,
+  isFinalStandings = false,
 ): Standing[] => {
   const totalTeams = groups.reduce((sum, group) => sum + group.length, 0);
   let position = 1;
@@ -310,8 +317,13 @@ const assignRanks = (
       (row) => teamsById[row.teamId]?.manualTiebreakOrder !== undefined,
     );
     const unresolvedTie = ordered.length > 1 && !hasCompleteManualOrder;
+    const needsPublicDraw =
+      unresolvedTie &&
+      isFinalStandings &&
+      rules.criticalTieResolution === 'PUBLIC_DRAW' &&
+      isCriticalTie(position, position + ordered.length - 1, totalTeams, leagueConfig);
     const tieStatus: StandingTieStatus = unresolvedTie
-      ? isCriticalTie(position, position + ordered.length - 1, totalTeams, leagueConfig)
+      ? needsPublicDraw
         ? 'DRAW_REQUIRED'
         : 'SHARED'
       : 'NONE';
@@ -336,6 +348,7 @@ export const calculateLeagueTable = ({
   matchEvents,
   rules,
   leagueConfig,
+  isFinalStandings = false,
 }: LeagueTableOptions): Standing[] => {
   const leagueTeams = teams.filter((team) => team.leagueId === league && isActiveTeam(team));
   const teamsById = Object.fromEntries(leagueTeams.map((team) => [team.id, team]));
@@ -405,7 +418,7 @@ export const calculateLeagueTable = ({
     .sort((a, b) => b - a)
     .flatMap((points) => resolveByCriteria(pointGroups.get(points) ?? [], countedMatches, rules));
 
-  return assignRanks(resolvedGroups, teamsById, leagueConfig);
+  return assignRanks(resolvedGroups, teamsById, rules, leagueConfig, isFinalStandings);
 };
 
 const resolveEventSubject = (

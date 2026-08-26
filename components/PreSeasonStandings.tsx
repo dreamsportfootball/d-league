@@ -58,6 +58,48 @@ const TeamCell: React.FC<TeamCellProps> = ({
   );
 };
 
+const StandingRowStylePreview: React.FC = () => {
+  const samples = [
+    {
+      label: 'L1 第 1 名',
+      status: '冠軍',
+      rowClass: 'bg-brand-blue/5',
+      barClass: 'bg-brand-blue',
+    },
+    {
+      label: 'L2／L3 第 1 名',
+      status: '升級',
+      rowClass: 'bg-green-50/70',
+      barClass: 'bg-green-500',
+    },
+    {
+      label: 'L1／L2 第 6 名',
+      status: '降級',
+      rowClass: 'bg-red-50/70',
+      barClass: 'bg-red-500',
+    },
+  ];
+
+  return (
+    <div className="mb-6" aria-label="積分榜升降級顏色說明">
+      <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-500">排名顏色預覽</p>
+      <div className="overflow-hidden border-y border-neutral-100">
+        {samples.map((sample) => (
+          <div
+            key={sample.label}
+            className={`relative flex min-h-11 items-center border-b border-neutral-100 px-4 last:border-b-0 ${sample.rowClass}`}
+          >
+            <span className={`absolute bottom-2 left-0 top-2 w-1 rounded-r-full ${sample.barClass}`} aria-hidden="true" />
+            <span className="text-xs font-bold text-brand-black">{sample.label}</span>
+            <span className="ml-auto text-xs font-bold text-neutral-600">{sample.status}</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-2 text-[10px] leading-5 text-neutral-500">僅示意正式積分榜的狀態顏色，不代表目前球隊排名。</p>
+    </div>
+  );
+};
+
 const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNames }) => {
   const { activeSeasonId, seasonData } = useSeason();
   const [mobileExpanded, setMobileExpanded] = useState(false);
@@ -79,6 +121,8 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
       <p className="mb-3 text-xs font-medium leading-5 text-neutral-500">
         賽季尚未開賽，名次將於首輪正式比賽完成後產生
       </p>
+
+      <StandingRowStylePreview />
 
       <div className="mb-2 flex justify-end md:hidden">
         <button

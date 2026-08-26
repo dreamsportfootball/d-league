@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
               <li><FooterLink to="/about">關於 D LEAGUE</FooterLink></li>
               <li><FooterLink to="/#teams">參賽球隊</FooterLink></li>
               <li><FooterLink to="/schedule">賽程與結果</FooterLink></li>
-              {SHOW_REGISTRATION_NAV && <li><FooterLink to="/registration">賽季報名</FooterLink></li>}
+              {SHOW_REGISTRATION_NAV && <li><FooterLink to="/registration">賽季資訊</FooterLink></li>}
               {currentSeason.regulationsUrl && (
                 <li>
                   <a href={currentSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="group flex min-h-11 items-center transition-colors hover:text-brand-accent">

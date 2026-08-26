@@ -425,7 +425,7 @@ const PlayerPage: React.FC = () => {
                   <span className="text-[11px] font-semibold tabular-nums text-neutral-500">
                     {record.season.shortName}
                   </span>
-                  <span className="text-[11px] font-bold text-brand-blue">{team?.leagueId ?? '—'}</span>
+                  <span className="text-[11px] font-bold text-brand-blue">{team?.leagueId ?? '-'}</span>
                   <div className="min-w-0 pr-1 text-[12px] font-bold text-brand-black">
                     {team ? (
                       <Link
@@ -435,7 +435,7 @@ const PlayerPage: React.FC = () => {
                         {team.name}
                       </Link>
                     ) : (
-                      '—'
+                      '-'
                     )}
                   </div>
                   <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{goals}</span>
@@ -462,7 +462,7 @@ const PlayerPage: React.FC = () => {
                 {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                   <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
                     <td className="py-4 text-sm font-bold text-brand-black">{record.season.shortName}</td>
-                    <td className="py-4 text-sm font-bold text-brand-blue">{team?.leagueId ?? '—'}</td>
+                    <td className="py-4 text-sm font-bold text-brand-blue">{team?.leagueId ?? '-'}</td>
                     <td className="py-4 text-sm text-brand-black">
                       {team ? (
                         <Link
@@ -472,7 +472,7 @@ const PlayerPage: React.FC = () => {
                           {team.name}
                         </Link>
                       ) : (
-                        '—'
+                        '-'
                       )}
                     </td>
                     <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</td>

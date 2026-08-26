@@ -23,11 +23,14 @@ export type RankingCriterion =
   | 'FEWEST_SECOND_YELLOW'
   | 'FEWEST_YELLOW';
 
+export type CriticalTieResolution = 'SHARED' | 'PUBLIC_DRAW';
+
 export interface CompetitionRules {
   winPoints: number;
   drawPoints: number;
   lossPoints: number;
   rankingCriteria: RankingCriterion[];
+  criticalTieResolution: CriticalTieResolution;
   yellowCardSuspensionThreshold: number;
   automaticSuspensionMatches: number;
   yellowCardFine: number;
@@ -102,6 +105,12 @@ export interface LeagueConfig {
   matchesPerTeam: number;
   promotionPlaces: number;
   relegationPlaces: number;
+  /**
+   * Final table positions whose order must be resolved because an actual
+   * next-season replacement vacancy depends on them. Keep empty/undefined
+   * until a replacement situation actually exists.
+   */
+  replacementTiebreakRanks?: number[];
   hasPlayoff: boolean;
   description: string;
 }

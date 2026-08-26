@@ -237,9 +237,10 @@ const PlayerPage: React.FC = () => {
         <div className="mx-auto max-w-5xl">
           <EmptyState title="找不到此球員" description="此球員不存在、尚未登錄，或網址已失效" />
           <div className="mt-8 text-center">
-            <Link to="/stats" className="text-sm font-bold text-brand-blue">
-              返回數據中心
-            </Link>
+            <BackButton
+              fallbackTo={isSeasonId(requestedSeason) ? `/stats?season=${requestedSeason}` : '/stats'}
+              className="inline-flex min-h-11 items-center text-sm font-bold text-brand-blue hover:text-brand-black"
+            />
           </div>
         </div>
       </div>

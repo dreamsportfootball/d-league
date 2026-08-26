@@ -363,7 +363,7 @@ const PlayerPage: React.FC = () => {
                 {preferredRecord.team && (
                   <Link
                     to={`/teams/${getTeamIdentity(preferredRecord.team)}?season=${preferredRecord.seasonId}`}
-                    className="mt-3 inline-flex min-h-9 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
+                    className="mt-3 inline-flex min-h-11 items-center text-sm font-black text-brand-blue hover:text-brand-black sm:mt-4 sm:text-base lg:text-lg"
                   >
                     {preferredRecord.team.name}
                   </Link>
@@ -407,26 +407,27 @@ const PlayerPage: React.FC = () => {
             <h2 className="font-display text-2xl font-extrabold text-brand-black">D LEAGUE 生涯</h2>
           </div>
 
-          <div className="md:hidden">
-            <div className="grid grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-400">
-              <span>賽季</span>
-              <span>級別</span>
-              <span>球隊</span>
-              <span className="text-center">進</span>
-              <span className="text-center">黃</span>
-              <span className="text-center">紅</span>
+          <div className="md:hidden" role="table" aria-label="D LEAGUE 生涯">
+            <div role="row" className="grid grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-400">
+              <span role="columnheader">賽季</span>
+              <span role="columnheader">級別</span>
+              <span role="columnheader">球隊</span>
+              <span role="columnheader" className="text-center">進</span>
+              <span role="columnheader" className="text-center">黃</span>
+              <span role="columnheader" className="text-center">紅</span>
             </div>
-            <div className="divide-y divide-neutral-100">
+            <div className="divide-y divide-neutral-100" role="rowgroup">
               {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                 <div
+                  role="row"
                   key={`${record.seasonId}-${team?.id ?? 'unknown'}`}
                   className="grid min-h-12 grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 py-2.5"
                 >
-                  <span className="text-[11px] font-semibold tabular-nums text-neutral-500">
+                  <span role="cell" className="text-[11px] font-semibold tabular-nums text-neutral-500">
                     {record.season.shortName}
                   </span>
-                  <span className="text-[11px] font-bold text-brand-blue">{team?.leagueId ?? '-'}</span>
-                  <div className="min-w-0 pr-1 text-[12px] font-bold text-brand-black">
+                  <span role="cell" className="text-[11px] font-bold text-brand-blue">{team?.leagueId ?? '-'}</span>
+                  <div role="cell" className="min-w-0 pr-1 text-[12px] font-bold text-brand-black">
                     {team ? (
                       <Link
                         to={`/teams/${getTeamIdentity(team)}?season=${record.seasonId}`}
@@ -438,9 +439,9 @@ const PlayerPage: React.FC = () => {
                       '-'
                     )}
                   </div>
-                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{goals}</span>
-                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{yellowCards}</span>
-                  <span className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{redCards}</span>
+                  <span role="cell" className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{goals}</span>
+                  <span role="cell" className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{yellowCards}</span>
+                  <span role="cell" className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{redCards}</span>
                 </div>
               ))}
             </div>
@@ -532,7 +533,7 @@ const PlayerPage: React.FC = () => {
               <select
                 value={eventSeason}
                 onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
-                className="min-h-9 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
+                className="min-h-11 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
                 aria-label="篩選比賽事件賽季"
               >
                 <option value="ALL">全部賽季</option>

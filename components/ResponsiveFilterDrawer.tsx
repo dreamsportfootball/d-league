@@ -36,6 +36,9 @@ interface FilterPanelContentProps extends Omit<ResponsiveFilterDrawerProps, 'ope
 const formatDesktopLeagueText = (value: string): string =>
   value.replace(/\bL(\d+)\b/g, 'LEAGUE $1');
 
+const formatMobileOptionLabel = (option: FilterDrawerOption): string =>
+  /^L[123]$/.test(option.value) ? option.value : option.label;
+
 const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
   fields,
   onClose,
@@ -79,7 +82,9 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
         <div className={`flex-1 overflow-y-auto overscroll-contain py-3 ${horizontalPadding}`} role="radiogroup" aria-label={activeField.label}>
           {activeField.options.map((option) => {
             const selected = option.value === activeField.value;
-            const optionLabel = mobile ? option.label : formatDesktopLeagueText(option.label);
+            const optionLabel = mobile
+              ? formatMobileOptionLabel(option)
+              : formatDesktopLeagueText(option.label);
             return (
               <button
                 key={option.value}

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import {
-  ArrowLeft,
   CalendarDays,
   ExternalLink,
   Facebook,
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
+import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
@@ -213,7 +213,10 @@ const TeamPage: React.FC = () => {
         </div>
         <div className="relative mx-auto max-w-7xl">
           <div className="flex items-start justify-between gap-4">
-            <Link to={`/standings?season=${seasonId}`} className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"><ArrowLeft className="mr-2 h-4 w-4" />返回積分榜</Link>
+            <BackButton
+              fallbackTo={`/standings?season=${seasonId}`}
+              className="inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black"
+            />
             {socialLinks.length > 0 && renderSocialLinks(false)}
           </div>
 

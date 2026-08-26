@@ -24,7 +24,7 @@ const DataFilterToolbar: React.FC<DataFilterToolbarProps> = ({
         {primaryText}
       </span>
       {secondaryText && (
-        <span className="truncate text-[11px] font-bold text-neutral-400 md:text-xs">
+        <span className="truncate text-[11px] font-bold text-neutral-500 md:text-xs">
           {secondaryText}
         </span>
       )}

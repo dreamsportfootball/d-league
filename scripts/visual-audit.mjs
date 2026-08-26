@@ -158,7 +158,7 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'standings-2026') {
-        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · L1';
+        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · LEAGUE 1';
         const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
           elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
         );
@@ -170,7 +170,8 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'stats-2026') {
-        assert('stats-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        const expectedStatsLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
+        assert('stats-summary-has-season-league', diagnostics.bodyText.includes(expectedStatsLabel), `Expected ${expectedStatsLabel}`);
         assert('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selector must stay inside drawer');
       }
 
@@ -281,7 +282,7 @@ const auditInteractiveCase = async (testCase) => {
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible = testCase.action === 'mobile-menu'
-      ? await page.evaluate(() => /賽季報名/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
+      ? await page.evaluate(() => /賽季資訊/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
       : false;
     const passed = testCase.action === 'mobile-menu'
       ? menuVisible

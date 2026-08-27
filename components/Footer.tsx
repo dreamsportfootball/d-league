@@ -1,11 +1,18 @@
 import React from 'react';
-import { ExternalLink, Facebook, Instagram, Youtube } from 'lucide-react';
+import { ExternalLink, Facebook, Instagram, Mail, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
-import { CURRENT_SEASON_ID, SHOW_REGISTRATION_NAV } from '../config/siteConfig';
+import {
+  CURRENT_SEASON_ID,
+  D_LEAGUE_EMAIL_URL,
+  D_LEAGUE_FACEBOOK_URL,
+  D_LEAGUE_INSTAGRAM_URL,
+  D_LEAGUE_YOUTUBE_URL,
+  SHOW_REGISTRATION_NAV,
+} from '../config/siteConfig';
 
-const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: string }> = ({ icon, href, label }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all duration-300 hover:-translate-y-1 hover:border-brand-accent hover:bg-brand-accent hover:text-brand-black">{icon}</a>
+const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: string; external?: boolean }> = ({ icon, href, label, external = true }) => (
+  <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all duration-300 hover:-translate-y-1 hover:border-brand-accent hover:bg-brand-accent hover:text-brand-black">{icon}</a>
 );
 
 const PartnerLogo: React.FC<{ src: string; className?: string }> = ({ src, className }) => (
@@ -32,7 +39,7 @@ const Footer: React.FC = () => {
             <div className="mb-1 md:mb-2"><span className="border-l-4 border-brand-accent pl-3 font-display text-2xl font-black uppercase tracking-widest text-white">D LEAGUE</span></div>
             <h2 className="mb-3 font-display text-3xl font-extrabold uppercase leading-tight tracking-wider text-white [-webkit-text-stroke:.5px_currentColor] md:mb-4 md:text-4xl md:font-black md:[-webkit-text-stroke:0px]">台南夢達七人足球聯賽</h2>
             <p className="mb-5 max-w-sm text-sm font-medium leading-relaxed text-neutral-500 md:mb-6">我們致力建立一個<span className="whitespace-nowrap">能讓更多人能夠踢、願意踢、</span><span className="whitespace-nowrap">享受踢的草根聯賽</span></p>
-            <div className="flex items-center space-x-3 md:space-x-4"><SocialButton icon={<Instagram className="h-5 w-5" />} href="https://www.instagram.com/d.league_tw/" label="Instagram" /><SocialButton icon={<Youtube className="h-5 w-5" />} href="https://www.youtube.com/@DreamSportFootball" label="YouTube" /><SocialButton icon={<Facebook className="h-5 w-5" />} href="https://www.facebook.com/profile.php?id=61576222172219" label="Facebook" /></div>
+            <div className="flex items-center space-x-3 md:space-x-4"><SocialButton icon={<Instagram className="h-5 w-5" />} href={D_LEAGUE_INSTAGRAM_URL} label="Instagram" /><SocialButton icon={<Youtube className="h-5 w-5" />} href={D_LEAGUE_YOUTUBE_URL} label="YouTube" /><SocialButton icon={<Facebook className="h-5 w-5" />} href={D_LEAGUE_FACEBOOK_URL} label="Facebook" /><SocialButton icon={<Mail className="h-5 w-5" />} href={D_LEAGUE_EMAIL_URL} label="Email" external={false} /></div>
           </div>
 
           <div className="md:col-span-3">

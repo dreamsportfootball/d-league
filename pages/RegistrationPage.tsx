@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   FileText,
   Instagram,
+  Mail,
   ShieldCheck,
   Trophy,
   UsersRound,
@@ -13,6 +14,7 @@ import {
 import RegistrationProgress from '../components/RegistrationProgress';
 import RegistrationResults from '../components/RegistrationResults';
 import SeasonParticipants from '../components/SeasonParticipants';
+import { D_LEAGUE_EMAIL, D_LEAGUE_EMAIL_URL, D_LEAGUE_INSTAGRAM_URL } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import type { RegistrationContentConfig } from '../types/season';
 
@@ -165,7 +167,8 @@ const RegistrationPage: React.FC = () => {
               <div className="mt-10 flex flex-col gap-3">
                 {registrationOpen && activeSeason.registrationFormUrl && <a href={activeSeason.registrationFormUrl} target="_blank" rel="noopener noreferrer" data-analytics-event="registration_click" className="inline-flex min-h-12 items-center justify-center bg-brand-accent px-6 py-3 text-sm font-bold uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black">立即報名<ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></a>}
                 {activeSeason.regulationsUrl && <a href={activeSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" data-analytics-event="regulations_click" className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black"><FileText className="mr-2 h-4 w-4" aria-hidden="true" />查看競賽規程</a>}
-                <a href="https://www.instagram.com/d.league_tw/" target="_blank" rel="noopener noreferrer" data-analytics-event="instagram_click" className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black"><Instagram className="mr-2 h-4 w-4" aria-hidden="true" />聯絡主辦單位</a>
+                <a href={D_LEAGUE_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" data-analytics-event="instagram_click" className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black"><Instagram className="mr-2 h-4 w-4" aria-hidden="true" />Instagram 私訊</a>
+                <a href={D_LEAGUE_EMAIL_URL} data-analytics-event="email_click" className="inline-flex min-h-12 items-center justify-center border border-white/30 px-6 py-3 text-sm font-bold tracking-wide text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black"><Mail className="mr-2 h-4 w-4" aria-hidden="true" />{D_LEAGUE_EMAIL}</a>
               </div>
             </div>
           </aside>

@@ -20,6 +20,7 @@ import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateForm
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
+import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
 
 interface MatchDialogProps {
@@ -337,6 +338,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               D LEAGUE 官方賽事紀錄
             </p>
           </section>
+
+          <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
 
           {lineup && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">

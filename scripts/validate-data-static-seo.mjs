@@ -58,7 +58,7 @@ const roundRoute = `/rounds/${seasonId}/${match.league}/${encodeURIComponent(Str
 
 const scheduleHtml = await readRoute('/schedule');
 if (scheduleHtml.includes(`${SITE_URL}${matchRoute}`)) {
-  fail(`/schedule: match permalink must not be duplicated into the static schedule body (${matchRoute})`);
+  fail(`/schedule: compatibility match link must not be exposed (${matchRoute})`);
 }
 if (!scheduleHtml.includes(`${SITE_URL}${roundRoute}`)) {
   fail(`/schedule: round entity link missing (${roundRoute})`);
@@ -88,7 +88,7 @@ if (!statsHtml.includes('進球') || !statsHtml.includes('黃牌')) {
 
 const playerHtml = await readRoute(playerRoute);
 if (playerHtml.includes(`${SITE_URL}${matchRoute}`)) {
-  fail(`${playerRoute}: match permalink must not be injected into static player history`);
+  fail(`${playerRoute}: compatibility match link must not appear in static player history`);
 }
 if (!playerHtml.includes('歷年賽季') || !playerHtml.includes('個人比賽事件')) {
   fail(`${playerRoute}: player history sections missing`);
@@ -98,28 +98,19 @@ if (playerHtml.includes('雙黃')) {
 }
 
 const matchHtml = await readRoute(matchRoute);
-if (!matchHtml.includes(`<link rel="canonical" href="${SITE_URL}${matchRoute}"`)) {
-  fail(`${matchRoute}: canonical must point to the permanent match URL`);
+if (!matchHtml.includes(`<link rel="canonical" href="${SITE_URL}/schedule"`)) {
+  fail(`${matchRoute}: compatibility canonical must point to schedule`);
 }
-if (matchHtml.includes('name="robots" content="noindex,follow"')) {
-  fail(`${matchRoute}: permanent match URL must be indexable`);
+if (!matchHtml.includes('name="robots" content="noindex,follow"')) {
+  fail(`${matchRoute}: compatibility route must be noindex,follow`);
 }
-if (!matchHtml.includes('SportsEvent')) {
-  fail(`${matchRoute}: SportsEvent structured data missing`);
-}
-if (!matchHtml.includes(home.name) || !matchHtml.includes(away.name)) {
-  fail(`${matchRoute}: social metadata must contain both team names`);
-}
-if (!matchHtml.includes(`property="og:url" content="${SITE_URL}${matchRoute}"`)) {
-  fail(`${matchRoute}: Open Graph URL must use the permanent match URL`);
-}
-if (!matchHtml.includes('name="twitter:card" content="summary_large_image"')) {
-  fail(`${matchRoute}: Twitter/X large image card metadata missing`);
+if (matchHtml.includes('SportsEvent') || matchHtml.includes(`${SITE_URL}${playerRoute}`)) {
+  fail(`${matchRoute}: standalone match entity SEO must not be restored`);
 }
 
 const roundHtml = await readRoute(roundRoute);
 if (roundHtml.includes(`${SITE_URL}${matchRoute}`)) {
-  fail(`${roundRoute}: match permalink must not be injected into static round body`);
+  fail(`${roundRoute}: compatibility match link must not appear`);
 }
 if (!roundHtml.includes('本輪數據') || !roundHtml.includes('本輪總進球')) {
   fail(`${roundRoute}: round data facts missing`);
@@ -129,8 +120,8 @@ if (roundHtml.includes('數據洞察')) {
 }
 
 const sitemap = await fs.readFile(path.join(distDir, 'sitemap.xml'), 'utf8');
-if (!sitemap.includes(`<loc>${SITE_URL}${matchRoute}</loc>`)) {
-  fail(`sitemap.xml: permanent match route must be indexed (${matchRoute})`);
+if (sitemap.includes(`<loc>${SITE_URL}${matchRoute}</loc>`)) {
+  fail(`sitemap.xml: compatibility match route must not be indexed (${matchRoute})`);
 }
 
 console.log(

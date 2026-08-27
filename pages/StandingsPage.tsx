@@ -146,7 +146,7 @@ const StandingsPage: React.FC = () => {
         <SeasonPageHeader
           title="積分"
           accent="榜"
-          description={`${activeSeason.displayName} ${activeLeague} 即時排名與數據`}
+          description={`${activeSeason.displayName} ${activeLeague} 排名與數據`}
           showMobileSeasonSelector={false}
           showDesktopSeasonSelector={false}
         />

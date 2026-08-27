@@ -28,7 +28,7 @@ const checkHtml = async (
     fail(`${route}: canonical URL missing or incorrect (expected ${canonicalRoute})`);
   }
   if (requireSchema && !html.includes('data-static-seo')) fail(`${route}: JSON-LD missing`);
-  if (!requireSchema && html.includes('data-static-seo')) fail(`${route}: unexpected JSON-LD on compatibility route`);
+  if (!requireSchema && html.includes('data-static-seo')) fail(`${route}: unexpected base JSON-LD`);
   if (schemaType && !html.includes(`"@type":"${schemaType}"`)) {
     fail(`${route}: ${schemaType} schema missing`);
   }
@@ -71,6 +71,7 @@ for (const seasonId of SEASON_IDS) {
   const teams = await readJson(seasonId, 'teams.json');
   const players = await readJson(seasonId, 'players.json');
   const matches = await readJson(seasonId, 'matches.json');
+  const teamMap = new Map(teams.map((team) => [team.id, team]));
 
   for (const article of articles) {
     await checkHtml(`/news/${article.id}`, article.title, { schemaType: 'NewsArticle' });
@@ -108,15 +109,26 @@ for (const seasonId of SEASON_IDS) {
     if (matchIds.has(match.id)) fail(`duplicate match id across seasons: ${match.id}`);
     matchIds.add(match.id);
     const route = `/matches/${match.id}`;
-    const html = await checkHtml(route, '賽程與結果', {
-      canonicalRoute: '/schedule',
+    const homeTeam = teamMap.get(match.homeTeamId);
+    const awayTeam = teamMap.get(match.awayTeamId);
+    if (!homeTeam || !awayTeam) fail(`${route}: unresolved team reference`);
+
+    const html = await checkHtml(route, homeTeam.name, {
+      canonicalRoute: route,
       requireSchema: false,
     });
-    if (!html.includes('name="robots" content="noindex,follow"')) {
-      fail(`${route}: compatibility route must be noindex,follow`);
+    if (!html.includes(awayTeam.name)) fail(`${route}: away team missing from social metadata`);
+    if (html.includes('name="robots" content="noindex,follow"')) {
+      fail(`${route}: permanent match route must be indexable`);
     }
-    if (html.includes('SportsEvent') || html.includes('數據洞察')) {
-      fail(`${route}: standalone match SEO content must not be restored`);
+    if (!html.includes('data-match-share-seo') || !html.includes('SportsEvent')) {
+      fail(`${route}: SportsEvent share metadata missing`);
+    }
+    if (!html.includes(`property="og:url" content="${SITE_URL}${route}"`)) {
+      fail(`${route}: Open Graph URL must use permanent match URL`);
+    }
+    if (!html.includes('name="twitter:card" content="summary_large_image"')) {
+      fail(`${route}: large social card metadata missing`);
     }
   }
 }
@@ -137,8 +149,8 @@ for (const id of playerCanonicalIds) {
   }
 }
 for (const id of matchIds) {
-  if (sitemap.includes(`<loc>${SITE_URL}/matches/${id}</loc>`)) {
-    fail(`sitemap.xml: compatibility match ${id} must not be indexed`);
+  if (!sitemap.includes(`<loc>${SITE_URL}/matches/${id}</loc>`)) {
+    fail(`sitemap.xml: permanent match ${id} missing`);
   }
 }
 

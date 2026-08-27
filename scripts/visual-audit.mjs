@@ -26,7 +26,7 @@ const routes = [
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
-  { name: 'match-compat', path: '/matches/m1?season=2025-26' },
+  { name: 'match-permalink', path: '/matches/m1?season=2025-26' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -204,9 +204,9 @@ const auditViewport = async (viewport) => {
         assert('player-page-links-team-entity', diagnostics.teamLinkCount > 0, `Found ${diagnostics.teamLinkCount} team link(s)`);
       }
 
-      if (route.name === 'match-compat') {
+      if (route.name === 'match-permalink') {
         const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
-        assert('legacy-match-url-redirects-to-schedule-dialog', page.url().includes('#/schedule?season=2025-26&match=m1') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
+        assert('match-permalink-opens-direct-dialog', page.url().includes('#/matches/m1?season=2025-26') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
       }
 
       if (route.name === 'media-default') {

@@ -158,7 +158,7 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'standings-2026') {
-        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · LEAGUE 1';
+        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
           elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
         );

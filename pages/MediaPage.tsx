@@ -9,6 +9,9 @@ import type { Video } from '../types';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
+const formatMediaDate = (value: string): string =>
+  value.replaceAll('.', '/').replaceAll('-', '/');
+
 const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   <a
     href={album.link}
@@ -26,8 +29,8 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
     </div>
 
     <div className="flex flex-col items-start">
-      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">
-        {album.date}
+      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
+        {formatMediaDate(album.date)}
       </span>
       <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
         <span className="border-b border-transparent pb-0.5 transition-all group-hover:border-blue-800">查看相簿</span>
@@ -58,8 +61,8 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
         </span>
       </div>
     </div>
-    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-400">
-      <span>{video.date}</span>
+    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
+      <span>{formatMediaDate(video.date)}</span>
       <span>{video.duration}</span>
     </div>
     <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black transition-colors group-hover:text-brand-blue">

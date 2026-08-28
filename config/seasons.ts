@@ -21,6 +21,7 @@ const legacyRules: CompetitionRules = {
   drawPoints: 1,
   lossPoints: 0,
   rankingCriteria: ['GOAL_DIFFERENCE', 'GOALS_FOR'],
+  criticalTieResolution: 'SHARED',
   yellowCardSuspensionThreshold: 2,
   automaticSuspensionMatches: 1,
   yellowCardFine: 500,
@@ -43,6 +44,7 @@ const season2026Rules: CompetitionRules = {
     'FEWEST_SECOND_YELLOW',
     'FEWEST_YELLOW',
   ],
+  criticalTieResolution: 'PUBLIC_DRAW',
   yellowCardSuspensionThreshold: 2,
   automaticSuspensionMatches: 1,
   yellowCardFine: 500,
@@ -158,6 +160,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
       intro: 'D LEAGUE 2026/27 賽季共 18 支球隊完成參賽確認，L1、L2、L3 各 6 隊，正式分級名單如下',
       ageReferenceDate: '2026-11-01',
       minimumAge: 15,
+      ageSummary: '2026/11/01 基準；一般年滿 15 歲，L3 14-15 歲須審核',
       minimumPlayers: 12,
       maximumPlayers: 20,
       maximumStaff: 3,
@@ -177,7 +180,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
         },
         {
           question: '球員年齡及登錄人數有什麼限制？',
-          answer: '球員須於 2026/11/01 當日年滿 15 歲，性別不限。每隊球員最少登錄 12 人、最多 20 人',
+          answer: '球員年齡以 2026/11/01 當日為計算基準，性別不限。年滿 15 歲者可登錄 L1、L2 或 L3，無年齡上限；年滿 14 歲但未滿 15 歲者，須繳交教練推薦書並經主辦單位審核同意後，方可登錄 L3；未滿 14 歲者不得登錄。未滿 18 歲者須繳交家長同意書。每隊球員登錄人數為 12-20 人',
         },
         {
           question: '隊職員可以登錄多少人？',

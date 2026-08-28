@@ -33,6 +33,12 @@ interface FilterPanelContentProps extends Omit<ResponsiveFilterDrawerProps, 'ope
   mobile?: boolean;
 }
 
+const formatDesktopLeagueText = (value: string): string =>
+  value.replace(/\bL(\d+)\b/g, 'LEAGUE $1');
+
+const formatMobileOptionLabel = (option: FilterDrawerOption): string =>
+  /^L[123]$/.test(option.value) ? option.value : option.label;
+
 const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
   fields,
   onClose,
@@ -76,6 +82,9 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
         <div className={`flex-1 overflow-y-auto overscroll-contain py-3 ${horizontalPadding}`} role="radiogroup" aria-label={activeField.label}>
           {activeField.options.map((option) => {
             const selected = option.value === activeField.value;
+            const optionLabel = mobile
+              ? formatMobileOptionLabel(option)
+              : formatDesktopLeagueText(option.label);
             return (
               <button
                 key={option.value}
@@ -90,7 +99,7 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
                   selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
                 }`}
               >
-                <span>{option.label}</span>
+                <span>{optionLabel}</span>
                 <span
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
                     selected ? 'border-brand-blue' : 'border-neutral-300'
@@ -137,7 +146,9 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
             className="flex min-h-[64px] w-full items-center border-b border-neutral-100 text-left last:border-b-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset"
           >
             <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
-            <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">{field.displayValue}</span>
+            <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
+              {mobile ? field.displayValue : formatDesktopLeagueText(field.displayValue)}
+            </span>
             <ChevronRight className="ml-2 h-4 w-4 shrink-0 text-neutral-300" aria-hidden="true" />
           </button>
         ))}

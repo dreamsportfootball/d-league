@@ -39,7 +39,7 @@ function Tabs<T extends string>({
                     ? 'bg-white text-brand-black shadow-sm'
                     : 'text-neutral-400 hover:text-neutral-600'
                 }`
-              : `border-b-2 px-1 pb-2 text-xs font-bold md:text-sm ${
+              : `min-h-11 border-b-2 px-1 py-2 text-xs font-bold md:text-sm ${
                   active === option
                     ? 'border-brand-blue text-brand-black'
                     : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'

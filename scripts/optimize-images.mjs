@@ -98,6 +98,29 @@ const processWithConcurrency = async (items, concurrency, worker) => {
   return results;
 };
 
+const getWebpSourcePriority = (sourcePath) => {
+  const extension = path.extname(sourcePath).toLowerCase();
+  if (extension === '.png') return 0;
+  if (extension === '.jpeg') return 1;
+  return 2;
+};
+
+const getWebpOutputPath = (sourcePath) => sourcePath.replace(RASTER_PATTERN, '.webp');
+
+const selectWebpOwners = (files) => {
+  const owners = new Map();
+
+  for (const sourcePath of files) {
+    const outputPath = getWebpOutputPath(sourcePath);
+    const current = owners.get(outputPath);
+    if (!current || getWebpSourcePriority(sourcePath) < getWebpSourcePriority(current)) {
+      owners.set(outputPath, sourcePath);
+    }
+  }
+
+  return owners;
+};
+
 export const optimizeImages = async () => {
   let sharp;
   try {
@@ -118,14 +141,13 @@ export const optimizeImages = async () => {
   await cp(PUBLIC_DIR, OPTIMIZED_PUBLIC_DIR, { recursive: true });
 
   const files = await collectImages(OPTIMIZED_PUBLIC_DIR);
-  let originalBytes = 0;
-  let deployedOriginalBytes = 0;
-  let webpBytes = 0;
+  const webpOwners = selectWebpOwners(files);
 
   const results = await processWithConcurrency(files, 4, async (sourcePath) => {
     const relativePath = path.relative(OPTIMIZED_PUBLIC_DIR, sourcePath);
     const originalSourcePath = path.join(PUBLIC_DIR, relativePath);
-    const outputPath = sourcePath.replace(RASTER_PATTERN, '.webp');
+    const outputPath = getWebpOutputPath(sourcePath);
+    const isWebpOwner = webpOwners.get(outputPath) === sourcePath;
     const temporaryOriginalPath = `${sourcePath}.tmp`;
     const temporaryWebpPath = `${outputPath}.tmp`;
     const profile = getProfile(relativePath);
@@ -153,35 +175,42 @@ export const optimizeImages = async () => {
         .toFile(temporaryOriginalPath);
     }
 
-    await basePipeline.clone().webp(profile.webp).toFile(temporaryWebpPath);
+    if (isWebpOwner) {
+      await basePipeline.clone().webp(profile.webp).toFile(temporaryWebpPath);
+    }
     await rename(temporaryOriginalPath, sourcePath);
-    await rename(temporaryWebpPath, outputPath);
+    if (isWebpOwner) {
+      await rename(temporaryWebpPath, outputPath);
+    }
 
     const deployedOriginalStats = await stat(sourcePath);
-    const outputStats = await stat(outputPath);
-    originalBytes += originalStats.size;
-    deployedOriginalBytes += deployedOriginalStats.size;
-    webpBytes += outputStats.size;
+    const outputStats = isWebpOwner ? await stat(outputPath) : null;
+    const optimizedWebpBytes = outputStats?.size ?? 0;
 
     return {
       source: toPosixPath(relativePath),
       webp: toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, outputPath)),
+      webpOwner: isWebpOwner,
       originalBytes: originalStats.size,
       deployedOriginalBytes: deployedOriginalStats.size,
-      webpBytes: outputStats.size,
-      webpSavedBytes: originalStats.size - outputStats.size,
-      webpSavedPercent: originalStats.size > 0
-        ? Number((((originalStats.size - outputStats.size) / originalStats.size) * 100).toFixed(1))
+      webpBytes: optimizedWebpBytes,
+      webpSavedBytes: isWebpOwner ? originalStats.size - optimizedWebpBytes : 0,
+      webpSavedPercent: isWebpOwner && originalStats.size > 0
+        ? Number((((originalStats.size - optimizedWebpBytes) / originalStats.size) * 100).toFixed(1))
         : 0,
     };
   });
 
+  const originalBytes = results.reduce((sum, item) => sum + item.originalBytes, 0);
+  const deployedOriginalBytes = results.reduce((sum, item) => sum + item.deployedOriginalBytes, 0);
+  const webpBytes = results.reduce((sum, item) => sum + item.webpBytes, 0);
   const savedBytes = originalBytes - webpBytes;
   const report = {
     optimized: true,
     generatedAt: new Date().toISOString(),
     publicDirectory: '.optimized-public',
     fileCount: results.length,
+    webpFileCount: webpOwners.size,
     originalBytes,
     deployedOriginalBytes,
     webpBytes,
@@ -195,7 +224,7 @@ export const optimizeImages = async () => {
   await mkdir(path.dirname(REPORT_PATH), { recursive: true });
   await writeFile(REPORT_PATH, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   console.log(
-    `[images] optimized ${results.length} files, WebP delivery saves ${(savedBytes / 1024 / 1024).toFixed(2)} MB (${report.savedPercent}%)`,
+    `[images] optimized ${results.length} raster files into ${webpOwners.size} WebP outputs, saving ${(savedBytes / 1024 / 1024).toFixed(2)} MB (${report.savedPercent}%)`,
   );
   return true;
 };

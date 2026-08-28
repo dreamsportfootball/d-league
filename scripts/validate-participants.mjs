@@ -10,9 +10,12 @@ const fail = (message) => {
 };
 
 const participants = read('participants.json');
+const teamBranding = read('teamBranding.json');
 const news = read('news.json');
 const highlights = read('highlights.json');
 const leagueIds = ['L1', 'L2', 'L3'];
+const colorPattern = /^#[0-9a-f]{6}$/i;
+const logoFilePattern = /^[a-z0-9][a-z0-9-]*\.(png|webp|svg)$/i;
 
 if (!participants || typeof participants !== 'object' || Array.isArray(participants)) {
   fail('participants.json must contain an object');
@@ -47,6 +50,28 @@ if (allTeams.length !== 18) fail('expected exactly 18 confirmed teams');
 if (new Set(allTeams).size !== allTeams.length) fail('team names must be unique across all leagues');
 if (allTeams.includes('石門聯隊')) fail('withdrawn team 石門聯隊 must not appear in confirmed participants');
 
+if (!teamBranding || typeof teamBranding !== 'object' || Array.isArray(teamBranding)) {
+  fail('teamBranding.json must contain an object');
+}
+const brandingNames = Object.keys(teamBranding).sort();
+const participantNames = [...allTeams].sort();
+if (JSON.stringify(brandingNames) !== JSON.stringify(participantNames)) {
+  fail('teamBranding.json must define exactly the 18 confirmed teams');
+}
+for (const [teamName, branding] of Object.entries(teamBranding)) {
+  if (!branding || typeof branding !== 'object' || Array.isArray(branding)) {
+    fail(`${teamName}: branding must be an object`);
+  }
+  if (typeof branding.logoFile !== 'string' || !logoFilePattern.test(branding.logoFile)) {
+    fail(`${teamName}: invalid logoFile ${branding.logoFile ?? ''}`);
+  }
+  for (const field of ['primaryColor', 'secondaryColor']) {
+    if (branding[field] !== undefined && (typeof branding[field] !== 'string' || !colorPattern.test(branding[field]))) {
+      fail(`${teamName}: ${field} must be a six-digit hex color`);
+    }
+  }
+}
+
 for (const field of ['note', 'nextStep', 'detailsNote']) {
   if (typeof participants[field] !== 'string' || !participants[field].trim()) {
     fail(`${field} is required`);
@@ -79,4 +104,4 @@ for (const team of allTeams) {
 }
 
 console.log(`${CURRENT_SEASON_ID}: ${allTeams.length} confirmed teams across ${leagueIds.length} leagues`);
-console.log('Participant validation passed');
+console.log('Participant and team branding validation passed');

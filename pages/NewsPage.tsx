@@ -58,7 +58,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
               </span>
             )}
           </div>
-          <span className="shrink-0 font-mono text-[11px] text-neutral-400">
+          <span className="shrink-0 font-mono text-[11px] text-neutral-500">
             {formatTaipeiDate(article.timestamp)}
           </span>
         </div>

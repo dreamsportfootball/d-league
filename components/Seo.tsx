@@ -105,7 +105,7 @@ const Seo: React.FC = () => {
     if (matchId) {
       const record = getMatchRecord(matchId, preferredSeason);
       if (record?.homeTeam && record.awayTeam) {
-        const { match, homeTeam, awayTeam, season, seasonId } = record;
+        const { match, homeTeam, awayTeam, season } = record;
         const score = match.homeScore !== null && match.awayScore !== null
           ? `${match.homeScore}-${match.awayScore}`
           : 'vs';
@@ -114,7 +114,7 @@ const Seo: React.FC = () => {
           description: `${season.displayName} ${match.league} 第 ${match.round} 輪：${homeTeam.name} 對 ${awayTeam.name}，比賽時間、地點、比數、進球與紅黃牌官方紀錄`,
           image: absoluteAssetUrl(season.heroImageDesktop ?? season.heroFallbackImage),
           type: 'website',
-          canonicalPath: `/schedule?season=${seasonId}`,
+          canonicalPath: `/matches/${encodeURIComponent(match.id)}`,
         };
       }
     }

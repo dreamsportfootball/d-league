@@ -16,23 +16,57 @@ interface StandingsProps { league: LeagueId; variant?: 'widget' | 'page'; }
 
 const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact = false }) => {
   if (row.tieStatus === 'NONE') return null;
-  return <span className={`ml-1 whitespace-nowrap font-bold ${row.tieStatus === 'DRAW_REQUIRED' ? 'text-amber-600' : 'text-neutral-400'} ${compact ? 'text-[8px]' : 'text-[9px]'}`}>{row.tieStatus === 'DRAW_REQUIRED' ? '待抽籤' : '並列'}</span>;
+  const label = row.tieStatus === 'DRAW_REQUIRED'
+    ? compact ? '待抽籤' : '待公開抽籤'
+    : '並列';
+  return <span className={`ml-1 whitespace-nowrap font-bold ${row.tieStatus === 'DRAW_REQUIRED' ? 'text-amber-700' : 'text-neutral-500'} ${compact ? 'text-[8px]' : 'text-[9px]'}`}>{label}</span>;
 };
 
 const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   const { activeSeason, seasonData } = useSeason();
   const [mobileExpanded, setMobileExpanded] = useState(false);
   const leagueConfig = activeSeason.leagues[league];
-  const standings = useMemo(() => calculateLeagueTable({ league, teams: seasonData.teams, matches: seasonData.matches, matchEvents: seasonData.matchEvents, rules: activeSeason.rules, leagueConfig }), [activeSeason.rules, league, leagueConfig, seasonData.matchEvents, seasonData.matches, seasonData.teams]);
+  const standings = useMemo(() => calculateLeagueTable({
+    league,
+    teams: seasonData.teams,
+    matches: seasonData.matches,
+    matchEvents: seasonData.matchEvents,
+    rules: activeSeason.rules,
+    leagueConfig,
+    isFinalStandings: activeSeason.status === 'completed',
+  }), [activeSeason.rules, activeSeason.status, league, leagueConfig, seasonData.matchEvents, seasonData.matches, seasonData.teams]);
   const isWidget = variant === 'widget';
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
   const relegationStart = leagueConfig && leagueConfig.relegationPlaces > 0 ? standings.length - leagueConfig.relegationPlaces + 1 : Number.POSITIVE_INFINITY;
+  const isPromotionRank = (row: Standing): boolean =>
+    row.tieStatus === 'NONE' && Boolean(leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces);
+  const isRelegationRank = (row: Standing): boolean =>
+    row.tieStatus === 'NONE' && row.rank >= relegationStart;
+  const isChampionRank = (row: Standing): boolean =>
+    row.tieStatus === 'NONE' && row.rank === 1;
   const rankBar = (row: Standing) => {
     if (row.tieStatus === 'DRAW_REQUIRED') return 'bg-amber-400';
-    if (row.rank === 1) return 'bg-brand-blue';
-    if (leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces) return 'bg-green-500';
-    if (row.rank >= relegationStart) return 'bg-red-500';
+    if (row.tieStatus === 'SHARED') return 'bg-neutral-300';
+    if (isPromotionRank(row)) return 'bg-green-500';
+    if (isChampionRank(row)) return 'bg-brand-blue';
+    if (isRelegationRank(row)) return 'bg-red-500';
     return 'bg-transparent';
+  };
+  const pageRowClass = (row: Standing): string => {
+    if (row.tieStatus === 'DRAW_REQUIRED') return 'bg-amber-50/70 hover:bg-amber-100/70';
+    if (row.tieStatus === 'SHARED') return 'hover:bg-neutral-50/50';
+    if (isPromotionRank(row)) return 'bg-green-50/70 hover:bg-green-100/70';
+    if (isChampionRank(row)) return 'bg-brand-blue/5 hover:bg-brand-blue/10';
+    if (isRelegationRank(row)) return 'bg-red-50/70 hover:bg-red-100/70';
+    return 'hover:bg-neutral-50/50';
+  };
+  const rowStatusText = (row: Standing): string | null => {
+    if (row.tieStatus === 'DRAW_REQUIRED') return '此順位待公開抽籤確認';
+    if (row.tieStatus === 'SHARED') return '目前並列';
+    if (isPromotionRank(row)) return '升級席位';
+    if (isChampionRank(row)) return '冠軍順位';
+    if (isRelegationRank(row)) return '降級席位';
+    return null;
   };
 
   if (isWidget) {
@@ -49,7 +83,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           type="button"
           onClick={() => setMobileExpanded((expanded) => !expanded)}
           aria-expanded={mobileExpanded}
-          className="min-h-10 rounded-sm px-2 text-xs font-bold text-brand-blue transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30"
+          className="min-h-11 rounded-sm px-2 text-xs font-bold text-brand-blue transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30"
         >
           {mobileExpanded ? '收起數據 ↑' : '查看完整數據 ↓'}
         </button>
@@ -69,7 +103,8 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
             </thead>
             <tbody>{displayed.map((row) => {
               const team = seasonData.teamMap[row.teamId]; if (!team) return null;
-              return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span></div></td><td className="py-1.5 pl-2 pr-1"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} compact /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums text-brand-blue">{row.points}</td></tr>;
+              const statusText = rowStatusText(row);
+              return <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span>{statusText && <span className="sr-only">，{statusText}</span>}</div></td><td className="py-1.5 pl-2 pr-1"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} compact /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums text-brand-blue">{row.points}</td></tr>;
             })}</tbody>
           </table>
         </div>
@@ -81,7 +116,8 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
             <thead className="border-b border-neutral-200 text-[10px] font-bold tracking-widest text-neutral-500"><tr><th className="w-8 px-1 py-3 text-left">名次</th><th className="w-[140px] py-3 pl-2 pr-2 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th></tr></thead>
             <tbody>{displayed.map((row) => {
               const team = seasonData.teamMap[row.teamId]; if (!team) return null;
-              return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span></div></td><td className="py-1.5 pl-2 pr-2"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.ga}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
+              const statusText = rowStatusText(row);
+              return <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span>{statusText && <span className="sr-only">，{statusText}</span>}</div></td><td className="py-1.5 pl-2 pr-2"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.ga}</td><td className="px-1 py-3 text-center text-xs tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-xs font-semibold tabular-nums">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
             })}</tbody>
           </table>
         </div>
@@ -92,7 +128,8 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-widest text-neutral-500"><tr><th className="w-10 px-1 py-3 text-left">名次</th><th className="w-[220px] px-4 py-3 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th></tr></thead>
           <tbody>{displayed.map((row) => {
             const team = seasonData.teamMap[row.teamId]; if (!team) return null;
-            return <tr key={row.teamId} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50"><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-sm font-bold tabular-nums">{row.rank}</span></div></td><td className="px-4 py-1.5"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-8 w-8 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.ga}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-sm font-semibold tabular-nums">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
+            const statusText = rowStatusText(row);
+            return <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}><td className="px-1 py-3"><div className="relative flex items-center pl-1"><div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} /><span className="ml-3 font-mono text-sm font-bold tabular-nums">{row.rank}</span>{statusText && <span className="sr-only">，{statusText}</span>}</div></td><td className="px-4 py-1.5"><Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`} className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue" aria-label={`查看 ${team.name} 球隊頁`}><img src={team.logo} alt={team.name} className="h-8 w-8 shrink-0 object-contain" /><div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div><TieLabel row={row} /></Link></td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.played}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.won}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.drawn}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.lost}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gf}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.ga}</td><td className="px-1 py-3 text-center text-sm tabular-nums">{row.gd > 0 ? `+${row.gd}` : row.gd}</td><td className="px-1 py-3 text-center text-sm font-semibold tabular-nums">{row.points}</td><td className="px-1 py-3 text-left"><div className="flex items-center">{row.form.slice(0, 3).map((result, index) => <FormBadge key={`${row.teamId}-${index}`} result={result} />)}</div></td></tr>;
           })}</tbody>
         </table>
       </div>

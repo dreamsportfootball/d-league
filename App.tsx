@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import ExperienceEnhancements from './components/ExperienceEnhancements';
@@ -83,49 +83,95 @@ const SectionAnchorNavigation: React.FC = () => {
   return null;
 };
 
+const SCROLL_STORAGE_PREFIX = 'dleague:scroll:';
+const MAX_SCROLL_RESTORE_ATTEMPTS = 30;
+
+const getScrollStorageKey = (locationKey: string): string =>
+  `${SCROLL_STORAGE_PREFIX}${locationKey}`;
+
+const readScrollPosition = (locationKey: string): number | null => {
+  try {
+    const raw = window.sessionStorage.getItem(getScrollStorageKey(locationKey));
+    if (raw === null) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) && value >= 0 ? value : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeScrollPosition = (locationKey: string, scrollY: number): void => {
+  try {
+    window.sessionStorage.setItem(getScrollStorageKey(locationKey), String(scrollY));
+  } catch {
+    // Session storage may be unavailable.
+  }
+};
+
 const ScrollMemory: React.FC = () => {
-  const { pathname, hash } = useLocation();
+  const { pathname, search, hash, key } = useLocation();
+  const navigationType = useNavigationType();
 
   useEffect(() => {
-    const previousPathname = window.sessionStorage.getItem('lastPathname') || '';
-    const isReturningFromArticle = previousPathname.startsWith('/news/') && pathname === '/news';
-
-    if (isReturningFromArticle) {
-      const savedY = window.sessionStorage.getItem('newsScrollY');
-      if (savedY !== null) {
-        const y = parseInt(savedY, 10);
-        if (!Number.isNaN(y)) {
-          window.scrollTo({ top: y, behavior: 'auto' });
-          return;
-        }
-      }
-    }
-
-    if (hash) {
-      const id = hash.substring(1);
-      const element = document.getElementById(id);
-      if (element) {
-        const headerHeight = id === 'main-content' ? 0 : 64;
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: elementPosition - headerHeight,
-          behavior: preferredScrollBehavior(),
-        });
-        return;
-      }
-    }
-
-    window.scrollTo(0, 0);
-  }, [pathname, hash]);
+    const previousRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+    return () => {
+      window.history.scrollRestoration = previousRestoration;
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
-      window.sessionStorage.setItem('lastPathname', pathname);
-      if (pathname === '/news') {
-        window.sessionStorage.setItem('newsScrollY', String(window.scrollY));
-      }
+      writeScrollPosition(key, window.scrollY);
     };
-  }, [pathname]);
+  }, [key]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let frameId = 0;
+    let attempts = 0;
+    const savedPosition = navigationType === 'POP' ? readScrollPosition(key) : null;
+    const sectionId = hash ? decodeURIComponent(hash.slice(1)) : '';
+
+    const restore = () => {
+      if (cancelled) return;
+      attempts += 1;
+
+      if (savedPosition !== null) {
+        const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        window.scrollTo({ top: Math.min(savedPosition, maxScrollY), behavior: 'auto' });
+        if (maxScrollY + 2 < savedPosition && attempts < MAX_SCROLL_RESTORE_ATTEMPTS) {
+          frameId = window.requestAnimationFrame(restore);
+        }
+        return;
+      }
+
+      if (sectionId) {
+        const element = document.getElementById(sectionId);
+        if (!element && attempts < MAX_SCROLL_RESTORE_ATTEMPTS) {
+          frameId = window.requestAnimationFrame(restore);
+          return;
+        }
+        if (element) {
+          const headerHeight = sectionId === 'main-content' ? 0 : 64;
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - headerHeight,
+            behavior: preferredScrollBehavior(),
+          });
+          return;
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+
+    frameId = window.requestAnimationFrame(restore);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [hash, key, navigationType, pathname, search]);
 
   return null;
 };

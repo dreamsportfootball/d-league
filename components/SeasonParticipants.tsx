@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
-import type { LeagueId, SeasonParticipantsConfig } from '../types/season';
+import { getTeamLogoUrl } from '../services/teamBranding';
+import type { LeagueId, SeasonId, SeasonParticipantsConfig } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 
 interface SeasonParticipantsProps {
   participants: SeasonParticipantsConfig;
   className?: string;
+}
+
+interface ParticipantTeamLogoProps {
+  seasonId: SeasonId;
+  teamName: string;
 }
 
 const LEAGUE_ORDER: LeagueId[] = ['L1', 'L2', 'L3'];
@@ -19,6 +26,26 @@ const formatDeadline = (value: string): string => {
   const formattedDate = formatDate(datePart);
   const formattedTime = timePart.slice(0, 5);
   return formattedTime ? `${formattedDate} ${formattedTime} 前` : `${formattedDate} 前`;
+};
+
+const ParticipantTeamLogo: React.FC<ParticipantTeamLogoProps> = ({ seasonId, teamName }) => {
+  const [failed, setFailed] = useState(false);
+  const logoUrl = getTeamLogoUrl(seasonId, teamName);
+
+  return (
+    <span className="relative mr-2 w-9 shrink-0 self-stretch md:w-10" aria-hidden="true">
+      {logoUrl && !failed && (
+        <img
+          src={logoUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 object-contain md:h-10 md:w-10"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </span>
+  );
 };
 
 const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({ participants, className = '' }) => {
@@ -52,10 +79,10 @@ const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({ participants, c
               <ol className="divide-y divide-neutral-200">
                 {teams.map((teamName, index) => {
                   const publishedTeam = publishedTeamByName.get(teamName);
-                  const content = <><span className="mr-4 w-7 shrink-0 font-display text-lg font-black tabular-nums text-brand-blue">{String(index + 1).padStart(2, '0')}</span><span className="text-sm font-black leading-6 text-brand-black md:text-base">{teamName}</span></>;
+                  const content = <><span className="mr-4 w-7 shrink-0 font-display text-lg font-black tabular-nums text-brand-blue">{String(index + 1).padStart(2, '0')}</span><ParticipantTeamLogo seasonId={activeSeasonId} teamName={teamName} /><span className="min-w-0 flex-1 text-sm font-bold leading-6 text-brand-black md:text-base">{teamName}</span>{publishedTeam && <ChevronRight className="ml-3 h-4 w-4 shrink-0 text-neutral-300 transition-colors group-hover:text-brand-blue" aria-hidden="true" />}</>;
                   return (
                     <li key={teamName}>
-                      {publishedTeam ? <Link to={`/teams/${getTeamIdentity(publishedTeam)}?season=${activeSeasonId}`} className="flex min-h-16 items-center px-5 py-4 transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue" aria-label={`查看 ${teamName} 球隊頁`}>{content}</Link> : <div className="flex min-h-16 items-center px-5 py-4">{content}</div>}
+                      {publishedTeam ? <Link to={`/teams/${getTeamIdentity(publishedTeam)}?season=${activeSeasonId}`} className="group flex min-h-16 items-center px-5 py-4 transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue" aria-label={`查看 ${teamName} 球隊頁`}>{content}</Link> : <div className="flex min-h-16 items-center px-5 py-4">{content}</div>}
                     </li>
                   );
                 })}

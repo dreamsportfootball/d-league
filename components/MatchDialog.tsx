@@ -18,7 +18,9 @@ import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
+import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
+import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
 
 interface MatchDialogProps {
@@ -159,6 +161,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
   const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
+  const matchPermalink = buildMatchPermalink(match.id);
   const matchInfoText = buildMatchInfoText({
     match,
     seasonShortName: activeSeason.shortName,
@@ -167,14 +170,14 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     awayTeamName: awayTeam.name,
     awayTeamShortName: awayTeam.shortName || awayTeam.name,
     events: matchEvents,
-    detailUrl: window.location.href,
+    detailUrl: matchPermalink,
   });
 
   const handleShare = async () => {
     const shareData = {
       title: `${homeTeam.name} vs ${awayTeam.name}｜${activeSeason.displayName}`,
       text: matchInfoText,
-      url: window.location.href,
+      url: matchPermalink,
     };
 
     try {
@@ -182,7 +185,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
         await navigator.share(shareData);
         return;
       }
-      await copyText(window.location.href);
+      await copyText(matchPermalink);
       setShareStatus('COPIED');
       window.setTimeout(() => setShareStatus('IDLE'), 2200);
     } catch (error) {
@@ -335,6 +338,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               D LEAGUE 官方賽事紀錄
             </p>
           </section>
+
+          <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
 
           {lineup && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">

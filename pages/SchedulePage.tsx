@@ -66,6 +66,32 @@ const EMPTY_FILTERS: ScheduleFilters = {
   status: 'ALL',
 };
 
+const getFocusableElements = (container: HTMLElement): HTMLElement[] =>
+  Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter((element) => element.offsetParent !== null);
+
+const trapDialogFocus = (event: KeyboardEvent, dialog: HTMLElement | null): void => {
+  if (event.key !== 'Tab' || !dialog) return;
+  const focusable = getFocusableElements(dialog);
+  if (focusable.length === 0) {
+    event.preventDefault();
+    dialog.focus();
+    return;
+  }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+};
+
 const matchPassesFilters = (
   match: Match,
   filters: ScheduleFilters,
@@ -189,6 +215,10 @@ const SchedulePage: React.FC = () => {
   } = useSeason();
   const [searchParams, setSearchParams] = useSearchParams();
   const previousSeasonIdRef = useRef(activeSeasonId);
+  const desktopFilterTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const mobileFilterTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const desktopFilterDialogRef = useRef<HTMLElement | null>(null);
+  const mobileFilterDialogRef = useRef<HTMLDivElement | null>(null);
   const [filters, setFilters] = useState<ScheduleFilters>(() => {
     let savedLeague: LeagueFilter = 'ALL';
     try {
@@ -221,6 +251,12 @@ const SchedulePage: React.FC = () => {
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
+  );
+  const historicalScheduleSeason = useMemo(
+    () => sortedSeasons.find(
+      (season) => season.id !== activeSeasonId && getSeasonData(season.id).matches.length > 0,
+    ),
+    [activeSeasonId, sortedSeasons],
   );
   const filteredMatches = useMemo(
     () => seasonData.matches.filter((match) => matchPassesFilters(match, filters)),
@@ -292,37 +328,60 @@ const SchedulePage: React.FC = () => {
 
   useEffect(() => {
     if (!desktopFiltersOpen) return;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    const frame = window.requestAnimationFrame(() => {
+      const dialog = desktopFilterDialogRef.current;
+      const initial = dialog?.querySelector<HTMLElement>('[data-schedule-filter-initial-focus]');
+      (initial ?? dialog)?.focus();
+    });
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      setDesktopFilterView('ROOT');
-      setDesktopFiltersOpen(false);
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setDesktopFilterView('ROOT');
+        setDesktopFiltersOpen(false);
+        return;
+      }
+      trapDialogFocus(event, desktopFilterDialogRef.current);
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = '';
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
+      desktopFilterTriggerRef.current?.focus();
     };
   }, [desktopFiltersOpen]);
 
   useEffect(() => {
     if (!mobileFiltersOpen) return;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    const frame = window.requestAnimationFrame(() => {
+      const dialog = mobileFilterDialogRef.current;
+      const initial = dialog?.querySelector<HTMLElement>('[data-schedule-filter-initial-focus]');
+      (initial ?? dialog)?.focus();
+    });
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        event.preventDefault();
         if (mobileFilterView !== 'ROOT') {
           setMobileFilterView('ROOT');
         } else {
           setMobileFiltersOpen(false);
         }
+        return;
       }
+      trapDialogFocus(event, mobileFilterDialogRef.current);
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = '';
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
+      mobileFilterTriggerRef.current?.focus();
     };
   }, [mobileFilterView, mobileFiltersOpen]);
 
@@ -421,6 +480,9 @@ const SchedulePage: React.FC = () => {
   };
 
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
+  const desktopLeagueSummary = filters.league === 'ALL'
+    ? '全部級別'
+    : activeSeason.leagues[filters.league]?.displayName ?? filters.league;
   const desktopActiveFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
   const desktopDraftFilterCount = Object.values(desktopDraft.filters).filter((value) => value !== 'ALL').length;
   const activeMobileFilterCount = Object.values(filters).filter((value) => value !== 'ALL').length;
@@ -428,7 +490,7 @@ const SchedulePage: React.FC = () => {
 
   const desktopDraftLeagueSummary = desktopDraft.filters.league === 'ALL'
     ? '全部級別'
-    : desktopDraft.filters.league;
+    : desktopDraftSeason.leagues[desktopDraft.filters.league]?.displayName ?? desktopDraft.filters.league;
   const desktopDraftStatusSummary = getStatusSummary(desktopDraft.filters.status);
   const desktopDraftTeamSummary = desktopDraft.filters.team === 'ALL'
     ? '全部球隊'
@@ -471,7 +533,9 @@ const SchedulePage: React.FC = () => {
           selectedValue: desktopDraft.filters.league,
           options: (['ALL', ...desktopDraftSeason.enabledLeagues] as LeagueFilter[]).map((league) => ({
             value: league,
-            label: league === 'ALL' ? '全部級別' : league,
+            label: league === 'ALL'
+              ? '全部級別'
+              : desktopDraftSeason.leagues[league]?.displayName ?? league,
           })),
           onSelect: (value) => updateDesktopDraftFacet('league', value),
         }
@@ -592,6 +656,7 @@ const SchedulePage: React.FC = () => {
         />
 
         <button
+          ref={mobileFilterTriggerRef}
           type="button"
           onClick={openMobileFilters}
           className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
@@ -619,10 +684,11 @@ const SchedulePage: React.FC = () => {
                 {filteredMatches.length} 場比賽
               </span>
               <span className="text-[11px] font-bold text-neutral-400">
-                {activeSeason.shortName} · {leagueSummary}
+                {activeSeason.shortName} · {desktopLeagueSummary}
               </span>
             </div>
             <button
+              ref={desktopFilterTriggerRef}
               type="button"
               onClick={toggleDesktopFilters}
               aria-expanded={desktopFiltersOpen}
@@ -650,8 +716,14 @@ const SchedulePage: React.FC = () => {
           {seasonData.matches.length === 0 ? (
             <EmptyState
               title={`${activeSeason.shortName} 賽程尚未公布`}
-              description={`${activeSeason.shortName} 賽程將於球隊錄取及分級完成後公布`}
+              description={activeSeason.seasonParticipants
+                ? `${activeSeason.shortName} 賽程將於球員登錄及賽程編排完成後統一公布`
+                : `${activeSeason.shortName} 賽程將於球隊錄取及分級完成後公布`}
               showRegistrationLink={activeSeason.status === 'registration'}
+              primaryAction={historicalScheduleSeason ? {
+                label: `查看 ${historicalScheduleSeason.shortName} 賽程與結果`,
+                to: `/schedule?season=${historicalScheduleSeason.id}`,
+              } : undefined}
             />
           ) : filteredMatches.length === 0 ? (
             <EmptyState title="沒有符合條件的賽事" description="請調整篩選條件後再查看" />
@@ -676,11 +748,13 @@ const SchedulePage: React.FC = () => {
           />
 
           <aside
+            ref={desktopFilterDialogRef}
             id="desktop-schedule-filters"
             role="dialog"
             aria-modal="true"
             aria-label="篩選賽程"
-            className="absolute right-0 top-0 flex h-full w-[420px] max-w-full flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.2)]"
+            tabIndex={-1}
+            className="absolute right-0 top-0 flex h-full w-[420px] max-w-full flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.2)] outline-none"
           >
             {desktopSelectorConfig ? (
               <>
@@ -688,6 +762,7 @@ const SchedulePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setDesktopFilterView('ROOT')}
+                    data-schedule-filter-initial-focus
                     className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black"
                     aria-label="返回篩選"
                   >
@@ -706,7 +781,7 @@ const SchedulePage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
+                <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3" role="radiogroup" aria-label={desktopSelectorConfig.title}>
                   {desktopSelectorConfig.options.map((option) => {
                     const selected = option.value === desktopSelectorConfig.selectedValue;
                     return (
@@ -748,6 +823,7 @@ const SchedulePage: React.FC = () => {
                     <button
                       type="button"
                       onClick={closeDesktopFilters}
+                      data-schedule-filter-initial-focus
                       className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black"
                       aria-label="取消並關閉"
                     >
@@ -807,7 +883,7 @@ const SchedulePage: React.FC = () => {
       )}
 
       {mobileFiltersOpen && (
-        <div className="fixed inset-0 z-[1200] flex items-end md:hidden" role="dialog" aria-modal="true" aria-label="篩選賽程">
+        <div className="fixed inset-0 z-[1200] flex items-end md:hidden">
           <button
             type="button"
             className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"
@@ -815,13 +891,21 @@ const SchedulePage: React.FC = () => {
             aria-label="取消並關閉篩選"
           />
 
-          <div className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl">
+          <div
+            ref={mobileFilterDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="篩選賽程"
+            tabIndex={-1}
+            className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl outline-none"
+          >
             {mobileSelectorConfig ? (
               <>
                 <div className="grid shrink-0 grid-cols-[44px_1fr_44px] items-center border-b border-neutral-100 px-2 py-2">
                   <button
                     type="button"
                     onClick={() => setMobileFilterView('ROOT')}
+                    data-schedule-filter-initial-focus
                     className="flex h-11 w-11 items-center justify-center text-neutral-500 active:text-brand-black"
                     aria-label="返回篩選"
                   >
@@ -840,7 +924,7 @@ const SchedulePage: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
+                <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2" role="radiogroup" aria-label={mobileSelectorConfig.title}>
                   {mobileSelectorConfig.options.map((option) => {
                     const selected = option.value === mobileSelectorConfig.selectedValue;
                     return (
@@ -883,6 +967,7 @@ const SchedulePage: React.FC = () => {
                     <button
                       type="button"
                       onClick={closeMobileFilters}
+                      data-schedule-filter-initial-focus
                       className="flex h-11 w-11 items-center justify-center rounded-full text-neutral-400 transition-colors active:bg-neutral-100 active:text-brand-black"
                       aria-label="取消並關閉"
                     >

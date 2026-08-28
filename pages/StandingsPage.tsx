@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, BookOpen, Filter } from 'lucide-react';
+import { AlertCircle, BookOpen } from 'lucide-react';
+import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
+import PreSeasonStandings from '../components/PreSeasonStandings';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Standings from '../components/Standings';
@@ -33,6 +35,12 @@ const StandingsPage: React.FC = () => {
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
   );
+  const historicalSeason = useMemo(
+    () => activeSeasonId === CURRENT_SEASON_ID
+      ? sortedSeasons.find((season) => season.id !== activeSeasonId)
+      : undefined,
+    [activeSeasonId, sortedSeasons],
+  );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
   const currentSeason = availableSeasons.find((season) => season.id === CURRENT_SEASON_ID) ?? activeSeason;
   const defaultLeague = currentSeason.enabledLeagues[0];
@@ -59,6 +67,7 @@ const StandingsPage: React.FC = () => {
   };
 
   const leagueConfig = activeSeason.leagues[activeLeague];
+  const participantTeamNames = activeSeason.seasonParticipants?.leagues[activeLeague] ?? [];
   const leagueTeams = useMemo(
     () =>
       seasonData.teams.filter(
@@ -79,7 +88,9 @@ const StandingsPage: React.FC = () => {
     [activeLeague, seasonData.matches],
   );
 
-  const shouldShowEmptyState = leagueTeams.length === 0 || !hasFinishedMatches;
+  const shouldShowEmptyState = leagueTeams.length === 0 && participantTeamNames.length === 0;
+  const showPreSeasonStandings = !hasFinishedMatches && participantTeamNames.length > 0;
+  const activeFilterCount = activeLeague === activeSeason.enabledLeagues[0] ? 0 : 1;
   const filterFields: FilterDrawerField[] = [
     {
       id: 'season',
@@ -136,60 +147,56 @@ const StandingsPage: React.FC = () => {
         <SeasonPageHeader
           title="積分"
           accent="榜"
-          description={`${activeSeason.displayName} ${activeLeague} 即時排名與數據`}
+          description={`${activeSeason.displayName} ${activeLeague} 排名與數據`}
           showMobileSeasonSelector={false}
           showDesktopSeasonSelector={false}
         />
 
-        <div className="mb-8 flex min-h-14 items-center border-b border-neutral-100">
-          <div className="flex min-w-0 items-center">
-            <span className="whitespace-nowrap text-xs font-bold tracking-[0.02em] text-brand-black md:hidden">
-              {activeSeason.shortName} · {activeLeague}
-            </span>
-            <span className="hidden whitespace-nowrap text-sm font-bold tracking-[0.02em] text-brand-black md:inline">
-              {activeSeason.shortName} 賽季 · {activeLeague}
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={openFilters}
-            aria-label="篩選積分榜"
-            className="ml-auto inline-flex min-h-11 shrink-0 items-center pl-3 text-[11px] font-semibold text-brand-black transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:text-sm md:font-bold"
-          >
-            <Filter className="mr-1.5 h-3.5 w-3.5 md:h-4 md:w-4" aria-hidden="true" />
-            篩選
-          </button>
-        </div>
+        <DataFilterToolbar
+          primaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          onOpen={openFilters}
+          activeFilterCount={activeFilterCount}
+          ariaLabel="篩選積分榜"
+        />
 
         {shouldShowEmptyState ? (
           <EmptyState
             title="新賽季尚未開始"
-            description="積分榜將於首輪比賽完成後更新"
+            description="積分榜將於正式參賽隊伍資料完成後顯示"
             showRegistrationLink={activeSeason.status === 'registration'}
+            primaryAction={historicalSeason ? {
+              label: `查看 ${historicalSeason.shortName} 積分榜`,
+              to: `/standings?season=${historicalSeason.id}`,
+            } : undefined}
           />
         ) : (
           <div className="grid grid-cols-1 items-start gap-12 xl:grid-cols-12">
             <div className="xl:col-span-8">
-              <Standings league={activeLeague} variant="page" />
-              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
-                <span className="flex items-center">
-                  <span className="mr-2 h-1.5 w-1.5 rounded-full bg-brand-blue" />
-                  冠軍
-                </span>
-                {leagueConfig && leagueConfig.promotionPlaces > 0 && (
+              {showPreSeasonStandings ? (
+                <PreSeasonStandings league={activeLeague} teamNames={participantTeamNames} />
+              ) : (
+                <Standings league={activeLeague} variant="page" />
+              )}
+              {!showPreSeasonStandings && (
+                <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
                   <span className="flex items-center">
-                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-green-500" />
-                    升級區
+                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-brand-blue" />
+                    冠軍
                   </span>
-                )}
-                {leagueConfig && leagueConfig.relegationPlaces > 0 && (
-                  <span className="flex items-center">
-                    <span className="mr-2 h-1.5 w-1.5 rounded-full bg-red-500" />
-                    降級區
-                  </span>
-                )}
-              </div>
+                  {leagueConfig && leagueConfig.promotionPlaces > 0 && (
+                    <span className="flex items-center">
+                      <span className="mr-2 h-1.5 w-1.5 rounded-full bg-green-500" />
+                      升級區
+                    </span>
+                  )}
+                  {leagueConfig && leagueConfig.relegationPlaces > 0 && (
+                    <span className="flex items-center">
+                      <span className="mr-2 h-1.5 w-1.5 rounded-full bg-red-500" />
+                      降級區
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="sticky top-24 hidden flex-col space-y-8 pl-8 xl:col-span-4 xl:flex">

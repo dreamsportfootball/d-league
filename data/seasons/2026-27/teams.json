@@ -1,1 +1,239 @@
-[]
+[
+  {
+    "id": "t_sf_2026",
+    "identityId": "sf-football-club",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "SF足球俱樂部",
+    "shortName": "SF足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/sf-football-club.png",
+    "primaryColor": "#025517",
+    "secondaryColor": "#bf8f06",
+    "kits": {
+      "home": "#e187a1",
+      "away": "#173663"
+    },
+    "socialLinks": {
+      "instagram": "https://www.instagram.com/sf__footballclub/"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "吳孟容",
+        "englishName": "WU MENG RONG"
+      },
+      {
+        "role": "管理",
+        "name": "許凱昱",
+        "englishName": "KAI YU HSU"
+      },
+      {
+        "role": "教練",
+        "name": "鄭詠翰",
+        "englishName": "CHENG, YUNG-HAN"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_kaohsiung_amateur_2026",
+    "identityId": "kaohsiung-amateur-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "高雄業餘足球俱樂部",
+    "shortName": "高雄業餘足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/kaohsiung-amateur-fc.png",
+    "primaryColor": "#e80818",
+    "secondaryColor": "#082858",
+    "kits": {
+      "home": "#e80818",
+      "away": "#082858"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "劉力瑋",
+        "englishName": "LIU-LI-WEI"
+      },
+      {
+        "role": "管理",
+        "name": "劉力瑋",
+        "englishName": "LIU-LI-WEI"
+      },
+      {
+        "role": "教練",
+        "name": "劉力瑋",
+        "englishName": "LIU-LI-WEI"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_tongque_2026",
+    "identityId": "t_tongque",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "銅雀",
+    "shortName": "銅雀",
+    "logo": "assets/seasons/2026-27/teams/tongque-club.png",
+    "primaryColor": "#2a2b30",
+    "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#2a2b30",
+      "away": "#ffffff"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "陳揚",
+        "englishName": "CHEN YANG"
+      },
+      {
+        "role": "管理",
+        "name": "李相慶",
+        "englishName": "LI HSIANG CHING"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_pingtung_wolves_2026",
+    "identityId": "pingtung-wolves-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "屏東野狼足球俱樂部",
+    "shortName": "屏東野狼足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/pingtung-wolves-fc.png",
+    "primaryColor": "#98a8d8",
+    "secondaryColor": "#c83888",
+    "kits": {
+      "home": "#ffffff",
+      "away": "#c83888"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "周宗德",
+        "englishName": "CHOU TSUNG TE"
+      },
+      {
+        "role": "管理",
+        "name": "林大雄",
+        "englishName": "Lin Tahsiung"
+      },
+      {
+        "role": "教練",
+        "name": "謝晉元",
+        "englishName": "XIE JIN-YUAN"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_kaohsiung_hk_2026",
+    "identityId": "kaohsiung-hong-kong-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "高雄香港人足球俱樂部",
+    "shortName": "高雄香港人足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/kaohsiung-hongkongers-fc.png",
+    "primaryColor": "#f2d600",
+    "secondaryColor": "#111111",
+    "kits": {
+      "home": "#f2d600",
+      "away": "#14251c"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "謝俊杰",
+        "englishName": "Tse Chun Kit"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_pingtung_wild_ape_2026",
+    "identityId": "t_pingtung",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "屏東野猿足球俱樂部",
+    "shortName": "屏東野猿",
+    "logo": "assets/seasons/2026-27/teams/pingtung-wild-ape-fc.png",
+    "primaryColor": "#563e92",
+    "secondaryColor": "#ffffff",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "簡法亦",
+        "englishName": "CHIEN FA I"
+      },
+      {
+        "role": "管理",
+        "name": "林彥文",
+        "englishName": "LIN YEN WEN"
+      },
+      {
+        "role": "教練",
+        "name": "黃震浩",
+        "englishName": "HUANG JHEN HAO"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_tainan_evergreen_2026",
+    "identityId": "tainan-evergreen-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L1",
+    "name": "台南長青足球俱樂部",
+    "shortName": "台南長青足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/tainan-evergreen-fc.png",
+    "primaryColor": "#c01010",
+    "secondaryColor": "#e0c050",
+    "kits": {
+      "home": "#c01010",
+      "away": "#e0c050"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "龔炳芳",
+        "englishName": "KUNG,PING-FANG"
+      },
+      {
+        "role": "管理",
+        "name": "莊金生",
+        "englishName": "ZHUANG,JIN-SHENG"
+      },
+      {
+        "role": "教練",
+        "name": "曹冠祥",
+        "englishName": "TSAO,KUAN-HSIANG"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_black_wolf_2026",
+    "identityId": "black-wolf-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L2",
+    "name": "黑狼FC",
+    "shortName": "黑狼FC",
+    "logo": "assets/seasons/2026-27/teams/black-wolf-fc.png",
+    "primaryColor": "#111111",
+    "kits": {
+      "home": "#111111",
+      "away": "#ffffff"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "王浩誠",
+        "englishName": "WANG,HAO-CHENG"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  }
+]

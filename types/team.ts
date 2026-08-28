@@ -7,6 +7,23 @@ export interface TeamSocialLinks {
   website?: string;
 }
 
+export interface TeamBrandingAsset {
+  logoFile: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+}
+
+export interface TeamStaffMember {
+  role: string;
+  name: string;
+  englishName?: string;
+}
+
+export interface TeamKits {
+  home: string;
+  away: string;
+}
+
 export interface SeasonTeam {
   id: string;
   identityId?: string;
@@ -17,7 +34,9 @@ export interface SeasonTeam {
   logo: string;
   primaryColor: string;
   secondaryColor?: string;
+  kits?: TeamKits;
   socialLinks?: TeamSocialLinks;
+  staff?: TeamStaffMember[];
   competitionStatus?: 'ACTIVE' | 'WITHDRAWN';
   pointsAdjustment?: number;
   pointsAdjustmentReason?: string;

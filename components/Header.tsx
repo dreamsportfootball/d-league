@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
-import { useSeason } from '../hooks/useSeason';
 
 interface NavItem {
   name: string;
@@ -17,17 +16,10 @@ const Header: React.FC = () => {
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
-  const { activeSeason } = useSeason();
-
-  const seasonInfoLabel = activeSeason.status === 'registration'
-    ? '賽季報名'
-    : activeSeason.status === 'review'
-      ? '報名結果'
-      : '賽季資訊';
 
   const navItems = useMemo<NavItem[]>(() => [
     { name: '首頁', href: '/' },
-    ...(SHOW_REGISTRATION_NAV ? [{ name: seasonInfoLabel, href: '/registration' }] : []),
+    ...(SHOW_REGISTRATION_NAV ? [{ name: '賽季資訊', href: '/registration' }] : []),
     { name: '賽程與結果', href: '/schedule' },
     { name: '積分榜', href: '/standings' },
     { name: '數據中心', href: '/stats' },
@@ -38,7 +30,7 @@ const Header: React.FC = () => {
       href: '#',
       children: [{ name: '2026 新春賀歲盃', href: '/cup' }],
     },
-  ], [seasonInfoLabel]);
+  ], []);
 
   useEffect(() => {
     setMobileMenuOpen(false);

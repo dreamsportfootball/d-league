@@ -419,7 +419,7 @@ const CupPage: React.FC = () => {
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">Cup Champion</p>
                     <div className="mt-1 min-w-0">
                       <AutoFitText
-                        text={cupChampion?.name ?? '—'}
+                        text={cupChampion?.name ?? '-'}
                         minFontSize={12}
                         lineHeight={1}
                         className="font-display text-3xl font-black md:text-5xl"
@@ -433,13 +433,13 @@ const CupPage: React.FC = () => {
                   <div className="min-w-0 border-b border-neutral-200 px-5 py-6 md:border-b-0 md:border-r md:px-8">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">盃賽亞軍</p>
                     <div className="mt-2 min-w-0">
-                      <AutoFitText text={cupRunnerUp?.name ?? '—'} minFontSize={8} className="text-xl font-black" />
+                      <AutoFitText text={cupRunnerUp?.name ?? '-'} minFontSize={8} className="text-xl font-black" />
                     </div>
                   </div>
                   <div className="min-w-0 px-5 py-6 md:px-8">
                     <p className="text-[10px] font-black uppercase tracking-[0.18em] text-neutral-400">盃賽季軍</p>
                     <div className="mt-2 min-w-0">
-                      <AutoFitText text={cupThird?.name ?? '—'} minFontSize={8} className="text-xl font-black" />
+                      <AutoFitText text={cupThird?.name ?? '-'} minFontSize={8} className="text-xl font-black" />
                     </div>
                   </div>
                 </div>
@@ -450,7 +450,7 @@ const CupPage: React.FC = () => {
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#d7b86e]">Plate Champion</p>
                   <div className="mt-3 min-w-0">
                     <AutoFitText
-                      text={plateChampion?.name ?? '—'}
+                      text={plateChampion?.name ?? '-'}
                       minFontSize={10}
                       lineHeight={1}
                       className="font-display text-3xl font-black md:text-4xl"
@@ -460,7 +460,7 @@ const CupPage: React.FC = () => {
                 <div className="mt-12 min-w-0 border-t border-white/15 pt-5">
                   <p className="text-xs font-bold text-white/50">盤賽亞軍</p>
                   <div className="mt-1 min-w-0">
-                    <AutoFitText text={plateRunnerUp?.name ?? '—'} minFontSize={7} className="text-base font-black" />
+                    <AutoFitText text={plateRunnerUp?.name ?? '-'} minFontSize={7} className="text-base font-black" />
                   </div>
                   {plateThird && (
                     <div className="mt-4 min-w-0">

@@ -75,8 +75,16 @@ for (const season of seasons) {
   const matchIds = new Set(matches.map((match) => match.id));
   const matchMap = Object.fromEntries(matches.map((match) => [match.id, match]));
 
+  const teamIdentityIds = new Set();
   for (const team of teams) {
     if (team.seasonId !== season) fail(`${season} team ${team.id}: invalid seasonId`);
+    if (!team.name?.trim() || !team.shortName?.trim()) fail(`${season} team ${team.id}: missing name`);
+    if (!team.leagueId?.trim()) fail(`${season} team ${team.id}: missing leagueId`);
+    if (!team.primaryColor?.trim()) fail(`${season} team ${team.id}: missing primaryColor`);
+    if (team.identityId) {
+      if (teamIdentityIds.has(team.identityId)) fail(`${season} team ${team.id}: duplicate identityId ${team.identityId}`);
+      teamIdentityIds.add(team.identityId);
+    }
     if (team.competitionStatus && !['ACTIVE', 'WITHDRAWN'].includes(team.competitionStatus)) {
       fail(`${season} team ${team.id}: invalid competitionStatus`);
     }
@@ -93,6 +101,13 @@ for (const season of seasons) {
         }
       }
     }
+    if (team.staff !== undefined) {
+      if (!Array.isArray(team.staff)) fail(`${season} team ${team.id}: staff must be an array`);
+      for (const staff of team.staff) {
+        if (!staff?.role?.trim() || !staff?.name?.trim()) fail(`${season} team ${team.id}: invalid staff entry`);
+        if (staff.englishName !== undefined && !staff.englishName?.trim()) fail(`${season} team ${team.id}: invalid staff englishName`);
+      }
+    }
     if (team.pointsAdjustment !== undefined && !Number.isInteger(team.pointsAdjustment)) {
       fail(`${season} team ${team.id}: pointsAdjustment must be an integer`);
     }
@@ -102,8 +117,25 @@ for (const season of seasons) {
     asset(team.logo, `${season} team ${team.id}`);
   }
 
+  const playerIdentityIds = new Set();
+  const teamNumbers = new Set();
   for (const player of players) {
     if (!teamIds.has(player.teamId)) fail(`${season} player ${player.id}: unknown team`);
+    if (!player.name?.trim()) fail(`${season} player ${player.id}: missing name`);
+    if (!Number.isInteger(player.number) || player.number < 0 || player.number > 99) {
+      fail(`${season} player ${player.id}: invalid shirt number`);
+    }
+    if (typeof player.gender !== 'string' || !player.gender.trim()) fail(`${season} player ${player.id}: missing gender`);
+    if (typeof player.nationality !== 'string' || !player.nationality.trim()) fail(`${season} player ${player.id}: missing nationality`);
+    if (!Number.isInteger(player.age) || player.age < 0 || player.age > 100) fail(`${season} player ${player.id}: invalid age`);
+    if (player.englishName !== undefined && !player.englishName?.trim()) fail(`${season} player ${player.id}: invalid englishName`);
+    if (player.identityId) {
+      if (playerIdentityIds.has(player.identityId)) fail(`${season} player ${player.id}: duplicate identityId ${player.identityId}`);
+      playerIdentityIds.add(player.identityId);
+    }
+    const teamNumberKey = `${player.teamId}:${player.number}`;
+    if (teamNumbers.has(teamNumberKey)) fail(`${season} player ${player.id}: duplicate shirt number ${player.number}`);
+    teamNumbers.add(teamNumberKey);
     if (player.registrations) {
       for (const registration of player.registrations) {
         if (!teamIds.has(registration.teamId)) fail(`${season} player ${player.id}: unknown registration team`);
@@ -243,8 +275,6 @@ if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-2
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
 
 for (const file of [
-  'teams.json',
-  'players.json',
   'playerImages.json',
   'matches.json',
   'matchEvents.json',
@@ -256,6 +286,25 @@ for (const file of [
   const value = read(CURRENT_SEASON_ID, file);
   const count = Array.isArray(value) ? value.length : Object.keys(value).length;
   if (count !== 0) fail(`${CURRENT_SEASON_ID} ${file}: must stay empty until official data is confirmed`);
+}
+
+const currentParticipants = read(CURRENT_SEASON_ID, 'participants.json');
+const currentTeams = read(CURRENT_SEASON_ID, 'teams.json');
+const currentPlayers = read(CURRENT_SEASON_ID, 'players.json');
+const participantLeagueByName = new Map(
+  Object.entries(currentParticipants.leagues).flatMap(([leagueId, names]) =>
+    names.map((name) => [name, leagueId]),
+  ),
+);
+
+for (const team of currentTeams) {
+  const participantLeague = participantLeagueByName.get(team.name);
+  if (!participantLeague) fail(`${CURRENT_SEASON_ID} team ${team.id}: not found in confirmed participants`);
+  if (team.leagueId !== participantLeague) fail(`${CURRENT_SEASON_ID} team ${team.id}: league does not match confirmed participants`);
+  const roster = currentPlayers.filter((player) => player.teamId === team.id);
+  if (roster.length !== 0 && (roster.length < 12 || roster.length > 20)) {
+    fail(`${CURRENT_SEASON_ID} team ${team.id}: published roster must contain 12-20 players`);
+  }
 }
 
 const currentSeasonNews = read(CURRENT_SEASON_ID, 'news.json');

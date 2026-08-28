@@ -26,7 +26,7 @@ const routes = [
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
-  { name: 'match-compat', path: '/matches/m1?season=2025-26' },
+  { name: 'match-permalink', path: '/matches/m1?season=2025-26' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -158,7 +158,7 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'standings-2026') {
-        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 賽季 · L1';
+        const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
           elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
         );
@@ -170,7 +170,8 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'stats-2026') {
-        assert('stats-summary-has-season-league', diagnostics.bodyText.includes('2026/27 · L1'), 'Expected 2026/27 · L1');
+        const expectedStatsLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
+        assert('stats-summary-has-season-league', diagnostics.bodyText.includes(expectedStatsLabel), `Expected ${expectedStatsLabel}`);
         assert('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selector must stay inside drawer');
       }
 
@@ -199,13 +200,13 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'player-detail') {
-        assert('player-page-resolves', page.url().includes('#/players/cy-01?season=2025-26') && diagnostics.bodyText.includes('陳日揚') && diagnostics.bodyText.includes('賽季紀錄'), `Resolved ${page.url()}`);
+        assert('player-page-resolves', page.url().includes('#/players/cy-01?season=2025-26') && diagnostics.bodyText.includes('陳日揚') && diagnostics.bodyText.includes('2025/26 賽季數據'), `Resolved ${page.url()}`);
         assert('player-page-links-team-entity', diagnostics.teamLinkCount > 0, `Found ${diagnostics.teamLinkCount} team link(s)`);
       }
 
-      if (route.name === 'match-compat') {
+      if (route.name === 'match-permalink') {
         const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
-        assert('legacy-match-url-redirects-to-schedule-dialog', page.url().includes('#/schedule?season=2025-26&match=m1') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
+        assert('match-permalink-opens-direct-dialog', page.url().includes('#/matches/m1?season=2025-26') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
       }
 
       if (route.name === 'media-default') {
@@ -271,7 +272,7 @@ const auditInteractiveCase = async (testCase) => {
       await page.locator('[data-analytics-event="match_open"]:visible').first().click();
       await page.waitForTimeout(250);
     } else if (testCase.action === 'playlist') {
-      await page.getByRole('button', { name: /播放.*賽季完整賽事/ }).click();
+      await page.waitForSelector('iframe[title*="比賽影片"]', { state: 'attached' });
       await page.waitForTimeout(350);
     } else {
       await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i }).first().click();
@@ -281,7 +282,7 @@ const auditInteractiveCase = async (testCase) => {
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible = testCase.action === 'mobile-menu'
-      ? await page.evaluate(() => /賽季報名|報名結果|賽季資訊/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
+      ? await page.evaluate(() => /賽季資訊/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
       : false;
     const passed = testCase.action === 'mobile-menu'
       ? menuVisible

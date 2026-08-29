@@ -51,6 +51,7 @@ jobs:
           VITE_ROUTER_MODE: hash
           VITE_USE_OPTIMIZED_IMAGES: 'true'
           VITE_ANALYTICS_DISABLED: 'true'
+          VITE_PREVIEW_SEASON_STATUS: 'active'
         run: |
           npx vite build --base=/d-league/preview/season-2026-27/
           npm run generate:seo

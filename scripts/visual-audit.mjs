@@ -4,6 +4,7 @@ import path from 'node:path';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
 const outputDir = process.env.AUDIT_OUTPUT_DIR ?? 'visual-audit';
+const expectSeasonInfo = process.env.AUDIT_EXPECT_SEASON_INFO !== 'false';
 
 const viewports = [
   { name: 'mobile-375', width: 375, height: 812 },
@@ -58,6 +59,7 @@ const browser = await chromium.launch({ headless: true });
 const report = {
   generatedAt: new Date().toISOString(),
   baseUrl,
+  expectSeasonInfo,
   pages: [],
   interactive: [],
   failures: [],
@@ -158,10 +160,12 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'registration') {
+        const resolvedHash = new URL(page.url()).hash;
+        const expectedHash = expectSeasonInfo ? '#/registration' : '#/';
         assert(
-          'season-info-route-removed',
-          new URL(page.url()).hash === '#/',
-          `Expected /registration to redirect home, resolved ${page.url()}`,
+          expectSeasonInfo ? 'season-info-route-preserved' : 'season-info-route-removed',
+          resolvedHash === expectedHash,
+          `Expected ${expectedHash}, resolved ${page.url()}`,
         );
       }
 
@@ -290,16 +294,19 @@ const auditInteractiveCase = async (testCase) => {
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible = testCase.action === 'mobile-menu'
-      ? await page.evaluate(() => {
+      ? await page.evaluate((shouldShowSeasonInfo) => {
           const bodyText = document.body.innerText;
+          const seasonInfoMatchesExpectation = shouldShowSeasonInfo
+            ? bodyText.includes('賽季資訊')
+            : !bodyText.includes('賽季資訊');
           return (
             getComputedStyle(document.body).overflow === 'hidden' &&
             bodyText.includes('首頁') &&
             bodyText.includes('賽程與結果') &&
             bodyText.includes('積分榜') &&
-            !bodyText.includes('賽季資訊')
+            seasonInfoMatchesExpectation
           );
-        })
+        }, expectSeasonInfo)
       : false;
     const passed = testCase.action === 'mobile-menu'
       ? menuVisible

@@ -95,8 +95,6 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
       ? {
           ...configuredSeason,
           status: 'active',
-          heroImageDesktop: undefined,
-          heroImageMobile: undefined,
         }
       : configuredSeason;
 

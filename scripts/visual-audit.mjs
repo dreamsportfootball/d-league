@@ -157,6 +157,14 @@ const auditViewport = async (viewport) => {
         );
       }
 
+      if (route.name === 'registration') {
+        assert(
+          'season-info-route-removed',
+          new URL(page.url()).hash === '#/',
+          `Expected /registration to redirect home, resolved ${page.url()}`,
+        );
+      }
+
       if (route.name === 'standings-2026') {
         const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
@@ -282,7 +290,16 @@ const auditInteractiveCase = async (testCase) => {
     const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
     const playlistVisible = (await page.locator('iframe[title*="比賽影片"]').count()) > 0;
     const menuVisible = testCase.action === 'mobile-menu'
-      ? await page.evaluate(() => /賽季資訊/.test(document.body.innerText) && getComputedStyle(document.body).overflow === 'hidden')
+      ? await page.evaluate(() => {
+          const bodyText = document.body.innerText;
+          return (
+            getComputedStyle(document.body).overflow === 'hidden' &&
+            bodyText.includes('首頁') &&
+            bodyText.includes('賽程與結果') &&
+            bodyText.includes('積分榜') &&
+            !bodyText.includes('賽季資訊')
+          );
+        })
       : false;
     const passed = testCase.action === 'mobile-menu'
       ? menuVisible

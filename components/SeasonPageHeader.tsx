@@ -24,8 +24,6 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
   const stringDescription = typeof description === 'string' ? description : null;
   const desktopDescription = stringDescription ? formatDesktopLeagueText(stringDescription) : null;
   const hasDesktopDescription = stringDescription !== null && desktopDescription !== stringDescription;
-  const renderMobileSeasonSelector = showMobileSeasonSelector || !showDesktopSeasonSelector;
-  const renderDesktopSeasonSelector = showDesktopSeasonSelector || !showMobileSeasonSelector;
 
   return (
     <section
@@ -40,7 +38,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
               {title}{' '}<span className="text-brand-blue">{accent}</span>
             </h1>
 
-            {renderMobileSeasonSelector && (
+            {showMobileSeasonSelector && (
               <div className="shrink-0 md:hidden">
                 <SeasonSelector compact />
               </div>
@@ -57,7 +55,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
           </div>
         </div>
 
-        {renderDesktopSeasonSelector && (
+        {showDesktopSeasonSelector && (
           <div className="hidden shrink-0 md:flex">
             <SeasonSelector />
           </div>

@@ -834,6 +834,7 @@ const SchedulePage: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-7 py-3">
                   {[
+                    { label: '賽季', value: desktopDraftSeason.shortName, view: 'SEASON' as const },
                     { label: '聯賽級別', value: desktopDraftLeagueSummary, view: 'LEAGUE' as const },
                     { label: '比賽狀態', value: desktopDraftStatusSummary, view: 'STATUS' as const },
                     { label: '球隊', value: desktopDraftTeamSummary, view: 'TEAM' as const },
@@ -977,6 +978,7 @@ const SchedulePage: React.FC = () => {
 
                 <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-2">
                   {[
+                    { label: '賽季', value: mobileDraftSeason.shortName, view: 'SEASON' as const },
                     { label: '聯賽級別', value: mobileDraftLeagueSummary, view: 'LEAGUE' as const },
                     { label: '比賽狀態', value: mobileDraftStatusSummary, view: 'STATUS' as const },
                     { label: '球隊', value: mobileDraftTeamSummary, view: 'TEAM' as const },

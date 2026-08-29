@@ -36,57 +36,72 @@ const inspectRoute = async (context, route) => {
     await page.waitForSelector('#root > *', { timeout: 12000 });
     await page.waitForTimeout(700);
 
-    const result = await page.evaluate(() => ({
-      viewportHeight: window.innerHeight,
-      externalHeroPreloadScripts: [
-        ...document.querySelectorAll('script[src*="hero-preload.js"]'),
-      ].map((script) => script.getAttribute('src') ?? ''),
-      heroBootstrapResources: performance
-        .getEntriesByType('resource')
-        .filter((entry) => entry.name.includes('hero-preload.js'))
-        .map((entry) => ({
-          name: entry.name,
-          initiatorType: entry.initiatorType,
-          startTime: entry.startTime,
-          duration: entry.duration,
-          transferSize: 'transferSize' in entry ? entry.transferSize : 0,
+    const result = await page.evaluate(() => {
+      const homeHeroPreload = document.querySelector('link[data-home-hero-preload="true"]');
+      const homeHeroPreloadHref = homeHeroPreload?.href ?? '';
+
+      return {
+        viewportHeight: window.innerHeight,
+        externalHeroPreloadScripts: [
+          ...document.querySelectorAll('script[src*="hero-preload.js"]'),
+        ].map((script) => script.getAttribute('src') ?? ''),
+        heroBootstrapResources: performance
+          .getEntriesByType('resource')
+          .filter((entry) => entry.name.includes('hero-preload.js'))
+          .map((entry) => ({
+            name: entry.name,
+            initiatorType: entry.initiatorType,
+            startTime: entry.startTime,
+            duration: entry.duration,
+            transferSize: 'transferSize' in entry ? entry.transferSize : 0,
+          })),
+        preloads: [...document.querySelectorAll('link[data-home-hero-preload="true"]')].map((link) => ({
+          href: link.href,
+          as: link.getAttribute('as') ?? '',
+          type: link.getAttribute('type') ?? '',
+          fetchPriority: link.getAttribute('fetchpriority') ?? '',
         })),
-      preloads: [...document.querySelectorAll('link[data-home-hero-preload="true"]')].map((link) => ({
-        href: link.href,
-        as: link.getAttribute('as') ?? '',
-        type: link.getAttribute('type') ?? '',
-        fetchPriority: link.getAttribute('fetchpriority') ?? '',
-      })),
-      posterResources: performance
-        .getEntriesByType('resource')
-        .filter((entry) => entry.name.includes('registration-poster-'))
-        .map((entry) => ({
-          name: entry.name,
-          initiatorType: entry.initiatorType,
-          startTime: entry.startTime,
-          duration: entry.duration,
-          transferSize: 'transferSize' in entry ? entry.transferSize : 0,
-        })),
-      registrationPictureClass:
-        document.querySelector('img[fetchpriority="high"][src*="registration-poster-"]')?.parentElement?.getAttribute('class') ?? '',
-      images: [...document.images].map((image) => {
-        const rect = image.getBoundingClientRect();
-        return {
-          alt: image.alt,
-          src: image.getAttribute('src') ?? '',
-          currentSrc: image.currentSrc,
-          loading: image.loading,
-          decoding: image.decoding,
-          fetchPriority: image.getAttribute('fetchpriority') ?? '',
-          width: image.getAttribute('width') ?? '',
-          height: image.getAttribute('height') ?? '',
-          top: rect.top,
-          bottom: rect.bottom,
-          complete: image.complete,
-          naturalWidth: image.naturalWidth,
-        };
-      }),
-    }));
+        homeHeroPreloadResources: performance
+          .getEntriesByType('resource')
+          .filter((entry) => homeHeroPreloadHref !== '' && entry.name === homeHeroPreloadHref)
+          .map((entry) => ({
+            name: entry.name,
+            initiatorType: entry.initiatorType,
+            startTime: entry.startTime,
+            duration: entry.duration,
+            transferSize: 'transferSize' in entry ? entry.transferSize : 0,
+          })),
+        posterResources: performance
+          .getEntriesByType('resource')
+          .filter((entry) => entry.name.includes('registration-poster-'))
+          .map((entry) => ({
+            name: entry.name,
+            initiatorType: entry.initiatorType,
+            startTime: entry.startTime,
+            duration: entry.duration,
+            transferSize: 'transferSize' in entry ? entry.transferSize : 0,
+          })),
+        registrationPictureClass:
+          document.querySelector('img[fetchpriority="high"][src*="registration-poster-"]')?.parentElement?.getAttribute('class') ?? '',
+        images: [...document.images].map((image) => {
+          const rect = image.getBoundingClientRect();
+          return {
+            alt: image.alt,
+            src: image.getAttribute('src') ?? '',
+            currentSrc: image.currentSrc,
+            loading: image.loading,
+            decoding: image.decoding,
+            fetchPriority: image.getAttribute('fetchpriority') ?? '',
+            width: image.getAttribute('width') ?? '',
+            height: image.getAttribute('height') ?? '',
+            top: rect.top,
+            bottom: rect.bottom,
+            complete: image.complete,
+            naturalWidth: image.naturalWidth,
+          };
+        }),
+      };
+    });
 
     if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
 
@@ -119,31 +134,28 @@ const inspectRoute = async (context, route) => {
   }
 };
 
-const validateHomeHero = (result, expectedFileName) => {
+const validateHomeHero = (result) => {
   const hero = result.images.find(
-    (image) =>
-      image.fetchPriority === 'high' &&
-      image.currentSrc.includes('/assets/seasons/2026-27/registration-poster-'),
+    (image) => image.fetchPriority === 'high' && image.loading === 'eager',
   );
   if (!hero) fail('homepage hero image was not found');
   if (!/\.webp(?:$|\?)/.test(hero.currentSrc)) fail(`homepage hero is not WebP: ${hero.currentSrc}`);
-  if (hero.loading !== 'eager' || hero.fetchPriority !== 'high') {
-    fail('homepage hero is not prioritized');
-  }
-  if (hero.width !== '1920' || hero.height !== '800') {
-    fail(`homepage hero dimensions are not reserved: ${hero.width}x${hero.height}`);
-  }
-  if (result.registrationPictureClass.includes('opacity-0') || result.registrationPictureClass.includes('transition-opacity')) {
-    fail('registration hero still starts hidden behind an opacity transition');
+  if (hero.fetchPriority !== 'high') fail('homepage hero is not prioritized');
+
+  const isRegistrationPoster = hero.currentSrc.includes('/assets/seasons/2026-27/registration-poster-');
+  if (isRegistrationPoster) {
+    if (hero.width !== '1920' || hero.height !== '800') {
+      fail(`homepage hero dimensions are not reserved: ${hero.width}x${hero.height}`);
+    }
+    if (result.registrationPictureClass.includes('opacity-0') || result.registrationPictureClass.includes('transition-opacity')) {
+      fail('registration hero still starts hidden behind an opacity transition');
+    }
   }
 
   if (result.preloads.length !== 1) {
     fail(`homepage should create exactly one hero preload, received ${result.preloads.length}`);
   }
   const preload = result.preloads[0];
-  if (!preload.href.endsWith(`/assets/seasons/2026-27/${expectedFileName}.webp`)) {
-    fail(`homepage preloaded the wrong hero: ${preload.href}`);
-  }
   if (preload.as !== 'image' || preload.type !== 'image/webp' || preload.fetchPriority !== 'high') {
     fail('homepage hero preload is missing image type or high priority');
   }
@@ -151,14 +163,21 @@ const validateHomeHero = (result, expectedFileName) => {
     fail(`hero preload does not match the rendered image: ${preload.href} vs ${hero.currentSrc}`);
   }
 
-  const preloadResources = result.posterResources.filter(
-    (resource) => resource.initiatorType === 'link',
-  );
-  if (preloadResources.length !== 1) {
-    fail(`homepage created ${preloadResources.length} high-priority poster requests instead of one`);
+  if (result.homeHeroPreloadResources.length !== 1) {
+    fail(`homepage created ${result.homeHeroPreloadResources.length} hero preload requests instead of one`);
   }
-  if (!preloadResources[0].name.endsWith(`${expectedFileName}.webp`)) {
-    fail(`homepage requested the wrong high-priority hero: ${preloadResources[0].name}`);
+  const preloadResource = result.homeHeroPreloadResources[0];
+  if (preloadResource.name !== preload.href || preloadResource.initiatorType !== 'link') {
+    fail(`homepage hero preload resource is incorrect: ${preloadResource.name}`);
+  }
+
+  if (!isRegistrationPoster) {
+    const stalePosterPreloads = result.posterResources.filter(
+      (resource) => resource.initiatorType === 'link',
+    );
+    if (stalePosterPreloads.length > 0) {
+      fail(`active homepage still preloads a registration poster: ${stalePosterPreloads[0].name}`);
+    }
   }
 };
 
@@ -172,8 +191,8 @@ try {
     'utf8',
   );
 
-  validateHomeHero(mobileHome, 'registration-poster-mobile');
-  validateHomeHero(desktopHome, 'registration-poster-desktop');
+  validateHomeHero(mobileHome);
+  validateHomeHero(desktopHome);
 
   const news = await inspectRoute(mobileContext, '/news');
   if (news.preloads.length !== 0 || news.posterResources.some((resource) => resource.initiatorType === 'link')) {

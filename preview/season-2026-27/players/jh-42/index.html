@@ -46,21 +46,19 @@
         if (!isHomeRoute) return;
 
         var optimized = 'true' === 'true';
-        var previewingActiveSeason = 'active' === 'active';
         var mobile = window.matchMedia('(max-width: 767px)').matches;
-        var fileName = previewingActiveSeason
-          ? 'banner'
-          : mobile
-            ? 'registration-poster-mobile'
-            : 'registration-poster-desktop';
-        var assetPath = previewingActiveSeason
-          ? fileName
-          : 'assets/seasons/2026-27/' + fileName;
+        var fileName = mobile
+          ? 'registration-poster-mobile'
+          : 'registration-poster-desktop';
         var preload = document.createElement('link');
 
         preload.rel = 'preload';
         preload.as = 'image';
-        preload.href = normalizedBaseUrl + assetPath + (optimized ? '.webp' : '.png');
+        preload.href =
+          normalizedBaseUrl +
+          'assets/seasons/2026-27/' +
+          fileName +
+          (optimized ? '.webp' : '.png');
         preload.type = optimized ? 'image/webp' : 'image/png';
         preload.fetchPriority = 'high';
         preload.setAttribute('fetchpriority', 'high');
@@ -83,7 +81,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Oswald:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/d-league/preview/season-2026-27/assets/index-wwHNhMz_.js"></script>
+    <script type="module" crossorigin src="/d-league/preview/season-2026-27/assets/index-COK4wGHp.js"></script>
     <link rel="stylesheet" crossorigin href="/d-league/preview/season-2026-27/assets/index-rTXpya7y.css">
       <meta name="twitter:title" content="李彼得｜D LEAGUE 官方球員資料｜D LEAGUE｜台南夢達七人足球聯賽" />
       <meta name="twitter:description" content="李彼得 D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 0 球、黃牌 0 張及比賽事件" />

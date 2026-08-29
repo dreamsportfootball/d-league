@@ -55,19 +55,21 @@
         if (!isHomeRoute) return;
 
         var optimized = '%VITE_USE_OPTIMIZED_IMAGES%' === 'true';
+        var previewingActiveSeason = '%VITE_PREVIEW_SEASON_STATUS%' === 'active';
         var mobile = window.matchMedia('(max-width: 767px)').matches;
-        var fileName = mobile
-          ? 'registration-poster-mobile'
-          : 'registration-poster-desktop';
+        var fileName = previewingActiveSeason
+          ? 'banner'
+          : mobile
+            ? 'registration-poster-mobile'
+            : 'registration-poster-desktop';
+        var assetPath = previewingActiveSeason
+          ? fileName
+          : 'assets/seasons/2026-27/' + fileName;
         var preload = document.createElement('link');
 
         preload.rel = 'preload';
         preload.as = 'image';
-        preload.href =
-          normalizedBaseUrl +
-          'assets/seasons/2026-27/' +
-          fileName +
-          (optimized ? '.webp' : '.png');
+        preload.href = normalizedBaseUrl + assetPath + (optimized ? '.webp' : '.png');
         preload.type = optimized ? 'image/webp' : 'image/png';
         preload.fetchPriority = 'high';
         preload.setAttribute('fetchpriority', 'high');

@@ -29,13 +29,15 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       {description}
     </p>
     <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-      <Link
-        to="/"
-        className="inline-flex min-h-11 items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-2.5 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
-        返回首頁
-      </Link>
+      {!primaryAction && (
+        <Link
+          to="/"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-neutral-300 bg-white px-5 py-2.5 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+          返回首頁
+        </Link>
+      )}
 
       {primaryAction && (
         <Link

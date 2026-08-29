@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { assetUrl } from '../services/seasonData';
 
@@ -80,7 +81,7 @@ const Hero: React.FC = () => {
                 立即報名 <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             )}
-            {!announcementPublished && (
+            {!announcementPublished && SHOW_REGISTRATION_NAV && (
               <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                 報名詳情
               </Link>
@@ -91,20 +92,30 @@ const Hero: React.FC = () => {
                 <Link to="/schedule" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                   查看賽程 <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-                <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
-                  {participantsPublished ? '查看正式分級' : '查看錄取名單'}
-                </Link>
+                {SHOW_REGISTRATION_NAV && (
+                  <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
+                    {participantsPublished ? '查看正式分級' : '查看錄取名單'}
+                  </Link>
+                )}
               </>
             )}
 
             {announcementPublished && !schedulePublished && (
               <>
-                <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
-                  {participantsPublished ? '查看正式分級' : '查看錄取名單'} <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-                <Link to="/news" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
-                  查看最新公告
-                </Link>
+                {SHOW_REGISTRATION_NAV ? (
+                  <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
+                    {participantsPublished ? '查看正式分級' : '查看錄取名單'} <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                ) : (
+                  <Link to="/news" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
+                    查看最新公告 <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                )}
+                {SHOW_REGISTRATION_NAV && (
+                  <Link to="/news" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
+                    查看最新公告
+                  </Link>
+                )}
               </>
             )}
 
@@ -151,10 +162,12 @@ const Hero: React.FC = () => {
                     <span className="relative z-10 flex items-center">立即報名<ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" /></span>
                   </a>
                 )}
-                <Link to="/registration" className="group relative px-8 py-4 font-bold uppercase tracking-widest text-white transition-colors duration-300 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black">
-                  <span className="absolute inset-0 -skew-x-12 border border-white/40 backdrop-blur-sm transition-all duration-300 group-hover:border-white group-hover:bg-white" />
-                  <span className="relative z-10">報名詳情</span>
-                </Link>
+                {SHOW_REGISTRATION_NAV && (
+                  <Link to="/registration" className="group relative px-8 py-4 font-bold uppercase tracking-widest text-white transition-colors duration-300 hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black">
+                    <span className="absolute inset-0 -skew-x-12 border border-white/40 backdrop-blur-sm transition-all duration-300 group-hover:border-white group-hover:bg-white" />
+                    <span className="relative z-10">報名詳情</span>
+                  </Link>
+                )}
                 {activeSeason.regulationsUrl && (
                   <a href={activeSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-4 py-4 text-sm font-bold uppercase tracking-widest text-white/80 transition-colors hover:text-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent">
                     <FileText className="mr-2 h-5 w-5" />競賽規程

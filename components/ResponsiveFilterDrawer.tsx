@@ -185,10 +185,24 @@ const getFocusableElements = (container: HTMLElement): HTMLElement[] =>
 const ResponsiveFilterDrawer: React.FC<ResponsiveFilterDrawerProps> = (props) => {
   const { open, onClose, fields, title = '篩選資料' } = props;
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
-  const fieldIds = useMemo(() => new Set(fields.map((field) => field.id)), [fields]);
+  const visibleFields = useMemo(() => fields.filter((field) => field.id !== 'season'), [fields]);
+  const hiddenSeasonField = useMemo(() => fields.find((field) => field.id === 'season') ?? null, [fields]);
+  const fieldIds = useMemo(() => new Set(visibleFields.map((field) => field.id)), [visibleFields]);
   const desktopDialogRef = useRef<HTMLElement | null>(null);
   const mobileDialogRef = useRef<HTMLElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  const handleClear = () => {
+    props.onClear();
+    if (hiddenSeasonField) hiddenSeasonField.onChange(hiddenSeasonField.value);
+  };
+
+  const panelProps: ResponsiveFilterDrawerProps = {
+    ...props,
+    fields: visibleFields,
+    onClear: handleClear,
+    subtitle: props.subtitle?.replace('賽季與', ''),
+  };
 
   const getActiveDialog = (): HTMLElement | null =>
     window.matchMedia('(min-width: 768px)').matches
@@ -277,7 +291,7 @@ const ResponsiveFilterDrawer: React.FC<ResponsiveFilterDrawerProps> = (props) =>
           tabIndex={-1}
           className="absolute right-0 top-0 flex h-full w-[420px] max-w-full flex-col bg-white shadow-[-24px_0_60px_rgba(0,0,0,0.2)] outline-none"
         >
-          <FilterPanelContent {...props} activeFieldId={activeFieldId} setActiveFieldId={setActiveFieldId} />
+          <FilterPanelContent {...panelProps} activeFieldId={activeFieldId} setActiveFieldId={setActiveFieldId} />
         </aside>
       </div>
 
@@ -291,7 +305,7 @@ const ResponsiveFilterDrawer: React.FC<ResponsiveFilterDrawerProps> = (props) =>
           tabIndex={-1}
           className="relative flex max-h-[88dvh] w-full flex-col overflow-hidden rounded-t-[24px] bg-white shadow-2xl outline-none"
         >
-          <FilterPanelContent {...props} activeFieldId={activeFieldId} setActiveFieldId={setActiveFieldId} mobile />
+          <FilterPanelContent {...panelProps} activeFieldId={activeFieldId} setActiveFieldId={setActiveFieldId} mobile />
         </section>
       </div>
     </>

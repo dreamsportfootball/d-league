@@ -44,6 +44,7 @@ jobs:
         env:
           VITE_ROUTER_MODE: hash
           VITE_USE_OPTIMIZED_IMAGES: "true"
+          VITE_PREVIEW_SEASON_STATUS: "active"
         run: npx vite build
 
       - name: Start local preview server

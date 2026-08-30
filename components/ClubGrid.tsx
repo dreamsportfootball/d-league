@@ -146,6 +146,7 @@ const ClubGrid: React.FC = () => {
                     to={`/teams/${getTeamIdentity(club.team)}?season=${activeSeason.id}`}
                     className={`${className} hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2`}
                     aria-label={`查看 ${club.name} 球隊頁`}
+                    data-scroll-anchor-id={`home-club-grid:${club.key}`}
                   >
                     {content}
                   </Link>

@@ -32,22 +32,25 @@ for (const viewport of viewports) {
       await popupCloseButton.click();
     }
 
-    const participants = page.locator('section[aria-labelledby="season-participants-title"]').first();
-    await participants.waitFor({ state: 'visible' });
+    const teamsSection = page.locator('#teams').first();
+    await teamsSection.waitFor({ state: 'attached' });
 
-    const teamLink = participants.locator('a[aria-label^="查看 "][aria-label$=" 球隊頁"]').first();
+    const teamLink = teamsSection.locator('a[aria-label^="查看 "][aria-label$=" 球隊頁"]').first();
     await teamLink.waitFor({ state: 'visible' });
     await teamLink.evaluate((element) => {
       const top = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: Math.max(0, top - 180), behavior: 'auto' });
     });
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(150);
 
     const ariaLabel = await teamLink.getAttribute('aria-label');
     if (!ariaLabel) fail(`${viewport.name}: team link is missing aria-label`);
 
     const beforeTop = await teamLink.evaluate((element) => element.getBoundingClientRect().top);
     const beforeScrollY = await page.evaluate(() => window.scrollY);
+    if (beforeScrollY < window.innerHeight) {
+      fail(`${viewport.name}: test did not reach the homepage team section (scrollY=${beforeScrollY})`);
+    }
 
     await teamLink.click();
     await page.waitForURL(/#\/teams\//);
@@ -55,7 +58,7 @@ for (const viewport of viewports) {
 
     await page.goBack();
     await page.waitForURL(/#\/$/);
-    await participants.waitFor({ state: 'visible' });
+    await teamsSection.waitFor({ state: 'attached' });
 
     await page.waitForFunction(
       ({ label, expectedTop, tolerance }) => {
@@ -68,7 +71,7 @@ for (const viewport of viewports) {
       { timeout: 6000 },
     );
 
-    const restoredLink = participants.locator(`a[aria-label="${ariaLabel}"]`).first();
+    const restoredLink = teamsSection.locator(`a[aria-label="${ariaLabel}"]`).first();
     const afterTop = await restoredLink.evaluate((element) => element.getBoundingClientRect().top);
     const afterScrollY = await page.evaluate(() => window.scrollY);
     const delta = Math.abs(afterTop - beforeTop);

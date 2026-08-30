@@ -241,7 +241,7 @@ const ScrollMemory: React.FC = () => {
     let restoreWindowId = 0;
     let restoringSavedPosition = false;
     const savedPosition = navigationType === 'POP' ? readScrollPosition(key) : null;
-    const savedAnchor = navigationType === 'POP' ? consumeScrollAnchor(key) : null;
+    const savedAnchor = consumeScrollAnchor(key);
     const sectionId = hash ? decodeURIComponent(hash.slice(1)) : '';
 
     const stopSavedPositionRestoration = () => {

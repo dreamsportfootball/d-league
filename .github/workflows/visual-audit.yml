@@ -66,6 +66,11 @@ jobs:
           AUDIT_EXPECT_SEASON_INFO: "false"
         run: node scripts/visual-audit.mjs
 
+      - name: Validate back navigation scroll restoration
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-scroll-restoration.mjs
+
       - name: Validate round entity page
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

@@ -182,6 +182,35 @@
     "competitionStatus": "ACTIVE"
   },
   {
+    "id": "t_chen_2026",
+    "identityId": "t_chen",
+    "seasonId": "2026-27",
+    "leagueId": "L1",
+    "name": "陳公舘",
+    "shortName": "陳公舘",
+    "logo": "assets/seasons/2026-27/teams/nanzhou-chen.png",
+    "primaryColor": "#000000",
+    "secondaryColor": "#8ac4e1",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "倪天銘",
+        "englishName": "NI,Tian-Ming"
+      },
+      {
+        "role": "管理",
+        "name": "孫裕程",
+        "englishName": "Sun,Yu-Cheng"
+      },
+      {
+        "role": "教練",
+        "name": "洪品宇",
+        "englishName": "Hong,Pin-Yu"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
     "id": "t_tainan_evergreen_2026",
     "identityId": "tainan-evergreen-fc",
     "seasonId": "2026-27",

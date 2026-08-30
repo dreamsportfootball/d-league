@@ -83,11 +83,23 @@ const SectionAnchorNavigation: React.FC = () => {
   return null;
 };
 
+interface ScrollAnchorSnapshot {
+  ariaLabel: string;
+  viewportTop: number;
+  anchorId?: string;
+}
+
 const SCROLL_STORAGE_PREFIX = 'dleague:scroll:';
-const MAX_SCROLL_RESTORE_ATTEMPTS = 30;
+const SCROLL_ANCHOR_STORAGE_PREFIX = 'dleague:scroll-anchor:';
+const MAX_SECTION_RESTORE_ATTEMPTS = 30;
+const POP_SCROLL_RESTORE_WINDOW_MS = 8000;
+const SCROLL_RESTORE_TOLERANCE_PX = 2;
 
 const getScrollStorageKey = (locationKey: string): string =>
   `${SCROLL_STORAGE_PREFIX}${locationKey}`;
+
+const getScrollAnchorStorageKey = (locationKey: string): string =>
+  `${SCROLL_ANCHOR_STORAGE_PREFIX}${locationKey}`;
 
 const readScrollPosition = (locationKey: string): number | null => {
   try {
@@ -108,6 +120,55 @@ const writeScrollPosition = (locationKey: string, scrollY: number): void => {
   }
 };
 
+const writeScrollAnchor = (locationKey: string, snapshot: ScrollAnchorSnapshot): void => {
+  try {
+    window.sessionStorage.setItem(getScrollAnchorStorageKey(locationKey), JSON.stringify(snapshot));
+  } catch {
+    // Session storage may be unavailable.
+  }
+};
+
+const consumeScrollAnchor = (locationKey: string): ScrollAnchorSnapshot | null => {
+  try {
+    const storageKey = getScrollAnchorStorageKey(locationKey);
+    const raw = window.sessionStorage.getItem(storageKey);
+    window.sessionStorage.removeItem(storageKey);
+    if (raw === null) return null;
+
+    const value = JSON.parse(raw) as Partial<ScrollAnchorSnapshot>;
+    if (
+      typeof value.ariaLabel !== 'string' ||
+      value.ariaLabel.length === 0 ||
+      typeof value.viewportTop !== 'number' ||
+      !Number.isFinite(value.viewportTop) ||
+      (value.anchorId !== undefined && typeof value.anchorId !== 'string')
+    ) return null;
+
+    return {
+      ariaLabel: value.ariaLabel,
+      viewportTop: value.viewportTop,
+      ...(value.anchorId ? { anchorId: value.anchorId } : {}),
+    };
+  } catch {
+    return null;
+  }
+};
+
+const findScrollAnchor = (snapshot: ScrollAnchorSnapshot): HTMLAnchorElement | null => {
+  if (snapshot.anchorId) {
+    const identifiedAnchors = document.querySelectorAll<HTMLAnchorElement>('a[data-scroll-anchor-id]');
+    const identifiedAnchor = Array.from(identifiedAnchors).find(
+      (element) => element.dataset.scrollAnchorId === snapshot.anchorId,
+    );
+    if (identifiedAnchor) return identifiedAnchor;
+  }
+
+  const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');
+  return Array.from(candidates).find(
+    (element) => element.getAttribute('aria-label') === snapshot.ariaLabel,
+  ) ?? null;
+};
+
 const ScrollMemory: React.FC = () => {
   const { pathname, search, hash, key } = useLocation();
   const navigationType = useNavigationType();
@@ -121,34 +182,132 @@ const ScrollMemory: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    return () => {
+    let frameId = 0;
+
+    const persistCurrentPosition = () => {
+      frameId = 0;
       writeScrollPosition(key, window.scrollY);
     };
+
+    const handleScroll = () => {
+      if (frameId !== 0) return;
+      frameId = window.requestAnimationFrame(persistCurrentPosition);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frameId !== 0) window.cancelAnimationFrame(frameId);
+      writeScrollPosition(key, window.scrollY);
+    };
+  }, [key]);
+
+  useEffect(() => {
+    const handleTeamNavigation = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) return;
+
+      const target = event.target;
+      const anchor = target instanceof Element
+        ? target.closest<HTMLAnchorElement>('a[aria-label^="查看 "][aria-label$=" 球隊頁"]')
+        : null;
+      const ariaLabel = anchor?.getAttribute('aria-label');
+      if (!anchor || !ariaLabel) return;
+
+      const anchorId = anchor.dataset.scrollAnchorId;
+      writeScrollAnchor(key, {
+        ariaLabel,
+        viewportTop: anchor.getBoundingClientRect().top,
+        ...(anchorId ? { anchorId } : {}),
+      });
+    };
+
+    document.addEventListener('click', handleTeamNavigation, true);
+    return () => document.removeEventListener('click', handleTeamNavigation, true);
   }, [key]);
 
   useEffect(() => {
     let cancelled = false;
     let frameId = 0;
     let attempts = 0;
+    let restoreWindowId = 0;
+    let restoringSavedPosition = false;
     const savedPosition = navigationType === 'POP' ? readScrollPosition(key) : null;
+    const savedAnchor = navigationType === 'POP' ? consumeScrollAnchor(key) : null;
     const sectionId = hash ? decodeURIComponent(hash.slice(1)) : '';
+
+    const stopSavedPositionRestoration = () => {
+      if (!restoringSavedPosition) return;
+      restoringSavedPosition = false;
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+        frameId = 0;
+      }
+      if (restoreWindowId !== 0) {
+        window.clearTimeout(restoreWindowId);
+        restoreWindowId = 0;
+      }
+      window.removeEventListener('wheel', stopSavedPositionRestoration);
+      window.removeEventListener('touchstart', stopSavedPositionRestoration);
+      window.removeEventListener('pointerdown', stopSavedPositionRestoration);
+      window.removeEventListener('keydown', stopSavedPositionRestoration);
+    };
+
+    const maintainSavedPosition = () => {
+      if (
+        cancelled ||
+        !restoringSavedPosition ||
+        (savedPosition === null && savedAnchor === null)
+      ) return;
+
+      const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const anchorElement = savedAnchor ? findScrollAnchor(savedAnchor) : null;
+
+      if (anchorElement && savedAnchor) {
+        const anchorDelta = anchorElement.getBoundingClientRect().top - savedAnchor.viewportTop;
+        if (Math.abs(anchorDelta) > SCROLL_RESTORE_TOLERANCE_PX) {
+          const targetScrollY = Math.max(0, Math.min(maxScrollY, window.scrollY + anchorDelta));
+          window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+        }
+      } else if (savedPosition !== null) {
+        const targetScrollY = Math.min(savedPosition, maxScrollY);
+        if (Math.abs(window.scrollY - targetScrollY) > SCROLL_RESTORE_TOLERANCE_PX) {
+          window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+        }
+      }
+
+      frameId = window.requestAnimationFrame(maintainSavedPosition);
+    };
+
+    const startSavedPositionRestoration = () => {
+      restoringSavedPosition = true;
+      window.addEventListener('wheel', stopSavedPositionRestoration, { passive: true });
+      window.addEventListener('touchstart', stopSavedPositionRestoration, { passive: true });
+      window.addEventListener('pointerdown', stopSavedPositionRestoration, { passive: true });
+      window.addEventListener('keydown', stopSavedPositionRestoration);
+      restoreWindowId = window.setTimeout(stopSavedPositionRestoration, POP_SCROLL_RESTORE_WINDOW_MS);
+      maintainSavedPosition();
+    };
 
     const restore = () => {
       if (cancelled) return;
       attempts += 1;
 
-      if (savedPosition !== null) {
-        const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        window.scrollTo({ top: Math.min(savedPosition, maxScrollY), behavior: 'auto' });
-        if (maxScrollY + 2 < savedPosition && attempts < MAX_SCROLL_RESTORE_ATTEMPTS) {
-          frameId = window.requestAnimationFrame(restore);
-        }
+      if (savedPosition !== null || savedAnchor !== null) {
+        startSavedPositionRestoration();
         return;
       }
 
       if (sectionId) {
         const element = document.getElementById(sectionId);
-        if (!element && attempts < MAX_SCROLL_RESTORE_ATTEMPTS) {
+        if (!element && attempts < MAX_SECTION_RESTORE_ATTEMPTS) {
           frameId = window.requestAnimationFrame(restore);
           return;
         }
@@ -169,7 +328,8 @@ const ScrollMemory: React.FC = () => {
     frameId = window.requestAnimationFrame(restore);
     return () => {
       cancelled = true;
-      window.cancelAnimationFrame(frameId);
+      stopSavedPositionRestoration();
+      if (frameId !== 0) window.cancelAnimationFrame(frameId);
     };
   }, [hash, key, navigationType, pathname, search]);
 

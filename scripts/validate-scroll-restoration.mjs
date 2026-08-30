@@ -48,7 +48,7 @@ for (const viewport of viewports) {
 
     const beforeTop = await teamLink.evaluate((element) => element.getBoundingClientRect().top);
     const beforeScrollY = await page.evaluate(() => window.scrollY);
-    if (beforeScrollY < window.innerHeight) {
+    if (beforeScrollY < viewport.height) {
       fail(`${viewport.name}: test did not reach the homepage team section (scrollY=${beforeScrollY})`);
     }
 

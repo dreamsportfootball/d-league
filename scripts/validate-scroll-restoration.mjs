@@ -6,6 +6,7 @@ const viewports = [
   { name: 'desktop-1280', width: 1280, height: 900 },
 ];
 const allowedDelta = 24;
+const restoreTimeoutMs = 6000;
 
 const fail = (message) => {
   throw new Error(`Scroll restoration validation failed: ${message}`);
@@ -56,30 +57,74 @@ for (const viewport of viewports) {
     await page.waitForURL(/#\/teams\//);
     await page.waitForSelector('#root > *');
 
+    const storageAfterClick = await page.evaluate(() =>
+      Object.fromEntries(
+        Object.keys(sessionStorage)
+          .filter((key) => key.startsWith('dleague:scroll'))
+          .sort()
+          .map((key) => [key, sessionStorage.getItem(key)]),
+      ),
+    );
+    console.log(`${viewport.name}: storage after click`, JSON.stringify(storageAfterClick));
+
     await page.goBack();
     await page.waitForURL(/#\/$/);
     await teamsSection.waitFor({ state: 'attached' });
 
-    await page.waitForFunction(
-      ({ label, expectedTop, tolerance }) => {
+    const startedAt = Date.now();
+    let restored = false;
+    while (Date.now() - startedAt < restoreTimeoutMs) {
+      const state = await page.evaluate((label) => {
         const link = [...document.querySelectorAll('a[aria-label]')]
           .find((element) => element.getAttribute('aria-label') === label);
-        if (!(link instanceof HTMLElement)) return false;
-        return Math.abs(link.getBoundingClientRect().top - expectedTop) <= tolerance;
-      },
-      { label: ariaLabel, expectedTop: beforeTop, tolerance: allowedDelta },
-      { timeout: 6000 },
-    );
+        return {
+          found: link instanceof HTMLElement,
+          top: link instanceof HTMLElement ? link.getBoundingClientRect().top : null,
+          scrollY: window.scrollY,
+          scrollHeight: document.documentElement.scrollHeight,
+          storage: Object.fromEntries(
+            Object.keys(sessionStorage)
+              .filter((key) => key.startsWith('dleague:scroll'))
+              .sort()
+              .map((key) => [key, sessionStorage.getItem(key)]),
+          ),
+        };
+      }, ariaLabel);
 
-    const restoredLink = teamsSection.locator(`a[aria-label="${ariaLabel}"]`).first();
-    const afterTop = await restoredLink.evaluate((element) => element.getBoundingClientRect().top);
-    const afterScrollY = await page.evaluate(() => window.scrollY);
-    const delta = Math.abs(afterTop - beforeTop);
-
-    if (delta > allowedDelta) {
-      fail(`${viewport.name}: returned ${delta.toFixed(1)}px away from the clicked team (before scroll ${beforeScrollY}, after ${afterScrollY})`);
+      if (state.found && state.top !== null && Math.abs(state.top - beforeTop) <= allowedDelta) {
+        restored = true;
+        break;
+      }
+      await page.waitForTimeout(100);
     }
 
+    const finalState = await page.evaluate((label) => {
+      const link = [...document.querySelectorAll('a[aria-label]')]
+        .find((element) => element.getAttribute('aria-label') === label);
+      return {
+        found: link instanceof HTMLElement,
+        top: link instanceof HTMLElement ? link.getBoundingClientRect().top : null,
+        scrollY: window.scrollY,
+        scrollHeight: document.documentElement.scrollHeight,
+        teamsTop: document.getElementById('teams')?.getBoundingClientRect().top ?? null,
+        storage: Object.fromEntries(
+          Object.keys(sessionStorage)
+            .filter((key) => key.startsWith('dleague:scroll'))
+            .sort()
+            .map((key) => [key, sessionStorage.getItem(key)]),
+        ),
+      };
+    }, ariaLabel);
+
+    console.log(
+      `${viewport.name}: before top=${beforeTop.toFixed(1)} scrollY=${beforeScrollY}; final=${JSON.stringify(finalState)}`,
+    );
+
+    if (!restored || finalState.top === null) {
+      fail(`${viewport.name}: did not restore clicked team within ${allowedDelta}px; diagnostics=${JSON.stringify(finalState)}`);
+    }
+
+    const delta = Math.abs(finalState.top - beforeTop);
     console.log(`${viewport.name}: restored clicked team within ${delta.toFixed(1)}px`);
   } finally {
     await page.close();

@@ -47,6 +47,9 @@ for (const viewport of viewports) {
     const ariaLabel = await teamLink.getAttribute('aria-label');
     if (!ariaLabel) fail(`${viewport.name}: team link is missing aria-label`);
 
+    const anchorId = await teamLink.getAttribute('data-scroll-anchor-id');
+    if (!anchorId) fail(`${viewport.name}: homepage team link is missing data-scroll-anchor-id`);
+
     const beforeTop = await teamLink.evaluate((element) => element.getBoundingClientRect().top);
     const beforeScrollY = await page.evaluate(() => window.scrollY);
     if (beforeScrollY < viewport.height) {
@@ -74,9 +77,14 @@ for (const viewport of viewports) {
     const startedAt = Date.now();
     let restored = false;
     while (Date.now() - startedAt < restoreTimeoutMs) {
-      const state = await page.evaluate((label) => {
-        const link = [...document.querySelectorAll('a[aria-label]')]
+      const state = await page.evaluate(({ label, scrollAnchorId }) => {
+        const identifiedLinks = [...document.querySelectorAll('a[data-scroll-anchor-id]')];
+        const exactLink = identifiedLinks.find(
+          (element) => element.getAttribute('data-scroll-anchor-id') === scrollAnchorId,
+        );
+        const fallbackLink = [...document.querySelectorAll('a[aria-label]')]
           .find((element) => element.getAttribute('aria-label') === label);
+        const link = exactLink ?? fallbackLink;
         return {
           found: link instanceof HTMLElement,
           top: link instanceof HTMLElement ? link.getBoundingClientRect().top : null,
@@ -89,7 +97,7 @@ for (const viewport of viewports) {
               .map((key) => [key, sessionStorage.getItem(key)]),
           ),
         };
-      }, ariaLabel);
+      }, { label: ariaLabel, scrollAnchorId: anchorId });
 
       if (state.found && state.top !== null && Math.abs(state.top - beforeTop) <= allowedDelta) {
         restored = true;
@@ -98,9 +106,14 @@ for (const viewport of viewports) {
       await page.waitForTimeout(100);
     }
 
-    const finalState = await page.evaluate((label) => {
-      const link = [...document.querySelectorAll('a[aria-label]')]
+    const finalState = await page.evaluate(({ label, scrollAnchorId }) => {
+      const identifiedLinks = [...document.querySelectorAll('a[data-scroll-anchor-id]')];
+      const exactLink = identifiedLinks.find(
+        (element) => element.getAttribute('data-scroll-anchor-id') === scrollAnchorId,
+      );
+      const fallbackLink = [...document.querySelectorAll('a[aria-label]')]
         .find((element) => element.getAttribute('aria-label') === label);
+      const link = exactLink ?? fallbackLink;
       return {
         found: link instanceof HTMLElement,
         top: link instanceof HTMLElement ? link.getBoundingClientRect().top : null,
@@ -114,7 +127,7 @@ for (const viewport of viewports) {
             .map((key) => [key, sessionStorage.getItem(key)]),
         ),
       };
-    }, ariaLabel);
+    }, { label: ariaLabel, scrollAnchorId: anchorId });
 
     console.log(
       `${viewport.name}: before top=${beforeTop.toFixed(1)} scrollY=${beforeScrollY}; final=${JSON.stringify(finalState)}`,

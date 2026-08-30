@@ -84,13 +84,22 @@ const SectionAnchorNavigation: React.FC = () => {
   return null;
 };
 
+interface ScrollAnchorSnapshot {
+  ariaLabel: string;
+  viewportTop: number;
+}
+
 const SCROLL_STORAGE_PREFIX = 'dleague:scroll:';
+const SCROLL_ANCHOR_STORAGE_PREFIX = 'dleague:scroll-anchor:';
 const MAX_SECTION_RESTORE_ATTEMPTS = 30;
 const POP_SCROLL_RESTORE_WINDOW_MS = 8000;
 const SCROLL_RESTORE_TOLERANCE_PX = 2;
 
 const getScrollStorageKey = (locationKey: string): string =>
   `${SCROLL_STORAGE_PREFIX}${locationKey}`;
+
+const getScrollAnchorStorageKey = (locationKey: string): string =>
+  `${SCROLL_ANCHOR_STORAGE_PREFIX}${locationKey}`;
 
 const readScrollPosition = (locationKey: string): number | null => {
   try {
@@ -109,6 +118,43 @@ const writeScrollPosition = (locationKey: string, scrollY: number): void => {
   } catch {
     // Session storage may be unavailable.
   }
+};
+
+const writeScrollAnchor = (locationKey: string, snapshot: ScrollAnchorSnapshot): void => {
+  try {
+    window.sessionStorage.setItem(getScrollAnchorStorageKey(locationKey), JSON.stringify(snapshot));
+  } catch {
+    // Session storage may be unavailable.
+  }
+};
+
+const consumeScrollAnchor = (locationKey: string): ScrollAnchorSnapshot | null => {
+  try {
+    const storageKey = getScrollAnchorStorageKey(locationKey);
+    const raw = window.sessionStorage.getItem(storageKey);
+    window.sessionStorage.removeItem(storageKey);
+    if (raw === null) return null;
+
+    const value = JSON.parse(raw) as Partial<ScrollAnchorSnapshot>;
+    if (
+      typeof value.ariaLabel !== 'string' ||
+      value.ariaLabel.length === 0 ||
+      typeof value.viewportTop !== 'number' ||
+      !Number.isFinite(value.viewportTop)
+    ) return null;
+
+    return {
+      ariaLabel: value.ariaLabel,
+      viewportTop: value.viewportTop,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const findScrollAnchor = (ariaLabel: string): HTMLAnchorElement | null => {
+  const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');
+  return Array.from(candidates).find((element) => element.getAttribute('aria-label') === ariaLabel) ?? null;
 };
 
 const ScrollMemory: React.FC = () => {
@@ -146,12 +192,41 @@ const ScrollMemory: React.FC = () => {
   }, [key]);
 
   useEffect(() => {
+    const handleTeamNavigation = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) return;
+
+      const target = event.target;
+      const anchor = target instanceof Element
+        ? target.closest<HTMLAnchorElement>('a[aria-label^="查看 "][aria-label$=" 球隊頁"]')
+        : null;
+      const ariaLabel = anchor?.getAttribute('aria-label');
+      if (!anchor || !ariaLabel) return;
+
+      writeScrollAnchor(key, {
+        ariaLabel,
+        viewportTop: anchor.getBoundingClientRect().top,
+      });
+    };
+
+    document.addEventListener('click', handleTeamNavigation, true);
+    return () => document.removeEventListener('click', handleTeamNavigation, true);
+  }, [key]);
+
+  useEffect(() => {
     let cancelled = false;
     let frameId = 0;
     let attempts = 0;
     let restoreWindowId = 0;
     let restoringSavedPosition = false;
     const savedPosition = navigationType === 'POP' ? readScrollPosition(key) : null;
+    const savedAnchor = navigationType === 'POP' ? consumeScrollAnchor(key) : null;
     const sectionId = hash ? decodeURIComponent(hash.slice(1)) : '';
 
     const stopSavedPositionRestoration = () => {
@@ -172,12 +247,26 @@ const ScrollMemory: React.FC = () => {
     };
 
     const maintainSavedPosition = () => {
-      if (cancelled || !restoringSavedPosition || savedPosition === null) return;
-      const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      const targetScrollY = Math.min(savedPosition, maxScrollY);
+      if (
+        cancelled ||
+        !restoringSavedPosition ||
+        (savedPosition === null && savedAnchor === null)
+      ) return;
 
-      if (Math.abs(window.scrollY - targetScrollY) > SCROLL_RESTORE_TOLERANCE_PX) {
-        window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+      const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const anchorElement = savedAnchor ? findScrollAnchor(savedAnchor.ariaLabel) : null;
+
+      if (anchorElement && savedAnchor) {
+        const anchorDelta = anchorElement.getBoundingClientRect().top - savedAnchor.viewportTop;
+        if (Math.abs(anchorDelta) > SCROLL_RESTORE_TOLERANCE_PX) {
+          const targetScrollY = Math.max(0, Math.min(maxScrollY, window.scrollY + anchorDelta));
+          window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+        }
+      } else if (savedPosition !== null) {
+        const targetScrollY = Math.min(savedPosition, maxScrollY);
+        if (Math.abs(window.scrollY - targetScrollY) > SCROLL_RESTORE_TOLERANCE_PX) {
+          window.scrollTo({ top: targetScrollY, behavior: 'auto' });
+        }
       }
 
       frameId = window.requestAnimationFrame(maintainSavedPosition);
@@ -197,7 +286,7 @@ const ScrollMemory: React.FC = () => {
       if (cancelled) return;
       attempts += 1;
 
-      if (savedPosition !== null) {
+      if (savedPosition !== null || savedAnchor !== null) {
         startSavedPositionRestoration();
         return;
       }

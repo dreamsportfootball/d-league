@@ -1,3 +1,4 @@
+import { getSeasonConfig } from '../config/seasons';
 import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import { SEASON_IDS } from '../config/siteManifest.js';
 import playerIdentityAliases from '../data/playerIdentityAliases.json';
@@ -8,6 +9,7 @@ import type { MediaAlbum } from '../types/media';
 import type { PlayerProfile } from '../types/player';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
+import { resolvePlayerAge } from '../utils/playerAge';
 
 export interface SeasonData {
   teams: SeasonTeam[];
@@ -83,9 +85,14 @@ const makeData = (
 ): SeasonData => {
   const teams = teamsInput.map((team) => ({ ...team, logo: assetUrl(team.logo) }));
   const playerAliases = playerIdentityAliasMap[id] ?? {};
+  const ageReferenceDate = getSeasonConfig(id).ageReferenceDate;
   const players = playersInput.map((player) => {
     const identityId = playerAliases[player.id] ?? player.identityId;
-    return identityId ? { ...player, identityId } : player;
+    return {
+      ...player,
+      age: resolvePlayerAge(player, ageReferenceDate),
+      ...(identityId ? { identityId } : {}),
+    };
   });
 
   return {

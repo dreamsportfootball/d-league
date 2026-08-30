@@ -87,6 +87,7 @@ const SectionAnchorNavigation: React.FC = () => {
 interface ScrollAnchorSnapshot {
   ariaLabel: string;
   viewportTop: number;
+  anchorId?: string;
 }
 
 const SCROLL_STORAGE_PREFIX = 'dleague:scroll:';
@@ -140,21 +141,33 @@ const consumeScrollAnchor = (locationKey: string): ScrollAnchorSnapshot | null =
       typeof value.ariaLabel !== 'string' ||
       value.ariaLabel.length === 0 ||
       typeof value.viewportTop !== 'number' ||
-      !Number.isFinite(value.viewportTop)
+      !Number.isFinite(value.viewportTop) ||
+      (value.anchorId !== undefined && typeof value.anchorId !== 'string')
     ) return null;
 
     return {
       ariaLabel: value.ariaLabel,
       viewportTop: value.viewportTop,
+      ...(value.anchorId ? { anchorId: value.anchorId } : {}),
     };
   } catch {
     return null;
   }
 };
 
-const findScrollAnchor = (ariaLabel: string): HTMLAnchorElement | null => {
+const findScrollAnchor = (snapshot: ScrollAnchorSnapshot): HTMLAnchorElement | null => {
+  if (snapshot.anchorId) {
+    const identifiedAnchors = document.querySelectorAll<HTMLAnchorElement>('a[data-scroll-anchor-id]');
+    const identifiedAnchor = Array.from(identifiedAnchors).find(
+      (element) => element.dataset.scrollAnchorId === snapshot.anchorId,
+    );
+    if (identifiedAnchor) return identifiedAnchor;
+  }
+
   const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');
-  return Array.from(candidates).find((element) => element.getAttribute('aria-label') === ariaLabel) ?? null;
+  return Array.from(candidates).find(
+    (element) => element.getAttribute('aria-label') === snapshot.ariaLabel,
+  ) ?? null;
 };
 
 const ScrollMemory: React.FC = () => {
@@ -209,9 +222,11 @@ const ScrollMemory: React.FC = () => {
       const ariaLabel = anchor?.getAttribute('aria-label');
       if (!anchor || !ariaLabel) return;
 
+      const anchorId = anchor.dataset.scrollAnchorId;
       writeScrollAnchor(key, {
         ariaLabel,
         viewportTop: anchor.getBoundingClientRect().top,
+        ...(anchorId ? { anchorId } : {}),
       });
     };
 
@@ -254,7 +269,7 @@ const ScrollMemory: React.FC = () => {
       ) return;
 
       const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      const anchorElement = savedAnchor ? findScrollAnchor(savedAnchor.ariaLabel) : null;
+      const anchorElement = savedAnchor ? findScrollAnchor(savedAnchor) : null;
 
       if (anchorElement && savedAnchor) {
         const anchorDelta = anchorElement.getBoundingClientRect().top - savedAnchor.viewportTop;

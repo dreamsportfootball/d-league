@@ -121,6 +121,8 @@ export interface SeasonConfig {
   shortName: string;
   status: SeasonStatus;
   isDefault: boolean;
+  /** Fixed date used to resolve every player's official age for this season. */
+  ageReferenceDate: string;
   registrationStart?: string;
   registrationEnd?: string;
   venue: string;

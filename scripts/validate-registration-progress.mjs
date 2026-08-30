@@ -11,7 +11,7 @@ const expectedMessages = [
   '2026/08/31 23:59 前',
 ];
 const expectedTeams = [
-  '南州陳公舘',
+  '陳公舘',
   '高雄黑騎士足球隊',
   '銅雀',
   'Wanderers',

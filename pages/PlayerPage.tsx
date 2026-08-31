@@ -174,16 +174,22 @@ const PlayerPage: React.FC = () => {
   const history = useMemo(() => getPlayerHistory(id), [id]);
   const matchRecords = useMemo(() => getPlayerMatchRecords(id), [id]);
   const transferRecords = useMemo(() => getPlayerTransfers(history), [history]);
-  const latestEventSeason = history[0]?.seasonId ?? 'ALL';
+  const requestedEventSeason =
+    isSeasonId(requestedSeason) && history.some((record) => record.seasonId === requestedSeason)
+      ? requestedSeason
+      : undefined;
+  const defaultEventSeason: EventSeasonFilter =
+    requestedEventSeason ?? history[0]?.seasonId ?? 'ALL';
+  const eventSeasonStateKey = `${id}:${requestedEventSeason ?? ''}`;
   const [eventSeasonByPlayer, setEventSeasonByPlayer] = useState<{
-    playerId: string;
+    key: string;
     season: EventSeasonFilter;
-  }>(() => ({ playerId: id, season: latestEventSeason }));
-  const eventSeason = eventSeasonByPlayer.playerId === id
+  }>(() => ({ key: eventSeasonStateKey, season: defaultEventSeason }));
+  const eventSeason = eventSeasonByPlayer.key === eventSeasonStateKey
     ? eventSeasonByPlayer.season
-    : latestEventSeason;
+    : defaultEventSeason;
   const setEventSeason = (season: EventSeasonFilter) => {
-    setEventSeasonByPlayer({ playerId: id, season });
+    setEventSeasonByPlayer({ key: eventSeasonStateKey, season });
   };
   const [selectedMatch, setSelectedMatch] = useState<SelectedMatchState | null>(null);
 

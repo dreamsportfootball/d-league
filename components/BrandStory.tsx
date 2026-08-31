@@ -2,34 +2,33 @@ import React from 'react';
 import SiteViewCount from './SiteViewCount';
 
 const BrandStory: React.FC = () => (
-  <section className="border-t border-neutral-200 bg-white py-12 md:py-16" aria-labelledby="brand-story-title">
-    <div className="container mx-auto px-4 md:px-6">
-      <div className="grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] md:items-end md:gap-16">
-        <div>
-          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-brand-blue">
-            Our Philosophy
-          </p>
-          <h2 id="brand-story-title" className="max-w-3xl font-display text-4xl font-black leading-[1.05] tracking-tight text-brand-black md:text-6xl">
-            不只是一場比賽
-            <span className="mt-1 block text-neutral-300">而是一個起點</span>
-          </h2>
-          <p className="mt-6 max-w-2xl text-base font-medium leading-8 text-neutral-600 md:text-lg">
-            我們致力建立一個能讓更多人能夠踢、願意踢、享受踢的草根聯賽。
-          </p>
-        </div>
+  <section className="relative overflow-hidden bg-white py-8 md:py-16">
+    <div className="pointer-events-none absolute left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 text-center">
+      <span className="font-display text-[15rem] font-black uppercase leading-none text-neutral-50 opacity-60">
+        DREAM
+      </span>
+    </div>
 
-        <div className="border-l-2 border-brand-blue pl-5 md:pl-7">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400">D LEAGUE</p>
-          <p className="mt-3 font-display text-4xl font-black leading-none text-brand-black md:text-5xl">
-            DREAM IT.
-          </p>
-          <p className="mt-2 font-display text-4xl font-black leading-none text-brand-accent md:text-5xl">
-            PLAY IT.
-          </p>
-        </div>
+    <div className="container relative z-10 mx-auto max-w-3xl px-4 text-center md:px-6">
+      <span className="mb-6 block text-xs font-black uppercase tracking-[0.2em] text-brand-blue">
+        Our Philosophy
+      </span>
+      <h2 className="mb-10 font-display text-4xl font-black leading-tight text-brand-black md:text-6xl">
+        不只是一場比賽<br />
+        <span className="text-neutral-300">而是一個起點</span>
+      </h2>
+      <div className="mx-auto max-w-2xl space-y-6 text-lg font-medium leading-relaxed text-neutral-600 md:text-xl">
+        <p>
+          我們致力建立一個
+          <span className="whitespace-nowrap">能讓更多人能夠踢、願意踢、</span>
+          <span className="whitespace-nowrap">享受踢的草根聯賽</span>
+        </p>
       </div>
-
-      <div className="mt-10 border-t border-neutral-200 pt-5 md:mt-14 md:pt-7">
+      <div className="mt-16 flex items-center justify-center space-x-3">
+        <span className="font-display text-4xl font-black text-brand-black md:text-5xl">DREAM IT.</span>
+        <span className="stroke-black font-display text-4xl font-black text-brand-accent md:text-5xl">PLAY IT.</span>
+      </div>
+      <div className="pt-5 md:pt-9">
         <SiteViewCount />
       </div>
     </div>

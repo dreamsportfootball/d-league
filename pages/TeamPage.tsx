@@ -154,7 +154,7 @@ const TeamPage: React.FC = () => {
       return {
         id: `league-${record.seasonId}`,
         period: record.season.shortName,
-        competition: `D LEAGUE|台南夢達七人足球聯賽 ${record.season.shortName}`,
+        competition: `台南夢達七人足球聯賽 ${record.season.shortName}`,
         result: row?.played ? `#${row.rank}` : '-',
         startYear: Number.parseInt(record.seasonId.slice(0, 4), 10),
       };
@@ -298,7 +298,6 @@ const TeamPage: React.FC = () => {
               {socialLinks.length > 0 && renderSocialLinks(true)}
             </div>
           </div>
-
           <dl className="mt-7 grid grid-cols-4 divide-x divide-neutral-300 border-t border-neutral-300 pt-4 md:mt-6">
             {[
               ['排名', seasonHasStarted && standing ? formatStatValue(standing.rank) : '-'],

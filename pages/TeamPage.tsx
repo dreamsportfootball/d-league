@@ -49,7 +49,6 @@ interface TeamCompetitionHistoryRow {
   period: string;
   competition: string;
   result: string;
-  record: string;
   startYear: number;
   href?: string;
 }
@@ -157,7 +156,6 @@ const TeamPage: React.FC = () => {
         period: record.season.shortName,
         competition: `D LEAGUE · ${formatLeagueName(record.team.leagueId)}`,
         result: row?.played ? `#${row.rank}` : '-',
-        record: row?.played ? `${row.points} 分` : '-',
         startYear: Number.parseInt(record.seasonId.slice(0, 4), 10),
       };
     });
@@ -170,7 +168,6 @@ const TeamPage: React.FC = () => {
       period: String(cupYear),
       competition: CUP_EVENT.shortName,
       result: cupPlacement ?? '參賽',
-      record: `${cupMatches.length} 場`,
       startYear: cupYear,
       href: '/cup',
     };
@@ -349,21 +346,20 @@ const TeamPage: React.FC = () => {
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年賽事</h2></div>
           <div role="table" aria-label="歷年賽事">
-            <div role="row" className="grid grid-cols-[64px_minmax(0,1fr)_76px_56px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500 sm:grid-cols-[90px_minmax(0,1fr)_120px_80px]">
+            <div role="row" className="grid grid-cols-[64px_minmax(0,1fr)_76px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500 sm:grid-cols-[90px_minmax(0,1fr)_120px]">
               <span role="columnheader">年度</span>
               <span role="columnheader">賽事</span>
               <span role="columnheader" className="text-center">成績</span>
-              <span role="columnheader" className="text-right">紀錄</span>
             </div>
             <div className="divide-y divide-neutral-100">
               {competitionHistory.map((record) => (
                 <div
                   role="row"
                   key={record.id}
-                  className="grid grid-cols-[64px_minmax(0,1fr)_76px_56px] items-center gap-3 py-4 text-sm sm:grid-cols-[90px_minmax(0,1fr)_120px_80px]"
+                  className="grid grid-cols-[64px_minmax(0,1fr)_76px] items-center gap-3 py-4 text-sm sm:grid-cols-[90px_minmax(0,1fr)_120px]"
                 >
                   <span role="cell" className="font-bold text-brand-black">{record.period}</span>
-                  <span role="cell" className="min-w-0 break-words font-semibold text-neutral-500">
+                  <span role="cell" className="min-w-0 break-words text-neutral-500">
                     {record.href ? (
                       <Link to={record.href} className="font-bold text-brand-black hover:text-brand-blue">
                         {record.competition}
@@ -371,7 +367,6 @@ const TeamPage: React.FC = () => {
                     ) : record.competition}
                   </span>
                   <span role="cell" className="break-words text-center font-bold text-brand-black">{record.result}</span>
-                  <span role="cell" className="text-right font-bold text-brand-blue">{record.record}</span>
                 </div>
               ))}
             </div>

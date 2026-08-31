@@ -154,7 +154,7 @@ const TeamPage: React.FC = () => {
       return {
         id: `league-${record.seasonId}`,
         period: record.season.shortName,
-        competition: `台南夢達七人足球聯賽 ${record.season.shortName}`,
+        competition: `D LEAGUE ${record.team.leagueId}`,
         result: row?.played ? `#${row.rank}` : '-',
         startYear: Number.parseInt(record.seasonId.slice(0, 4), 10),
       };

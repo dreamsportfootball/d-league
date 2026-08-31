@@ -82,7 +82,7 @@ const SeasonParticipants: React.FC<SeasonParticipantsProps> = ({ participants, c
                   const content = <><span className="mr-4 w-7 shrink-0 font-display text-lg font-black tabular-nums text-brand-blue">{String(index + 1).padStart(2, '0')}</span><ParticipantTeamLogo seasonId={activeSeasonId} teamName={teamName} /><span className="min-w-0 flex-1 text-sm font-bold leading-6 text-brand-black md:text-base">{teamName}</span>{publishedTeam && <ChevronRight className="ml-3 h-4 w-4 shrink-0 text-neutral-300 transition-colors group-hover:text-brand-blue" aria-hidden="true" />}</>;
                   return (
                     <li key={teamName}>
-                      {publishedTeam ? <Link to={`/teams/${getTeamIdentity(publishedTeam)}?season=${activeSeasonId}`} className="group flex min-h-16 items-center px-5 py-4 transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue" aria-label={`查看 ${teamName} 球隊頁`}>{content}</Link> : <div className="flex min-h-16 items-center px-5 py-4">{content}</div>}
+                      {publishedTeam ? <Link to={`/teams/${getTeamIdentity(publishedTeam)}?season=${activeSeasonId}`} className="group flex min-h-16 items-center px-5 py-4 transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue" aria-label={`查看 ${teamName} 球隊頁`} data-scroll-anchor-id={`home-season-participants:${leagueId}:${publishedTeam.id}`}>{content}</Link> : <div className="flex min-h-16 items-center px-5 py-4">{content}</div>}
                     </li>
                   );
                 })}

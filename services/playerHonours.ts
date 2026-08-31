@@ -1,3 +1,8 @@
+import {
+  CUP_PLAYER_HONOUR_AWARDS,
+  type CupPlayerHonourKind,
+  type CupPlayerHonourTitle,
+} from '../data/cupPlayerHonours';
 import type { LeagueId, SeasonId } from '../types/season';
 import { calculateLeagueTable, calculatePlayerCompetitionStats } from './competitionEngine';
 import {
@@ -9,15 +14,18 @@ import {
 export type PlayerHonourKind =
   | 'GOLDEN_BOOT'
   | 'LEAGUE_CHAMPION'
-  | 'LEAGUE_RUNNER_UP';
+  | 'LEAGUE_RUNNER_UP'
+  | CupPlayerHonourKind;
 
 export interface PlayerHonour {
   id: string;
-  seasonId: SeasonId;
+  seasonId?: SeasonId;
   seasonName: string;
-  leagueId: LeagueId;
+  leagueId?: LeagueId;
+  competitionName?: string;
   kind: PlayerHonourKind;
-  title: '金靴獎' | '聯賽冠軍' | '聯賽亞軍';
+  title: '金靴獎' | '聯賽冠軍' | '聯賽亞軍' | CupPlayerHonourTitle;
+  sortKey: string;
   teamId?: string;
   teamName?: string;
 }
@@ -100,15 +108,48 @@ const getTopScorerIds = (
   );
 };
 
+const normalizePlayerName = (value: string): string => value.replace(/\s+/g, '');
+
+const matchesCupParticipant = (
+  record: PlayerSeasonRecord,
+  participantName: string,
+): boolean =>
+  normalizePlayerName(record.player.name) === normalizePlayerName(participantName);
+
+const getCupHonours = (history: PlayerSeasonRecord[]): PlayerHonour[] =>
+  CUP_PLAYER_HONOUR_AWARDS.flatMap((award) => {
+    const isParticipant = history.some((record) =>
+      award.participantNames.some((participantName) =>
+        matchesCupParticipant(record, participantName),
+      ),
+    );
+    if (!isParticipant) return [];
+
+    return [{
+      id: `cup:${award.id}`,
+      seasonName: award.period,
+      competitionName: award.competitionName,
+      kind: award.kind,
+      title: award.title,
+      sortKey: award.eventDate,
+      teamId: award.teamId,
+      teamName: award.teamName,
+    }];
+  });
+
 const honourPriority: Record<PlayerHonourKind, number> = {
   GOLDEN_BOOT: 0,
   LEAGUE_CHAMPION: 1,
+  CUP_CHAMPION: 1,
+  PLATE_CHAMPION: 1,
   LEAGUE_RUNNER_UP: 2,
+  CUP_RUNNER_UP: 2,
+  PLATE_RUNNER_UP: 2,
 };
 
 export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
   const history = getPlayerHistory(entityOrPlayerId);
-  const honours: PlayerHonour[] = [];
+  const honours: PlayerHonour[] = getCupHonours(history);
 
   history.forEach((record) => {
     if (record.season.status !== 'completed') return;
@@ -150,6 +191,7 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
           leagueId,
           kind,
           title: standing.rank === 1 ? '聯賽冠軍' : '聯賽亞軍',
+          sortKey: record.seasonId,
           teamId: team.id,
           teamName: team.name,
         });
@@ -163,6 +205,7 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
           leagueId,
           kind: 'GOLDEN_BOOT',
           title: '金靴獎',
+          sortKey: record.seasonId,
         });
       }
     });
@@ -170,8 +213,8 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
 
   return honours.sort(
     (a, b) =>
-      b.seasonId.localeCompare(a.seasonId) ||
-      a.leagueId.localeCompare(b.leagueId) ||
+      b.sortKey.localeCompare(a.sortKey) ||
+      (a.leagueId ?? '').localeCompare(b.leagueId ?? '') ||
       honourPriority[a.kind] - honourPriority[b.kind] ||
       a.id.localeCompare(b.id),
   );

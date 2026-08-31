@@ -1,0 +1,105 @@
+name: Correct 2026-27 player ages
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/correct-2026-27-player-ages.yml
+
+permissions:
+  contents: write
+
+jobs:
+  correct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout season branch
+        uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+
+      - name: Apply source-verified age corrections
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'data/seasons/2026-27/players.json';
+          const players = JSON.parse(fs.readFileSync(path, 'utf8'));
+
+          const corrections = [
+            ['t_sf_2026', '林暐濠', 15, 14],
+            ['t_sf_2026', '潘俐言', 19, 18],
+            ['t_sf_2026', '黃晨崴', 15, 14],
+            ['t_sf_2026', '黃嵩崴', 16, 15],
+            ['t_sf_2026', '林亮昀', 16, 17],
+            ['t_sf_2026', '楊哲銘', 20, 19],
+            ['t_sf_2026', '蔡銘洧', 15, 14],
+            ['t_sf_2026', '呂承燁', 16, 17],
+            ['t_wanderers_2026', '葉晉嘉', 22, 21],
+            ['t_wanderers_2026', '沈家弘', 22, 23],
+            ['t_wanderers_2026', '王亮均', 21, 22],
+            ['t_alian_2026', '戴于翔', 29, 30],
+            ['t_alian_2026', '陳家駿', 34, 35],
+            ['t_alian_2026', '林淮中', 26, 27],
+            ['t_alian_2026', '許恩豪', 25, 26],
+            ['t_chiayi_235_2026', '黃偉倫', 28, 27],
+            ['t_chiayi_235_2026', '鄭州偉', 30, 29],
+            ['t_chiayi_235_2026', '李宇文', 32, 31],
+            ['t_chiayi_235_2026', '黃楷堯', 37, 38],
+            ['t_tongque_2026', '陳揚', 26, 27],
+            ['t_tongque_2026', '李偉豪', 36, 37],
+            ['t_tongque_2026', '孫進楠', 52, 53],
+            ['t_tongque_2026', '林宴丞', 24, 25],
+            ['t_tongque_2026', '蔡孟宏', 33, 34],
+            ['t_kaohsiung_hk_2026', '謝俊杰', 28, 29],
+            ['t_kaohsiung_hk_2026', '鄭力', 37, 38],
+            ['t_kaohsiung_hk_2026', '高義莉', 28, 29],
+            ['t_pingtung_wild_ape_2026', '黃浩程', 18, 19],
+            ['t_pingtung_wild_ape_2026', '文俊偉', 43, 44],
+            ['t_pingtung_wild_ape_2026', '陳奕盛', 19, 20],
+            ['t_pingtung_wild_ape_2026', '陳柏諧', 32, 33],
+            ['t_black_wolf_2026', '慎在成', 24, 21],
+            ['t_black_wolf_2026', '高李忠', 36, 37],
+            ['t_black_wolf_2026', '蘇靖棠', 18, 19],
+          ];
+
+          if (corrections.length !== 34) {
+            throw new Error(`Expected 34 corrections, got ${corrections.length}`);
+          }
+
+          const birthDateRecords = players.filter((player) => Object.prototype.hasOwnProperty.call(player, 'birthDate'));
+          if (birthDateRecords.length !== 0) {
+            throw new Error(`Public player data still contains ${birthDateRecords.length} birthDate fields`);
+          }
+
+          for (const [teamId, name, expectedCurrentAge, correctedAge] of corrections) {
+            const matches = players.filter((player) => player.teamId === teamId && player.name === name);
+            if (matches.length !== 1) {
+              throw new Error(`${teamId}/${name}: expected exactly one player, found ${matches.length}`);
+            }
+            const player = matches[0];
+            if (player.age !== expectedCurrentAge) {
+              throw new Error(`${teamId}/${name}: expected current age ${expectedCurrentAge}, found ${player.age}`);
+            }
+            player.age = correctedAge;
+          }
+
+          fs.writeFileSync(path, `${JSON.stringify(players, null, 2)}\n`, 'utf8');
+          console.log(`Applied ${corrections.length} age corrections using 2026-11-01 as the reference date.`);
+          console.log(`Player records: ${players.length}; public birthDate fields: 0.`);
+          NODE
+
+      - name: Remove one-time privacy workflows
+        run: |
+          rm -f .github/workflows/correct-2026-27-player-ages.yml
+          rm -f .github/workflows/sanitize-player-birthdates.yml
+
+      - name: Commit corrected ages
+        run: |
+          git config user.name "dreamsportfootball"
+          git config user.email "dreamsportfootball@gmail.com"
+          git add data/seasons/2026-27/players.json .github/workflows
+          git diff --cached --quiet && exit 0
+          git commit -m "Correct 2026-27 player ages"
+          git push origin HEAD:season/2026-27

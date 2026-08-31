@@ -57,7 +57,7 @@ const ActiveHomeContent: React.FC = () => {
                 </span>
                 <h3 className="flex items-center font-display text-3xl font-bold tracking-wide text-brand-black">
                   <Trophy className="mr-2 h-6 w-6 translate-y-[2px] text-brand-blue" />
-                  {activeSeason.status === 'completed' ? '最終排名' : '戰績排名'}
+                  {activeSeason.status === 'completed' ? '最終排名' : '積分榜'}
                 </h3>
               </div>
 

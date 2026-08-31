@@ -11,7 +11,6 @@ import NewsSection from '../NewsSection';
 import PhotoCarousel from '../PhotoCarousel';
 import PreSeasonStandings from '../PreSeasonStandings';
 import Standings from '../Standings';
-import Tabs from '../Tabs';
 import VideoHub from '../VideoHub';
 
 const ActiveHomeContent: React.FC = () => {
@@ -41,49 +40,69 @@ const ActiveHomeContent: React.FC = () => {
 
   return (
     <>
-      <div id="match-center" className="container relative z-20 mx-auto -mt-5 px-0 pb-12 md:px-6">
-        <div className="overflow-hidden rounded-t-xl border-neutral-100 bg-white shadow-2xl ring-1 ring-black/5 md:border">
+      <div id="match-center" className="container relative z-20 mx-auto -mt-4 px-4 pb-10 md:-mt-5 md:px-6 md:pb-14">
+        <div className="border-t-4 border-brand-blue bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
           <MatchCenter />
         </div>
       </div>
 
-      <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-4 md:px-6">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
-          <div className="order-2 lg:order-1 lg:col-span-4">
-            <div className="mb-4 flex items-end justify-between gap-4 border-b border-neutral-100 pb-2">
-              <div>
-                <span className="mb-1 block font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400">
-                  {activeSeason.status === 'completed' ? 'Final Ranking' : 'Ranking'}
-                </span>
-                <h3 className="flex items-center font-display text-3xl font-bold tracking-wide text-brand-black">
-                  <Trophy className="mr-2 h-6 w-6 translate-y-[2px] text-brand-blue" />
-                  {activeSeason.status === 'completed' ? '最終排名' : '戰績排名'}
-                </h3>
-              </div>
-
-              <div className="rounded-full bg-neutral-100 p-1">
-                <Tabs
-                  options={activeSeason.enabledLeagues}
-                  active={activeLeague}
-                  onChange={setActiveLeague}
-                  getLabel={(league) => league}
-                  variant="compact"
-                  ariaLabel="切換積分榜級別"
-                />
-              </div>
+      <section id="standings-and-news" className="border-t border-neutral-200 bg-white py-12 md:py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start lg:gap-14">
+            <div className="lg:col-span-8">
+              <NewsSection />
             </div>
 
-            {showConfirmedTeams ? (
-              <PreSeasonStandings
-                league={activeLeague}
-                teamNames={participantTeamNames}
-                variant="widget"
-              />
-            ) : (
-              <Standings league={activeLeague} variant="widget" />
-            )}
+            <section className="lg:col-span-4" aria-labelledby="home-standings-title">
+              <div className="flex items-end justify-between gap-4 border-b border-neutral-200 pb-4">
+                <div>
+                  <p className="mb-1 text-[10px] font-black uppercase tracking-[0.24em] text-brand-blue">
+                    {activeSeason.status === 'completed' ? 'Final Ranking' : 'Ranking'} · {activeSeason.shortName}
+                  </p>
+                  <h2 id="home-standings-title" className="flex items-center font-display text-3xl font-black tracking-tight text-brand-black md:text-4xl">
+                    <Trophy className="mr-2 h-6 w-6 text-brand-blue" aria-hidden="true" />
+                    {activeSeason.status === 'completed' ? '最終排名' : '戰績排名'}
+                  </h2>
+                </div>
+              </div>
 
-            <div className="mt-4 text-center">
+              <div className="flex min-h-12 items-center gap-5 border-b border-neutral-200" role="tablist" aria-label="切換積分榜級別">
+                {activeSeason.enabledLeagues.map((leagueId) => {
+                  const active = leagueId === activeLeague;
+                  return (
+                    <button
+                      key={leagueId}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setActiveLeague(leagueId)}
+                      className={`relative min-h-12 px-1 text-xs font-black tracking-wider transition-colors ${
+                        active ? 'text-brand-black' : 'text-neutral-400 hover:text-brand-black'
+                      }`}
+                    >
+                      {leagueId}
+                      <span
+                        className={`absolute inset-x-0 bottom-0 h-0.5 transition-opacity ${
+                          active ? 'bg-brand-blue opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-4">
+                {showConfirmedTeams ? (
+                  <PreSeasonStandings
+                    league={activeLeague}
+                    teamNames={participantTeamNames}
+                    variant="widget"
+                  />
+                ) : (
+                  <Standings league={activeLeague} variant="widget" />
+                )}
+              </div>
+
               <Link
                 to="/standings"
                 onClick={() => {
@@ -93,25 +112,21 @@ const ActiveHomeContent: React.FC = () => {
                     // Session storage may be unavailable.
                   }
                 }}
-                className="group flex min-h-11 items-center justify-center text-xs font-bold uppercase tracking-widest text-brand-blue transition-colors hover:text-brand-black"
+                className="group mt-4 flex min-h-11 items-center justify-end border-t border-neutral-200 pt-4 text-xs font-black tracking-wider text-brand-blue transition-colors hover:text-brand-black"
               >
                 查看完整積分榜
                 <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
-            </div>
-          </div>
-
-          <div className="order-1 lg:order-2 lg:col-span-8">
-            <NewsSection />
+            </section>
           </div>
         </div>
       </section>
 
-      <VideoHub />
-      <PhotoCarousel />
       <div id="teams">
         <ClubGrid />
       </div>
+      <VideoHub />
+      <PhotoCarousel />
       <BrandStory />
     </>
   );

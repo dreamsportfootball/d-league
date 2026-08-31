@@ -7,7 +7,6 @@ import {
   History,
   Instagram,
   TrendingUp,
-  Trophy,
   UserRound,
   Youtube,
 } from 'lucide-react';
@@ -43,6 +42,16 @@ interface TeamSocialLinkItem {
   label: string;
   href: string;
   icon: React.ReactNode;
+}
+
+interface TeamCompetitionHistoryRow {
+  id: string;
+  period: string;
+  competition: string;
+  result: string;
+  record: string;
+  startYear: number;
+  href?: string;
 }
 
 const isResolvedMatch = (match: Match): boolean =>
@@ -132,6 +141,45 @@ const TeamPage: React.FC = () => {
   const cupTeam = getCupTeamByIdentity(getTeamIdentity(team));
   const cupMatches = cupTeam ? getCupMatchesForTeam(cupTeam.id) : [];
   const cupPlacement = cupTeam ? getCupTeamPlacementLabel(cupTeam.id) : null;
+  const competitionHistory: TeamCompetitionHistoryRow[] = (() => {
+    const leagueRows: TeamCompetitionHistoryRow[] = history.map((record) => {
+      const row = calculateLeagueTable({
+        league: record.team.leagueId,
+        teams: record.data.teams,
+        matches: record.data.matches,
+        matchEvents: record.data.matchEvents,
+        rules: record.season.rules,
+        leagueConfig: record.season.leagues[record.team.leagueId],
+      }).find((item) => item.teamId === record.team.id);
+
+      return {
+        id: `league-${record.seasonId}`,
+        period: record.season.shortName,
+        competition: `D LEAGUE · ${formatLeagueName(record.team.leagueId)}`,
+        result: row?.played ? `#${row.rank}` : '-',
+        record: row?.played ? `${row.points} 分` : '-',
+        startYear: Number.parseInt(record.seasonId.slice(0, 4), 10),
+      };
+    });
+
+    if (!cupTeam || cupMatches.length === 0) return leagueRows;
+
+    const cupYear = new Date(CUP_EVENT.date).getFullYear();
+    const cupRow: TeamCompetitionHistoryRow = {
+      id: `cup-${cupTeam.id}-${cupYear}`,
+      period: String(cupYear),
+      competition: CUP_EVENT.shortName,
+      result: cupPlacement ?? '參賽',
+      record: `${cupMatches.length} 場`,
+      startYear: cupYear,
+      href: '/cup',
+    };
+    const insertIndex = leagueRows.findIndex((row) => row.startYear < cupYear);
+
+    return insertIndex === -1
+      ? [...leagueRows, cupRow]
+      : [...leagueRows.slice(0, insertIndex), cupRow, ...leagueRows.slice(insertIndex)];
+  })();
   const dialogSeasonContext = {
     activeSeasonId: seasonId,
     activeSeason: season,
@@ -276,50 +324,6 @@ const TeamPage: React.FC = () => {
           {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
-        {cupTeam && cupMatches.length > 0 && (
-          <section>
-            <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3">
-              <div className="flex items-center">
-                <Trophy className="mr-2 h-5 w-5 text-brand-blue" />
-                <h2 className="font-display text-2xl font-extrabold text-brand-black">盃賽紀錄</h2>
-              </div>
-              <Link
-                to="/cup"
-                className="inline-flex min-h-11 items-center text-xs font-bold text-brand-blue hover:text-brand-black"
-              >
-                查看完整賽事
-              </Link>
-            </div>
-            <div
-              role="table"
-              aria-label={`${team.name} 盃賽紀錄`}
-              className="border-y border-neutral-200"
-            >
-              <div
-                role="row"
-                className="grid gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_140px_88px] sm:items-center"
-              >
-                <div role="cell" className="min-w-0">
-                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">賽事</span>
-                  <Link to="/cup" className="mt-1 block text-sm font-black text-brand-black hover:text-brand-blue">
-                    {CUP_EVENT.shortName}
-                  </Link>
-                </div>
-                <div role="cell">
-                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">成績</span>
-                  <span className="mt-1 block text-sm font-black text-brand-black">{cupPlacement ?? '參賽'}</span>
-                </div>
-                <div role="cell" className="sm:text-right">
-                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">場次</span>
-                  <span className="mt-1 block font-display text-xl font-black tabular-nums text-brand-blue">
-                    {cupMatches.length}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
         {team.staff && team.staff.length > 0 && (
           <section>
             <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">隊職員</h2></div>
@@ -345,16 +349,32 @@ const TeamPage: React.FC = () => {
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年賽事</h2></div>
           <div role="table" aria-label="歷年賽事">
-            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500">
-              <span role="columnheader">賽季</span>
-              <span role="columnheader">級別</span>
-              <span role="columnheader" className="text-center">排名</span>
-              <span role="columnheader" className="text-right">積分</span>
+            <div role="row" className="grid grid-cols-[64px_minmax(0,1fr)_76px_56px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500 sm:grid-cols-[90px_minmax(0,1fr)_120px_80px]">
+              <span role="columnheader">年度</span>
+              <span role="columnheader">賽事</span>
+              <span role="columnheader" className="text-center">成績</span>
+              <span role="columnheader" className="text-right">紀錄</span>
             </div>
-            <div className="divide-y divide-neutral-100">{history.map((record) => {
-              const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-              return <div role="row" key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span role="cell" className="font-bold text-brand-black">{record.season.shortName}</span><span role="cell" className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span role="cell" className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '-'}</span><span role="cell" className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '-'}</span></div>;
-            })}</div>
+            <div className="divide-y divide-neutral-100">
+              {competitionHistory.map((record) => (
+                <div
+                  role="row"
+                  key={record.id}
+                  className="grid grid-cols-[64px_minmax(0,1fr)_76px_56px] items-center gap-3 py-4 text-sm sm:grid-cols-[90px_minmax(0,1fr)_120px_80px]"
+                >
+                  <span role="cell" className="font-bold text-brand-black">{record.period}</span>
+                  <span role="cell" className="min-w-0 break-words font-semibold text-neutral-500">
+                    {record.href ? (
+                      <Link to={record.href} className="font-bold text-brand-black hover:text-brand-blue">
+                        {record.competition}
+                      </Link>
+                    ) : record.competition}
+                  </span>
+                  <span role="cell" className="break-words text-center font-bold text-brand-black">{record.result}</span>
+                  <span role="cell" className="text-right font-bold text-brand-blue">{record.record}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>

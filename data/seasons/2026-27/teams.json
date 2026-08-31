@@ -297,5 +297,104 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_wanderers_2026",
+    "identityId": "wanderers",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "Wanderers",
+    "shortName": "Wanderers",
+    "logo": "assets/seasons/2026-27/teams/wanderers.png",
+    "primaryColor": "#26195f",
+    "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#26195f",
+      "away": "#ffffff"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "毛邦澤",
+        "englishName": "PANG TSE MAO"
+      },
+      {
+        "role": "管理",
+        "name": "沈家弘",
+        "englishName": "SHEN,JIA-HONG"
+      },
+      {
+        "role": "教練",
+        "name": "毛邦丞",
+        "englishName": "PANG CHENG MAO"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_chiayi_235_2026",
+    "identityId": "chiayi-235-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L1",
+    "name": "嘉義 235 FC",
+    "shortName": "嘉義 235 FC",
+    "logo": "assets/seasons/2026-27/teams/chiayi-235-fc.png",
+    "primaryColor": "#8fa8b8",
+    "secondaryColor": "#2b1a76",
+    "kits": {
+      "home": "#8fa8b8",
+      "away": "#2b1a76"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "蔡孟勲",
+        "englishName": "TSAI MENG HSUN"
+      },
+      {
+        "role": "管理",
+        "name": "蔡明瀚",
+        "englishName": "TSAI MING HAN"
+      },
+      {
+        "role": "教練",
+        "name": "郭政達",
+        "englishName": "GUO ZHENG DA"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_alian_2026",
+    "identityId": "alian-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L1",
+    "name": "阿蓮FC",
+    "shortName": "阿蓮FC",
+    "logo": "assets/seasons/2026-27/teams/alian-fc.png",
+    "primaryColor": "#111111",
+    "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#111111",
+      "away": "#ffffff"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "鍾明翰",
+        "englishName": "CHUNG, MING-HAN"
+      },
+      {
+        "role": "管理",
+        "name": "劉庭瑜",
+        "englishName": "LIU, TING-YU"
+      },
+      {
+        "role": "教練",
+        "name": "林育廷",
+        "englishName": "LIN, YU-TING"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

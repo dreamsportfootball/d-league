@@ -6,6 +6,7 @@ export type CupGroupTieBreakStatus = 'RESOLVED' | 'PENALTY_SHOOTOUT_REQUIRED';
 
 export interface CupTeam {
   id: string;
+  identityId?: string;
   name: string;
   group: CupGroup;
 }
@@ -122,7 +123,12 @@ export const CUP_EVENT: CupEventConfig = {
 const CUP_TEAM_DEFINITIONS: Record<string, CupTeam> = {
   KAFC: { id: 'KAFC', name: 'KAFC', group: 'A' },
   DONG_GAO: { id: 'DONG_GAO', name: '東高 FC', group: 'A' },
-  TN_SENIOR: { id: 'TN_SENIOR', name: '台南長青俱樂部', group: 'A' },
+  TN_SENIOR: {
+    id: 'TN_SENIOR',
+    identityId: 'tainan-evergreen-fc',
+    name: '台南長青足球俱樂部',
+    group: 'A',
+  },
   DONG_GANG: { id: 'DONG_GANG', name: '東港足球隊', group: 'A' },
   LANDEN: { id: 'LANDEN', name: 'Landen United', group: 'B' },
   HAPPY_NEW_YEAR: { id: 'HAPPY_NEW_YEAR', name: '新年快快樂樂', group: 'B' },
@@ -361,3 +367,42 @@ export const CUP_TEAMS: Record<string, CupTeam> = Object.fromEntries(
     standing.team,
   ]),
 );
+
+const getCupMatchWinnerTeamId = (match?: CupMatch): string | null => {
+  if (!match || match.homeScore === undefined || match.awayScore === undefined) return null;
+  if (match.homeScore > match.awayScore) return match.homeTeamId;
+  if (match.awayScore > match.homeScore) return match.awayTeamId;
+  if (match.homePenalty !== undefined && match.awayPenalty !== undefined) {
+    return match.homePenalty > match.awayPenalty ? match.homeTeamId : match.awayTeamId;
+  }
+  return null;
+};
+
+const getCupMatchLoserTeamId = (match?: CupMatch): string | null => {
+  const winnerId = getCupMatchWinnerTeamId(match);
+  if (!match || !winnerId) return null;
+  return winnerId === match.homeTeamId ? match.awayTeamId : match.homeTeamId;
+};
+
+export const getCupTeamByIdentity = (identityId: string): CupTeam | undefined =>
+  Object.values(CUP_TEAMS).find((team) => (team.identityId ?? team.id) === identityId);
+
+export const getCupMatchesForTeam = (teamId: string): CupMatch[] =>
+  CUP_MATCHES.filter((match) => match.homeTeamId === teamId || match.awayTeamId === teamId);
+
+export const getCupTeamPlacementLabel = (teamId: string): string | null => {
+  const cupFinal = CUP_MATCHES.find((match) => match.id === CUP_EVENT.cupFinalMatchId);
+  const cupThirdPlace = CUP_MATCHES.find((match) => match.id === CUP_EVENT.cupThirdPlaceMatchId);
+  const plateFinal = CUP_MATCHES.find((match) => match.id === CUP_EVENT.plateFinalMatchId);
+  const plateThirdPlace = CUP_MATCHES.find((match) => match.id === CUP_EVENT.plateThirdPlaceMatchId);
+  const placements: Array<[string, string | null]> = [
+    ['盃賽冠軍', getCupMatchWinnerTeamId(cupFinal)],
+    ['盃賽亞軍', getCupMatchLoserTeamId(cupFinal)],
+    ['盃賽季軍', getCupMatchWinnerTeamId(cupThirdPlace)],
+    ['盤賽冠軍', getCupMatchWinnerTeamId(plateFinal)],
+    ['盤賽亞軍', getCupMatchLoserTeamId(plateFinal)],
+    ['盤賽季軍', getCupMatchWinnerTeamId(plateThirdPlace)],
+  ];
+
+  return placements.find(([, placementTeamId]) => placementTeamId === teamId)?.[0] ?? null;
+};

@@ -7,6 +7,7 @@ import {
   History,
   Instagram,
   TrendingUp,
+  Trophy,
   UserRound,
   Youtube,
 } from 'lucide-react';
@@ -19,9 +20,15 @@ import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
+import {
+  CUP_EVENT,
+  getCupMatchesForTeam,
+  getCupTeamByIdentity,
+  getCupTeamPlacementLabel,
+} from '../cupData';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
-import { getPlayerIdentity, getTeamHistory } from '../services/entityData';
+import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam, TeamSocialLinks } from '../types/team';
 
@@ -122,6 +129,9 @@ const TeamPage: React.FC = () => {
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  const cupTeam = getCupTeamByIdentity(getTeamIdentity(team));
+  const cupMatches = cupTeam ? getCupMatchesForTeam(cupTeam.id) : [];
+  const cupPlacement = cupTeam ? getCupTeamPlacementLabel(cupTeam.id) : null;
   const dialogSeasonContext = {
     activeSeasonId: seasonId,
     activeSeason: season,
@@ -265,6 +275,50 @@ const TeamPage: React.FC = () => {
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-500">共 {teamMatches.length} 場</span></div>
           {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
+
+        {cupTeam && cupMatches.length > 0 && (
+          <section>
+            <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3">
+              <div className="flex items-center">
+                <Trophy className="mr-2 h-5 w-5 text-brand-blue" />
+                <h2 className="font-display text-2xl font-extrabold text-brand-black">盃賽紀錄</h2>
+              </div>
+              <Link
+                to="/cup"
+                className="inline-flex min-h-11 items-center text-xs font-bold text-brand-blue hover:text-brand-black"
+              >
+                查看完整賽事
+              </Link>
+            </div>
+            <div
+              role="table"
+              aria-label={`${team.name} 盃賽紀錄`}
+              className="border-y border-neutral-200"
+            >
+              <div
+                role="row"
+                className="grid gap-4 py-5 sm:grid-cols-[minmax(0,1fr)_140px_88px] sm:items-center"
+              >
+                <div role="cell" className="min-w-0">
+                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">賽事</span>
+                  <Link to="/cup" className="mt-1 block text-sm font-black text-brand-black hover:text-brand-blue">
+                    {CUP_EVENT.shortName}
+                  </Link>
+                </div>
+                <div role="cell">
+                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">成績</span>
+                  <span className="mt-1 block text-sm font-black text-brand-black">{cupPlacement ?? '參賽'}</span>
+                </div>
+                <div role="cell" className="sm:text-right">
+                  <span className="block text-[10px] font-bold tracking-wider text-neutral-400">場次</span>
+                  <span className="mt-1 block font-display text-xl font-black tabular-nums text-brand-blue">
+                    {cupMatches.length}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {team.staff && team.staff.length > 0 && (
           <section>

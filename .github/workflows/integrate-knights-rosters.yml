@@ -38,6 +38,14 @@ jobs:
           const normalizeName = (value) => String(value ?? '').replace(/\s+/g, '').toLowerCase();
           const normalizeEnglishName = (value) => String(value ?? '').replace(/[\s,.'-]+/g, '').toLowerCase();
           const playerIdentity = (player) => player.identityId ?? player.id;
+          const slugify = (value) => String(value ?? '')
+            .normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+          const usedIdentityIds = new Set(players.map(playerIdentity));
 
           const assertParticipant = (leagueId, name) => {
             if (!participants.leagues?.[leagueId]?.includes(name)) {
@@ -66,6 +74,15 @@ jobs:
             if (matches.length > 0) {
               throw new Error(`${source.name}: already exists in 2026/27 under ${matches.map((player) => player.teamId).join(', ')}`);
             }
+          };
+
+          const createNewIdentity = (source, rosterPrefix, index) => {
+            const base = slugify(source.englishName) || `${rosterPrefix}-player-${String(index + 1).padStart(2, '0')}`;
+            let candidate = base;
+            if (usedIdentityIds.has(candidate)) candidate = `${base}-${rosterPrefix}`;
+            if (usedIdentityIds.has(candidate)) candidate = `${base}-${rosterPrefix}-${String(index + 1).padStart(2, '0')}`;
+            if (usedIdentityIds.has(candidate)) throw new Error(`${source.name}: unable to generate unique identityId`);
+            return candidate;
           };
 
           const teamSources = [
@@ -156,7 +173,8 @@ jobs:
             teams.push(team);
           }
 
-          const identityLinks = [];
+          const historicalIdentityLinks = [];
+          const newIdentityIds = [];
           for (const roster of rosterSources) {
             const teamNumbers = new Set();
             roster.players.forEach((source, index) => {
@@ -166,13 +184,16 @@ jobs:
               }
               teamNumbers.add(source.number);
 
-              const identityId = resolveHistoricalIdentity(source);
-              if (identityId && players.some((player) => playerIdentity(player) === identityId)) {
-                throw new Error(`${source.name}: historical identity ${identityId} is already active in 2026/27`);
+              const historicalIdentity = resolveHistoricalIdentity(source);
+              const identityId = historicalIdentity ?? createNewIdentity(source, roster.prefix, index);
+              if (usedIdentityIds.has(identityId)) {
+                throw new Error(`${source.name}: identity ${identityId} is already active in 2026/27`);
               }
+              usedIdentityIds.add(identityId);
 
               const player = {
                 id: `${roster.prefix}-${String(index + 1).padStart(2, '0')}`,
+                identityId,
                 teamId: roster.teamId,
                 name: source.name,
                 englishName: source.englishName,
@@ -181,10 +202,9 @@ jobs:
                 nationality: source.nationality,
                 age: source.age,
               };
-              if (identityId) {
-                player.identityId = identityId;
-                identityLinks.push(`${source.name} -> ${identityId}`);
-              }
+
+              if (historicalIdentity) historicalIdentityLinks.push(`${source.name} -> ${identityId}`);
+              else newIdentityIds.push(`${source.name} -> ${identityId}`);
               players.push(player);
             });
           }
@@ -193,8 +213,9 @@ jobs:
           fs.writeFileSync(playersPath, `${JSON.stringify(players, null, 2)}\n`, 'utf8');
 
           console.log(`Added ${teamSources.length} teams and ${rosterSources.reduce((sum, roster) => sum + roster.players.length, 0)} players.`);
-          console.log(`Historical identity links: ${identityLinks.length}`);
-          if (identityLinks.length) console.log(identityLinks.join('\n'));
+          console.log(`Historical identity links: ${historicalIdentityLinks.length}`);
+          if (historicalIdentityLinks.length) console.log(historicalIdentityLinks.join('\n'));
+          console.log(`New canonical identities: ${newIdentityIds.length}`);
           console.log('No birth dates, ID numbers or contact details were written to public data.');
           NODE
 

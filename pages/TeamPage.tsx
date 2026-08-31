@@ -359,7 +359,7 @@ const TeamPage: React.FC = () => {
                   className="grid grid-cols-[64px_minmax(0,1fr)_76px] items-center gap-3 py-4 text-sm sm:grid-cols-[90px_minmax(0,1fr)_120px]"
                 >
                   <span role="cell" className="font-bold text-brand-black">{record.period}</span>
-                  <span role="cell" className="min-w-0 break-words text-brand-black">
+                  <span role="cell" className="min-w-0 break-words font-semibold text-brand-black">
                     {record.href ? (
                       <Link to={record.href} className="font-bold text-brand-black hover:text-brand-blue">
                         {record.competition}

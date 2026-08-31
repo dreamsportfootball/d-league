@@ -264,5 +264,38 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_luzhu_2026",
+    "identityId": "t_luzhu",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "鹿逐俱樂部",
+    "shortName": "鹿逐俱樂部",
+    "logo": "assets/seasons/2026-27/teams/luzhu-club.png",
+    "primaryColor": "#385984",
+    "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#385984",
+      "away": "#ffffff"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "陳麒竣",
+        "englishName": "CHEN CHI-CHUN"
+      },
+      {
+        "role": "管理",
+        "name": "陳泰盛",
+        "englishName": "CHEN TAI-SHENG"
+      },
+      {
+        "role": "教練",
+        "name": "宋映德",
+        "englishName": "SUNG YIN-TE"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

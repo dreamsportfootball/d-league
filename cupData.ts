@@ -126,7 +126,7 @@ const CUP_TEAM_DEFINITIONS: Record<string, CupTeam> = {
   TN_SENIOR: {
     id: 'TN_SENIOR',
     identityId: 'tainan-evergreen-fc',
-    name: '台南長青足球俱樂部',
+    name: '台南長青俱樂部',
     group: 'A',
   },
   DONG_GANG: { id: 'DONG_GANG', name: '東港足球隊', group: 'A' },

@@ -137,6 +137,20 @@ const getCupHonours = (history: PlayerSeasonRecord[]): PlayerHonour[] =>
     }];
   });
 
+const getLeagueHonourSortKey = (
+  record: PlayerSeasonRecord,
+  leagueId: LeagueId,
+): string => {
+  const matchTimestamps = record.data.matches
+    .filter((match) => match.league === leagueId)
+    .map((match) => match.timestamp);
+
+  if (matchTimestamps.length === 0) return record.seasonId;
+  return matchTimestamps.reduce((latest, timestamp) =>
+    timestamp.localeCompare(latest) > 0 ? timestamp : latest,
+  );
+};
+
 const honourPriority: Record<PlayerHonourKind, number> = {
   GOLDEN_BOOT: 0,
   LEAGUE_CHAMPION: 1,
@@ -191,7 +205,7 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
           leagueId,
           kind,
           title: standing.rank === 1 ? '聯賽冠軍' : '聯賽亞軍',
-          sortKey: record.seasonId,
+          sortKey: getLeagueHonourSortKey(record, leagueId),
           teamId: team.id,
           teamName: team.name,
         });
@@ -205,7 +219,7 @@ export const getPlayerHonours = (entityOrPlayerId: string): PlayerHonour[] => {
           leagueId,
           kind: 'GOLDEN_BOOT',
           title: '金靴獎',
-          sortKey: record.seasonId,
+          sortKey: getLeagueHonourSortKey(record, leagueId),
         });
       }
     });

@@ -206,7 +206,7 @@ const auditViewport = async (viewport) => {
 
       if (route.name === 'team-detail') {
         assert('historical-team-keeps-permanent-page', page.url().includes('#/teams/t_chiayi?season=2025-26') && diagnostics.bodyText.includes('2025/26') && diagnostics.bodyText.includes('嘉義諸羅山FC'), `Resolved ${page.url()}`);
-        assert('team-page-has-official-sections', diagnostics.bodyText.includes('賽程與賽果') && diagnostics.bodyText.includes('球員名單') && diagnostics.bodyText.includes('歷年 D LEAGUE'), 'Expected schedule, squad and history sections');
+        assert('team-page-has-official-sections', diagnostics.bodyText.includes('賽程與賽果') && diagnostics.bodyText.includes('球員名單') && diagnostics.bodyText.includes('歷年賽事'), 'Expected schedule, squad and history sections');
         assert('team-page-links-player-entities', diagnostics.playerLinkCount > 0, `Found ${diagnostics.playerLinkCount} player link(s)`);
         assert('team-page-has-match-dialog-buttons', diagnostics.matchOpenButtonCount > 0, `Found ${diagnostics.matchOpenButtonCount} match button(s)`);
       }

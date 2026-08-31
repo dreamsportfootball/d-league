@@ -46,12 +46,6 @@ const Hero: React.FC = () => {
   const showSeasonPosterActions = !previewingActiveSeason || schedulePublished;
   const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
   const leagueCount = activeSeason.enabledLeagues.length;
-  const participantTeamCount = activeSeason.seasonParticipants
-    ? activeSeason.enabledLeagues.reduce(
-        (count, leagueId) => count + (activeSeason.seasonParticipants?.leagues[leagueId]?.length ?? 0),
-        0,
-      )
-    : 0;
 
   if (showSeasonPoster) {
     return (
@@ -67,13 +61,11 @@ const Hero: React.FC = () => {
           <img
             src={heroImages.desktop}
             onError={() => setImageFailed(true)}
-            alt={previewingActiveSeason
-              ? `${activeSeason.displayName} 官方主視覺`
-              : participantsPublished
-                ? `${activeSeason.displayName} 正式參賽隊伍及分級已公布`
-                : resultsPublished
-                  ? `${activeSeason.displayName} 錄取名單已公布`
-                  : `${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
+            alt={participantsPublished
+              ? `${activeSeason.displayName} 正式參賽隊伍及分級已公布`
+              : resultsPublished
+                ? `${activeSeason.displayName} 錄取名單已公布`
+                : `${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
             width={1920}
             height={800}
             loading="eager"
@@ -83,39 +75,6 @@ const Hero: React.FC = () => {
             className="block h-auto w-full"
           />
         </picture>
-
-        {previewingActiveSeason && participantsPublished && (
-          <div className="border-t border-white/10 bg-brand-black text-white">
-            <div className="container mx-auto flex flex-col px-4 sm:flex-row sm:items-stretch sm:justify-between md:px-6">
-              <div className="min-w-0 border-l-2 border-brand-accent py-4 pl-4 sm:flex sm:flex-1 sm:items-center sm:py-5 md:pl-5">
-                <div>
-                  <p className="font-display text-xs font-black uppercase tracking-[0.24em] text-brand-accent sm:text-sm">
-                    D LEAGUE · {activeSeason.shortName}
-                  </p>
-                  <p className="mt-1 text-sm font-bold leading-6 text-white sm:text-base">
-                    {activeSeason.registrationMessage ?? '正式參賽隊伍及分級已公布'}
-                  </p>
-                </div>
-              </div>
-
-              <dl className="grid grid-cols-2 border-t border-white/10 sm:min-w-[24rem] sm:border-l sm:border-t-0 sm:border-white/10">
-                <div className="flex min-h-20 flex-col justify-center border-r border-white/10 px-4 py-3 sm:px-6">
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">正式參賽</dt>
-                  <dd className="mt-1 font-display text-2xl font-black leading-none tracking-tight text-white sm:text-3xl">
-                    {participantTeamCount}
-                    <span className="ml-1 text-xs font-bold tracking-normal text-white/60 sm:text-sm">支</span>
-                  </dd>
-                </div>
-                <div className="flex min-h-20 flex-col justify-center px-4 py-3 sm:px-6">
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">聯賽級別</dt>
-                  <dd className="mt-1 whitespace-nowrap font-display text-xl font-black leading-none tracking-tight text-white sm:text-2xl">
-                    {activeSeason.enabledLeagues.join(' · ')}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        )}
 
         {showSeasonPosterActions && (
           <div className="border-t border-white/10 bg-brand-black">

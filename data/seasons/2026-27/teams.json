@@ -396,5 +396,58 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_kaohsiung_black_knights_2026",
+    "identityId": "kaohsiung-black-knights",
+    "seasonId": "2026-27",
+    "leagueId": "L1",
+    "name": "高雄黑騎士足球隊",
+    "shortName": "高雄黑騎士足球隊",
+    "logo": "assets/seasons/2026-27/teams/kaohsiung-black-knights.png",
+    "primaryColor": "#111111",
+    "secondaryColor": "#ffffff",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "Joel Vega",
+        "englishName": "L. JOEL VEGA V"
+      },
+      {
+        "role": "管理",
+        "name": "王家偉",
+        "englishName": "WANG JIA WEI"
+      },
+      {
+        "role": "教練",
+        "name": "MICHAEL LENIHAN",
+        "englishName": "MICHAEL STEIN LENIHAN"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_holy_knights_2026",
+    "identityId": "holy-knights-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "聖騎士足球俱樂部",
+    "shortName": "聖騎士足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/holy-knights-fc.png",
+    "primaryColor": "#111111",
+    "secondaryColor": "#ffffff",
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "詹景森",
+        "englishName": "CHAN JING SEN"
+      },
+      {
+        "role": "管理",
+        "name": "曾以安",
+        "englishName": "Tseng Yian"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

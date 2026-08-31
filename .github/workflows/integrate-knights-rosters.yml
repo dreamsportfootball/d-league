@@ -1,0 +1,214 @@
+name: Integrate Knights rosters
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/integrate-knights-rosters.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout season branch
+        uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+
+      - name: Integrate source-verified team and player data
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          const teamsPath = 'data/seasons/2026-27/teams.json';
+          const playersPath = 'data/seasons/2026-27/players.json';
+          const previousPlayersPath = 'data/seasons/2025-26/players.json';
+          const participantsPath = 'data/seasons/2026-27/participants.json';
+
+          const teams = JSON.parse(fs.readFileSync(teamsPath, 'utf8'));
+          const players = JSON.parse(fs.readFileSync(playersPath, 'utf8'));
+          const previousPlayers = JSON.parse(fs.readFileSync(previousPlayersPath, 'utf8'));
+          const participants = JSON.parse(fs.readFileSync(participantsPath, 'utf8'));
+
+          const normalizeName = (value) => String(value ?? '').replace(/\s+/g, '').toLowerCase();
+          const normalizeEnglishName = (value) => String(value ?? '').replace(/[\s,.'-]+/g, '').toLowerCase();
+          const playerIdentity = (player) => player.identityId ?? player.id;
+
+          const assertParticipant = (leagueId, name) => {
+            if (!participants.leagues?.[leagueId]?.includes(name)) {
+              throw new Error(`${name}: not found in ${leagueId} confirmed participants`);
+            }
+          };
+
+          const resolveHistoricalIdentity = (source) => {
+            const byName = previousPlayers.filter((player) => normalizeName(player.name) === normalizeName(source.name));
+            let matches = byName;
+            if (matches.length > 1 && source.englishName) {
+              const byEnglish = matches.filter(
+                (player) => normalizeEnglishName(player.englishName) === normalizeEnglishName(source.englishName),
+              );
+              if (byEnglish.length === 1) matches = byEnglish;
+            }
+            if (matches.length === 0) return undefined;
+            if (matches.length > 1) {
+              throw new Error(`${source.name}: ambiguous 2025/26 identity match (${matches.length})`);
+            }
+            return playerIdentity(matches[0]);
+          };
+
+          const ensureNoCurrentDuplicate = (source) => {
+            const matches = players.filter((player) => normalizeName(player.name) === normalizeName(source.name));
+            if (matches.length > 0) {
+              throw new Error(`${source.name}: already exists in 2026/27 under ${matches.map((player) => player.teamId).join(', ')}`);
+            }
+          };
+
+          const teamSources = [
+            {
+              id: 't_kaohsiung_black_knights_2026',
+              identityId: 'kaohsiung-black-knights',
+              seasonId: '2026-27',
+              leagueId: 'L1',
+              name: '高雄黑騎士足球隊',
+              shortName: '高雄黑騎士足球隊',
+              logo: 'assets/seasons/2026-27/teams/kaohsiung-black-knights.png',
+              primaryColor: '#111111',
+              secondaryColor: '#ffffff',
+              staff: [
+                { role: '領隊', name: 'Joel Vega', englishName: 'L. JOEL VEGA V' },
+                { role: '管理', name: '王家偉', englishName: 'WANG JIA WEI' },
+                { role: '教練', name: 'MICHAEL LENIHAN', englishName: 'MICHAEL STEIN LENIHAN' },
+              ],
+              competitionStatus: 'ACTIVE',
+            },
+            {
+              id: 't_holy_knights_2026',
+              identityId: 'holy-knights-fc',
+              seasonId: '2026-27',
+              leagueId: 'L3',
+              name: '聖騎士足球俱樂部',
+              shortName: '聖騎士足球俱樂部',
+              logo: 'assets/seasons/2026-27/teams/holy-knights-fc.png',
+              primaryColor: '#111111',
+              secondaryColor: '#ffffff',
+              staff: [
+                { role: '領隊', name: '詹景森', englishName: 'CHAN JING SEN' },
+                { role: '管理', name: '曾以安', englishName: 'Tseng Yian' },
+              ],
+              competitionStatus: 'ACTIVE',
+            },
+          ];
+
+          const rosterSources = [
+            {
+              teamId: 't_kaohsiung_black_knights_2026',
+              prefix: 'kbk26',
+              players: [
+                { number: 10, name: 'Joel Vega', englishName: 'L. JOEL VEGA V', gender: '男', nationality: '尼加拉瓜', age: 37 },
+                { number: 17, name: '王家偉', englishName: 'WANG JIA WEI', gender: '男', nationality: '台灣', age: 34 },
+                { number: 16, name: 'MICHAEL LENIHAN', englishName: 'MICHAEL STEIN LENIHAN', gender: '男', nationality: '愛爾蘭', age: 39 },
+                { number: 36, name: 'PATRICK HAINES', englishName: 'PATRICK BRYAN HAINES', gender: '男', nationality: '美國', age: 38 },
+                { number: 26, name: 'CHARLES NWANGI', englishName: 'CHARLES NWANGI NJOROGE', gender: '男', nationality: '肯亞', age: 37 },
+                { number: 4, name: 'LIKHWA', englishName: 'HLANDZE LIKHWA LETHU', gender: '男', nationality: '史瓦帝尼', age: 27 },
+                { number: 79, name: 'ALI', englishName: 'AHMED NADEEM KHALEEL KANDOURI', gender: '男', nationality: '伊拉克', age: 37 },
+                { number: 29, name: 'Lucas Roa', englishName: 'Lucas Matias Roa Espinola', gender: '男', nationality: '巴拉圭', age: 23 },
+                { number: 11, name: '連于翔', englishName: 'LIAN YU XIANG', gender: '男', nationality: '台灣', age: 16 },
+                { number: 30, name: '黃衍普', englishName: 'HUANG YEN PU', gender: '男', nationality: '台灣', age: 16 },
+                { number: 7, name: 'MANONGI DICKSON', englishName: 'MANONGI DICKSON', gender: '男', nationality: '索羅門群島', age: 33 },
+                { number: 2, name: '姜斌', englishName: 'CHIANG PIN', gender: '男', nationality: '台灣', age: 21 },
+              ],
+            },
+            {
+              teamId: 't_holy_knights_2026',
+              prefix: 'holy26',
+              players: [
+                { number: 77, name: '林暐傑', englishName: 'WEI-JIE LIN', gender: '男', nationality: '中華民國', age: 24 },
+                { number: 14, name: '劉子祥', englishName: 'LIU, TZU-HSIANG', gender: '男', nationality: '中華民國', age: 24 },
+                { number: 13, name: '蘇帟緁', englishName: 'Su Yi Jie', gender: '女', nationality: '中華民國', age: 22 },
+                { number: 21, name: '戴吉甫', englishName: 'DAl CHI FU', gender: '男', nationality: '中華民國', age: 53 },
+                { number: 23, name: '徐貫評', englishName: 'HSU-GUAN PING', gender: '男', nationality: '中華民國', age: 25 },
+                { number: 3, name: '黃柏文', englishName: 'Huang Bo-Wen', gender: '男', nationality: '中華民國', age: 39 },
+                { number: 1, name: '陳竑沅', englishName: 'CHEN,HUNG-YUAN', gender: '男', nationality: '中華民國', age: 18 },
+                { number: 79, name: '謝承晉', englishName: 'Xie chen jin', gender: '男', nationality: '中華民國', age: 22 },
+                { number: 86, name: '周宥廷', englishName: 'CHOU, YU-TING', gender: '男', nationality: '中華民國', age: 25 },
+                { number: 95, name: '黃品喬', englishName: 'Huang Pin Chiao', gender: '男', nationality: '中華民國', age: 31 },
+                { number: 26, name: '黃祥恩', englishName: 'Xiang.En.Huang', gender: '男', nationality: '中華民國', age: 24 },
+                { number: 7, name: '王立任', englishName: 'Wang Li Ren', gender: '男', nationality: '中華民國', age: 21 },
+                { number: 9, name: '姚昇宏', englishName: 'Yao-sheng-hung', gender: '男', nationality: '中華民國', age: 50 },
+                { number: 2, name: '蘇憲奕', englishName: 'HSIEN I SU', gender: '男', nationality: '中華民國', age: 19 },
+                { number: 53, name: '范丞佑', englishName: 'FAN CHENG YU', gender: '男', nationality: '中華民國', age: 16 },
+                { number: 16, name: '蘇子恆', englishName: 'Su, Tzu-Heng', gender: '男', nationality: '中華民國', age: 16 },
+                { number: 0, name: '張至虔', englishName: 'Chang chin chien', gender: '男', nationality: '中華民國', age: 24 },
+              ],
+            },
+          ];
+
+          for (const team of teamSources) {
+            assertParticipant(team.leagueId, team.name);
+            if (teams.some((existing) => existing.id === team.id || existing.name === team.name || existing.identityId === team.identityId)) {
+              throw new Error(`${team.name}: team already exists in teams.json`);
+            }
+            teams.push(team);
+          }
+
+          const identityLinks = [];
+          for (const roster of rosterSources) {
+            const teamNumbers = new Set();
+            roster.players.forEach((source, index) => {
+              ensureNoCurrentDuplicate(source);
+              if (teamNumbers.has(source.number)) {
+                throw new Error(`${roster.teamId}: duplicate shirt number ${source.number}`);
+              }
+              teamNumbers.add(source.number);
+
+              const identityId = resolveHistoricalIdentity(source);
+              if (identityId && players.some((player) => playerIdentity(player) === identityId)) {
+                throw new Error(`${source.name}: historical identity ${identityId} is already active in 2026/27`);
+              }
+
+              const player = {
+                id: `${roster.prefix}-${String(index + 1).padStart(2, '0')}`,
+                teamId: roster.teamId,
+                name: source.name,
+                englishName: source.englishName,
+                number: source.number,
+                gender: source.gender,
+                nationality: source.nationality,
+                age: source.age,
+              };
+              if (identityId) {
+                player.identityId = identityId;
+                identityLinks.push(`${source.name} -> ${identityId}`);
+              }
+              players.push(player);
+            });
+          }
+
+          fs.writeFileSync(teamsPath, `${JSON.stringify(teams, null, 2)}\n`, 'utf8');
+          fs.writeFileSync(playersPath, `${JSON.stringify(players, null, 2)}\n`, 'utf8');
+
+          console.log(`Added ${teamSources.length} teams and ${rosterSources.reduce((sum, roster) => sum + roster.players.length, 0)} players.`);
+          console.log(`Historical identity links: ${identityLinks.length}`);
+          if (identityLinks.length) console.log(identityLinks.join('\n'));
+          console.log('No birth dates, ID numbers or contact details were written to public data.');
+          NODE
+
+      - name: Validate season data
+        run: npm run validate:data
+
+      - name: Remove one-time integration workflow
+        run: rm -f .github/workflows/integrate-knights-rosters.yml
+
+      - name: Commit roster data
+        run: |
+          git config user.name "dreamsportfootball"
+          git config user.email "dreamsportfootball@gmail.com"
+          git add data/seasons/2026-27/teams.json data/seasons/2026-27/players.json .github/workflows/integrate-knights-rosters.yml
+          git diff --cached --quiet && exit 0
+          git commit -m "Add Knights 2026-27 rosters"
+          git push origin HEAD:season/2026-27

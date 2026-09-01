@@ -146,7 +146,7 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     id: '2026-27',
     displayName: 'D LEAGUE 2026/27',
     shortName: '2026/27',
-    status: 'upcoming',
+    status: 'active',
     isDefault: true,
     ageReferenceDate: '2026-11-01',
     registrationStart: '2026-06-23',

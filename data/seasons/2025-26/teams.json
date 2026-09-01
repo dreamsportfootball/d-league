@@ -7,7 +7,8 @@
     "shortName": "嘉義諸羅山FC",
     "logo": "assets/teams/chiayi.png",
     "primaryColor": "#90d1d2",
-    "secondaryColor": "#0e3679"
+    "secondaryColor": "#0e3679",
+    "identityId": "chiayi-235-fc"
   },
   {
     "id": "t_jiuhao",

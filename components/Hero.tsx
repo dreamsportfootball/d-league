@@ -40,10 +40,9 @@ const Hero: React.FC = () => {
   const resultsPublished = Boolean(activeSeason.registrationResults);
   const announcementPublished = participantsPublished || resultsPublished;
   const schedulePublished = seasonData.matches.length > 0;
-  const previewingActiveSeason = import.meta.env.VITE_PREVIEW_SEASON_STATUS === 'active';
   const showSeasonPoster =
     (isRegistration || announcementPublished) && Boolean(activeSeason.heroImageDesktop) && !imageFailed;
-  const showSeasonPosterActions = !previewingActiveSeason || schedulePublished;
+  const showSeasonPosterActions = isRegistration || schedulePublished;
   const expectedTeamCount = activeSeason.leagues[activeSeason.enabledLeagues[0]]?.expectedTeamCount;
   const leagueCount = activeSeason.enabledLeagues.length;
 
@@ -84,7 +83,7 @@ const Hero: React.FC = () => {
                   立即報名 <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               )}
-              {!announcementPublished && SHOW_REGISTRATION_NAV && !previewingActiveSeason && (
+              {!announcementPublished && SHOW_REGISTRATION_NAV && (
                 <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                   報名詳情
                 </Link>
@@ -95,7 +94,7 @@ const Hero: React.FC = () => {
                   <Link to="/schedule" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                     查看賽程 <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
-                  {SHOW_REGISTRATION_NAV && !previewingActiveSeason && (
+                  {SHOW_REGISTRATION_NAV && (
                     <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center border border-white/45 px-7 py-3 text-sm font-bold uppercase tracking-widest text-white transition-colors hover:border-white hover:bg-white hover:text-brand-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                       {participantsPublished ? '查看正式分級' : '查看錄取名單'}
                     </Link>
@@ -103,7 +102,7 @@ const Hero: React.FC = () => {
                 </>
               )}
 
-              {announcementPublished && !schedulePublished && !previewingActiveSeason && (
+              {announcementPublished && !schedulePublished && (
                 <>
                   {SHOW_REGISTRATION_NAV ? (
                     <Link to="/registration" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
@@ -122,7 +121,7 @@ const Hero: React.FC = () => {
                 </>
               )}
 
-              {!previewingActiveSeason && activeSeason.regulationsUrl && (
+              {activeSeason.regulationsUrl && (
                 <a href={activeSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 w-full items-center justify-center px-5 py-3 text-sm font-bold uppercase tracking-widest text-white/80 transition-colors hover:text-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                   <FileText className="mr-2 h-5 w-5" />競賽規程
                 </a>
@@ -188,7 +187,7 @@ const Hero: React.FC = () => {
                   <span className="absolute inset-0 -skew-x-12 border border-white/30 backdrop-blur-sm transition-all duration-300 group-hover:border-white group-hover:bg-white" />
                   <span className="relative z-10">查看積分榜</span>
                 </Link>
-                {!previewingActiveSeason && activeSeason.regulationsUrl && (
+                {activeSeason.regulationsUrl && (
                   <a href={activeSeason.regulationsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-4 py-4 text-sm font-bold uppercase tracking-widest text-white/75 transition-colors hover:text-brand-accent">
                     <FileText className="mr-2 h-5 w-5" />賽事規程
                   </a>

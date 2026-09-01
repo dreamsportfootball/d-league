@@ -51,6 +51,9 @@ const normalizeVenueText = (value: string): string =>
     .split('仁德文賢國中人工草皮球場')
     .join(MATCH_VENUE_NAME);
 
+const normalizeNationality = (value: string): string =>
+  value === '中華民國' ? '台灣' : value;
+
 const getOptimizedAssetPath = (path: string): string => {
   if (!useOptimizedImages || !/\.(png|jpe?g)$/i.test(path)) return path;
   return path.replace(/\.(png|jpe?g)$/i, '.webp');
@@ -90,6 +93,7 @@ const makeData = (
     const identityId = playerAliases[player.id] ?? player.identityId;
     return {
       ...player,
+      nationality: normalizeNationality(player.nationality),
       age: resolvePlayerAge(player, ageReferenceDate),
       ...(identityId ? { identityId } : {}),
     };

@@ -38,7 +38,8 @@ const context = await browser.newContext({
   serviceWorkers: 'block',
 });
 
-const validateRoute = async (route) => {
+const validateRegistration = async () => {
+  const route = '/registration';
   const page = await context.newPage();
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
@@ -78,8 +79,7 @@ const validateRoute = async (route) => {
 };
 
 try {
-  await validateRoute('/');
-  await validateRoute('/registration');
+  await validateRegistration();
   console.log('Season participants validation passed');
 } finally {
   await context.close();

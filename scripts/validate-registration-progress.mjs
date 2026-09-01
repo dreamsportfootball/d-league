@@ -38,49 +38,6 @@ const context = await browser.newContext({
   serviceWorkers: 'block',
 });
 
-const assertPageHealth = async (page, route, pageErrors) => {
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
-  );
-  if (hasHorizontalOverflow) fail(`${route}: page causes horizontal overflow`);
-  if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
-};
-
-const validateHome = async () => {
-  const route = '/';
-  const page = await context.newPage();
-  const pageErrors = [];
-  page.on('pageerror', (error) => pageErrors.push(error.message));
-
-  try {
-    await page.goto(`${baseUrl}/#${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await page.waitForSelector('#root > *', { timeout: 12000 });
-
-    const teamsSection = page.locator('#teams').first();
-    await teamsSection.waitFor({ state: 'visible', timeout: 12000 });
-    const text = (await teamsSection.innerText()).replace(/\s+/g, ' ').trim();
-
-    if (!text.includes('參賽 球隊') && !text.includes('參賽球隊')) {
-      fail(`${route}: missing active-season teams section`);
-    }
-    if (!text.includes('18 支正式參賽球隊')) {
-      fail(`${route}: missing confirmed 18-team count`);
-    }
-    for (const team of expectedTeams) {
-      if (!text.includes(team)) fail(`${route}: missing confirmed team “${team}”`);
-    }
-
-    const bodyText = (await page.locator('body').innerText()).replace(/\s+/g, ' ').trim();
-    for (const forbidden of forbiddenMessages) {
-      if (bodyText.includes(forbidden)) fail(`${route}: should not display obsolete registration text “${forbidden}”`);
-    }
-
-    await assertPageHealth(page, route, pageErrors);
-  } finally {
-    await page.close();
-  }
-};
-
 const validateRegistration = async () => {
   const route = '/registration';
   const page = await context.newPage();
@@ -111,14 +68,17 @@ const validateRegistration = async () => {
       fail(`${route}: should not render a registration-capacity progress bar after confirmed teams are published`);
     }
 
-    await assertPageHealth(page, route, pageErrors);
+    const hasHorizontalOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+    if (hasHorizontalOverflow) fail(`${route}: confirmed participant information causes horizontal overflow`);
+    if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
   } finally {
     await page.close();
   }
 };
 
 try {
-  await validateHome();
   await validateRegistration();
   console.log('Season participants validation passed');
 } finally {

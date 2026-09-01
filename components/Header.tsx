@@ -113,7 +113,7 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-4 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-7" aria-label="主要導覽">
+        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-6 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-8" aria-label="主要導覽">
           {navItems.map((item) => {
             const desktopExpanded = desktopDropdownOpen === item.name;
             const childActive = item.children?.some((child) => isPathActive(child.href)) ?? false;

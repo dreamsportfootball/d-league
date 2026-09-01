@@ -60,6 +60,16 @@ for (const viewport of viewports) {
     await page.waitForURL(/#\/teams\//);
     await page.waitForSelector('#root > *');
 
+    const storageAfterClick = await page.evaluate(() =>
+      Object.fromEntries(
+        Object.keys(sessionStorage)
+          .filter((key) => key.startsWith('dleague:scroll'))
+          .sort()
+          .map((key) => [key, sessionStorage.getItem(key)]),
+      ),
+    );
+    console.log(`${viewport.name}: storage after click`, JSON.stringify(storageAfterClick));
+
     await page.goBack();
     await page.waitForURL(/#\/$/);
     await teamsSection.waitFor({ state: 'attached' });
@@ -78,6 +88,14 @@ for (const viewport of viewports) {
         return {
           found: link instanceof HTMLElement,
           top: link instanceof HTMLElement ? link.getBoundingClientRect().top : null,
+          scrollY: window.scrollY,
+          scrollHeight: document.documentElement.scrollHeight,
+          storage: Object.fromEntries(
+            Object.keys(sessionStorage)
+              .filter((key) => key.startsWith('dleague:scroll'))
+              .sort()
+              .map((key) => [key, sessionStorage.getItem(key)]),
+          ),
         };
       }, { label: ariaLabel, scrollAnchorId: anchorId });
 
@@ -102,8 +120,18 @@ for (const viewport of viewports) {
         scrollY: window.scrollY,
         scrollHeight: document.documentElement.scrollHeight,
         teamsTop: document.getElementById('teams')?.getBoundingClientRect().top ?? null,
+        storage: Object.fromEntries(
+          Object.keys(sessionStorage)
+            .filter((key) => key.startsWith('dleague:scroll'))
+            .sort()
+            .map((key) => [key, sessionStorage.getItem(key)]),
+        ),
       };
     }, { label: ariaLabel, scrollAnchorId: anchorId });
+
+    console.log(
+      `${viewport.name}: before top=${beforeTop.toFixed(1)} scrollY=${beforeScrollY}; final=${JSON.stringify(finalState)}`,
+    );
 
     if (!restored || finalState.top === null) {
       fail(`${viewport.name}: did not restore clicked team within ${allowedDelta}px; diagnostics=${JSON.stringify(finalState)}`);

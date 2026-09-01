@@ -30,7 +30,7 @@
     "englishName": "LIN WEI HAO",
     "gender": "男",
     "nationality": "台灣",
-    "age": 15
+    "age": 14
   },
   {
     "id": "sf26-04",
@@ -74,7 +74,7 @@
     "englishName": "Pan Li-Yan",
     "gender": "女",
     "nationality": "台灣",
-    "age": 19
+    "age": 18
   },
   {
     "id": "sf26-08",
@@ -85,7 +85,7 @@
     "englishName": "Huang,Chen-Wei",
     "gender": "男",
     "nationality": "台灣",
-    "age": 15
+    "age": 14
   },
   {
     "id": "sf26-09",
@@ -151,7 +151,7 @@
     "englishName": "Huang Sung-Wei",
     "gender": "男",
     "nationality": "台灣",
-    "age": 16
+    "age": 15
   },
   {
     "id": "sf26-15",
@@ -162,7 +162,7 @@
     "englishName": "Lin Liang Yun",
     "gender": "女",
     "nationality": "台灣",
-    "age": 16
+    "age": 17
   },
   {
     "id": "sf26-16",
@@ -173,7 +173,7 @@
     "englishName": "YANGCHEMING",
     "gender": "男",
     "nationality": "台灣",
-    "age": 20
+    "age": 19
   },
   {
     "id": "sf26-17",
@@ -206,7 +206,7 @@
     "englishName": "CAI MING WEI",
     "gender": "男",
     "nationality": "台灣",
-    "age": 15
+    "age": 14
   },
   {
     "id": "sf26-20",
@@ -217,7 +217,7 @@
     "englishName": "LU CHENG YE",
     "gender": "男",
     "nationality": "台灣",
-    "age": 16
+    "age": 17
   },
   {
     "id": "pw26-01",
@@ -393,7 +393,6 @@
     "englishName": "CHANG CHIA WEI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2004-12-24",
     "age": 21
   },
   {
@@ -405,7 +404,6 @@
     "englishName": "YANG CHING TANG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2003-09-23",
     "age": 23
   },
   {
@@ -417,7 +415,6 @@
     "englishName": "LIU LI WEI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1989-12-08",
     "age": 36
   },
   {
@@ -429,7 +426,6 @@
     "englishName": "Tang,Hung chun",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2004-11-14",
     "age": 21
   },
   {
@@ -441,7 +437,6 @@
     "englishName": "Wu ming-wei",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1987-11-03",
     "age": 38
   },
   {
@@ -453,7 +448,6 @@
     "englishName": "LU ZONG LIN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1995-12-12",
     "age": 30
   },
   {
@@ -465,7 +459,6 @@
     "englishName": "CHUNG HAO-YU",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2000-08-18",
     "age": 26
   },
   {
@@ -477,7 +470,6 @@
     "englishName": "LEE HSIN-YEN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1999-08-08",
     "age": 27
   },
   {
@@ -489,7 +481,6 @@
     "englishName": "Li kun hong",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1998-11-20",
     "age": 27
   },
   {
@@ -501,7 +492,6 @@
     "englishName": "Bo-Yan CHEN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1993-07-07",
     "age": 33
   },
   {
@@ -513,7 +503,6 @@
     "englishName": "HUANG XIANG-LI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1998-05-20",
     "age": 28
   },
   {
@@ -525,7 +514,6 @@
     "englishName": "CHEN YU CHIEH",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1994-11-20",
     "age": 31
   },
   {
@@ -537,7 +525,6 @@
     "englishName": "CHANG WEI-CHOU",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1999-10-11",
     "age": 27
   },
   {
@@ -549,7 +536,6 @@
     "englishName": "HUNG,CHING-HUAI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2000-01-22",
     "age": 26
   },
   {
@@ -561,7 +547,6 @@
     "englishName": "YU-SHENG FANG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2000-01-31",
     "age": 26
   },
   {
@@ -573,7 +558,6 @@
     "englishName": "Chen Chih-Hung",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1997-03-06",
     "age": 29
   },
   {
@@ -585,7 +569,7 @@
     "englishName": "CHEN YANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26
+    "age": 27
   },
   {
     "id": "tq26-02",
@@ -596,7 +580,7 @@
     "englishName": "LI WEIHAO",
     "gender": "男",
     "nationality": "台灣",
-    "age": 36
+    "age": 37
   },
   {
     "id": "tq26-03",
@@ -728,7 +712,7 @@
     "englishName": "sun chinnan",
     "gender": "男",
     "nationality": "台灣",
-    "age": 52
+    "age": 53
   },
   {
     "id": "tq26-15",
@@ -739,7 +723,7 @@
     "englishName": "LIN YEN-CHENG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 24
+    "age": 25
   },
   {
     "id": "tq26-16",
@@ -750,7 +734,7 @@
     "englishName": "TSAI MENG HUNG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 33
+    "age": 34
   },
   {
     "id": "tq26-17",
@@ -783,7 +767,7 @@
     "englishName": "Tse Chun Kit",
     "gender": "男",
     "nationality": "香港",
-    "age": 28
+    "age": 29
   },
   {
     "id": "khk26-03",
@@ -794,7 +778,7 @@
     "englishName": "Cheng Li",
     "gender": "男",
     "nationality": "台灣",
-    "age": 37
+    "age": 38
   },
   {
     "id": "khk26-04",
@@ -838,7 +822,7 @@
     "englishName": "Marie Theresa Gantner",
     "gender": "女",
     "nationality": "德國",
-    "age": 28
+    "age": 29
   },
   {
     "id": "khk26-08",
@@ -1003,7 +987,7 @@
     "englishName": "HUANG HAO CHENG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 18
+    "age": 19
   },
   {
     "id": "pwa26-08",
@@ -1036,7 +1020,7 @@
     "englishName": "WUN  JYUN WEI",
     "gender": "男",
     "nationality": "台灣",
-    "age": 43
+    "age": 44
   },
   {
     "id": "pwa26-11",
@@ -1047,7 +1031,7 @@
     "englishName": "CHEN I SHENG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 19
+    "age": 20
   },
   {
     "id": "pwa26-12",
@@ -1113,7 +1097,7 @@
     "englishName": "CHEN PO HSIEH",
     "gender": "男",
     "nationality": "台灣",
-    "age": 32
+    "age": 33
   },
   {
     "id": "pwa26-18",
@@ -1410,7 +1394,7 @@
     "englishName": "shin Jae seong",
     "gender": "男",
     "nationality": "台灣",
-    "age": 24
+    "age": 21
   },
   {
     "id": "bw26-06",
@@ -1443,7 +1427,7 @@
     "englishName": "GAO, LI-ZHONG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 36
+    "age": 37
   },
   {
     "id": "bw26-09",
@@ -1454,7 +1438,7 @@
     "englishName": "SU CHING TANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 18
+    "age": 19
   },
   {
     "id": "bw26-10",
@@ -1542,7 +1526,6 @@
     "englishName": "LI,Bing-Jin",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2000-04-11",
     "age": 26
   },
   {
@@ -1554,7 +1537,6 @@
     "englishName": "LIN,Jia-Ming",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1989-04-23",
     "age": 37
   },
   {
@@ -1566,7 +1548,6 @@
     "englishName": "NI,Bo-Xuan",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2003-04-02",
     "age": 23
   },
   {
@@ -1578,7 +1559,6 @@
     "englishName": "ZHANG,JIAN-ZHI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1989-08-29",
     "age": 37
   },
   {
@@ -1590,7 +1570,6 @@
     "englishName": "Sun,Yu-Cheng",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1990-07-18",
     "age": 36
   },
   {
@@ -1602,7 +1581,6 @@
     "englishName": "HONG,Pin-Cheng",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1993-04-16",
     "age": 33
   },
   {
@@ -1614,7 +1592,6 @@
     "englishName": "CHEN Li-Xin",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1982-06-28",
     "age": 44
   },
   {
@@ -1626,7 +1603,6 @@
     "englishName": "PAN,Zhi-Hao",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2000-06-28",
     "age": 26
   },
   {
@@ -1638,7 +1614,6 @@
     "englishName": "NI,Tian-Ming",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1990-12-24",
     "age": 35
   },
   {
@@ -1650,7 +1625,6 @@
     "englishName": "YANG,Jun-Xiong",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1996-10-09",
     "age": 30
   },
   {
@@ -1662,7 +1636,6 @@
     "englishName": "ZENG,Long-Sheng",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1993-04-07",
     "age": 33
   },
   {
@@ -1674,7 +1647,6 @@
     "englishName": "Hong,Pin-Yu",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1995-12-03",
     "age": 30
   },
   {
@@ -1686,7 +1658,6 @@
     "englishName": "LIN,Ji-Ting",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1997-03-07",
     "age": 29
   },
   {
@@ -1698,7 +1669,6 @@
     "englishName": "ZHANG,Zhi-Wen",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1999-12-25",
     "age": 26
   },
   {
@@ -1710,7 +1680,6 @@
     "englishName": "WU,Ming-Wei",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1998-08-02",
     "age": 28
   },
   {
@@ -1722,7 +1691,6 @@
     "englishName": "LI,JIA-XUN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1996-11-09",
     "age": 29
   },
   {
@@ -1734,7 +1702,6 @@
     "englishName": "CHEN,Chun-Chieh",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1982-09-19",
     "age": 44
   },
   {
@@ -1746,7 +1713,6 @@
     "englishName": "Chung,Hao-hsien",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1990-05-04",
     "age": 36
   },
   {
@@ -1758,7 +1724,6 @@
     "englishName": "Huang,chieh",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1997-05-30",
     "age": 29
   },
   {
@@ -1770,7 +1735,1128 @@
     "englishName": "LIN,YOU-CHENG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1996-10-11",
     "age": 30
+  },
+  {
+    "id": "lz26-01",
+    "identityId": "lz-10",
+    "teamId": "t_luzhu_2026",
+    "number": 10,
+    "name": "陳麒竣",
+    "englishName": "CHEN CHI-CHUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 36
+  },
+  {
+    "id": "lz26-02",
+    "identityId": "lz-03",
+    "teamId": "t_luzhu_2026",
+    "number": 3,
+    "name": "宋映德",
+    "englishName": "SUNG YIN-TE",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "lz26-03",
+    "identityId": "lz-04",
+    "teamId": "t_luzhu_2026",
+    "number": 4,
+    "name": "謝詒婷",
+    "englishName": "HSIEH YI-TING",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 36
+  },
+  {
+    "id": "lz26-04",
+    "identityId": "lz-07",
+    "teamId": "t_luzhu_2026",
+    "number": 7,
+    "name": "林伯仲",
+    "englishName": "LIN PO-CHUNG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 39
+  },
+  {
+    "id": "lz26-05",
+    "identityId": "lz-34",
+    "teamId": "t_luzhu_2026",
+    "number": 34,
+    "name": "李修沛",
+    "englishName": "LEE HSIU-PEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 41
+  },
+  {
+    "id": "lz26-06",
+    "identityId": "lz-17",
+    "teamId": "t_luzhu_2026",
+    "number": 17,
+    "name": "梶原航",
+    "englishName": "WATARU KAJIHARA",
+    "gender": "男",
+    "nationality": "日本",
+    "age": 43
+  },
+  {
+    "id": "lz26-07",
+    "identityId": "lz-52",
+    "teamId": "t_luzhu_2026",
+    "number": 52,
+    "name": "鐘佳勳",
+    "englishName": "CHUNG CHIA-HSUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 37
+  },
+  {
+    "id": "lz26-08",
+    "identityId": "lz-08",
+    "teamId": "t_luzhu_2026",
+    "number": 8,
+    "name": "王子豪",
+    "englishName": "WANG TZU-HAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 47
+  },
+  {
+    "id": "lz26-09",
+    "identityId": "lz-29",
+    "teamId": "t_luzhu_2026",
+    "number": 29,
+    "name": "陳泰盛",
+    "englishName": "CHEN TAI-SHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 42
+  },
+  {
+    "id": "lz26-10",
+    "identityId": "lz-21",
+    "teamId": "t_luzhu_2026",
+    "number": 21,
+    "name": "林敬祐",
+    "englishName": "LIN CHING-YU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 18
+  },
+  {
+    "id": "lz26-11",
+    "identityId": "lz-56",
+    "teamId": "t_luzhu_2026",
+    "number": 56,
+    "name": "陳穧元",
+    "englishName": "CHEN CHI-YUAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 59
+  },
+  {
+    "id": "lz26-12",
+    "identityId": "lz-13",
+    "teamId": "t_luzhu_2026",
+    "number": 13,
+    "name": "李祐任",
+    "englishName": "LI YOU-REN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 38
+  },
+  {
+    "id": "lz26-13",
+    "identityId": "lz-02",
+    "teamId": "t_luzhu_2026",
+    "number": 2,
+    "name": "蔡昀晏",
+    "englishName": "TSAI YUN-YEN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 35
+  },
+  {
+    "id": "lz26-14",
+    "identityId": "lz-38",
+    "teamId": "t_luzhu_2026",
+    "number": 38,
+    "name": "方韻雅",
+    "englishName": "FANG YUN-YA",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 42
+  },
+  {
+    "id": "lz26-15",
+    "identityId": "lz-88",
+    "teamId": "t_luzhu_2026",
+    "number": 88,
+    "name": "林冠宇",
+    "englishName": "Lin Guan Yu",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 41
+  },
+  {
+    "id": "lz26-16",
+    "identityId": "gu-chih-yin",
+    "teamId": "t_luzhu_2026",
+    "number": 9,
+    "name": "古智尹",
+    "englishName": "GU CHIH YIN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "lz26-17",
+    "identityId": "lz-06",
+    "teamId": "t_luzhu_2026",
+    "number": 6,
+    "name": "林宜蓁",
+    "englishName": "LIN YI ZHEN",
+    "gender": "女",
+    "nationality": "台灣",
+    "age": 21
+  },
+  {
+    "id": "lz26-18",
+    "identityId": "cl-14",
+    "teamId": "t_luzhu_2026",
+    "number": 14,
+    "name": "蘇宗霆",
+    "englishName": "TSUNG TING SU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 33
+  },
+  {
+    "id": "wa26-01",
+    "identityId": "cl-19",
+    "teamId": "t_wanderers_2026",
+    "number": 19,
+    "name": "林湧鈞",
+    "englishName": "LIN YUNG CHUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 18
+  },
+  {
+    "id": "wa26-02",
+    "identityId": "cl-05",
+    "teamId": "t_wanderers_2026",
+    "number": 5,
+    "name": "葉晉嘉",
+    "englishName": "YEH JIN-JIA",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 21
+  },
+  {
+    "id": "wa26-03",
+    "identityId": "cl-17",
+    "teamId": "t_wanderers_2026",
+    "number": 17,
+    "name": "丁誌暉",
+    "englishName": "DING,ZHI-HUI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 19
+  },
+  {
+    "id": "wa26-04",
+    "identityId": "tsai-yi-cheng",
+    "teamId": "t_wanderers_2026",
+    "number": 36,
+    "name": "蔡羿丞",
+    "englishName": "TSAI YI-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 20
+  },
+  {
+    "id": "wa26-05",
+    "identityId": "hong-chi-hong",
+    "teamId": "t_wanderers_2026",
+    "number": 66,
+    "name": "洪萁宏",
+    "englishName": "HONG CHI HONG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "wa26-06",
+    "identityId": "wang-tzu-ching",
+    "teamId": "t_wanderers_2026",
+    "number": 30,
+    "name": "王子境",
+    "englishName": "WANG,TZU CHING",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 28
+  },
+  {
+    "id": "wa26-07",
+    "identityId": "chen-wei-ting-wanderers",
+    "teamId": "t_wanderers_2026",
+    "number": 2,
+    "name": "陳韋廷",
+    "englishName": "CHEN WEI TING",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 46
+  },
+  {
+    "id": "wa26-08",
+    "identityId": "cl-10",
+    "teamId": "t_wanderers_2026",
+    "number": 77,
+    "name": "毛邦澤",
+    "englishName": "MAO PANG TSE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  },
+  {
+    "id": "wa26-09",
+    "identityId": "shen-jia-hong",
+    "teamId": "t_wanderers_2026",
+    "number": 47,
+    "name": "沈家弘",
+    "englishName": "SHEN,JIA-HONG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 23
+  },
+  {
+    "id": "wa26-10",
+    "identityId": "mao-pang-cheng",
+    "teamId": "t_wanderers_2026",
+    "number": 33,
+    "name": "毛邦丞",
+    "englishName": "MAO PANG CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 24
+  },
+  {
+    "id": "wa26-11",
+    "identityId": "wang-liang-chun",
+    "teamId": "t_wanderers_2026",
+    "number": 11,
+    "name": "王亮均",
+    "englishName": "WANG LIANG CHUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  },
+  {
+    "id": "wa26-12",
+    "identityId": "chen-po-sheng",
+    "teamId": "t_wanderers_2026",
+    "number": 29,
+    "name": "陳柏陞",
+    "englishName": "CHEN PO SHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  },
+  {
+    "id": "wa26-13",
+    "identityId": "chang-tung",
+    "teamId": "t_wanderers_2026",
+    "number": 13,
+    "name": "張董",
+    "englishName": "CHANG TUNG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 21
+  },
+  {
+    "id": "wa26-14",
+    "identityId": "cl-15",
+    "teamId": "t_wanderers_2026",
+    "number": 8,
+    "name": "洪子程",
+    "englishName": "HUNG ZI-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 17
+  },
+  {
+    "id": "wa26-15",
+    "identityId": "chang-hsien-kuo",
+    "teamId": "t_wanderers_2026",
+    "number": 1,
+    "name": "張賢國",
+    "englishName": "CHANG HSIEN KUO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 46
+  },
+  {
+    "id": "wa26-16",
+    "identityId": "yu-yu-hsiang",
+    "teamId": "t_wanderers_2026",
+    "number": 9,
+    "name": "尤昱翔",
+    "englishName": "YU,YU HSIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 19
+  },
+  {
+    "id": "c23526-01",
+    "identityId": "cy-01",
+    "teamId": "t_chiayi_235_2026",
+    "number": 1,
+    "name": "陳日揚",
+    "englishName": "CHEN JIH YANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "c23526-02",
+    "identityId": "cy-02",
+    "teamId": "t_chiayi_235_2026",
+    "number": 2,
+    "name": "陳官澤",
+    "englishName": "CHEN GUAN ZE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 33
+  },
+  {
+    "id": "c23526-03",
+    "identityId": "cy-03",
+    "teamId": "t_chiayi_235_2026",
+    "number": 3,
+    "name": "陳柏翰",
+    "englishName": "CHEN BO HAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  },
+  {
+    "id": "c23526-04",
+    "identityId": "cy-06",
+    "teamId": "t_chiayi_235_2026",
+    "number": 6,
+    "name": "黃子睿",
+    "englishName": "HUANG ZI RUI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 34
+  },
+  {
+    "id": "c23526-05",
+    "identityId": "cy-07",
+    "teamId": "t_chiayi_235_2026",
+    "number": 7,
+    "name": "黃偉倫",
+    "englishName": "HUANG WEI LUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "c23526-06",
+    "identityId": "cy-08",
+    "teamId": "t_chiayi_235_2026",
+    "number": 8,
+    "name": "王至皓",
+    "englishName": "WANG ZHI HAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "c23526-07",
+    "identityId": "cy-09",
+    "teamId": "t_chiayi_235_2026",
+    "number": 9,
+    "name": "唐毓翔",
+    "englishName": "TANG YU XIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 34
+  },
+  {
+    "id": "c23526-08",
+    "identityId": "he-mao-bing",
+    "teamId": "t_chiayi_235_2026",
+    "number": 11,
+    "name": "何茂彬",
+    "englishName": "HE MAO BING",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 24
+  },
+  {
+    "id": "c23526-09",
+    "identityId": "cy-12",
+    "teamId": "t_chiayi_235_2026",
+    "number": 12,
+    "name": "鄭州偉",
+    "englishName": "ZHENG ZHOU WEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "c23526-10",
+    "identityId": "lee-yu-wen",
+    "teamId": "t_chiayi_235_2026",
+    "number": 14,
+    "name": "李宇文",
+    "englishName": "LEEE YU WEN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 31
+  },
+  {
+    "id": "c23526-11",
+    "identityId": "cy-17",
+    "teamId": "t_chiayi_235_2026",
+    "number": 17,
+    "name": "王建翔",
+    "englishName": "WANG JIANG XIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 18
+  },
+  {
+    "id": "c23526-12",
+    "identityId": "cy-11",
+    "teamId": "t_chiayi_235_2026",
+    "number": 18,
+    "name": "李裕玄",
+    "englishName": "LEE YU XUAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 38
+  },
+  {
+    "id": "c23526-13",
+    "identityId": "chen-jing-xuan",
+    "teamId": "t_chiayi_235_2026",
+    "number": 19,
+    "name": "陳敬玄",
+    "englishName": "CHEN JING XUAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "c23526-14",
+    "identityId": "cy-26",
+    "teamId": "t_chiayi_235_2026",
+    "number": 26,
+    "name": "黃楷堯",
+    "englishName": "HUANG KAI YAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 38
+  },
+  {
+    "id": "c23526-15",
+    "identityId": "fu-wei-da",
+    "teamId": "t_chiayi_235_2026",
+    "number": 30,
+    "name": "傅韋達",
+    "englishName": "FU WEI DA",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "c23526-16",
+    "identityId": "he-qi-sheng",
+    "teamId": "t_chiayi_235_2026",
+    "number": 31,
+    "name": "何啟聖",
+    "englishName": "HE QI SHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "c23526-17",
+    "identityId": "cy-32",
+    "teamId": "t_chiayi_235_2026",
+    "number": 32,
+    "name": "温立丞",
+    "englishName": "WEN LITSUKI",
+    "gender": "男",
+    "nationality": "日本",
+    "age": 26
+  },
+  {
+    "id": "c23526-18",
+    "identityId": "zhu-shao-li",
+    "teamId": "t_chiayi_235_2026",
+    "number": 69,
+    "name": "朱少立",
+    "englishName": "ZHU SHAO LI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "c23526-19",
+    "identityId": "cy-71",
+    "teamId": "t_chiayi_235_2026",
+    "number": 71,
+    "name": "李俊逵",
+    "englishName": "LEE CHUN KUEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 41
+  },
+  {
+    "id": "c23526-20",
+    "identityId": "huang-jun-de",
+    "teamId": "t_chiayi_235_2026",
+    "number": 77,
+    "name": "黃峻德",
+    "englishName": "HUANG JUN DE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 30
+  },
+  {
+    "id": "al26-01",
+    "identityId": "ou-jia-cheng",
+    "teamId": "t_alian_2026",
+    "number": 13,
+    "name": "歐家成",
+    "englishName": "OU, JIA-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 35
+  },
+  {
+    "id": "al26-02",
+    "identityId": "jh-19",
+    "teamId": "t_alian_2026",
+    "number": 19,
+    "name": "何柏緯",
+    "englishName": "HO, BO-WEI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "al26-03",
+    "identityId": "jh-22",
+    "teamId": "t_alian_2026",
+    "number": 22,
+    "name": "李宗翰",
+    "englishName": "LEE, TSUNG-HAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "al26-04",
+    "identityId": "jh-23",
+    "teamId": "t_alian_2026",
+    "number": 23,
+    "name": "曾健康",
+    "englishName": "ZENG, JIAN-KANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 33
+  },
+  {
+    "id": "al26-05",
+    "identityId": "jh-10",
+    "teamId": "t_alian_2026",
+    "number": 10,
+    "name": "林冠亨",
+    "englishName": "LIN, KUAN-HENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "al26-06",
+    "identityId": "dai-yu-xiang",
+    "teamId": "t_alian_2026",
+    "number": 4,
+    "name": "戴于翔",
+    "englishName": "DAI, YU-XIANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 30
+  },
+  {
+    "id": "al26-07",
+    "identityId": "fu-yung-chin",
+    "teamId": "t_alian_2026",
+    "number": 38,
+    "name": "傅泳欽",
+    "englishName": "FU, YUNG-CHIN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 34
+  },
+  {
+    "id": "al26-08",
+    "identityId": "chen-yang-chin-hao",
+    "teamId": "t_alian_2026",
+    "number": 15,
+    "name": "陳楊青澔",
+    "englishName": "CHEN, YANG-CHIN-HAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "al26-09",
+    "identityId": "jh-14",
+    "teamId": "t_alian_2026",
+    "number": 14,
+    "name": "施聖章",
+    "englishName": "SHIH, SHENG-CHANG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "al26-10",
+    "identityId": "lin-kuan-fu",
+    "teamId": "t_alian_2026",
+    "number": 28,
+    "name": "林冠甫",
+    "englishName": "LIN, KUAN-FU",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "al26-11",
+    "identityId": "wang-bo-yi",
+    "teamId": "t_alian_2026",
+    "number": 69,
+    "name": "王柏叡",
+    "englishName": "WANG, BO-YI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "al26-12",
+    "identityId": "yang-ren-jie",
+    "teamId": "t_alian_2026",
+    "number": 41,
+    "name": "楊仁傑",
+    "englishName": "YANG, REN-JIE",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "al26-13",
+    "identityId": "cy-20",
+    "teamId": "t_alian_2026",
+    "number": 20,
+    "name": "李坤城",
+    "englishName": "LI, KUN-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "al26-14",
+    "identityId": "chen-wei-chia",
+    "teamId": "t_alian_2026",
+    "number": 66,
+    "name": "陳韋嘉",
+    "englishName": "CHEN, WEI-CHIA",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "al26-15",
+    "identityId": "chen-chia-chun",
+    "teamId": "t_alian_2026",
+    "number": 67,
+    "name": "陳家駿",
+    "englishName": "CHEN, CHIA-CHUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 35
+  },
+  {
+    "id": "al26-16",
+    "identityId": "huang-zi-han",
+    "teamId": "t_alian_2026",
+    "number": 79,
+    "name": "黃子翰",
+    "englishName": "HUANG, ZI-HAN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25
+  },
+  {
+    "id": "al26-17",
+    "identityId": "lin-huai-chung",
+    "teamId": "t_alian_2026",
+    "number": 35,
+    "name": "林淮中",
+    "englishName": "LIN, HUAI-CHUNG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "al26-18",
+    "identityId": "chen-yang-you-cheng",
+    "teamId": "t_alian_2026",
+    "number": 25,
+    "name": "陳楊祐誠",
+    "englishName": "CHEN, YANG-YOU-CHENG",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 27
+  },
+  {
+    "id": "al26-19",
+    "identityId": "jh-45",
+    "teamId": "t_alian_2026",
+    "number": 45,
+    "name": "許恩豪",
+    "englishName": "SHIU, EN-HAO",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 26
+  },
+  {
+    "id": "kbk26-01",
+    "identityId": "l-joel-vega-v",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "Joel Vega",
+    "englishName": "L. JOEL VEGA V",
+    "number": 10,
+    "gender": "男",
+    "nationality": "尼加拉瓜",
+    "age": 37
+  },
+  {
+    "id": "kbk26-02",
+    "identityId": "wang-jia-wei",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "王家偉",
+    "englishName": "WANG JIA WEI",
+    "number": 17,
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 34
+  },
+  {
+    "id": "kbk26-03",
+    "identityId": "michael-stein-lenihan",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "MICHAEL LENIHAN",
+    "englishName": "MICHAEL STEIN LENIHAN",
+    "number": 16,
+    "gender": "男",
+    "nationality": "愛爾蘭",
+    "age": 39
+  },
+  {
+    "id": "kbk26-04",
+    "identityId": "patrick-bryan-haines",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "PATRICK HAINES",
+    "englishName": "PATRICK BRYAN HAINES",
+    "number": 36,
+    "gender": "男",
+    "nationality": "美國",
+    "age": 38
+  },
+  {
+    "id": "kbk26-05",
+    "identityId": "charles-nwangi-njoroge",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "CHARLES NWANGI",
+    "englishName": "CHARLES NWANGI NJOROGE",
+    "number": 26,
+    "gender": "男",
+    "nationality": "肯亞",
+    "age": 37
+  },
+  {
+    "id": "kbk26-06",
+    "identityId": "hlandze-likhwa-lethu",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "LIKHWA",
+    "englishName": "HLANDZE LIKHWA LETHU",
+    "number": 4,
+    "gender": "男",
+    "nationality": "史瓦帝尼",
+    "age": 27
+  },
+  {
+    "id": "kbk26-07",
+    "identityId": "ahmed-nadeem-khaleel-kandouri",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "ALI",
+    "englishName": "AHMED NADEEM KHALEEL KANDOURI",
+    "number": 79,
+    "gender": "男",
+    "nationality": "伊拉克",
+    "age": 37
+  },
+  {
+    "id": "kbk26-08",
+    "identityId": "lucas-matias-roa-espinola",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "Lucas Roa",
+    "englishName": "Lucas Matias Roa Espinola",
+    "number": 29,
+    "gender": "男",
+    "nationality": "巴拉圭",
+    "age": 23
+  },
+  {
+    "id": "kbk26-09",
+    "identityId": "lian-yu-xiang",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "連于翔",
+    "englishName": "LIAN YU XIANG",
+    "number": 11,
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "kbk26-10",
+    "identityId": "huang-yen-pu",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "黃衍普",
+    "englishName": "HUANG YEN PU",
+    "number": 30,
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 16
+  },
+  {
+    "id": "kbk26-11",
+    "identityId": "manongi-dickson",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "MANONGI DICKSON",
+    "englishName": "MANONGI DICKSON",
+    "number": 7,
+    "gender": "男",
+    "nationality": "索羅門群島",
+    "age": 33
+  },
+  {
+    "id": "kbk26-12",
+    "identityId": "chiang-pin",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "姜斌",
+    "englishName": "CHIANG PIN",
+    "number": 2,
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 21
+  },
+  {
+    "id": "holy26-01",
+    "identityId": "wei-jie-lin",
+    "teamId": "t_holy_knights_2026",
+    "name": "林暐傑",
+    "englishName": "WEI-JIE LIN",
+    "number": 77,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 24
+  },
+  {
+    "id": "holy26-02",
+    "identityId": "liu-tzu-hsiang",
+    "teamId": "t_holy_knights_2026",
+    "name": "劉子祥",
+    "englishName": "LIU, TZU-HSIANG",
+    "number": 14,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 24
+  },
+  {
+    "id": "holy26-03",
+    "identityId": "su-yi-jie",
+    "teamId": "t_holy_knights_2026",
+    "name": "蘇帟緁",
+    "englishName": "Su Yi Jie",
+    "number": 13,
+    "gender": "女",
+    "nationality": "中華民國",
+    "age": 22
+  },
+  {
+    "id": "holy26-04",
+    "identityId": "dal-chi-fu",
+    "teamId": "t_holy_knights_2026",
+    "name": "戴吉甫",
+    "englishName": "DAl CHI FU",
+    "number": 21,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 53
+  },
+  {
+    "id": "holy26-05",
+    "identityId": "hsu-guan-ping",
+    "teamId": "t_holy_knights_2026",
+    "name": "徐貫評",
+    "englishName": "HSU-GUAN PING",
+    "number": 23,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 25
+  },
+  {
+    "id": "holy26-06",
+    "identityId": "huang-bo-wen",
+    "teamId": "t_holy_knights_2026",
+    "name": "黃柏文",
+    "englishName": "Huang Bo-Wen",
+    "number": 3,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 39
+  },
+  {
+    "id": "holy26-07",
+    "identityId": "chen-hung-yuan",
+    "teamId": "t_holy_knights_2026",
+    "name": "陳竑沅",
+    "englishName": "CHEN,HUNG-YUAN",
+    "number": 1,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 18
+  },
+  {
+    "id": "holy26-08",
+    "identityId": "xie-chen-jin",
+    "teamId": "t_holy_knights_2026",
+    "name": "謝承晉",
+    "englishName": "Xie chen jin",
+    "number": 79,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 22
+  },
+  {
+    "id": "holy26-09",
+    "identityId": "chou-yu-ting",
+    "teamId": "t_holy_knights_2026",
+    "name": "周宥廷",
+    "englishName": "CHOU, YU-TING",
+    "number": 86,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 25
+  },
+  {
+    "id": "holy26-10",
+    "identityId": "huang-pin-chiao",
+    "teamId": "t_holy_knights_2026",
+    "name": "黃品喬",
+    "englishName": "Huang Pin Chiao",
+    "number": 95,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 31
+  },
+  {
+    "id": "holy26-11",
+    "identityId": "xiang-en-huang",
+    "teamId": "t_holy_knights_2026",
+    "name": "黃祥恩",
+    "englishName": "Xiang.En.Huang",
+    "number": 26,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 24
+  },
+  {
+    "id": "holy26-12",
+    "identityId": "wang-li-ren",
+    "teamId": "t_holy_knights_2026",
+    "name": "王立任",
+    "englishName": "Wang Li Ren",
+    "number": 7,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 21
+  },
+  {
+    "id": "holy26-13",
+    "identityId": "yao-sheng-hung",
+    "teamId": "t_holy_knights_2026",
+    "name": "姚昇宏",
+    "englishName": "Yao-sheng-hung",
+    "number": 9,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 50
+  },
+  {
+    "id": "holy26-14",
+    "identityId": "hsien-i-su",
+    "teamId": "t_holy_knights_2026",
+    "name": "蘇憲奕",
+    "englishName": "HSIEN I SU",
+    "number": 2,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 19
+  },
+  {
+    "id": "holy26-15",
+    "identityId": "fan-cheng-yu",
+    "teamId": "t_holy_knights_2026",
+    "name": "范丞佑",
+    "englishName": "FAN CHENG YU",
+    "number": 53,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 16
+  },
+  {
+    "id": "holy26-16",
+    "identityId": "su-tzu-heng",
+    "teamId": "t_holy_knights_2026",
+    "name": "蘇子恆",
+    "englishName": "Su, Tzu-Heng",
+    "number": 16,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 16
+  },
+  {
+    "id": "holy26-17",
+    "identityId": "chang-chin-chien",
+    "teamId": "t_holy_knights_2026",
+    "name": "張至虔",
+    "englishName": "Chang chin chien",
+    "number": 0,
+    "gender": "男",
+    "nationality": "中華民國",
+    "age": 24
   }
 ]

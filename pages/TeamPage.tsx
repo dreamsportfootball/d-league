@@ -19,9 +19,15 @@ import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
+import {
+  CUP_EVENT,
+  getCupMatchesForTeam,
+  getCupTeamByIdentity,
+  getCupTeamPlacementLabel,
+} from '../cupData';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
-import { getPlayerIdentity, getTeamHistory } from '../services/entityData';
+import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam, TeamSocialLinks } from '../types/team';
 
@@ -36,6 +42,15 @@ interface TeamSocialLinkItem {
   label: string;
   href: string;
   icon: React.ReactNode;
+}
+
+interface TeamCompetitionHistoryRow {
+  id: string;
+  period: string;
+  competition: string;
+  result: string;
+  startYear: number;
+  href?: string;
 }
 
 const isResolvedMatch = (match: Match): boolean =>
@@ -122,6 +137,46 @@ const TeamPage: React.FC = () => {
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  const cupTeam = getCupTeamByIdentity(getTeamIdentity(team));
+  const cupMatches = cupTeam ? getCupMatchesForTeam(cupTeam.id) : [];
+  const cupPlacement = cupTeam ? getCupTeamPlacementLabel(cupTeam.id) : null;
+  const competitionHistory: TeamCompetitionHistoryRow[] = (() => {
+    const leagueRows: TeamCompetitionHistoryRow[] = history.map((record) => {
+      const row = calculateLeagueTable({
+        league: record.team.leagueId,
+        teams: record.data.teams,
+        matches: record.data.matches,
+        matchEvents: record.data.matchEvents,
+        rules: record.season.rules,
+        leagueConfig: record.season.leagues[record.team.leagueId],
+      }).find((item) => item.teamId === record.team.id);
+
+      return {
+        id: `league-${record.seasonId}`,
+        period: record.season.shortName,
+        competition: `D LEAGUE ${record.team.leagueId}`,
+        result: row?.played ? `#${row.rank}` : '-',
+        startYear: Number.parseInt(record.seasonId.slice(0, 4), 10),
+      };
+    });
+
+    if (!cupTeam || cupMatches.length === 0) return leagueRows;
+
+    const cupYear = new Date(CUP_EVENT.date).getFullYear();
+    const cupRow: TeamCompetitionHistoryRow = {
+      id: `cup-${cupTeam.id}-${cupYear}`,
+      period: String(cupYear),
+      competition: CUP_EVENT.shortName,
+      result: cupPlacement ?? '參賽',
+      startYear: cupYear,
+      href: '/cup',
+    };
+    const insertIndex = leagueRows.findIndex((row) => row.startYear < cupYear);
+
+    return insertIndex === -1
+      ? [...leagueRows, cupRow]
+      : [...leagueRows.slice(0, insertIndex), cupRow, ...leagueRows.slice(insertIndex)];
+  })();
   const dialogSeasonContext = {
     activeSeasonId: seasonId,
     activeSeason: season,
@@ -289,18 +344,32 @@ const TeamPage: React.FC = () => {
         </section>
 
         <section>
-          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年 D LEAGUE</h2></div>
-          <div role="table" aria-label="歷年 D LEAGUE">
-            <div role="row" className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500">
-              <span role="columnheader">賽季</span>
-              <span role="columnheader">級別</span>
-              <span role="columnheader" className="text-center">排名</span>
-              <span role="columnheader" className="text-right">積分</span>
+          <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年賽事</h2></div>
+          <div role="table" aria-label="歷年賽事">
+            <div role="row" className="grid grid-cols-[64px_minmax(0,1fr)_76px] items-center gap-3 pb-2 text-[10px] font-bold tracking-wider text-neutral-500 sm:grid-cols-[90px_minmax(0,1fr)_120px]">
+              <span role="columnheader">年度</span>
+              <span role="columnheader">賽事</span>
+              <span role="columnheader" className="text-center">成績</span>
             </div>
-            <div className="divide-y divide-neutral-100">{history.map((record) => {
-              const row = calculateLeagueTable({ league: record.team.leagueId, teams: record.data.teams, matches: record.data.matches, matchEvents: record.data.matchEvents, rules: record.season.rules, leagueConfig: record.season.leagues[record.team.leagueId] }).find((item) => item.teamId === record.team.id);
-              return <div role="row" key={record.seasonId} className="grid grid-cols-[90px_minmax(0,1fr)_72px_72px] items-center gap-3 py-4 text-sm"><span role="cell" className="font-bold text-brand-black">{record.season.shortName}</span><span role="cell" className="font-semibold text-neutral-500">{formatLeagueName(record.team.leagueId)}</span><span role="cell" className="text-center font-bold text-brand-black">{row?.played ? `#${row.rank}` : '-'}</span><span role="cell" className="text-right font-bold text-brand-blue">{row?.played ? `${row.points} 分` : '-'}</span></div>;
-            })}</div>
+            <div className="divide-y divide-neutral-100">
+              {competitionHistory.map((record) => (
+                <div
+                  role="row"
+                  key={record.id}
+                  className="grid grid-cols-[64px_minmax(0,1fr)_76px] items-center gap-3 py-4 text-sm sm:grid-cols-[90px_minmax(0,1fr)_120px]"
+                >
+                  <span role="cell" className="font-bold text-brand-black">{record.period}</span>
+                  <span role="cell" className="min-w-0 break-words font-semibold text-brand-black">
+                    {record.href ? (
+                      <Link to={record.href} className="font-bold text-brand-black hover:text-brand-blue">
+                        {record.competition}
+                      </Link>
+                    ) : record.competition}
+                  </span>
+                  <span role="cell" className="break-words text-center font-bold text-brand-black">{record.result}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>

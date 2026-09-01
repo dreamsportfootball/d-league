@@ -21,8 +21,10 @@ interface StaffPartnerTeamPopupConfig {
   ctaUrl: string;
 }
 
+const PREVIEW_HIDE_REGISTRATION_NAV = import.meta.env.VITE_PREVIEW_HIDE_REGISTRATION_NAV === 'true';
+
 export { CURRENT_SEASON_ID };
-export const SHOW_REGISTRATION_NAV = true;
+export const SHOW_REGISTRATION_NAV = !PREVIEW_HIDE_REGISTRATION_NAV;
 export const D_LEAGUE_INSTAGRAM_URL = 'https://www.instagram.com/d.league_tw/';
 export const D_LEAGUE_YOUTUBE_URL = 'https://www.youtube.com/channel/UCY_YR635gk38jDBJ2RRxZlw';
 export const D_LEAGUE_FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61576222172219';

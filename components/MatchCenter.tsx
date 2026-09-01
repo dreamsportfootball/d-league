@@ -112,15 +112,21 @@ const MatchCenter: React.FC = () => {
 
   const upcomingLabel = filteredMatches.length > 0 && filter === 'Upcoming' && formatTaipeiDateKey(filteredMatches[0].timestamp) === todayKey ? '今日賽程' : '即將開賽';
   const scroll = (direction: 'left' | 'right') => scrollContainerRef.current?.scrollBy({ left: direction === 'left' ? -340 : 340, behavior: 'smooth' });
+  const hasNoSeasonMatches = seasonData.matches.length === 0;
+  const emptyStateTitle = hasNoSeasonMatches
+    ? `${activeSeason.shortName} 賽程尚未公布`
+    : filter === 'Results'
+      ? '目前尚無完賽紀錄'
+      : '目前沒有即將進行的賽事';
 
   return (
     <>
-      <div className="bg-white py-8">
+      <div className="bg-white py-6 md:py-8">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="mb-6 flex flex-col items-end justify-between md:flex-row">
+          <div className="mb-4 flex flex-col items-end justify-between md:mb-6 md:flex-row">
             <div className="w-full md:w-auto">
               <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">賽事 <span className="text-brand-blue">中心</span></h2>
-              <div className="w-full rounded-full bg-neutral-100 p-1 md:w-auto">
+              <div className="w-full border-b border-neutral-200 md:w-auto md:rounded-full md:border-0 md:bg-neutral-100 md:p-1 [&_[role=tablist]]:w-full [&_[role=tablist]]:gap-0 md:[&_[role=tablist]]:gap-2 [&_[role=tab]]:min-h-11 [&_[role=tab]]:flex-1 [&_[role=tab]]:rounded-none [&_[role=tab]]:border-b-2 [&_[role=tab]]:border-transparent [&_[role=tab]]:px-2 [&_[role=tab]]:py-2.5 [&_[role=tab]]:text-sm [&_[aria-selected=true]]:border-brand-blue [&_[aria-selected=true]]:bg-transparent [&_[aria-selected=true]]:shadow-none md:[&_[role=tab]]:min-h-0 md:[&_[role=tab]]:flex-none md:[&_[role=tab]]:rounded-full md:[&_[role=tab]]:border-b-0 md:[&_[role=tab]]:px-4 md:[&_[role=tab]]:py-1.5 md:[&_[role=tab]]:text-xs md:[&_[aria-selected=true]]:bg-white md:[&_[aria-selected=true]]:shadow-sm">
                 <Tabs
                   options={['Results', 'Upcoming'] as const}
                   active={filter}
@@ -141,17 +147,23 @@ const MatchCenter: React.FC = () => {
             </div>
           </div>
           <div className="group relative">
-            <div ref={scrollContainerRef} className="no-scrollbar -mx-4 flex snap-x snap-proximity items-stretch overflow-x-auto px-4 pb-6 pt-1 scroll-smooth md:mx-0 md:px-0">
+            <div
+              ref={scrollContainerRef}
+              className={`no-scrollbar -mx-4 flex snap-x snap-proximity items-stretch overflow-x-auto px-4 pt-1 scroll-smooth md:mx-0 md:px-0 md:pb-6 ${filteredMatches.length > 0 ? 'pb-6' : 'pb-0'}`}
+            >
               {filteredMatches.length > 0 ? (
                 filteredMatches.map((match) => (
                   <MatchCard key={match.id} match={match} teamMap={seasonData.teamMap} onOpenMatch={setSelectedMatchId} />
                 ))
               ) : (
-                <div className="flex w-full flex-col items-center justify-center rounded-lg border border-dashed border-neutral-200 bg-neutral-50 py-12">
-                  <CalendarDays className="mb-2 h-8 w-8 text-neutral-300" />
-                  <p className="text-sm font-medium text-neutral-400">
-                    {seasonData.matches.length === 0 ? `${activeSeason.shortName} 賽程尚未公布` : filter === 'Results' ? '目前尚無完賽紀錄' : '目前沒有即將進行的賽事'}
-                  </p>
+                <div className="flex w-full items-center gap-3 rounded-md border border-neutral-200 bg-neutral-50 px-4 py-5 md:flex-col md:justify-center md:gap-0 md:rounded-lg md:border-dashed md:px-0 md:py-12">
+                  <CalendarDays className="h-6 w-6 shrink-0 text-neutral-300 md:mb-2 md:h-8 md:w-8" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-neutral-600 md:text-center md:font-medium md:text-neutral-400">{emptyStateTitle}</p>
+                    {hasNoSeasonMatches && (
+                      <p className="mt-1 text-xs leading-5 text-neutral-400 md:hidden">公布後會在這裡顯示最新賽果與即將開賽</p>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -10,6 +10,7 @@ import AutoFitText from './AutoFitText';
 interface PreSeasonStandingsProps {
   league: LeagueId;
   teamNames: readonly string[];
+  variant?: 'page' | 'widget';
 }
 
 interface TeamCellProps {
@@ -45,7 +46,7 @@ const TeamCell: React.FC<TeamCellProps> = ({ teamName, team, logoUrl, seasonId, 
   );
 };
 
-const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNames }) => {
+const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNames, variant = 'page' }) => {
   const { activeSeasonId, seasonData } = useSeason();
   const [mobileExpanded, setMobileExpanded] = useState(false);
   const publishedTeamByName = useMemo(
@@ -60,6 +61,30 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
     team: publishedTeamByName.get(teamName),
     logoUrl: getTeamLogoUrl(activeSeasonId, teamName),
   }));
+
+  if (variant === 'widget') {
+    return (
+      <div className="w-full text-xs">
+        <p className="mb-2 text-[10px] font-medium leading-5 text-neutral-400">
+          尚未有正式賽果，先顯示本季確認參賽球隊
+        </p>
+        <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 border-b border-neutral-100 py-2 text-[10px] font-bold tracking-wider text-neutral-500">
+          <span>#</span>
+          <span>球隊</span>
+          <span className="text-center">場次</span>
+          <span className="text-center">積分</span>
+        </div>
+        {rows.map(({ teamName, team, logoUrl }) => (
+          <div key={teamName} className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-2">
+            <span className="pl-2 font-medium tabular-nums text-neutral-400">-</span>
+            <TeamCell teamName={teamName} team={team} logoUrl={logoUrl} seasonId={activeSeasonId} compact />
+            <span className="text-center tabular-nums">0</span>
+            <span className="text-center font-semibold tabular-nums">0</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import ExperienceEnhancements from './components/ExperienceEnhancements';
@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import ImageLoadingOptimizer from './components/ImageLoadingOptimizer';
 import Seo from './components/Seo';
+import { SHOW_REGISTRATION_NAV } from './config/siteConfig';
 import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
@@ -240,7 +241,7 @@ const ScrollMemory: React.FC = () => {
     let restoreWindowId = 0;
     let restoringSavedPosition = false;
     const savedPosition = navigationType === 'POP' ? readScrollPosition(key) : null;
-    const savedAnchor = navigationType === 'POP' ? consumeScrollAnchor(key) : null;
+    const savedAnchor = consumeScrollAnchor(key);
     const sectionId = hash ? decodeURIComponent(hash.slice(1)) : '';
 
     const stopSavedPositionRestoration = () => {
@@ -358,7 +359,10 @@ const App: React.FC = () => (
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/registration" element={<RegistrationPage />} />
+              <Route
+                path="/registration"
+                element={SHOW_REGISTRATION_NAV ? <RegistrationPage /> : <Navigate to="/" replace />}
+              />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/news" element={<NewsPage />} />

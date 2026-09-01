@@ -15,6 +15,7 @@ interface SeasonContextValue {
 
 const CONTROLLED_SEASON_PATHS = ['/schedule', '/standings', '/stats', '/media'] as const;
 const ENTITY_PATHS = ['/teams', '/players', '/matches'] as const;
+const PREVIEW_SEASON_STATUS = import.meta.env.VITE_PREVIEW_SEASON_STATUS;
 
 const matchesPath = (pathname: string, paths: readonly string[]): boolean =>
   paths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
@@ -86,16 +87,25 @@ export const SeasonProvider: React.FC<React.PropsWithChildren> = ({ children }) 
         ? selectedSeasonId
         : CURRENT_SEASON_ID;
 
-  const value = useMemo<SeasonContextValue>(
-    () => ({
+  const value = useMemo<SeasonContextValue>(() => {
+    const configuredSeason = getSeasonConfig(activeSeasonId);
+    const previewingActiveCurrentSeason =
+      activeSeasonId === CURRENT_SEASON_ID && PREVIEW_SEASON_STATUS === 'active';
+    const activeSeason: SeasonConfig = previewingActiveCurrentSeason
+      ? {
+          ...configuredSeason,
+          status: 'active',
+        }
+      : configuredSeason;
+
+    return {
       activeSeasonId,
-      activeSeason: getSeasonConfig(activeSeasonId),
+      activeSeason,
       seasonData: getSeasonData(activeSeasonId),
       availableSeasons: Object.values(SEASONS),
       setActiveSeason,
-    }),
-    [activeSeasonId, setActiveSeason],
-  );
+    };
+  }, [activeSeasonId, setActiveSeason]);
 
   return <SeasonContext.Provider value={value}>{children}</SeasonContext.Provider>;
 };

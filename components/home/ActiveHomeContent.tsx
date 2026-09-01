@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../../hooks/useSeason';
+import { MatchStatus } from '../../types';
 import type { LeagueId } from '../../types/season';
 import BrandStory from '../BrandStory';
 import ClubGrid from '../ClubGrid';
 import MatchCenter from '../MatchCenter';
 import NewsSection from '../NewsSection';
 import PhotoCarousel from '../PhotoCarousel';
+import PreSeasonStandings from '../PreSeasonStandings';
 import Standings from '../Standings';
 import Tabs from '../Tabs';
 import VideoHub from '../VideoHub';
 
 const ActiveHomeContent: React.FC = () => {
-  const { activeSeason } = useSeason();
+  const { activeSeason, seasonData } = useSeason();
   const [activeLeague, setActiveLeague] = useState<LeagueId>(activeSeason.enabledLeagues[0]);
 
   useEffect(() => {
@@ -21,6 +23,21 @@ const ActiveHomeContent: React.FC = () => {
       setActiveLeague(activeSeason.enabledLeagues[0]);
     }
   }, [activeLeague, activeSeason.enabledLeagues]);
+
+  const participantTeamNames = activeSeason.seasonParticipants?.leagues[activeLeague] ?? [];
+  const hasFinishedMatches = useMemo(
+    () =>
+      seasonData.matches.some(
+        (match) =>
+          match.league === activeLeague &&
+          match.resultType !== 'VOID' &&
+          match.countsForStandings !== false &&
+          (match.status === MatchStatus.FINISHED ||
+            (match.homeScore !== null && match.awayScore !== null)),
+      ),
+    [activeLeague, seasonData.matches],
+  );
+  const showConfirmedTeams = !hasFinishedMatches && participantTeamNames.length > 0;
 
   return (
     <>
@@ -40,7 +57,7 @@ const ActiveHomeContent: React.FC = () => {
                 </span>
                 <h3 className="flex items-center font-display text-3xl font-bold tracking-wide text-brand-black">
                   <Trophy className="mr-2 h-6 w-6 translate-y-[2px] text-brand-blue" />
-                  {activeSeason.status === 'completed' ? '最終排名' : '戰績排名'}
+                  {activeSeason.status === 'completed' ? '最終排名' : '積分榜'}
                 </h3>
               </div>
 
@@ -56,7 +73,15 @@ const ActiveHomeContent: React.FC = () => {
               </div>
             </div>
 
-            <Standings league={activeLeague} variant="widget" />
+            {showConfirmedTeams ? (
+              <PreSeasonStandings
+                league={activeLeague}
+                teamNames={participantTeamNames}
+                variant="widget"
+              />
+            ) : (
+              <Standings league={activeLeague} variant="widget" />
+            )}
 
             <div className="mt-4 text-center">
               <Link

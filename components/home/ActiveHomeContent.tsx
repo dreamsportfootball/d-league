@@ -14,15 +14,41 @@ import Standings from '../Standings';
 import Tabs from '../Tabs';
 import VideoHub from '../VideoHub';
 
+const HOME_STANDINGS_LEAGUE_STORAGE_KEY = 'dleague:home-standings-league';
+
 const ActiveHomeContent: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
-  const [activeLeague, setActiveLeague] = useState<LeagueId>(activeSeason.enabledLeagues[0]);
+  const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
+    try {
+      const saved = window.sessionStorage.getItem(HOME_STANDINGS_LEAGUE_STORAGE_KEY);
+      if (saved === 'L1' || saved === 'L2' || saved === 'L3') {
+        return activeSeason.enabledLeagues.includes(saved) ? saved : activeSeason.enabledLeagues[0];
+      }
+    } catch {
+      // Session storage may be unavailable.
+    }
+    return activeSeason.enabledLeagues[0];
+  });
 
   useEffect(() => {
-    if (!activeSeason.enabledLeagues.includes(activeLeague)) {
-      setActiveLeague(activeSeason.enabledLeagues[0]);
+    if (activeSeason.enabledLeagues.includes(activeLeague)) return;
+    const fallbackLeague = activeSeason.enabledLeagues[0];
+    setActiveLeague(fallbackLeague);
+    try {
+      window.sessionStorage.setItem(HOME_STANDINGS_LEAGUE_STORAGE_KEY, fallbackLeague);
+    } catch {
+      // Session storage may be unavailable.
     }
   }, [activeLeague, activeSeason.enabledLeagues]);
+
+  const updateLeague = (league: LeagueId) => {
+    setActiveLeague(league);
+    try {
+      window.sessionStorage.setItem(HOME_STANDINGS_LEAGUE_STORAGE_KEY, league);
+    } catch {
+      // Session storage may be unavailable.
+    }
+  };
 
   const participantTeamNames = activeSeason.seasonParticipants?.leagues[activeLeague] ?? [];
   const hasFinishedMatches = useMemo(
@@ -65,7 +91,7 @@ const ActiveHomeContent: React.FC = () => {
                 <Tabs
                   options={activeSeason.enabledLeagues}
                   active={activeLeague}
-                  onChange={setActiveLeague}
+                  onChange={updateLeague}
                   getLabel={(league) => league}
                   variant="compact"
                   ariaLabel="切換積分榜級別"

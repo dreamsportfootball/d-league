@@ -135,6 +135,7 @@ jobs:
       - name: Capture responsive screenshots and diagnostics
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+          AUDIT_EXPECT_SEASON_INFO: "false"
         run: node scripts/visual-audit.mjs
 
       - name: Validate round entity page
@@ -155,6 +156,7 @@ jobs:
       - name: Validate registration progress
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+          AUDIT_EXPECT_SEASON_INFO: "false"
         run: node scripts/validate-registration-progress.mjs
 
       - name: Upload visual audit report

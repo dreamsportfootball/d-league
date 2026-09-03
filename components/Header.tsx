@@ -65,6 +65,12 @@ const Header: React.FC = () => {
 
   const isPathActive = (href: string) => {
     if (href === '/') return location.pathname === '/';
+    if (
+      href === '/schedule' &&
+      (location.pathname.startsWith('/matches/') || location.pathname.startsWith('/rounds/'))
+    ) {
+      return true;
+    }
     return location.pathname === href || location.pathname.startsWith(`${href}/`);
   };
 
@@ -86,7 +92,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header ref={headerRef} className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm">
+    <header
+      ref={headerRef}
+      className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm"
+    >
       <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">
           <Link
@@ -113,7 +122,10 @@ const Header: React.FC = () => {
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-6 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-8" aria-label="主要導覽">
+        <nav
+          className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-6 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-8"
+          aria-label="主要導覽"
+        >
           {navItems.map((item) => {
             const desktopExpanded = desktopDropdownOpen === item.name;
             const childActive = item.children?.some((child) => isPathActive(child.href)) ?? false;
@@ -151,7 +163,9 @@ const Header: React.FC = () => {
                       }`}
                     >
                       {item.name}
-                      <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${desktopExpanded ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        className={`ml-1 h-4 w-4 transition-transform ${desktopExpanded ? 'rotate-180' : ''}`}
+                      />
                     </button>
                     <div
                       role="menu"
@@ -255,7 +269,9 @@ const Header: React.FC = () => {
                                 to={child.href}
                                 aria-current={childActive ? 'page' : undefined}
                                 className={`min-h-11 rounded-md px-3 py-3 text-base font-medium ${
-                                  childActive ? 'bg-white text-brand-blue' : 'text-neutral-600 hover:text-brand-blue'
+                                  childActive
+                                    ? 'bg-white text-brand-blue'
+                                    : 'text-neutral-600 hover:text-brand-blue'
                                 }`}
                                 onClick={closeAllMenus}
                               >

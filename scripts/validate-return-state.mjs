@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
+const currentSeason = '2026-27';
 const historicalSeason = '2025-26';
 const allowedDelta = 24;
 const restoreTimeoutMs = 6000;
@@ -99,6 +100,87 @@ try {
     page.setDefaultTimeout(12000);
 
     try {
+      await page.goto(`${baseUrl}/#/`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await page.waitForSelector('#root > *');
+      await page.evaluate(() => sessionStorage.removeItem('dleague:home-standings-league'));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+
+      const standingsSection = page.locator('#standings-and-news');
+      await standingsSection.waitFor({ state: 'attached' });
+      const l2Tab = standingsSection.getByRole('tab', { name: 'L2' });
+      await l2Tab.waitFor({ state: 'visible' });
+      await l2Tab.click();
+      if ((await l2Tab.getAttribute('aria-selected')) !== 'true') {
+        fail('home standings: L2 did not become active');
+      }
+
+      const teamLink = standingsSection.locator(`a[data-scroll-anchor-id^="home-standings-${currentSeason}-L2-"]:visible`).first();
+      await teamLink.waitFor({ state: 'visible' });
+      await teamLink.click();
+      await page.waitForURL(/#\/teams\//);
+      const backButton = page.getByRole('button', { name: '返回上一頁' }).first();
+      await backButton.waitFor({ state: 'visible' });
+      await backButton.click();
+      await page.waitForURL((url) => url.hash === '#/');
+
+      const restoredL2Tab = page.locator('#standings-and-news').getByRole('tab', { name: 'L2' });
+      await restoredL2Tab.waitFor({ state: 'visible' });
+      if ((await restoredL2Tab.getAttribute('aria-selected')) !== 'true') {
+        fail('home standings: returning from team reset the active league to L1');
+      }
+    } finally {
+      await page.close();
+      await context.close();
+    }
+  }
+
+  {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      locale: 'zh-TW',
+      timezoneId: 'Asia/Taipei',
+      serviceWorkers: 'block',
+    });
+    const page = await context.newPage();
+    page.setDefaultTimeout(12000);
+
+    try {
+      await page.goto(`${baseUrl}/#/standings?season=${currentSeason}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await page.waitForSelector('#root > *');
+      await page.evaluate(() => sessionStorage.setItem('standingsActiveLeague', 'L1'));
+      await page.reload({ waitUntil: 'domcontentloaded' });
+
+      const teamLink = page.locator(`a[data-scroll-anchor-id^="preseason-standings-team-${currentSeason}-L1-"]:visible`).first();
+      await teamLink.waitFor({ state: 'visible' });
+      await positionAnchor(page, teamLink, 190);
+      const anchorId = await teamLink.getAttribute('data-scroll-anchor-id');
+      if (!anchorId) fail('current preseason standings: team link has no scroll anchor id');
+      const beforeTop = await teamLink.evaluate((element) => element.getBoundingClientRect().top);
+
+      await teamLink.click();
+      await page.waitForURL(/#\/teams\//);
+      const backButton = page.getByRole('button', { name: '返回上一頁' }).first();
+      await backButton.waitFor({ state: 'visible' });
+      await backButton.click();
+      await page.waitForURL((url) => url.hash.startsWith(`#/standings?season=${currentSeason}`));
+      await waitForAnchorRestore(page, anchorId, beforeTop, 'current preseason standings team return');
+    } finally {
+      await page.close();
+      await context.close();
+    }
+  }
+
+  {
+    const context = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      locale: 'zh-TW',
+      timezoneId: 'Asia/Taipei',
+      serviceWorkers: 'block',
+    });
+    const page = await context.newPage();
+    page.setDefaultTimeout(12000);
+
+    try {
       await page.goto(`${baseUrl}/#/standings?season=${historicalSeason}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await page.waitForSelector('#root > *');
       await page.evaluate(() => {
@@ -160,7 +242,7 @@ try {
       const desktopFilterButton = page.locator('button[aria-controls="desktop-schedule-filters"]');
       await desktopFilterButton.click();
       await page.getByRole('button', { name: /^聯賽級別/ }).click();
-      const l2Option = page.getByRole('radio', { name: 'L2' });
+      const l2Option = page.getByRole('radio', { name: /^(L2|LEAGUE 2)$/ });
       await l2Option.click();
       const applyButton = page.getByRole('button', { name: /^顯示 \d+ 場$/ });
       await applyButton.click();
@@ -179,7 +261,7 @@ try {
 
       await desktopFilterButton.click();
       await page.getByRole('button', { name: /^聯賽級別/ }).click();
-      const restoredL2Option = page.getByRole('radio', { name: 'L2' });
+      const restoredL2Option = page.getByRole('radio', { name: /^(L2|LEAGUE 2)$/ });
       if ((await restoredL2Option.getAttribute('aria-checked')) !== 'true') {
         fail('schedule: returning to schedule did not restore the L2 filter');
       }

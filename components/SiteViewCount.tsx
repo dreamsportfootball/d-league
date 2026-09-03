@@ -39,14 +39,13 @@ const SiteViewCount: React.FC = () => {
     return () => controller.abort();
   }, []);
 
+  if (totalViews === null) return null;
+
   return (
-    <p
-      className="mt-5 text-[11px] font-medium tracking-wide text-neutral-400"
-      aria-live="polite"
-    >
+    <p className="mt-5 text-[11px] font-medium tracking-wide text-neutral-400">
       網站累計瀏覽次數
       <span className="ml-2 font-display text-xs font-bold tabular-nums text-neutral-600">
-        {totalViews === null ? '-' : formatViews(totalViews)}
+        {formatViews(totalViews)}
       </span>
     </p>
   );

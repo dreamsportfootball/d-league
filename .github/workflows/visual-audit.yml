@@ -61,6 +61,7 @@ jobs:
       - name: Capture responsive screenshots and diagnostics
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+          AUDIT_EXPECT_SEASON_INFO: "false"
         run: node scripts/visual-audit.mjs
 
       # Run navigation-position verification even when an unrelated screenshot audit fails.

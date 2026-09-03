@@ -222,26 +222,30 @@ const readScheduleFilters = (
 
     const value = JSON.parse(raw) as Partial<Record<keyof ScheduleFilters, unknown>>;
     const savedLeague = value.league;
+    const savedTeam = value.team;
+    const savedRound = value.round;
+    const savedDate = value.date;
+    const savedStatus = value.status;
     const league: LeagueFilter =
       savedLeague === 'ALL' ||
       (typeof savedLeague === 'string' && enabledLeagues.includes(savedLeague as LeagueId))
         ? savedLeague as LeagueFilter
         : 'ALL';
-    const team = typeof value.team === 'string' &&
-      (value.team === 'ALL' || teams.some((candidate) => candidate.id === value.team))
-      ? value.team
+    const team = typeof savedTeam === 'string' &&
+      (savedTeam === 'ALL' || teams.some((candidate) => candidate.id === savedTeam))
+      ? savedTeam
       : 'ALL';
-    const round = typeof value.round === 'string' &&
-      (value.round === 'ALL' || matches.some((match) => String(match.round) === value.round))
-      ? value.round
+    const round = typeof savedRound === 'string' &&
+      (savedRound === 'ALL' || matches.some((match) => String(match.round) === savedRound))
+      ? savedRound
       : 'ALL';
-    const date = typeof value.date === 'string' &&
-      (value.date === 'ALL' || matches.some((match) => match.timestamp.startsWith(value.date)))
-      ? value.date
+    const date = typeof savedDate === 'string' &&
+      (savedDate === 'ALL' || matches.some((match) => match.timestamp.startsWith(savedDate)))
+      ? savedDate
       : 'ALL';
     const status: StatusFilter =
-      value.status === 'ALL' || value.status === 'UPCOMING' || value.status === 'FINISHED'
-        ? value.status
+      savedStatus === 'ALL' || savedStatus === 'UPCOMING' || savedStatus === 'FINISHED'
+        ? savedStatus
         : 'ALL';
 
     const nextFilters: ScheduleFilters = { league, team, round, date, status };

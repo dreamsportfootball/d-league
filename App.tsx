@@ -88,6 +88,7 @@ interface ScrollAnchorSnapshot {
   ariaLabel: string;
   viewportTop: number;
   anchorId?: string;
+  href?: string;
 }
 
 const SCROLL_STORAGE_PREFIX = 'dleague:scroll:';
@@ -142,13 +143,15 @@ const consumeScrollAnchor = (locationKey: string): ScrollAnchorSnapshot | null =
       value.ariaLabel.length === 0 ||
       typeof value.viewportTop !== 'number' ||
       !Number.isFinite(value.viewportTop) ||
-      (value.anchorId !== undefined && typeof value.anchorId !== 'string')
+      (value.anchorId !== undefined && typeof value.anchorId !== 'string') ||
+      (value.href !== undefined && typeof value.href !== 'string')
     ) return null;
 
     return {
       ariaLabel: value.ariaLabel,
       viewportTop: value.viewportTop,
       ...(value.anchorId ? { anchorId: value.anchorId } : {}),
+      ...(value.href ? { href: value.href } : {}),
     };
   } catch {
     return null;
@@ -162,6 +165,14 @@ const findScrollAnchor = (snapshot: ScrollAnchorSnapshot): HTMLAnchorElement | n
       (element) => element.dataset.scrollAnchorId === snapshot.anchorId,
     );
     if (identifiedAnchor) return identifiedAnchor;
+  }
+
+  if (snapshot.href) {
+    const hrefAnchors = document.querySelectorAll<HTMLAnchorElement>('a[href]');
+    const hrefAnchor = Array.from(hrefAnchors).find(
+      (element) => element.getAttribute('href') === snapshot.href,
+    );
+    if (hrefAnchor) return hrefAnchor;
   }
 
   const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');
@@ -205,7 +216,7 @@ const ScrollMemory: React.FC = () => {
   }, [key]);
 
   useEffect(() => {
-    const handleTeamNavigation = (event: MouseEvent) => {
+    const handleTrackedNavigation = (event: MouseEvent) => {
       if (
         event.defaultPrevented ||
         event.button !== 0 ||
@@ -217,21 +228,23 @@ const ScrollMemory: React.FC = () => {
 
       const target = event.target;
       const anchor = target instanceof Element
-        ? target.closest<HTMLAnchorElement>('a[aria-label^="查看 "][aria-label$=" 球隊頁"]')
+        ? target.closest<HTMLAnchorElement>('a[data-scroll-anchor-id], a[href*="/players/"]')
         : null;
-      const ariaLabel = anchor?.getAttribute('aria-label');
-      if (!anchor || !ariaLabel) return;
+      const href = anchor?.getAttribute('href');
+      if (!anchor || !href) return;
 
+      const ariaLabel = anchor.getAttribute('aria-label') ?? anchor.textContent?.trim() ?? href;
       const anchorId = anchor.dataset.scrollAnchorId;
       writeScrollAnchor(key, {
         ariaLabel,
         viewportTop: anchor.getBoundingClientRect().top,
         ...(anchorId ? { anchorId } : {}),
+        href,
       });
     };
 
-    document.addEventListener('click', handleTeamNavigation, true);
-    return () => document.removeEventListener('click', handleTeamNavigation, true);
+    document.addEventListener('click', handleTrackedNavigation, true);
+    return () => document.removeEventListener('click', handleTrackedNavigation, true);
   }, [key]);
 
   useEffect(() => {

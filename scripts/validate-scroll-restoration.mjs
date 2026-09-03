@@ -139,6 +139,54 @@ for (const viewport of viewports) {
 
     const delta = Math.abs(finalState.top - beforeTop);
     console.log(`${viewport.name}: restored clicked team within ${delta.toFixed(1)}px`);
+
+    await page.goto(`${baseUrl}/#/standings?season=2025-26`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.waitForSelector('#root > *');
+
+    const historicalTeamLink = page.locator('a[href*="/teams/"][href*="season=2025-26"]').first();
+    await historicalTeamLink.waitFor({ state: 'visible' });
+    await historicalTeamLink.click();
+    await page.waitForURL(/#\/teams\/.*season=2025-26/);
+
+    const historicalPlayerLink = page.locator('a[href*="/players/"][href*="season=2025-26"]').first();
+    await historicalPlayerLink.waitFor({ state: 'visible' });
+    await historicalPlayerLink.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, top - 200), behavior: 'auto' });
+    });
+    await page.waitForTimeout(150);
+
+    const historicalPlayerHref = await historicalPlayerLink.getAttribute('href');
+    if (!historicalPlayerHref) fail(`${viewport.name}: historical player link has no href`);
+    const historicalPlayerTop = await historicalPlayerLink.evaluate((element) => element.getBoundingClientRect().top);
+
+    await historicalPlayerLink.click();
+    await page.waitForURL(/#\/players\/.*season=2025-26/);
+    const backButton = page.getByRole('button', { name: '返回上一頁' }).first();
+    await backButton.waitFor({ state: 'visible' });
+    await backButton.click();
+    await page.waitForURL(/#\/teams\/.*season=2025-26/);
+
+    const historicalStartedAt = Date.now();
+    let historicalRestored = false;
+    let historicalFinalTop = null;
+    while (Date.now() - historicalStartedAt < restoreTimeoutMs) {
+      historicalFinalTop = await page.evaluate((href) => {
+        const link = [...document.querySelectorAll('a[href]')]
+          .find((element) => element.getAttribute('href') === href);
+        return link instanceof HTMLElement ? link.getBoundingClientRect().top : null;
+      }, historicalPlayerHref);
+      if (historicalFinalTop !== null && Math.abs(historicalFinalTop - historicalPlayerTop) <= allowedDelta) {
+        historicalRestored = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+
+    if (!historicalRestored || historicalFinalTop === null) {
+      fail(`${viewport.name}: historical team -> player -> back did not restore player position; before=${historicalPlayerTop}, after=${historicalFinalTop}`);
+    }
+    console.log(`${viewport.name}: historical player return restored within ${Math.abs(historicalFinalTop - historicalPlayerTop).toFixed(1)}px`);
   } finally {
     await page.close();
     await context.close();

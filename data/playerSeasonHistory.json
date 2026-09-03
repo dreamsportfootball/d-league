@@ -1,0 +1,86 @@
+[
+  {
+    "id": "hist25-huang-jhen-hao",
+    "identityId": "huang-jhen-hao",
+    "seasonId": "2025-26",
+    "teamId": "t_crazydog",
+    "number": 40,
+    "name": "黃震浩",
+    "englishName": "Huang Jhen-Hao",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 40
+  },
+  {
+    "id": "hist25-shi-bo-yun",
+    "identityId": "shi-bo-yun",
+    "seasonId": "2025-26",
+    "teamId": "t_tongque",
+    "number": 93,
+    "name": "施博允",
+    "englishName": "SHI BO YUN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 19
+  },
+  {
+    "id": "hist25-xu-yu-kai",
+    "identityId": "tainan-evergreen-xu-yu-kai",
+    "seasonId": "2025-26",
+    "teamId": "t_tongque",
+    "number": 84,
+    "name": "徐鈺凱",
+    "englishName": "HSU YU KAI",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 35
+  },
+  {
+    "id": "hist25-lin-ta-hsiung",
+    "identityId": "lin-tahsiung",
+    "seasonId": "2025-26",
+    "teamId": "t_pingtung",
+    "number": 6,
+    "name": "林大雄",
+    "englishName": "Lin Ta-hsiung",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 50
+  },
+  {
+    "id": "hist25-teng-chin-cheng",
+    "identityId": "teng-chin-cheng",
+    "seasonId": "2025-26",
+    "teamId": "t_pingtung",
+    "number": 12,
+    "name": "鄧進成",
+    "englishName": "Teng Chin-cheng",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 55
+  },
+  {
+    "id": "hist25-chien-gan-zen",
+    "identityId": "chien-gan-zen",
+    "seasonId": "2025-26",
+    "teamId": "t_pingtung",
+    "number": 17,
+    "name": "簡罡正",
+    "englishName": "CHIEN GAN ZEN",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 29
+  },
+  {
+    "id": "hist25-shen-jia-hong",
+    "identityId": "shen-jia-hong",
+    "seasonId": "2025-26",
+    "teamId": "t_canglong",
+    "number": 47,
+    "name": "沈家弘",
+    "englishName": "Shan Chia Hong",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 22
+  }
+]

@@ -393,7 +393,8 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 36,
-    "teamId": "t_kaohsiung_amateur_2026"
+    "teamId": "t_kaohsiung_amateur_2026",
+    "birthDate": "1990-07-29"
   },
   {
     "id": "ka26-02",
@@ -2061,7 +2062,7 @@
     "identityId": "chen-po-sheng",
     "teamId": "t_wanderers_2026",
     "number": 29,
-    "name": "陳柏陞",
+    "name": "陳柏升",
     "englishName": "CHEN PO SHENG",
     "gender": "男",
     "nationality": "台灣",

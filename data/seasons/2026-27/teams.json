@@ -46,8 +46,8 @@
     "primaryColor": "#e80818",
     "secondaryColor": "#082858",
     "kits": {
-      "home": "#e80818",
-      "away": "#082858"
+      "home": "#e70111",
+      "away": "#03294f"
     },
     "staff": [
       {
@@ -79,7 +79,7 @@
     "primaryColor": "#2a2b30",
     "secondaryColor": "#ffffff",
     "kits": {
-      "home": "#2a2b30",
+      "home": "#00091c",
       "away": "#ffffff"
     },
     "staff": [
@@ -141,7 +141,7 @@
     "secondaryColor": "#111111",
     "kits": {
       "home": "#f2d600",
-      "away": "#14251c"
+      "away": "#111111"
     },
     "staff": [
       {
@@ -179,7 +179,11 @@
         "englishName": "HUANG JHEN HAO"
       }
     ],
-    "competitionStatus": "ACTIVE"
+    "competitionStatus": "ACTIVE",
+    "kits": {
+      "home": "#563e92",
+      "away": "#ffffff"
+    }
   },
   {
     "id": "t_chen_2026",
@@ -208,7 +212,11 @@
         "englishName": "Hong,Pin-Yu"
       }
     ],
-    "competitionStatus": "ACTIVE"
+    "competitionStatus": "ACTIVE",
+    "kits": {
+      "home": "#2c3a67",
+      "away": "#e0a7b0"
+    }
   },
   {
     "id": "t_tainan_evergreen_2026",
@@ -287,7 +295,11 @@
         "englishName": "RUTH DARLEEN CHANDRA"
       }
     ],
-    "competitionStatus": "ACTIVE"
+    "competitionStatus": "ACTIVE",
+    "kits": {
+      "home": "#026531",
+      "away": "#ffffff"
+    }
   },
   {
     "id": "t_luzhu_2026",
@@ -327,13 +339,13 @@
     "identityId": "wanderers",
     "seasonId": "2026-27",
     "leagueId": "L3",
-    "name": "Wanderers",
-    "shortName": "Wanderers",
+    "name": "WANDERERS",
+    "shortName": "WANDERERS",
     "logo": "assets/seasons/2026-27/teams/wanderers.png",
     "primaryColor": "#26195f",
     "secondaryColor": "#ffffff",
     "kits": {
-      "home": "#26195f",
+      "home": "#191e54",
       "away": "#ffffff"
     },
     "staff": [
@@ -448,7 +460,11 @@
         "englishName": "MICHAEL STEIN LENIHAN"
       }
     ],
-    "competitionStatus": "ACTIVE"
+    "competitionStatus": "ACTIVE",
+    "kits": {
+      "home": "#111111",
+      "away": "#d9d8d4"
+    }
   },
   {
     "id": "t_holy_knights_2026",
@@ -472,6 +488,10 @@
         "englishName": "Tseng Yian"
       }
     ],
-    "competitionStatus": "ACTIVE"
+    "competitionStatus": "ACTIVE",
+    "kits": {
+      "home": "#05142b",
+      "away": "#efb4c6"
+    }
   }
 ]

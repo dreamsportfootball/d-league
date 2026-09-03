@@ -1,5 +1,6 @@
 import { getSeasonConfig } from '../config/seasons';
 import { SEASON_IDS } from '../config/siteManifest.js';
+import playerSeasonHistoryJson from '../data/playerSeasonHistory.json';
 import { MatchStatus, type Match } from '../types';
 import type { MatchEvent } from '../types/matchEvent';
 import type { PlayerProfile } from '../types/player';
@@ -51,6 +52,12 @@ export interface RoundInsights {
 
 const seasonIds = SEASON_IDS as readonly SeasonId[];
 
+interface HistoricalPlayerSeasonRecord extends PlayerProfile {
+  seasonId: SeasonId;
+}
+
+const historicalPlayerSeasonRecords = playerSeasonHistoryJson as HistoricalPlayerSeasonRecord[];
+
 export const getTeamIdentity = (team: SeasonTeam): string => team.identityId ?? team.id;
 export const getPlayerIdentity = (player: PlayerProfile): string => player.identityId ?? player.id;
 
@@ -101,6 +108,7 @@ export const getTeamHistory = (entityOrTeamId: string): TeamSeasonRecord[] => {
 
 export const getPlayerHistory = (entityOrPlayerId: string): PlayerSeasonRecord[] => {
   let identityId = entityOrPlayerId;
+  let identityResolved = false;
 
   for (const seasonId of seasonIds) {
     const exact = getSeasonData(seasonId).players.find(
@@ -108,19 +116,35 @@ export const getPlayerHistory = (entityOrPlayerId: string): PlayerSeasonRecord[]
     );
     if (exact) {
       identityId = getPlayerIdentity(exact);
+      identityResolved = true;
       break;
     }
+  }
+
+  if (!identityResolved) {
+    const historicalExact = historicalPlayerSeasonRecords.find(
+      (player) => player.id === entityOrPlayerId || player.identityId === entityOrPlayerId,
+    );
+    if (historicalExact) identityId = getPlayerIdentity(historicalExact);
   }
 
   return seasonIds
     .flatMap((seasonId) => {
       const data = getSeasonData(seasonId);
-      const player = data.players.find(
+      const actualPlayer = data.players.find(
         (candidate) =>
           getPlayerIdentity(candidate) === identityId ||
           candidate.id === entityOrPlayerId ||
           candidate.identityId === entityOrPlayerId,
       );
+      const historicalPlayer = historicalPlayerSeasonRecords.find(
+        (candidate) =>
+          candidate.seasonId === seasonId &&
+          (getPlayerIdentity(candidate) === identityId ||
+            candidate.id === entityOrPlayerId ||
+            candidate.identityId === entityOrPlayerId),
+      );
+      const player = actualPlayer ?? historicalPlayer;
       if (!player) return [];
       return [{
         seasonId,

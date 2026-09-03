@@ -14,7 +14,7 @@ const expectedTeams = [
   '陳公舘',
   '高雄黑騎士足球隊',
   '銅雀',
-  'Wanderers',
+  'WANDERERS',
   '台南鳥仕足球俱樂部',
 ];
 const forbiddenMessages = [

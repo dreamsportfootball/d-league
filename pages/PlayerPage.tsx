@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CalendarDays, Target, UserRound } from 'lucide-react';
+import { CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
@@ -115,57 +115,6 @@ interface SelectedMatchState {
   seasonId: SeasonId;
 }
 
-interface PlayerTransferRecord {
-  seasonId: SeasonId;
-  seasonName: string;
-  effectiveFrom?: string;
-  fromTeam: SeasonTeam;
-  toTeam: SeasonTeam;
-}
-
-const getPlayerTransfers = (history: PlayerSeasonRecord[]): PlayerTransferRecord[] =>
-  history.flatMap((record) => {
-    const registrations = (record.player.registrations ?? [])
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(a.effectiveFrom).getTime() - new Date(b.effectiveFrom).getTime(),
-      )
-      .filter((registration) => Boolean(record.data.teamMap[registration.teamId]));
-
-    const uniqueRegistrations = registrations.filter(
-      (registration, index) =>
-        index === 0 || registration.teamId !== registrations[index - 1].teamId,
-    );
-
-    if (uniqueRegistrations.length >= 2) {
-      return uniqueRegistrations.slice(1).flatMap((registration, index) => {
-        const previous = uniqueRegistrations[index];
-        const fromTeam = record.data.teamMap[previous.teamId];
-        const toTeam = record.data.teamMap[registration.teamId];
-        if (!fromTeam || !toTeam) return [];
-
-        return [{
-          seasonId: record.seasonId,
-          seasonName: record.season.shortName,
-          effectiveFrom: registration.effectiveFrom,
-          fromTeam,
-          toTeam,
-        }];
-      });
-    }
-
-    const inferredTeams = getPlayerSeasonTeams(record);
-    if (inferredTeams.length < 2) return [];
-
-    return inferredTeams.slice(1).map((toTeam, index) => ({
-      seasonId: record.seasonId,
-      seasonName: record.season.shortName,
-      fromTeam: inferredTeams[index],
-      toTeam,
-    }));
-  });
-
 const PlayerPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
@@ -173,7 +122,6 @@ const PlayerPage: React.FC = () => {
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getPlayerHistory(id), [id]);
   const matchRecords = useMemo(() => getPlayerMatchRecords(id), [id]);
-  const transferRecords = useMemo(() => getPlayerTransfers(history), [history]);
   const requestedEventSeason =
     isSeasonId(requestedSeason) && history.some((record) => record.seasonId === requestedSeason)
       ? requestedSeason
@@ -493,40 +441,6 @@ const PlayerPage: React.FC = () => {
         </section>
 
         <PlayerHonours playerId={id} className="order-2" />
-
-        {transferRecords.length > 0 && (
-          <section className="order-4">
-            <div className="flex items-center border-b border-neutral-200 pb-3">
-              <ArrowRight className="mr-2 h-5 w-5 text-brand-blue" />
-              <h2 className="font-display text-2xl font-extrabold text-brand-black">轉會紀錄</h2>
-            </div>
-            <div className="divide-y divide-neutral-100">
-              {transferRecords.map((transfer) => (
-                <div
-                  key={`${transfer.seasonId}-${transfer.fromTeam.id}-${transfer.toTeam.id}`}
-                  className="grid gap-2 py-4 sm:grid-cols-[90px_minmax(0,1fr)] sm:items-center"
-                >
-                  <span className="text-xs font-bold text-neutral-500">{transfer.seasonName}</span>
-                  <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold">
-                    <Link
-                      to={`/teams/${getTeamIdentity(transfer.fromTeam)}?season=${transfer.seasonId}`}
-                      className="text-brand-black hover:text-brand-blue"
-                    >
-                      {transfer.fromTeam.name}
-                    </Link>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-neutral-300" />
-                    <Link
-                      to={`/teams/${getTeamIdentity(transfer.toTeam)}?season=${transfer.seasonId}`}
-                      className="text-brand-blue"
-                    >
-                      {transfer.toTeam.name}
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         <section className="order-1">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">

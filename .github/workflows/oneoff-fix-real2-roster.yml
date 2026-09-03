@@ -1,0 +1,66 @@
+name: One-off fix verified real2 roster
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/oneoff-fix-real2-roster.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.event.head_commit.message == 'chore: stage verified real2 roster corrections'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+
+      - name: Apply exact verified corrections
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('data/seasons/2026-27/players.json')
+          players = json.loads(path.read_text(encoding='utf-8'))
+          assert len(players) == 276, f'expected 276 players, got {len(players)}'
+          by_id = {p['id']: p for p in players}
+
+          lucas = by_id['kbk26-08']
+          assert lucas['name'] == 'LUCAS ROA'
+          assert lucas['number'] == 35
+          assert lucas['age'] == 32
+          lucas['age'] = 23
+
+          douglas = by_id['kbk26-13']
+          assert douglas['name'] == 'DOUGLAS'
+          assert douglas['number'] == 29
+          assert douglas['age'] == 23
+          douglas['age'] = 32
+
+          dickson = by_id['kbk26-11']
+          assert dickson['name'] == 'MANONGI DICKSON'
+          dickson['name'] = 'DICKSON'
+
+          holy_ids = [f'holy26-{i:02d}' for i in range(1, 18)]
+          for player_id in holy_ids:
+              player = by_id[player_id]
+              assert player['nationality'] == '中華民國', f"{player_id}: {player['nationality']}"
+              player['nationality'] = '台灣'
+
+          path.write_text(json.dumps(players, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Commit corrected roster data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seasons/2026-27/players.json
+          git diff --cached --check
+          git commit -m "fix: align 2026-27 roster with combined registration"
+          git push origin HEAD:season/2026-27

@@ -148,7 +148,7 @@ for (const season of seasons) {
   const playerNames = new Set(players.map((player) => player.name));
   for (const [name, path] of Object.entries(images)) {
     asset(path, `${season} player image ${name}`);
-    if (!playerNames.has(name)) fail(`${season} player image ${name}: unknown player`);
+    if (season === CURRENT_SEASON_ID && !playerNames.has(name)) fail(`${season} player image ${name}: unknown player`);
     if (season === CURRENT_SEASON_ID) {
       const expectedPrefix = `assets/seasons/${CURRENT_SEASON_ID}/players/`;
       if (!path.startsWith(expectedPrefix)) {

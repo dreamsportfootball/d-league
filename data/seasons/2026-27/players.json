@@ -188,7 +188,7 @@
   },
   {
     "id": "sf26-18",
-    "identityId": "cheng-yung-han",
+    "identityId": "jh-12",
     "teamId": "t_sf_2026",
     "number": 12,
     "name": "鄭詠翰",
@@ -419,7 +419,7 @@
   },
   {
     "id": "ka26-30",
-    "identityId": "wu-yong-xiang",
+    "identityId": "cd-08",
     "number": 19,
     "name": "吳詠祥",
     "englishName": "WU YONG XIANG",
@@ -430,7 +430,7 @@
   },
   {
     "id": "ka26-31",
-    "identityId": "yang-cheng-yan",
+    "identityId": "cd-06",
     "number": 13,
     "name": "楊承諺",
     "englishName": "YANG CHENG YAN",
@@ -452,7 +452,7 @@
   },
   {
     "id": "ka26-33",
-    "identityId": "wu-yi-min",
+    "identityId": "cd-19",
     "number": 15,
     "name": "吳亦民",
     "englishName": "WU YI MIN",
@@ -507,7 +507,7 @@
   },
   {
     "id": "ka26-38",
-    "identityId": "pan-chen-wei",
+    "identityId": "cl-08",
     "number": 7,
     "name": "潘晨維",
     "englishName": "PAN CHEN WEI",
@@ -1431,7 +1431,7 @@
   },
   {
     "id": "bw26-09",
-    "identityId": "su-ching-tang",
+    "identityId": "pt-99",
     "teamId": "t_black_wolf_2026",
     "number": 99,
     "name": "蘇靖棠",
@@ -2861,7 +2861,7 @@
   },
   {
     "id": "sb26-01",
-    "identityId": "cevin-ade-pratama",
+    "identityId": "ppi-11",
     "teamId": "t_southboys_2026",
     "number": 1,
     "name": "杰菲",
@@ -2872,7 +2872,7 @@
   },
   {
     "id": "sb26-02",
-    "identityId": "rafif-jamil",
+    "identityId": "ppi-10",
     "teamId": "t_southboys_2026",
     "number": 2,
     "name": "拉非",
@@ -2883,7 +2883,7 @@
   },
   {
     "id": "sb26-03",
-    "identityId": "rangga-rulianto",
+    "identityId": "ppi-94",
     "teamId": "t_southboys_2026",
     "number": 3,
     "name": "孺立",
@@ -2894,7 +2894,7 @@
   },
   {
     "id": "sb26-04",
-    "identityId": "yehuda-gagah-wicaksono",
+    "identityId": "ppi-19",
     "teamId": "t_southboys_2026",
     "number": 4,
     "name": "李福祥",
@@ -2905,7 +2905,7 @@
   },
   {
     "id": "sb26-05",
-    "identityId": "tomi-haryadi",
+    "identityId": "ppi-18",
     "teamId": "t_southboys_2026",
     "number": 5,
     "name": "牙提",
@@ -2916,7 +2916,7 @@
   },
   {
     "id": "sb26-06",
-    "identityId": "sukma-hadi-novandi",
+    "identityId": "ppi-95",
     "teamId": "t_southboys_2026",
     "number": 6,
     "name": "蘇凡迪",
@@ -2927,7 +2927,7 @@
   },
   {
     "id": "sb26-07",
-    "identityId": "irfan-kholiq-aji-suk",
+    "identityId": "ppi-92",
     "teamId": "t_southboys_2026",
     "number": 7,
     "name": "伊而凡",
@@ -3015,7 +3015,7 @@
   },
   {
     "id": "sb26-15",
-    "identityId": "yeremia-immanuel-susilo",
+    "identityId": "ppi-96",
     "teamId": "t_southboys_2026",
     "number": 15,
     "name": "劉駿輝",

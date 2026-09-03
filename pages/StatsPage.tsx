@@ -13,6 +13,7 @@ import { useSeason } from '../hooks/useSeason';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
 import { getPlayerIdentity, getTeamIdentity } from '../services/entityData';
+import { getLatestPlayerImageUrl } from '../services/seasonDataJson';
 import type { SuspensionReason } from '../types/discipline';
 import type { LeagueId, SeasonId } from '../types/season';
 import { formatTaipeiDate } from '../utils/dateFormat';
@@ -423,7 +424,7 @@ const StatsPage: React.FC = () => {
               const team = seasonData.teamMap[player.teamId];
               if (!team) return null;
               const playerProfile = seasonData.players.find((item) => item.id === player.subjectId);
-              const playerImage = seasonData.playerImages[player.name];
+              const playerImage = playerProfile ? getLatestPlayerImageUrl(playerProfile) : undefined;
               const isTopScorer = activeTab === 'SCORERS' && index === 0;
               const nameClass = `block break-words tracking-tight text-brand-black transition-colors hover:text-brand-blue ${isTopScorer ? 'font-display text-2xl font-black italic text-brand-blue md:text-3xl' : 'text-sm font-bold md:text-base'}`;
 

@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
+const expectSeasonInfo = process.env.AUDIT_EXPECT_SEASON_INFO !== 'false';
 const expectedMessages = [
   '正式參賽隊伍',
   '正式分級公布於 2026/08/05',
@@ -48,6 +49,16 @@ const validateRegistration = async () => {
     await page.goto(`${baseUrl}/#${route}`, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForSelector('#root > *', { timeout: 12000 });
 
+    if (!expectSeasonInfo) {
+      await page.waitForURL((url) => url.hash === '#/');
+      const registrationLinkCount = await page.locator('a[href*="/registration"]').count();
+      if (registrationLinkCount !== 0) {
+        fail(`${route}: registration navigation is disabled but ${registrationLinkCount} registration link(s) remain`);
+      }
+      if (pageErrors.length > 0) fail(`${route}: ${pageErrors.join(' | ')}`);
+      return;
+    }
+
     const participantsSection = page.locator('section[aria-labelledby="season-participants-title"]').first();
     await participantsSection.waitFor({ state: 'visible', timeout: 12000 });
     const text = (await participantsSection.innerText()).replace(/\s+/g, ' ').trim();
@@ -80,7 +91,11 @@ const validateRegistration = async () => {
 
 try {
   await validateRegistration();
-  console.log('Season participants validation passed');
+  console.log(
+    expectSeasonInfo
+      ? 'Season participants validation passed'
+      : 'Season registration route-disabled validation passed',
+  );
 } finally {
   await context.close();
   await browser.close();

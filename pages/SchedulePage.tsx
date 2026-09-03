@@ -205,6 +205,77 @@ const getStatusSummary = (status: StatusFilter): string => {
   return '全部狀態';
 };
 
+const SCHEDULE_FILTERS_STORAGE_PREFIX = 'dleague:schedule-filters:';
+
+const getScheduleFiltersStorageKey = (seasonId: SeasonId): string =>
+  `${SCHEDULE_FILTERS_STORAGE_PREFIX}${seasonId}`;
+
+const readScheduleFilters = (
+  seasonId: SeasonId,
+  enabledLeagues: LeagueId[],
+  matches: Match[],
+  teams: SeasonTeam[],
+): ScheduleFilters => {
+  try {
+    const raw = window.sessionStorage.getItem(getScheduleFiltersStorageKey(seasonId));
+    if (!raw) return { ...EMPTY_FILTERS };
+
+    const value = JSON.parse(raw) as Partial<Record<keyof ScheduleFilters, unknown>>;
+    const savedLeague = value.league;
+    const savedTeam = value.team;
+    const savedRound = value.round;
+    const savedDate = value.date;
+    const savedStatus = value.status;
+    const league: LeagueFilter =
+      savedLeague === 'ALL' ||
+      (typeof savedLeague === 'string' && enabledLeagues.includes(savedLeague as LeagueId))
+        ? savedLeague as LeagueFilter
+        : 'ALL';
+    const team = typeof savedTeam === 'string' &&
+      (savedTeam === 'ALL' || teams.some((candidate) => candidate.id === savedTeam))
+      ? savedTeam
+      : 'ALL';
+    const round = typeof savedRound === 'string' &&
+      (savedRound === 'ALL' || matches.some((match) => String(match.round) === savedRound))
+      ? savedRound
+      : 'ALL';
+    const date = typeof savedDate === 'string' &&
+      (savedDate === 'ALL' || matches.some((match) => match.timestamp.startsWith(savedDate)))
+      ? savedDate
+      : 'ALL';
+    const status: StatusFilter =
+      savedStatus === 'ALL' || savedStatus === 'UPCOMING' || savedStatus === 'FINISHED'
+        ? savedStatus
+        : 'ALL';
+
+    const nextFilters: ScheduleFilters = { league, team, round, date, status };
+    const facets: FacetKey[] = ['league', 'status', 'team', 'date', 'round'];
+    for (let pass = 0; pass < facets.length; pass += 1) {
+      let changed = false;
+      for (const facet of facets) {
+        if (nextFilters[facet] === 'ALL') continue;
+        if (!isFacetValueAvailable(facet, nextFilters[facet], matches, nextFilters)) {
+          nextFilters[facet] = 'ALL';
+          changed = true;
+        }
+      }
+      if (!changed) break;
+    }
+
+    return nextFilters;
+  } catch {
+    return { ...EMPTY_FILTERS };
+  }
+};
+
+const writeScheduleFilters = (seasonId: SeasonId, filters: ScheduleFilters): void => {
+  try {
+    window.sessionStorage.setItem(getScheduleFiltersStorageKey(seasonId), JSON.stringify(filters));
+  } catch {
+    // Session storage may be unavailable.
+  }
+};
+
 const SchedulePage: React.FC = () => {
   const {
     activeSeasonId,
@@ -219,21 +290,14 @@ const SchedulePage: React.FC = () => {
   const mobileFilterTriggerRef = useRef<HTMLButtonElement | null>(null);
   const desktopFilterDialogRef = useRef<HTMLElement | null>(null);
   const mobileFilterDialogRef = useRef<HTMLDivElement | null>(null);
-  const [filters, setFilters] = useState<ScheduleFilters>(() => {
-    let savedLeague: LeagueFilter = 'ALL';
-    try {
-      const saved = window.sessionStorage.getItem('scheduleActiveLeague');
-      if (saved === 'L1' || saved === 'L2' || saved === 'L3') savedLeague = saved;
-    } catch {
-      // Session storage may be unavailable.
-    }
-    return {
-      ...EMPTY_FILTERS,
-      league: savedLeague !== 'ALL' && activeSeason.enabledLeagues.includes(savedLeague)
-        ? savedLeague
-        : 'ALL',
-    };
-  });
+  const [filters, setFilters] = useState<ScheduleFilters>(() =>
+    readScheduleFilters(
+      activeSeasonId,
+      activeSeason.enabledLeagues,
+      seasonData.matches,
+      seasonData.teams,
+    ),
+  );
   const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
   const [desktopFilterView, setDesktopFilterView] = useState<DesktopFilterView>('ROOT');
   const [desktopDraft, setDesktopDraft] = useState<ScheduleFilterDraft>({
@@ -308,15 +372,17 @@ const SchedulePage: React.FC = () => {
   useEffect(() => {
     if (previousSeasonIdRef.current === activeSeasonId) return;
     previousSeasonIdRef.current = activeSeasonId;
-    setFilters({ ...EMPTY_FILTERS });
+    setFilters(readScheduleFilters(
+      activeSeasonId,
+      activeSeason.enabledLeagues,
+      seasonData.matches,
+      seasonData.teams,
+    ));
     setDesktopFiltersOpen(false);
     setDesktopFilterView('ROOT');
-    try {
-      window.sessionStorage.setItem('scheduleActiveLeague', 'ALL');
-    } catch {
-      // Session storage may be unavailable.
-    }
-  }, [activeSeasonId]);
+    setMobileFiltersOpen(false);
+    setMobileFilterView('ROOT');
+  }, [activeSeason.enabledLeagues, activeSeasonId, seasonData.matches, seasonData.teams]);
 
   useEffect(() => {
     if (selectedMatchId && !seasonData.matches.some((match) => match.id === selectedMatchId)) {
@@ -430,15 +496,11 @@ const SchedulePage: React.FC = () => {
 
   const applyDesktopFilters = () => {
     previousSeasonIdRef.current = desktopDraft.seasonId;
+    writeScheduleFilters(desktopDraft.seasonId, desktopDraft.filters);
     if (desktopDraft.seasonId !== activeSeasonId) {
       setActiveSeason(desktopDraft.seasonId);
     }
     setFilters(desktopDraft.filters);
-    try {
-      window.sessionStorage.setItem('scheduleActiveLeague', desktopDraft.filters.league);
-    } catch {
-      // Session storage may be unavailable.
-    }
     closeDesktopFilters();
   };
 
@@ -455,15 +517,11 @@ const SchedulePage: React.FC = () => {
 
   const applyMobileFilters = () => {
     previousSeasonIdRef.current = mobileDraft.seasonId;
+    writeScheduleFilters(mobileDraft.seasonId, mobileDraft.filters);
     if (mobileDraft.seasonId !== activeSeasonId) {
       setActiveSeason(mobileDraft.seasonId);
     }
     setFilters(mobileDraft.filters);
-    try {
-      window.sessionStorage.setItem('scheduleActiveLeague', mobileDraft.filters.league);
-    } catch {
-      // Session storage may be unavailable.
-    }
     closeMobileFilters();
   };
 
@@ -476,7 +534,7 @@ const SchedulePage: React.FC = () => {
   const closeMatch = () => {
     const next = new URLSearchParams(searchParams);
     next.delete('match');
-    setSearchParams(next, { replace: false });
+    setSearchParams(next, { replace: true });
   };
 
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;

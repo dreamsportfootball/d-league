@@ -19,25 +19,44 @@ interface TeamCellProps {
   logoUrl: string | null;
   seasonId: string;
   compact?: boolean;
+  anchorId?: string;
 }
 
-const TeamCell: React.FC<TeamCellProps> = ({ teamName, team, logoUrl, seasonId, compact = false }) => {
+const TeamCell: React.FC<TeamCellProps> = ({
+  teamName,
+  team,
+  logoUrl,
+  seasonId,
+  compact = false,
+  anchorId,
+}) => {
   const content = (
     <>
-      <span className={`${compact ? 'h-7 w-7' : 'h-8 w-8'} flex shrink-0 items-center justify-center`} aria-hidden="true">
+      <span
+        className={`${compact ? 'h-7 w-7' : 'h-8 w-8'} flex shrink-0 items-center justify-center`}
+        aria-hidden="true"
+      >
         {logoUrl && <img src={logoUrl} alt="" className="max-h-full max-w-full object-contain" />}
       </span>
       <div className="min-w-0 flex-1">
-        <AutoFitText text={teamName} maxFontSize={compact ? 13 : 14} minFontSize={7} className="font-bold text-brand-black" />
+        <AutoFitText
+          text={teamName}
+          maxFontSize={compact ? 13 : 14}
+          minFontSize={7}
+          className="font-bold text-brand-black"
+        />
       </div>
     </>
   );
 
-  if (!team) return <div className="flex min-h-11 min-w-0 items-center space-x-2 md:space-x-3">{content}</div>;
+  if (!team) {
+    return <div className="flex min-h-11 min-w-0 items-center space-x-2 md:space-x-3">{content}</div>;
+  }
 
   return (
     <Link
       to={`/teams/${getTeamIdentity(team)}?season=${seasonId}`}
+      data-scroll-anchor-id={anchorId}
       className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue focus-visible:ring-2 focus-visible:ring-brand-blue/30 md:space-x-3"
       aria-label={`查看 ${teamName} 球隊頁`}
     >
@@ -46,13 +65,27 @@ const TeamCell: React.FC<TeamCellProps> = ({ teamName, team, logoUrl, seasonId, 
   );
 };
 
-const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNames, variant = 'page' }) => {
+const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
+  league,
+  teamNames,
+  variant = 'page',
+}) => {
   const { activeSeasonId, seasonData } = useSeason();
-  const [mobileExpanded, setMobileExpanded] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState(() => {
+    if (variant !== 'page') return false;
+    try {
+      return window.sessionStorage.getItem('standingsMobileExpanded') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const publishedTeamByName = useMemo(
-    () => new Map(seasonData.teams
-      .filter((team) => team.leagueId === league && team.competitionStatus !== 'WITHDRAWN')
-      .map((team): [string, SeasonTeam] => [team.name, team])),
+    () =>
+      new Map(
+        seasonData.teams
+          .filter((team) => team.leagueId === league && team.competitionStatus !== 'WITHDRAWN')
+          .map((team): [string, SeasonTeam] => [team.name, team]),
+      ),
     [league, seasonData.teams],
   );
 
@@ -62,11 +95,21 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
     logoUrl: getTeamLogoUrl(activeSeasonId, teamName),
   }));
 
+  const toggleMobileExpanded = () => {
+    const nextExpanded = !mobileExpanded;
+    setMobileExpanded(nextExpanded);
+    try {
+      window.sessionStorage.setItem('standingsMobileExpanded', String(nextExpanded));
+    } catch {
+      // Session storage may be unavailable.
+    }
+  };
+
   if (variant === 'widget') {
     return (
       <div className="w-full text-xs">
         <p className="mb-2 text-[10px] font-medium leading-5 text-neutral-400">
-          尚未有正式賽果，先顯示本季確認參賽球隊
+          賽季尚未開賽，積分榜將於首輪比賽後更新
         </p>
         <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 border-b border-neutral-100 py-2 text-[10px] font-bold tracking-wider text-neutral-500">
           <span>#</span>
@@ -75,9 +118,19 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
           <span className="text-center">積分</span>
         </div>
         {rows.map(({ teamName, team, logoUrl }) => (
-          <div key={teamName} className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-2">
+          <div
+            key={teamName}
+            className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-2"
+          >
             <span className="pl-2 font-medium tabular-nums text-neutral-400">-</span>
-            <TeamCell teamName={teamName} team={team} logoUrl={logoUrl} seasonId={activeSeasonId} compact />
+            <TeamCell
+              teamName={teamName}
+              team={team}
+              logoUrl={logoUrl}
+              seasonId={activeSeasonId}
+              compact
+              anchorId={team ? `home-standings-${activeSeasonId}-${league}-${team.id}` : undefined}
+            />
             <span className="text-center tabular-nums">0</span>
             <span className="text-center font-semibold tabular-nums">0</span>
           </div>
@@ -89,13 +142,13 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
   return (
     <div className="w-full">
       <p className="mb-3 text-xs font-medium leading-5 text-neutral-500">
-        賽季尚未開賽，名次將於首輪正式比賽完成後產生
+        賽季尚未開賽，所有球隊目前場次及積分均為 0，名次將於首輪正式比賽後產生
       </p>
 
       <div className="mb-2 flex justify-end md:hidden">
         <button
           type="button"
-          onClick={() => setMobileExpanded((expanded) => !expanded)}
+          onClick={toggleMobileExpanded}
           aria-expanded={mobileExpanded}
           className="min-h-11 rounded-sm px-2 text-xs font-bold text-brand-blue transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30"
         >
@@ -119,7 +172,16 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
               {rows.map(({ teamName, team, logoUrl }) => (
                 <tr key={teamName} className="border-b border-neutral-100">
                   <td className="px-1 py-3 font-mono text-xs font-bold text-neutral-400">-</td>
-                  <td className="py-1.5 pl-2 pr-1"><TeamCell teamName={teamName} team={team} logoUrl={logoUrl} seasonId={activeSeasonId} compact /></td>
+                  <td className="py-1.5 pl-2 pr-1">
+                    <TeamCell
+                      teamName={teamName}
+                      team={team}
+                      logoUrl={logoUrl}
+                      seasonId={activeSeasonId}
+                      compact
+                      anchorId={team ? `preseason-standings-team-${activeSeasonId}-${league}-${team.id}` : undefined}
+                    />
+                  </td>
                   <td className="px-1 py-3 text-center text-xs tabular-nums">0</td>
                   <td className="px-1 py-3 text-center text-xs tabular-nums">0</td>
                   <td className="px-1 py-3 text-center text-xs font-semibold tabular-nums text-brand-blue">0</td>
@@ -137,15 +199,36 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
               <tr>
                 <th className="w-8 px-1 py-3 text-left">名次</th>
                 <th className="w-[140px] py-3 pl-2 pr-2 text-left">球隊</th>
-                <th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th>
+                <th className="w-10 px-1 py-3 text-center">場次</th>
+                <th className="w-10 px-1 py-3 text-center">勝</th>
+                <th className="w-10 px-1 py-3 text-center">和</th>
+                <th className="w-10 px-1 py-3 text-center">敗</th>
+                <th className="w-10 px-1 py-3 text-center">進球</th>
+                <th className="w-10 px-1 py-3 text-center">失球</th>
+                <th className="w-12 px-1 py-3 text-center">淨勝</th>
+                <th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th>
+                <th className="w-[50px] px-1 py-3 text-left">近況</th>
               </tr>
             </thead>
             <tbody>
               {rows.map(({ teamName, team, logoUrl }) => (
                 <tr key={teamName} className="border-b border-neutral-100">
                   <td className="px-1 py-3 font-mono text-xs font-bold text-neutral-400">-</td>
-                  <td className="py-1.5 pl-2 pr-2"><TeamCell teamName={teamName} team={team} logoUrl={logoUrl} seasonId={activeSeasonId} compact /></td>
-                  {[0, 0, 0, 0, 0, 0, 0, 0].map((value, index) => <td key={`${teamName}-${index}`} className="px-1 py-3 text-center text-xs tabular-nums">{value}</td>)}
+                  <td className="py-1.5 pl-2 pr-2">
+                    <TeamCell
+                      teamName={teamName}
+                      team={team}
+                      logoUrl={logoUrl}
+                      seasonId={activeSeasonId}
+                      compact
+                      anchorId={team ? `preseason-standings-team-${activeSeasonId}-${league}-${team.id}` : undefined}
+                    />
+                  </td>
+                  {[0, 0, 0, 0, 0, 0, 0, 0].map((value, index) => (
+                    <td key={`${teamName}-${index}`} className="px-1 py-3 text-center text-xs tabular-nums">
+                      {value}
+                    </td>
+                  ))}
                   <td className="px-1 py-3 text-left text-xs text-neutral-400">-</td>
                 </tr>
               ))}
@@ -158,15 +241,37 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({ league, teamNam
         <table className="w-full border-collapse">
           <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-widest text-neutral-500">
             <tr>
-              <th className="w-10 px-1 py-3 text-left">名次</th><th className="w-[220px] px-4 py-3 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th>
+              <th className="w-10 px-1 py-3 text-left">名次</th>
+              <th className="w-[220px] px-4 py-3 text-left">球隊</th>
+              <th className="w-10 px-1 py-3 text-center">場次</th>
+              <th className="w-10 px-1 py-3 text-center">勝</th>
+              <th className="w-10 px-1 py-3 text-center">和</th>
+              <th className="w-10 px-1 py-3 text-center">敗</th>
+              <th className="w-10 px-1 py-3 text-center">進球</th>
+              <th className="w-10 px-1 py-3 text-center">失球</th>
+              <th className="w-12 px-1 py-3 text-center">淨勝</th>
+              <th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th>
+              <th className="w-[50px] px-1 py-3 text-left">近況</th>
             </tr>
           </thead>
           <tbody>
             {rows.map(({ teamName, team, logoUrl }) => (
               <tr key={teamName} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50">
                 <td className="px-1 py-3 font-mono text-sm font-bold text-neutral-400">-</td>
-                <td className="px-4 py-1.5"><TeamCell teamName={teamName} team={team} logoUrl={logoUrl} seasonId={activeSeasonId} /></td>
-                {[0, 0, 0, 0, 0, 0, 0, 0].map((value, index) => <td key={`${teamName}-${index}`} className="px-1 py-3 text-center text-sm tabular-nums">{value}</td>)}
+                <td className="px-4 py-1.5">
+                  <TeamCell
+                    teamName={teamName}
+                    team={team}
+                    logoUrl={logoUrl}
+                    seasonId={activeSeasonId}
+                    anchorId={team ? `preseason-standings-team-${activeSeasonId}-${league}-${team.id}` : undefined}
+                  />
+                </td>
+                {[0, 0, 0, 0, 0, 0, 0, 0].map((value, index) => (
+                  <td key={`${teamName}-${index}`} className="px-1 py-3 text-center text-sm tabular-nums">
+                    {value}
+                  </td>
+                ))}
                 <td className="px-1 py-3 text-left text-sm text-neutral-400">-</td>
               </tr>
             ))}

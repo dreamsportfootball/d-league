@@ -80,7 +80,7 @@ const PhotoCarousel: React.FC = () => {
 
         <div className="relative mx-auto w-full max-w-5xl">
           <div
-            className="group relative aspect-[16/10] overflow-hidden rounded-lg bg-neutral-200 shadow-2xl md:aspect-[16/7]"
+            className="group relative aspect-[16/10] overflow-hidden rounded-lg bg-neutral-950 shadow-2xl md:aspect-[16/7]"
             onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
             onTouchEnd={handleTouchEnd}
           >
@@ -91,20 +91,23 @@ const PhotoCarousel: React.FC = () => {
                   index === activeIndex ? 'z-10 scale-100 opacity-100' : 'z-0 scale-105 opacity-0'
                 }`}
               >
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950 text-center text-white">
+                  <span className="font-display text-3xl font-black uppercase tracking-[0.16em]">D LEAGUE</span>
+                  <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.24em] text-white/45">Official Gallery</span>
+                </div>
                 {loadedIndices.has(index) && (
                   <img
                     src={image.src}
                     alt={`賽事精選圖片 ${image.id}`}
-                    className="h-full w-full object-cover"
+                    className="relative z-10 h-full w-full object-cover"
                     loading="lazy"
                     decoding="async"
                     onError={(event) => {
-                      event.currentTarget.onerror = null;
-                      event.currentTarget.src = 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1200&auto=format&fit=crop';
+                      event.currentTarget.style.display = 'none';
                     }}
                   />
                 )}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
+                <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
               </div>
             ))}
           </div>

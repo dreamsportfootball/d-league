@@ -2858,5 +2858,170 @@
     "gender": "男",
     "nationality": "中華民國",
     "age": 24
+  },
+  {
+    "id": "sb26-01",
+    "identityId": "cevin-ade-pratama",
+    "teamId": "t_southboys_2026",
+    "number": 1,
+    "name": "杰菲",
+    "englishName": "CEVIN ADE PRATAMA",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 27
+  },
+  {
+    "id": "sb26-02",
+    "identityId": "rafif-jamil",
+    "teamId": "t_southboys_2026",
+    "number": 2,
+    "name": "拉非",
+    "englishName": "RAFIF JAMIL",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 24
+  },
+  {
+    "id": "sb26-03",
+    "identityId": "rangga-rulianto",
+    "teamId": "t_southboys_2026",
+    "number": 3,
+    "name": "孺立",
+    "englishName": "RANGGA RULIANTO",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 22
+  },
+  {
+    "id": "sb26-04",
+    "identityId": "yehuda-gagah-wicaksono",
+    "teamId": "t_southboys_2026",
+    "number": 4,
+    "name": "李福祥",
+    "englishName": "YEHUDA GAGAH WICAKSONO",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 19
+  },
+  {
+    "id": "sb26-05",
+    "identityId": "tomi-haryadi",
+    "teamId": "t_southboys_2026",
+    "number": 5,
+    "name": "牙提",
+    "englishName": "TOMI HARYADI",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 27
+  },
+  {
+    "id": "sb26-06",
+    "identityId": "sukma-hadi-novandi",
+    "teamId": "t_southboys_2026",
+    "number": 6,
+    "name": "蘇凡迪",
+    "englishName": "SUKMA HADI NOVANDI",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 26
+  },
+  {
+    "id": "sb26-07",
+    "identityId": "irfan-kholiq-aji-suk",
+    "teamId": "t_southboys_2026",
+    "number": 7,
+    "name": "伊而凡",
+    "englishName": "IRFAN KHOLIQ AJI SUK",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 30
+  },
+  {
+    "id": "sb26-08",
+    "identityId": "muhammad-reza-aziz-prasetya",
+    "teamId": "t_southboys_2026",
+    "number": 8,
+    "name": "朴禮薩",
+    "englishName": "MUHAMMAD REZA AZIZ PRASETYA",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 26
+  },
+  {
+    "id": "sb26-09",
+    "identityId": "alif-syach-rizky",
+    "teamId": "t_southboys_2026",
+    "number": 9,
+    "name": "艾力夫",
+    "englishName": "ALIF SYACH RIZKY",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 26
+  },
+  {
+    "id": "sb26-10",
+    "identityId": "revaldi-primatio-saputra",
+    "teamId": "t_southboys_2026",
+    "number": 10,
+    "name": "孫瑞文",
+    "englishName": "REVALDI PRIMATIO SAPUTRA",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 24
+  },
+  {
+    "id": "sb26-11",
+    "identityId": "dimas-andre-agus-bastiyar",
+    "teamId": "t_southboys_2026",
+    "number": 11,
+    "name": "迪馬斯",
+    "englishName": "DIMAS ANDRE AGUS BASTIYAR",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 23
+  },
+  {
+    "id": "sb26-12",
+    "identityId": "dandi-kurniawan",
+    "teamId": "t_southboys_2026",
+    "number": 12,
+    "name": "亞萬",
+    "englishName": "DANDI KURNIAWAN",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 26
+  },
+  {
+    "id": "sb26-13",
+    "identityId": "wais-alkorni",
+    "teamId": "t_southboys_2026",
+    "number": 13,
+    "name": "偉亦",
+    "englishName": "WAIS ALKORNI",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 28
+  },
+  {
+    "id": "sb26-14",
+    "identityId": "muhammad-rizal",
+    "teamId": "t_southboys_2026",
+    "number": 14,
+    "name": "立嘉",
+    "englishName": "MUHAMMAD RIZAL",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 20
+  },
+  {
+    "id": "sb26-15",
+    "identityId": "yeremia-immanuel-susilo",
+    "teamId": "t_southboys_2026",
+    "number": 15,
+    "name": "劉駿輝",
+    "englishName": "YEREMIA IMMANUEL SUSILO",
+    "gender": "男",
+    "nationality": "印尼",
+    "age": 26
   }
 ]

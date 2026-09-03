@@ -1,0 +1,43 @@
+name: One-off scope current image validation
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/oneoff-fix-current-image-validator.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+      - name: Scope validation to current season
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/validate-season-data.mjs')
+          text = path.read_text(encoding='utf-8')
+          old = "    if (!playerNames.has(name)) fail(`${season} player image ${name}: unknown player`);"
+          new = "    if (season === CURRENT_SEASON_ID && !playerNames.has(name)) fail(`${season} player image ${name}: unknown player`);"
+          if old not in text:
+              raise SystemExit('current image validator guard missing')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit validator fix
+        shell: bash
+        run: |
+          git config user.name "dreamsportfootball"
+          git config user.email "dreamsportfootball@users.noreply.github.com"
+          git add scripts/validate-season-data.mjs
+          git diff --cached --check
+          git commit -m "fix: scope player image validation to current season"
+          git push origin HEAD:season/2026-27

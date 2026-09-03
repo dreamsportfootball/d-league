@@ -1,0 +1,111 @@
+name: One-off fix 2026-27 ages Nov 1 baseline
+on:
+  push:
+    branches: [audit-age-2026-11-01]
+    paths: ['.github/workflows/oneoff-fix-age-2026-11-01.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          show-progress: false
+      - name: Patch confirmed age errors and Black Knights roster
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          path='data/seasons/2026-27/players.json'
+          with open(path,encoding='utf-8') as f:
+              players=json.load(f)
+          by_id={p['id']:p for p in players}
+
+          age_fixes={
+              'pw26-06':('柯士傑',50,51),
+              'pw26-07':('蔡世俊',48,49),
+              'pw26-09':('蘇冠升',15,16),
+              'pw26-12':('林哲維',33,34),
+              'pw26-13':('黃旭盛',33,34),
+              'pw26-14':('吳宇唐',33,34),
+              'pw26-15':('張承堯',32,33),
+              'te26-06':('徐鈺凱',36,35),
+          }
+          for pid,(name,old_age,new_age) in age_fixes.items():
+              p=by_id.get(pid)
+              assert p is not None, f'missing {pid}'
+              assert p.get('name')==name, (pid,p.get('name'),name)
+              assert p.get('age')==old_age, (pid,p.get('age'),old_age)
+              p['age']=new_age
+
+          lucas=by_id.get('kbk26-08')
+          assert lucas is not None
+          assert lucas.get('identityId')=='lucas-matias-roa-espinola'
+          assert lucas.get('name')=='Lucas Roa'
+          assert lucas.get('englishName')=='Lucas Matias Roa Espinola'
+          assert lucas.get('number')==29
+          assert lucas.get('gender')=='男'
+          assert lucas.get('nationality')=='巴拉圭'
+          assert lucas.get('age')==23
+          lucas['name']='LUCAS ROA'
+          lucas['number']=35
+          lucas['age']=32
+
+          assert 'kbk26-13' not in by_id
+          assert not any(p.get('identityId')=='douglas-alexander-alfaro' for p in players)
+          assert not any(p.get('englishName')=='DOUGLAS ALEXANDER ALFARO' for p in players)
+          douglas={
+              'id':'kbk26-13',
+              'identityId':'douglas-alexander-alfaro',
+              'teamId':'t_kaohsiung_black_knights_2026',
+              'name':'DOUGLAS',
+              'englishName':'DOUGLAS ALEXANDER ALFARO',
+              'number':29,
+              'gender':'男',
+              'nationality':'薩爾瓦多',
+              'age':23,
+          }
+          # Keep existing player IDs stable; insert Douglas immediately after Lucas for roster readability.
+          lucas_index=next(i for i,p in enumerate(players) if p['id']=='kbk26-08')
+          players.insert(lucas_index+1,douglas)
+
+          with open(path,'w',encoding='utf-8') as f:
+              json.dump(players,f,ensure_ascii=False,indent=2)
+              f.write('\n')
+          PY
+      - name: Verify exact scoped changes
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          path='data/seasons/2026-27/players.json'
+          before=json.loads(subprocess.check_output(['git','show','HEAD:'+path],text=True))
+          after=json.load(open(path,encoding='utf-8'))
+          b={p['id']:p for p in before}; a={p['id']:p for p in after}
+          assert len(after)==len(before)+1
+          assert set(a)-set(b)=={'kbk26-13'}
+          allowed={'pw26-06','pw26-07','pw26-09','pw26-12','pw26-13','pw26-14','pw26-15','te26-06','kbk26-08'}
+          changed={pid for pid in b if b[pid]!=a[pid]}
+          assert changed==allowed, changed
+          for pid in allowed-{'kbk26-08'}:
+              diff={k for k in b[pid] if b[pid].get(k)!=a[pid].get(k)}
+              assert diff=={'age'}, (pid,diff)
+          diff={k for k in b['kbk26-08'] if b['kbk26-08'].get(k)!=a['kbk26-08'].get(k)}
+          assert diff=={'name','number','age'}, diff
+          d=a['kbk26-13']
+          assert d=={'id':'kbk26-13','identityId':'douglas-alexander-alfaro','teamId':'t_kaohsiung_black_knights_2026','name':'DOUGLAS','englishName':'DOUGLAS ALEXANDER ALFARO','number':29,'gender':'男','nationality':'薩爾瓦多','age':23}
+          print('verified changed existing:',sorted(changed))
+          print('verified added: kbk26-13 DOUGLAS')
+          PY
+      - name: Commit to output branch
+        shell: bash
+        run: |
+          git config user.name 'dreamsportfootball'
+          git config user.email 'dreamsportfootball@users.noreply.github.com'
+          git checkout -B fix-age-2026-11-01-output
+          git add data/seasons/2026-27/players.json
+          git commit -m 'fix: align 2026-27 player ages to Nov 1 baseline'
+          git push origin HEAD:fix-age-2026-11-01-output --force-with-lease

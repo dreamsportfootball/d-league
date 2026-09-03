@@ -47,6 +47,24 @@ const PageSkeleton: React.FC = () => (
   </div>
 );
 
+const PlayerProfileRoute: React.FC = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  if (searchParams.has('season')) {
+    searchParams.delete('season');
+    const nextSearch = searchParams.toString();
+    return (
+      <Navigate
+        to={`${location.pathname}${nextSearch ? `?${nextSearch}` : ''}${location.hash}`}
+        replace
+      />
+    );
+  }
+
+  return <PlayerPage />;
+};
+
 const SectionAnchorNavigation: React.FC = () => {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -382,7 +400,7 @@ const App: React.FC = () => (
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/news/:id" element={<ArticleDetailPage />} />
               <Route path="/teams/:id" element={<TeamPage />} />
-              <Route path="/players/:id" element={<PlayerPage />} />
+              <Route path="/players/:id" element={<PlayerProfileRoute />} />
               <Route path="/matches/:id" element={<MatchPage />} />
               <Route path="/rounds/:seasonId/:league/:round" element={<RoundPage />} />
               <Route path="/media" element={<MediaPage />} />

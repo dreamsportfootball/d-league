@@ -299,8 +299,8 @@ try {
       await page.goto(`${baseUrl}/#/news`, { waitUntil: 'domcontentloaded', timeout: 20000 });
       await page.waitForSelector('#root > *');
       const articleLinks = page.locator('a[data-scroll-anchor-id^="news-"]:visible');
+      await articleLinks.first().waitFor({ state: 'visible', timeout: 12000 });
       const articleCount = await articleLinks.count();
-      if (articleCount === 0) fail('news: no article anchor links found');
       const articleLink = articleLinks.nth(Math.min(2, articleCount - 1));
       await positionAnchor(page, articleLink, 180);
       const anchorId = await articleLink.getAttribute('data-scroll-anchor-id');

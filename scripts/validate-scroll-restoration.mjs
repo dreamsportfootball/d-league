@@ -2,8 +2,12 @@ import { chromium } from 'playwright';
 
 const baseUrl = process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league';
 const viewports = [
+  { name: 'mobile-375', width: 375, height: 812 },
   { name: 'mobile-390', width: 390, height: 844 },
+  { name: 'tablet-768', width: 768, height: 1024 },
+  { name: 'desktop-1024', width: 1024, height: 768 },
   { name: 'desktop-1280', width: 1280, height: 900 },
+  { name: 'desktop-1440', width: 1440, height: 900 },
 ];
 const allowedDelta = 24;
 const restoreTimeoutMs = 6000;
@@ -139,6 +143,54 @@ for (const viewport of viewports) {
 
     const delta = Math.abs(finalState.top - beforeTop);
     console.log(`${viewport.name}: restored clicked team within ${delta.toFixed(1)}px`);
+
+    await page.goto(`${baseUrl}/#/standings?season=2026-27`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.waitForSelector('#root > *');
+
+    const currentTeamLink = page.locator('a[href*="/teams/"][href*="season=2026-27"]').first();
+    await currentTeamLink.waitFor({ state: 'visible' });
+    await currentTeamLink.click();
+    await page.waitForURL(/#\/teams\/.*season=2026-27/);
+
+    const currentPlayerLink = page.locator('a[href*="/players/"][href*="season=2026-27"]').first();
+    await currentPlayerLink.waitFor({ state: 'visible' });
+    await currentPlayerLink.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, top - 200), behavior: 'auto' });
+    });
+    await page.waitForTimeout(150);
+
+    const currentPlayerHref = await currentPlayerLink.getAttribute('href');
+    if (!currentPlayerHref) fail(`${viewport.name}: current player link has no href`);
+    const currentPlayerTop = await currentPlayerLink.evaluate((element) => element.getBoundingClientRect().top);
+
+    await currentPlayerLink.click();
+    await page.waitForURL(/#\/players\/.*season=2026-27/);
+    const currentBackButton = page.getByRole('button', { name: '返回上一頁' }).first();
+    await currentBackButton.waitFor({ state: 'visible' });
+    await currentBackButton.click();
+    await page.waitForURL(/#\/teams\/.*season=2026-27/);
+
+    const currentStartedAt = Date.now();
+    let currentRestored = false;
+    let currentFinalTop = null;
+    while (Date.now() - currentStartedAt < restoreTimeoutMs) {
+      currentFinalTop = await page.evaluate((href) => {
+        const link = [...document.querySelectorAll('a[href]')]
+          .find((element) => element.getAttribute('href') === href);
+        return link instanceof HTMLElement ? link.getBoundingClientRect().top : null;
+      }, currentPlayerHref);
+      if (currentFinalTop !== null && Math.abs(currentFinalTop - currentPlayerTop) <= allowedDelta) {
+        currentRestored = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+
+    if (!currentRestored || currentFinalTop === null) {
+      fail(`${viewport.name}: 2026/27 team -> player -> back did not restore player position; before=${currentPlayerTop}, after=${currentFinalTop}`);
+    }
+    console.log(`${viewport.name}: 2026/27 player return restored within ${Math.abs(currentFinalTop - currentPlayerTop).toFixed(1)}px`);
 
     await page.goto(`${baseUrl}/#/standings?season=2025-26`, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForSelector('#root > *');

@@ -63,6 +63,7 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/visual-audit.mjs
 
+      # Run navigation-position verification even when an unrelated screenshot audit fails.
       - name: Validate back navigation scroll restoration
         if: always()
         env:

@@ -12,7 +12,6 @@ permissions:
 
 jobs:
   fix:
-    if: github.event.head_commit.message == 'chore: stage verified real2 roster corrections'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +46,8 @@ jobs:
           assert dickson['name'] == 'MANONGI DICKSON'
           dickson['name'] = 'DICKSON'
 
-          holy_ids = [f'holy26-{i:02d}' for i in range(1, 18)]
-          for player_id in holy_ids:
+          for i in range(1, 18):
+              player_id = f'holy26-{i:02d}'
               player = by_id[player_id]
               assert player['nationality'] == '中華民國', f"{player_id}: {player['nationality']}"
               player['nationality'] = '台灣'

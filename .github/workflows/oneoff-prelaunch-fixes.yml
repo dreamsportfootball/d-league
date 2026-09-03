@@ -1,0 +1,200 @@
+name: One-off prelaunch fixes
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/oneoff-prelaunch-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+
+      - name: Apply verified changes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          # 1) Map all 20 current-season Chen Gong Guan headshots uploaded by the organizer.
+          images_path = Path('data/seasons/2026-27/playerImages.json')
+          images = json.loads(images_path.read_text(encoding='utf-8'))
+          mappings = {
+              '李秉錦': 'assets/seasons/2026-27/players/ch26-01.png',
+              '林家銘': 'assets/seasons/2026-27/players/ch26-02.png',
+              '倪柏瑄': 'assets/seasons/2026-27/players/ch26-03.png',
+              '張健治': 'assets/seasons/2026-27/players/ch26-04.png',
+              '孫裕程': 'assets/seasons/2026-27/players/ch26-05.png',
+              '洪品丞': 'assets/seasons/2026-27/players/ch26-06.png',
+              '陳立鑫': 'assets/seasons/2026-27/players/ch26-07.png',
+              '潘志豪': 'assets/seasons/2026-27/players/ch26-08.png',
+              '倪天銘': 'assets/seasons/2026-27/players/ch26-09.png',
+              '楊俊雄': 'assets/seasons/2026-27/players/ch26-10.png',
+              '曾龍盛': 'assets/seasons/2026-27/players/ch26-11.png',
+              '洪品宇': 'assets/seasons/2026-27/players/ch26-12.png',
+              '林紀廷': 'assets/seasons/2026-27/players/ch26-13.png',
+              '張誌文': 'assets/seasons/2026-27/players/ch26-14.png',
+              '吳明威': 'assets/seasons/2026-27/players/ch26-15.png',
+              '李家勳': 'assets/seasons/2026-27/players/ch26-16.png',
+              '陳俊介': 'assets/seasons/2026-27/players/ch26-17.png',
+              '鍾皓弦': 'assets/seasons/2026-27/players/ch26-18.png',
+              '黃杰': 'assets/seasons/2026-27/players/ch26-19.png',
+              '林祐丞': 'assets/seasons/2026-27/players/ch26-20.png',
+          }
+          for relative in mappings.values():
+              if not Path('public', relative).is_file():
+                  raise SystemExit(f'missing uploaded headshot: public/{relative}')
+          images.update(mappings)
+          images_path.write_text(json.dumps(images, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          # 2) Registration/season-info entry is explicitly closed for pre-season launch.
+          site_path = Path('config/siteConfig.ts')
+          site = site_path.read_text(encoding='utf-8')
+          old = 'export const SHOW_REGISTRATION_NAV = true;'
+          if old not in site:
+              raise SystemExit('SHOW_REGISTRATION_NAV=true guard not found')
+          site_path.write_text(site.replace(old, 'export const SHOW_REGISTRATION_NAV = false;', 1), encoding='utf-8')
+
+          # 3) Never fill 2026/27 headshots with historical-season photos.
+          season_data_path = Path('services/seasonDataJson.ts')
+          season_data = season_data_path.read_text(encoding='utf-8')
+          old_import = "import { SEASON_IDS } from '../config/siteManifest.js';"
+          new_import = "import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';"
+          if old_import not in season_data:
+              raise SystemExit('seasonDataJson import guard not found')
+          season_data = season_data.replace(old_import, new_import, 1)
+          old_loop = "  SEASON_IDS.forEach((seasonId) => {\n    const seasonData = dataBySeason[seasonId];\n    seasonData.players.forEach((player) => {"
+          new_loop = "  SEASON_IDS.forEach((seasonId) => {\n    if (seasonId === CURRENT_SEASON_ID) return;\n    const seasonData = dataBySeason[seasonId];\n    seasonData.players.forEach((player) => {"
+          if old_loop not in season_data:
+              raise SystemExit('seasonDataJson fallback loop guard not found')
+          season_data_path.write_text(season_data.replace(old_loop, new_loop, 1), encoding='utf-8')
+
+          # 4) Scroll restoration: remember the exact clicked player link, not only homepage team cards.
+          app_path = Path('App.tsx')
+          app = app_path.read_text(encoding='utf-8')
+
+          replacements = [
+              (
+                  "interface ScrollAnchorSnapshot {\n  ariaLabel: string;\n  viewportTop: number;\n  anchorId?: string;\n}",
+                  "interface ScrollAnchorSnapshot {\n  ariaLabel: string;\n  viewportTop: number;\n  anchorId?: string;\n  href?: string;\n}",
+              ),
+              (
+                  "      (value.anchorId !== undefined && typeof value.anchorId !== 'string')\n    ) return null;",
+                  "      (value.anchorId !== undefined && typeof value.anchorId !== 'string') ||\n      (value.href !== undefined && typeof value.href !== 'string')\n    ) return null;",
+              ),
+              (
+                  "      ...(value.anchorId ? { anchorId: value.anchorId } : {}),\n    };",
+                  "      ...(value.anchorId ? { anchorId: value.anchorId } : {}),\n      ...(value.href ? { href: value.href } : {}),\n    };",
+              ),
+              (
+                  "  const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');",
+                  "  if (snapshot.href) {\n    const hrefAnchors = document.querySelectorAll<HTMLAnchorElement>('a[href]');\n    const hrefAnchor = Array.from(hrefAnchors).find(\n      (element) => element.getAttribute('href') === snapshot.href,\n    );\n    if (hrefAnchor) return hrefAnchor;\n  }\n\n  const candidates = document.querySelectorAll<HTMLAnchorElement>('a[aria-label]');",
+              ),
+              (
+                  "    const handleTeamNavigation = (event: MouseEvent) => {",
+                  "    const handleTrackedNavigation = (event: MouseEvent) => {",
+              ),
+              (
+                  "        ? target.closest<HTMLAnchorElement>('a[aria-label^=\"查看 \"'][aria-label$=\" 球隊頁\"]')\n        : null;\n      const ariaLabel = anchor?.getAttribute('aria-label');\n      if (!anchor || !ariaLabel) return;\n\n      const anchorId = anchor.dataset.scrollAnchorId;\n      writeScrollAnchor(key, {\n        ariaLabel,\n        viewportTop: anchor.getBoundingClientRect().top,\n        ...(anchorId ? { anchorId } : {}),\n      });",
+                  "        ? target.closest<HTMLAnchorElement>('a[data-scroll-anchor-id], a[href*=\"/players/\"]')\n        : null;\n      const href = anchor?.getAttribute('href');\n      if (!anchor || !href) return;\n\n      const ariaLabel = anchor.getAttribute('aria-label') ?? anchor.textContent?.trim() ?? href;\n      const anchorId = anchor.dataset.scrollAnchorId;\n      writeScrollAnchor(key, {\n        ariaLabel,\n        viewportTop: anchor.getBoundingClientRect().top,\n        ...(anchorId ? { anchorId } : {}),\n        href,\n      });",
+              ),
+              (
+                  "    document.addEventListener('click', handleTeamNavigation, true);\n    return () => document.removeEventListener('click', handleTeamNavigation, true);",
+                  "    document.addEventListener('click', handleTrackedNavigation, true);\n    return () => document.removeEventListener('click', handleTrackedNavigation, true);",
+              ),
+          ]
+          for old_text, new_text in replacements:
+              if old_text not in app:
+                  raise SystemExit(f'App.tsx patch guard not found: {old_text[:80]!r}')
+              app = app.replace(old_text, new_text, 1)
+          app_path.write_text(app, encoding='utf-8')
+
+          # 5) Permanent regression test for historical team -> player -> BackButton location restoration.
+          test_path = Path('scripts/validate-scroll-restoration.mjs')
+          test = test_path.read_text(encoding='utf-8')
+          needle = "    const delta = Math.abs(finalState.top - beforeTop);\n    console.log(`${viewport.name}: restored clicked team within ${delta.toFixed(1)}px`);"
+          if needle not in test:
+              raise SystemExit('scroll regression insertion guard not found')
+          addition = r'''
+
+    await page.goto(`${baseUrl}/#/standings?season=2025-26`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.waitForSelector('#root > *');
+
+    const historicalTeamLink = page.locator('a[href*="/teams/"][href*="season=2025-26"]').first();
+    await historicalTeamLink.waitFor({ state: 'visible' });
+    await historicalTeamLink.click();
+    await page.waitForURL(/#\/teams\/.*season=2025-26/);
+
+    const historicalPlayerLink = page.locator('a[href*="/players/"][href*="season=2025-26"]').first();
+    await historicalPlayerLink.waitFor({ state: 'visible' });
+    await historicalPlayerLink.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, top - 200), behavior: 'auto' });
+    });
+    await page.waitForTimeout(150);
+
+    const historicalPlayerHref = await historicalPlayerLink.getAttribute('href');
+    if (!historicalPlayerHref) fail(`${viewport.name}: historical player link has no href`);
+    const historicalPlayerTop = await historicalPlayerLink.evaluate((element) => element.getBoundingClientRect().top);
+
+    await historicalPlayerLink.click();
+    await page.waitForURL(/#\/players\/.*season=2025-26/);
+    const backButton = page.getByRole('button', { name: '返回上一頁' }).first();
+    await backButton.waitFor({ state: 'visible' });
+    await backButton.click();
+    await page.waitForURL(/#\/teams\/.*season=2025-26/);
+
+    const historicalStartedAt = Date.now();
+    let historicalRestored = false;
+    let historicalFinalTop = null;
+    while (Date.now() - historicalStartedAt < restoreTimeoutMs) {
+      historicalFinalTop = await page.evaluate((href) => {
+        const link = [...document.querySelectorAll('a[href]')]
+          .find((element) => element.getAttribute('href') === href);
+        return link instanceof HTMLElement ? link.getBoundingClientRect().top : null;
+      }, historicalPlayerHref);
+      if (
+        historicalFinalTop !== null &&
+        Math.abs(historicalFinalTop - historicalPlayerTop) <= allowedDelta
+      ) {
+        historicalRestored = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+
+    if (!historicalRestored || historicalFinalTop === null) {
+      fail(
+        `${viewport.name}: historical team -> player -> back did not restore player position; ` +
+        `before=${historicalPlayerTop}, after=${historicalFinalTop}`,
+      );
+    }
+    console.log(
+      `${viewport.name}: historical player return restored within ` +
+      `${Math.abs(historicalFinalTop - historicalPlayerTop).toFixed(1)}px`,
+    );'''
+          test_path.write_text(test.replace(needle, needle + addition, 1), encoding='utf-8')
+
+          # Remove this one-off workflow from the final source tree.
+          Path('.github/workflows/oneoff-prelaunch-fixes.yml').unlink()
+          PY
+
+      - name: Commit patched source
+        shell: bash
+        run: |
+          git config user.name "dreamsportfootball"
+          git config user.email "dreamsportfootball@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "feat: prepare site for 2026-27 kickoff"
+          git push origin HEAD:season/2026-27

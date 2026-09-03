@@ -132,6 +132,11 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-scroll-restoration.mjs
 
+      - name: Validate return-state persistence
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-return-state.mjs
+
       - name: Validate round entity page
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

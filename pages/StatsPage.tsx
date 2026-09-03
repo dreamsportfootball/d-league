@@ -65,7 +65,16 @@ const StatsPage: React.FC = () => {
       return 'L1';
     }
   });
-  const [activeTab, setActiveTab] = useState<StatsTab>('SCORERS');
+  const [activeTab, setActiveTab] = useState<StatsTab>(() => {
+    try {
+      const saved = window.sessionStorage.getItem('statsActiveTab');
+      return saved === 'SCORERS' || saved === 'CARDS' || saved === 'SUSPENSIONS'
+        ? saved
+        : 'SCORERS';
+    } catch {
+      return 'SCORERS';
+    }
+  });
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
@@ -85,10 +94,25 @@ const StatsPage: React.FC = () => {
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
-      setActiveLeague(activeSeason.enabledLeagues[0]);
+      const fallbackLeague = activeSeason.enabledLeagues[0];
+      setActiveLeague(fallbackLeague);
+      try {
+        window.sessionStorage.setItem('statsActiveLeague', fallbackLeague);
+      } catch {
+        // Session storage may be unavailable.
+      }
     }
     setSelectedMatchId(null);
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
+
+  const updateTab = (tab: StatsTab) => {
+    setActiveTab(tab);
+    try {
+      window.sessionStorage.setItem('statsActiveTab', tab);
+    } catch {
+      // Session storage may be unavailable.
+    }
+  };
 
   const playerTeamStats = useMemo(
     () =>
@@ -283,7 +307,7 @@ const StatsPage: React.FC = () => {
           <Tabs
             options={['SCORERS', 'CARDS', 'SUSPENSIONS'] as const}
             active={activeTab}
-            onChange={setActiveTab}
+            onChange={updateTab}
             getLabel={(tab) => tabLabels[tab]}
             ariaLabel="切換數據類別"
           />
@@ -325,7 +349,11 @@ const StatsPage: React.FC = () => {
                           {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
                           <div className="min-w-0 flex-1">
                             {playerProfile ? (
-                              <Link to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`} className="truncate text-base font-black text-brand-black hover:text-brand-blue">
+                              <Link
+                                to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`}
+                                data-scroll-anchor-id={`stats-player-${activeSeasonId}-${activeLeague}-suspension-${suspension.id}`}
+                                className="truncate text-base font-black text-brand-black hover:text-brand-blue"
+                              >
                                 {suspension.subjectName}
                               </Link>
                             ) : (
@@ -334,7 +362,11 @@ const StatsPage: React.FC = () => {
                             <div className="mt-1 flex min-w-0 items-center gap-1 text-xs font-bold text-neutral-500">
                               <div className="min-w-0 flex-1">
                                 {team ? (
-                                  <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="block hover:text-brand-blue">
+                                  <Link
+                                    to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`}
+                                    data-scroll-anchor-id={`stats-team-${activeSeasonId}-${activeLeague}-suspension-${suspension.id}`}
+                                    className="block hover:text-brand-blue"
+                                  >
                                     <AutoFitText text={team.shortName} maxFontSize={12} minFontSize={6} className="font-bold text-neutral-500" />
                                   </Link>
                                 ) : (
@@ -413,13 +445,23 @@ const StatsPage: React.FC = () => {
 
                     <div className={`${activeTab === 'SCORERS' ? (isTopScorer ? 'ml-6 md:ml-8' : 'ml-4') : ''} min-w-0`}>
                       {playerProfile ? (
-                        <Link to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`} className={nameClass}>{player.name}</Link>
+                        <Link
+                          to={`/players/${getPlayerIdentity(playerProfile)}?season=${activeSeasonId}`}
+                          data-scroll-anchor-id={`stats-player-${activeSeasonId}-${activeLeague}-${activeTab}-${player.subjectId}`}
+                          className={nameClass}
+                        >
+                          {player.name}
+                        </Link>
                       ) : (
                         <span className={nameClass}>{player.name}</span>
                       )}
                       <div className="mt-1 flex min-w-0 items-center">
                         <img src={team.logo} alt="" className="mr-2 h-4 w-4 shrink-0 object-contain" />
-                        <Link to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`} className="min-w-0 flex-1 hover:text-brand-blue">
+                        <Link
+                          to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`}
+                          data-scroll-anchor-id={`stats-team-${activeSeasonId}-${activeLeague}-${activeTab}-${player.subjectId}`}
+                          className="min-w-0 flex-1 hover:text-brand-blue"
+                        >
                           <AutoFitText text={team.shortName} maxFontSize={10} minFontSize={6} className="font-bold uppercase tracking-wide text-neutral-500" />
                         </Link>
                       </div>

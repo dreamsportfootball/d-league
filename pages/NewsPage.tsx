@@ -27,7 +27,11 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
   const seasonLabel = getArticleSeasonLabel(article);
 
   return (
-    <Link to={`/news/${article.id}`} className="group flex h-full cursor-pointer flex-col">
+    <Link
+      to={`/news/${article.id}`}
+      data-scroll-anchor-id={`news-${article.seasonId ?? 'global'}-${article.id}`}
+      className="group flex h-full cursor-pointer flex-col"
+    >
       <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
         {article.imageUrl ? (
           <img

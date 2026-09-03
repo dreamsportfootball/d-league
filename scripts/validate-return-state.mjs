@@ -271,7 +271,7 @@ try {
       await matchButton.waitFor({ state: 'visible' });
       await matchButton.click();
       await page.waitForURL(/match=/);
-      await page.getByRole('button', { name: '關閉' }).click();
+      await page.getByRole('button', { name: '關閉', exact: true }).click();
       await page.waitForURL((url) => !url.hash.includes('match='));
 
       await page.goBack();

@@ -164,9 +164,23 @@ const applyPlayerImageFallbacks = (dataBySeason: Record<SeasonId, SeasonData>): 
 
 applyPlayerImageFallbacks(DATA);
 
+const latestPlayerImageByIdentity = new Map<string, string>();
+[...SEASON_IDS].reverse().forEach((seasonId) => {
+  const seasonData = DATA[seasonId];
+  seasonData.players.forEach((player) => {
+    const identityId = player.identityId ?? player.id;
+    if (latestPlayerImageByIdentity.has(identityId)) return;
+    const image = seasonData.playerImages[player.name];
+    if (image) latestPlayerImageByIdentity.set(identityId, image);
+  });
+});
+
 const ALL_NEWS: NewsArticle[] = SEASON_IDS.flatMap((seasonId) => DATA[seasonId].news);
 
 export const getSeasonData = (seasonId: SeasonId): SeasonData => DATA[seasonId];
+export const getLatestPlayerImageUrl = (
+  player: Pick<PlayerProfile, 'id' | 'identityId'>,
+): string | undefined => latestPlayerImageByIdentity.get(player.identityId ?? player.id);
 export const getAllNews = (): NewsArticle[] => ALL_NEWS.slice();
 export const getNewsArticle = (articleId: string): NewsArticle | null =>
   ALL_NEWS.find((article) => article.id === articleId) ?? null;

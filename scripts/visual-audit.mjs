@@ -42,7 +42,7 @@ const interactiveCases = [
   { name: 'media-mobile-filter', path: '/media', viewport: 'mobile-390', action: 'filter' },
   { name: 'news-mobile-load-more', path: '/news', viewport: 'mobile-390', action: 'load-more' },
   { name: 'team-mobile-match-dialog', path: '/teams/t_chiayi?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
-  { name: 'player-mobile-match-dialog', path: '/players/lz-10?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
+  { name: 'player-mobile-match-dialog', path: '/players/lz-10?season=2025-26', viewport: 'mobile-390', action: 'match-dialog', eventSeason: '2025-26' },
   { name: 'schedule-desktop-filter', path: '/schedule?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'standings-desktop-filter', path: '/standings?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
   { name: 'stats-desktop-filter', path: '/stats?season=2026-27', viewport: 'desktop-1280', action: 'filter' },
@@ -212,7 +212,15 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'player-detail') {
-        assert('player-page-resolves', page.url().includes('#/players/cy-01?season=2025-26') && diagnostics.bodyText.includes('陳日揚') && diagnostics.bodyText.includes('2025/26 賽季數據'), `Resolved ${page.url()}`);
+        assert(
+          'player-page-resolves-latest-profile',
+          page.url().includes('#/players/cy-01') &&
+            !page.url().includes('season=2025-26') &&
+            diagnostics.bodyText.includes('陳日揚') &&
+            diagnostics.bodyText.includes('2026/27 賽季數據') &&
+            diagnostics.bodyText.includes('2025/26'),
+          `Resolved ${page.url()}`,
+        );
         assert('player-page-links-team-entity', diagnostics.teamLinkCount > 0, `Found ${diagnostics.teamLinkCount} team link(s)`);
       }
 
@@ -281,6 +289,10 @@ const auditInteractiveCase = async (testCase) => {
       await page.waitForTimeout(300);
       afterCount = await page.locator('main a[href*="/news/"]').count();
     } else if (testCase.action === 'match-dialog') {
+      if (testCase.eventSeason) {
+        await page.getByRole('combobox', { name: '篩選比賽事件賽季' }).selectOption(testCase.eventSeason);
+        await page.waitForTimeout(200);
+      }
       await page.locator('[data-analytics-event="match_open"]:visible').first().click();
       await page.waitForTimeout(250);
     } else if (testCase.action === 'playlist') {

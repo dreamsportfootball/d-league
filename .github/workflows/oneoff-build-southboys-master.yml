@@ -1,0 +1,128 @@
+name: One-off build SOUTHBOYS master roster blobs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/oneoff-build-southboys-master.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-roster-blobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Build SOUTHBOYS teams and players blobs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import urllib.request
+
+          teams_path = 'data/seasons/2026-27/teams.json'
+          players_path = 'data/seasons/2026-27/players.json'
+          participants_path = 'data/seasons/2026-27/participants.json'
+          team_id = 't_southboys_2026'
+
+          with open(teams_path, 'r', encoding='utf-8') as f:
+              teams = json.load(f)
+          with open(players_path, 'r', encoding='utf-8') as f:
+              players = json.load(f)
+          with open(participants_path, 'r', encoding='utf-8') as f:
+              participants = json.load(f)
+
+          if 'SOUTHBOYS FC' not in participants['leagues']['L2']:
+              raise SystemExit('SOUTHBOYS FC missing from L2 participants')
+          if any(t.get('id') == team_id or t.get('name') == 'SOUTHBOYS FC' for t in teams):
+              raise SystemExit('SOUTHBOYS team already exists; refusing duplicate')
+          if any(p.get('teamId') == team_id for p in players):
+              raise SystemExit('SOUTHBOYS players already exist; refusing duplicate')
+
+          team = {
+              'id': team_id,
+              'identityId': 'southboys-fc',
+              'seasonId': '2026-27',
+              'leagueId': 'L2',
+              'name': 'SOUTHBOYS FC',
+              'shortName': 'SOUTHBOYS FC',
+              'logo': 'assets/seasons/2026-27/teams/southboys-fc.png',
+              'primaryColor': '#111111',
+              'secondaryColor': '#ffffff',
+              'staff': [
+                  {'role': '領隊', 'name': '劉駿輝', 'englishName': 'YEREMIA IMMANUEL SUSILO'},
+                  {'role': '管理', 'name': '陳美玲', 'englishName': 'RUTH DARLEEN CHANDRA'},
+              ],
+              'competitionStatus': 'ACTIVE',
+          }
+
+          insert_after = next(i for i,t in enumerate(teams) if t.get('id') == 't_black_wolf_2026')
+          teams_updated = teams[:insert_after + 1] + [team] + teams[insert_after + 1:]
+
+          roster = [
+              {'id':'sb26-01','identityId':'cevin-ade-pratama','teamId':team_id,'number':1,'name':'杰菲','englishName':'CEVIN ADE PRATAMA','gender':'男','nationality':'印尼','age':27},
+              {'id':'sb26-02','identityId':'rafif-jamil','teamId':team_id,'number':2,'name':'拉非','englishName':'RAFIF JAMIL','gender':'男','nationality':'印尼','age':24},
+              {'id':'sb26-03','identityId':'rangga-rulianto','teamId':team_id,'number':3,'name':'孺立','englishName':'RANGGA RULIANTO','gender':'男','nationality':'印尼','age':22},
+              {'id':'sb26-04','identityId':'yehuda-gagah-wicaksono','teamId':team_id,'number':4,'name':'李福祥','englishName':'YEHUDA GAGAH WICAKSONO','gender':'男','nationality':'印尼','age':19},
+              {'id':'sb26-05','identityId':'tomi-haryadi','teamId':team_id,'number':5,'name':'牙提','englishName':'TOMI HARYADI','gender':'男','nationality':'印尼','age':27},
+              {'id':'sb26-06','identityId':'sukma-hadi-novandi','teamId':team_id,'number':6,'name':'蘇凡迪','englishName':'SUKMA HADI NOVANDI','gender':'男','nationality':'印尼','age':26},
+              {'id':'sb26-07','identityId':'irfan-kholiq-aji-suk','teamId':team_id,'number':7,'name':'伊而凡','englishName':'IRFAN KHOLIQ AJI SUK','gender':'男','nationality':'印尼','age':30},
+              {'id':'sb26-08','identityId':'muhammad-reza-aziz-prasetya','teamId':team_id,'number':8,'name':'朴禮薩','englishName':'MUHAMMAD REZA AZIZ PRASETYA','gender':'男','nationality':'印尼','age':26},
+              {'id':'sb26-09','identityId':'alif-syach-rizky','teamId':team_id,'number':9,'name':'艾力夫','englishName':'ALIF SYACH RIZKY','gender':'男','nationality':'印尼','age':26},
+              {'id':'sb26-10','identityId':'revaldi-primatio-saputra','teamId':team_id,'number':10,'name':'孫瑞文','englishName':'REVALDI PRIMATIO SAPUTRA','gender':'男','nationality':'印尼','age':24},
+              {'id':'sb26-11','identityId':'dimas-andre-agus-bastiyar','teamId':team_id,'number':11,'name':'迪馬斯','englishName':'DIMAS ANDRE AGUS BASTIYAR','gender':'男','nationality':'印尼','age':23},
+              {'id':'sb26-12','identityId':'dandi-kurniawan','teamId':team_id,'number':12,'name':'亞萬','englishName':'DANDI KURNIAWAN','gender':'男','nationality':'印尼','age':26},
+              {'id':'sb26-13','identityId':'wais-alkorni','teamId':team_id,'number':13,'name':'偉亦','englishName':'WAIS ALKORNI','gender':'男','nationality':'印尼','age':28},
+              {'id':'sb26-14','identityId':'muhammad-rizal','teamId':team_id,'number':14,'name':'立嘉','englishName':'MUHAMMAD RIZAL','gender':'男','nationality':'印尼','age':20},
+              {'id':'sb26-15','identityId':'yeremia-immanuel-susilo','teamId':team_id,'number':15,'name':'劉駿輝','englishName':'YEREMIA IMMANUEL SUSILO','gender':'男','nationality':'印尼','age':26},
+          ]
+
+          existing_ids = {p['id'] for p in players}
+          existing_identity_ids = {p.get('identityId') for p in players if p.get('identityId')}
+          if existing_ids & {p['id'] for p in roster}:
+              raise SystemExit('SOUTHBOYS player id collision')
+          if existing_identity_ids & {p['identityId'] for p in roster}:
+              raise SystemExit('SOUTHBOYS identityId collision')
+          if len({p['number'] for p in roster}) != 15:
+              raise SystemExit('duplicate SOUTHBOYS shirt number')
+
+          players_updated = players + roster
+
+          def create_blob(data):
+              content = json.dumps(data, ensure_ascii=False, indent=2) + '\n'
+              payload = json.dumps({
+                  'content': base64.b64encode(content.encode('utf-8')).decode('ascii'),
+                  'encoding': 'base64'
+              }).encode('utf-8')
+              req = urllib.request.Request(
+                  f"https://api.github.com/repos/{os.environ['GH_REPOSITORY']}/git/blobs",
+                  data=payload,
+                  method='POST',
+                  headers={
+                      'Authorization': f"Bearer {os.environ['GH_TOKEN']}",
+                      'Accept': 'application/vnd.github+json',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'Content-Type': 'application/json',
+                  },
+              )
+              with urllib.request.urlopen(req) as resp:
+                  return json.load(resp)['sha']
+
+          teams_sha = create_blob(teams_updated)
+          players_sha = create_blob(players_updated)
+
+          print('TEAMS_BLOB_SHA=' + teams_sha)
+          print('PLAYERS_BLOB_SHA=' + players_sha)
+          print('ROSTER_COUNT=15')
+          print('ROSTER_NAMES=' + ','.join(p['name'] for p in roster))
+          PY

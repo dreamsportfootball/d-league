@@ -2621,12 +2621,23 @@
     "id": "kbk26-08",
     "identityId": "lucas-matias-roa-espinola",
     "teamId": "t_kaohsiung_black_knights_2026",
-    "name": "Lucas Roa",
+    "name": "LUCAS ROA",
     "englishName": "Lucas Matias Roa Espinola",
     "number": 29,
     "gender": "男",
     "nationality": "巴拉圭",
     "age": 23
+  },
+  {
+    "id": "kbk26-13",
+    "identityId": "douglas-alexander-alfaro",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "DOUGLAS",
+    "englishName": "DOUGLAS ALEXANDER ALFARO",
+    "number": 35,
+    "gender": "男",
+    "nationality": "薩爾瓦多",
+    "age": 32
   },
   {
     "id": "kbk26-09",
@@ -2654,7 +2665,7 @@
     "id": "kbk26-11",
     "identityId": "manongi-dickson",
     "teamId": "t_kaohsiung_black_knights_2026",
-    "name": "MANONGI DICKSON",
+    "name": "DICKSON",
     "englishName": "MANONGI DICKSON",
     "number": 7,
     "gender": "男",

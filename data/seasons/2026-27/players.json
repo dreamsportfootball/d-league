@@ -283,7 +283,7 @@
     "englishName": "KE,SHIH-JIE",
     "gender": "男",
     "nationality": "台灣",
-    "age": 50
+    "age": 51
   },
   {
     "id": "pw26-07",
@@ -294,7 +294,7 @@
     "englishName": "Tsai Shih Chun",
     "gender": "男",
     "nationality": "台灣",
-    "age": 48
+    "age": 49
   },
   {
     "id": "pw26-08",
@@ -316,7 +316,7 @@
     "englishName": "SU KUAN SHENG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 15
+    "age": 16
   },
   {
     "id": "pw26-10",
@@ -349,7 +349,7 @@
     "englishName": "CHE-WEI LIN",
     "gender": "男",
     "nationality": "台灣",
-    "age": 33
+    "age": 34
   },
   {
     "id": "pw26-13",
@@ -360,7 +360,7 @@
     "englishName": "HUANG,SHIU-SHENG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 33
+    "age": 34
   },
   {
     "id": "pw26-14",
@@ -371,7 +371,7 @@
     "englishName": "wu yu tang",
     "gender": "男",
     "nationality": "台灣",
-    "age": 33
+    "age": 34
   },
   {
     "id": "pw26-15",
@@ -382,7 +382,7 @@
     "englishName": "Chang Cheng Yao",
     "gender": "男",
     "nationality": "台灣",
-    "age": 32
+    "age": 33
   },
   {
     "id": "ka26-01",
@@ -1185,7 +1185,7 @@
     "englishName": "XU,YU-KAI",
     "gender": "男",
     "nationality": "台灣",
-    "age": 36
+    "age": 35
   },
   {
     "id": "te26-07",
@@ -2621,11 +2621,22 @@
     "id": "kbk26-08",
     "identityId": "lucas-matias-roa-espinola",
     "teamId": "t_kaohsiung_black_knights_2026",
-    "name": "Lucas Roa",
+    "name": "LUCAS ROA",
     "englishName": "Lucas Matias Roa Espinola",
-    "number": 29,
+    "number": 35,
     "gender": "男",
     "nationality": "巴拉圭",
+    "age": 32
+  },
+  {
+    "id": "kbk26-13",
+    "identityId": "douglas-alexander-alfaro",
+    "teamId": "t_kaohsiung_black_knights_2026",
+    "name": "DOUGLAS",
+    "englishName": "DOUGLAS ALEXANDER ALFARO",
+    "number": 29,
+    "gender": "男",
+    "nationality": "薩爾瓦多",
     "age": 23
   },
   {

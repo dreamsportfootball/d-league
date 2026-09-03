@@ -1,0 +1,165 @@
+name: One-off fix team player return
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - .github/workflows/oneoff-fix-team-player-return.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          fetch-depth: 0
+
+      - name: Patch team to player return context
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if old not in text:
+                  raise SystemExit(f'missing patch target in {path}: {old[:120]}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          # TeamPage: attach explicit origin state and a stable player-row anchor id.
+          replace_once(
+              'pages/TeamPage.tsx',
+              "import { Link, useParams, useSearchParams } from 'react-router-dom';",
+              "import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';",
+          )
+          replace_once(
+              'pages/TeamPage.tsx',
+              "const TeamPage: React.FC = () => {\n  const { id = '' } = useParams<{ id: string }>();\n  const [searchParams] = useSearchParams();",
+              "const TeamPage: React.FC = () => {\n  const { id = '' } = useParams<{ id: string }>();\n  const location = useLocation();\n  const [searchParams] = useSearchParams();",
+          )
+          old_link = "{players.length > 0 ? <div className=\"grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3\">{players.map((player) => <Link key={player.id} to={`/players/${getPlayerIdentity(player)}?season=${seasonId}`} className=\"grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50\"><span className=\"font-display text-xl font-black tabular-nums text-brand-blue\">{player.number}</span><div className=\"min-w-0\"><p className=\"break-words text-sm font-bold text-brand-black\">{player.name}</p>{player.englishName && <p className=\"mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-500\">{player.englishName}</p>}</div></Link>)}</div> : <p className=\"py-10 text-sm text-neutral-400\">球員名單尚未公布</p>}"
+          new_link = "{players.length > 0 ? <div className=\"grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3\">{players.map((player) => {\n            const playerIdentity = getPlayerIdentity(player);\n            return (\n              <Link\n                key={player.id}\n                to={`/players/${playerIdentity}?season=${seasonId}`}\n                state={{\n                  returnContext: 'team',\n                  returnTo: `${location.pathname}${location.search}${location.hash}`,\n                  returnLocationKey: location.key,\n                }}\n                data-scroll-anchor-id={`team-player-${seasonId}-${playerIdentity}`}\n                aria-label={`查看 ${player.name} 球員頁`}\n                className=\"grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50\"\n              >\n                <span className=\"font-display text-xl font-black tabular-nums text-brand-blue\">{player.number}</span>\n                <div className=\"min-w-0\">\n                  <p className=\"break-words text-sm font-bold text-brand-black\">{player.name}</p>\n                  {player.englishName && <p className=\"mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-500\">{player.englishName}</p>}\n                </div>\n              </Link>\n            );\n          })}</div> : <p className=\"py-10 text-sm text-neutral-400\">球員名單尚未公布</p>}"
+          replace_once('pages/TeamPage.tsx', old_link, new_link)
+
+          # PlayerPage: use the explicit team origin as the safe fallback if browser history is unavailable.
+          replace_once(
+              'pages/PlayerPage.tsx',
+              "import { Link, useParams, useSearchParams } from 'react-router-dom';",
+              "import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';",
+          )
+          insert_after = "interface SelectedMatchState {\n  matchId: string;\n  seasonId: SeasonId;\n}\n"
+          helper = "interface PlayerNavigationState {\n  returnContext?: unknown;\n  returnTo?: unknown;\n  returnLocationKey?: unknown;\n}\n\nconst getTeamReturnPath = (state: unknown): string | undefined => {\n  if (!state || typeof state !== 'object') return undefined;\n  const candidate = state as PlayerNavigationState;\n  if (candidate.returnContext !== 'team' || typeof candidate.returnTo !== 'string') return undefined;\n  return /^\\/teams\\/[^/?#]+(?:\\?[^#]*)?(?:#.*)?$/.test(candidate.returnTo)\n    ? candidate.returnTo\n    : undefined;\n};\n"
+          replace_once('pages/PlayerPage.tsx', insert_after, insert_after + "\n" + helper)
+          replace_once(
+              'pages/PlayerPage.tsx',
+              "const PlayerPage: React.FC = () => {\n  const { id = '' } = useParams<{ id: string }>();\n  const [searchParams] = useSearchParams();",
+              "const PlayerPage: React.FC = () => {\n  const { id = '' } = useParams<{ id: string }>();\n  const location = useLocation();\n  const [searchParams] = useSearchParams();",
+          )
+          replace_once(
+              'pages/PlayerPage.tsx',
+              "  const requestedSeason = searchParams.get('season');\n  const history = useMemo(() => getPlayerHistory(id), [id]);",
+              "  const requestedSeason = searchParams.get('season');\n  const teamReturnTo = getTeamReturnPath(location.state);\n  const history = useMemo(() => getPlayerHistory(id), [id]);",
+          )
+          replace_once(
+              'pages/PlayerPage.tsx',
+              "          <BackButton\n            fallbackTo={`/stats?season=${preferredRecord.seasonId}`}\n            className=\"inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black\"\n          />",
+              "          <BackButton\n            fallbackTo={teamReturnTo ?? `/stats?season=${preferredRecord.seasonId}`}\n            className=\"inline-flex min-h-11 items-center text-xs font-bold text-neutral-500 hover:text-brand-black\"\n          />",
+          )
+
+          # Ensure scroll validation still runs when an unrelated visual screenshot audit fails.
+          replace_once(
+              '.github/workflows/visual-audit.yml',
+              "      - name: Validate back navigation scroll restoration\n        env:",
+              "      - name: Validate back navigation scroll restoration\n        if: always()\n        env:",
+          )
+
+          # Cover every required responsive width and explicitly test 2026/27 team -> player -> back.
+          replace_once(
+              'scripts/validate-scroll-restoration.mjs',
+              "const viewports = [\n  { name: 'mobile-390', width: 390, height: 844 },\n  { name: 'desktop-1280', width: 1280, height: 900 },\n];",
+              "const viewports = [\n  { name: 'mobile-375', width: 375, height: 812 },\n  { name: 'mobile-390', width: 390, height: 844 },\n  { name: 'tablet-768', width: 768, height: 1024 },\n  { name: 'desktop-1024', width: 1024, height: 768 },\n  { name: 'desktop-1280', width: 1280, height: 900 },\n  { name: 'desktop-1440', width: 1440, height: 900 },\n];",
+          )
+
+          marker = "    await page.goto(`${baseUrl}/#/standings?season=2025-26`, { waitUntil: 'domcontentloaded', timeout: 20000 });"
+          current_test = r'''    await page.goto(`${baseUrl}/#/standings?season=2026-27`, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.waitForSelector('#root > *');
+
+    const currentTeamLink = page.locator('a[href*="/teams/"][href*="season=2026-27"]').first();
+    await currentTeamLink.waitFor({ state: 'visible' });
+    await currentTeamLink.click();
+    await page.waitForURL(/#\/teams\/.*season=2026-27/);
+
+    const currentPlayerLink = page.locator('a[data-scroll-anchor-id^="team-player-2026-27-"]').first();
+    await currentPlayerLink.waitFor({ state: 'visible' });
+    await currentPlayerLink.evaluate((element) => {
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, top - 200), behavior: 'auto' });
+    });
+    await page.waitForTimeout(150);
+
+    const currentPlayerAnchorId = await currentPlayerLink.getAttribute('data-scroll-anchor-id');
+    if (!currentPlayerAnchorId) fail(`${viewport.name}: current player link has no stable anchor id`);
+    const currentPlayerTop = await currentPlayerLink.evaluate((element) => element.getBoundingClientRect().top);
+
+    await currentPlayerLink.click();
+    await page.waitForURL(/#\/players\/.*season=2026-27/);
+
+    const currentReturnState = await page.evaluate(() => window.history.state?.usr ?? null);
+    if (
+      !currentReturnState ||
+      currentReturnState.returnContext !== 'team' ||
+      typeof currentReturnState.returnTo !== 'string' ||
+      !currentReturnState.returnTo.startsWith('/teams/')
+    ) {
+      fail(`${viewport.name}: current player route did not retain explicit team return context`);
+    }
+
+    const currentBackButton = page.getByRole('button', { name: '返回上一頁' }).first();
+    await currentBackButton.waitFor({ state: 'visible' });
+    await currentBackButton.click();
+    await page.waitForURL(/#\/teams\/.*season=2026-27/);
+
+    const currentStartedAt = Date.now();
+    let currentRestored = false;
+    let currentFinalTop = null;
+    while (Date.now() - currentStartedAt < restoreTimeoutMs) {
+      currentFinalTop = await page.evaluate((scrollAnchorId) => {
+        const link = [...document.querySelectorAll('a[data-scroll-anchor-id]')]
+          .find((element) => element.getAttribute('data-scroll-anchor-id') === scrollAnchorId);
+        return link instanceof HTMLElement ? link.getBoundingClientRect().top : null;
+      }, currentPlayerAnchorId);
+      if (currentFinalTop !== null && Math.abs(currentFinalTop - currentPlayerTop) <= allowedDelta) {
+        currentRestored = true;
+        break;
+      }
+      await page.waitForTimeout(100);
+    }
+
+    if (!currentRestored || currentFinalTop === null) {
+      fail(`${viewport.name}: 2026/27 team -> player -> back did not restore player position; before=${currentPlayerTop}, after=${currentFinalTop}`);
+    }
+    console.log(`${viewport.name}: 2026/27 player return restored within ${Math.abs(currentFinalTop - currentPlayerTop).toFixed(1)}px`);
+
+'''
+          p = Path('scripts/validate-scroll-restoration.mjs')
+          text = p.read_text(encoding='utf-8')
+          if marker not in text:
+              raise SystemExit('missing 2025 historical test marker')
+          p.write_text(text.replace(marker, current_test + marker, 1), encoding='utf-8')
+          PY
+
+      - name: Commit return-position fix
+        shell: bash
+        run: |
+          git config user.name "dreamsportfootball"
+          git config user.email "dreamsportfootball@users.noreply.github.com"
+          git add pages/TeamPage.tsx pages/PlayerPage.tsx scripts/validate-scroll-restoration.mjs .github/workflows/visual-audit.yml
+          git diff --cached --check
+          git commit -m "fix: stabilize team player return position"
+          git push origin HEAD:season/2026-27

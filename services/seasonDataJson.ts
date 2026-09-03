@@ -1,6 +1,6 @@
 import { getSeasonConfig } from '../config/seasons';
 import { MATCH_VENUE_NAME } from '../config/siteConfig';
-import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
+import { SEASON_IDS } from '../config/siteManifest.js';
 import playerIdentityAliases from '../data/playerIdentityAliases.json';
 import type { Match, NewsArticle, Video } from '../types';
 import type { DisciplineDecision, MatchLineup } from '../types/discipline';
@@ -152,7 +152,6 @@ const applyPlayerImageFallbacks = (dataBySeason: Record<SeasonId, SeasonData>): 
   });
 
   SEASON_IDS.forEach((seasonId) => {
-    if (seasonId === CURRENT_SEASON_ID) return;
     const seasonData = dataBySeason[seasonId];
     seasonData.players.forEach((player) => {
       if (seasonData.playerImages[player.name]) return;

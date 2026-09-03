@@ -147,7 +147,7 @@ for (const viewport of viewports) {
     await page.goto(`${baseUrl}/#/standings?season=2026-27`, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForSelector('#root > *');
 
-    const currentTeamLink = page.locator('a[href*="/teams/"][href*="season=2026-27"]').first();
+    const currentTeamLink = page.locator('a[href*="/teams/"][href*="season=2026-27"]:visible').first();
     await currentTeamLink.waitFor({ state: 'visible' });
     await currentTeamLink.click();
     await page.waitForURL(/#\/teams\/.*season=2026-27/);
@@ -195,7 +195,7 @@ for (const viewport of viewports) {
     await page.goto(`${baseUrl}/#/standings?season=2025-26`, { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.waitForSelector('#root > *');
 
-    const historicalTeamLink = page.locator('a[href*="/teams/"][href*="season=2025-26"]').first();
+    const historicalTeamLink = page.locator('a[href*="/teams/"][href*="season=2025-26"]:visible').first();
     await historicalTeamLink.waitFor({ state: 'visible' });
     await historicalTeamLink.click();
     await page.waitForURL(/#\/teams\/.*season=2025-26/);

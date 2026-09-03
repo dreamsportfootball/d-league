@@ -275,6 +275,7 @@ if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-2
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
 
 for (const file of [
+  'playerImages.json',
   'matches.json',
   'matchEvents.json',
   'disciplineDecisions.json',

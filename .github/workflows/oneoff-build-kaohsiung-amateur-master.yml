@@ -1,0 +1,112 @@
+name: One-off build Kaohsiung Amateur master roster blob
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/oneoff-build-kaohsiung-amateur-master.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-roster-blob:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Build updated players.json blob
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import urllib.request
+
+          path = 'data/seasons/2026-27/players.json'
+          team_id = 't_kaohsiung_amateur_2026'
+
+          with open(path, 'r', encoding='utf-8') as f:
+              players = json.load(f)
+
+          existing = [p for p in players if p.get('teamId') == team_id]
+          existing_by_name = {p['name']: p for p in existing}
+
+          desired = [
+              {'id':'ka26-01','identityId':'cd-05','number':9,'name':'劉力瑋','englishName':'LIU-LI-WEI','gender':'男','nationality':'台灣','age':36},
+              {'id':'ka26-02','identityId':'cl-03','number':3,'name':'李昆鴻','englishName':'LI-KU-HONG','gender':'男','nationality':'台灣','age':27},
+              {'id':'ka26-29','identityId':'tang-hong-jun','number':6,'name':'湯弘君','englishName':'TANG-HONG-JUN','gender':'男','nationality':'台灣','age':38},
+              {'id':'ka26-30','identityId':'wu-yong-xiang','number':19,'name':'吳詠祥','englishName':'WU YONG XIANG','gender':'男','nationality':'台灣','age':30},
+              {'id':'ka26-31','identityId':'yang-cheng-yan','number':13,'name':'楊承諺','englishName':'YANG CHENG YAN','gender':'男','nationality':'台灣','age':20},
+              {'id':'ka26-32','identityId':'chen-jian-hong','number':20,'name':'陳建宏','englishName':'CHEN JIAN HONG','gender':'男','nationality':'台灣','age':38},
+              {'id':'ka26-33','identityId':'wu-yi-min','number':15,'name':'吳亦民','englishName':'WU YI MIN','gender':'男','nationality':'台灣','age':29},
+              {'id':'ka26-34','identityId':'wang-shao-kai','number':14,'name':'王劭愷','englishName':'WANG SHAO KAI','gender':'男','nationality':'台灣','age':21},
+              {'id':'ka26-35','identityId':'zeng-han-sheng','number':12,'name':'曾瀚陞','englishName':'ZENG HAN SHENG','gender':'男','nationality':'台灣','age':37},
+              {'id':'ka26-36','identityId':'lin-wei-zhe','number':16,'name':'林煒哲','englishName':'LIN WEI ZHE','gender':'男','nationality':'台灣','age':37},
+              {'id':'ka26-37','identityId':'wang-sheng-han','number':51,'name':'王笙翰','englishName':'WANG SHENG HAN','gender':'男','nationality':'台灣','age':27},
+              {'id':'ka26-38','identityId':'pan-chen-wei','number':7,'name':'潘晨維','englishName':'PAN CHEN WEI','gender':'男','nationality':'台灣','age':20},
+              {'id':'ka26-39','identityId':'wang-wen-xian','number':17,'name':'王文賢','englishName':'WANG WEN XIAN','gender':'男','nationality':'台灣','age':18},
+              {'id':'ka26-40','identityId':'hou-yi-xian','number':8,'name':'侯奕賢','englishName':'HOU YI XIAN','gender':'男','nationality':'台灣','age':24},
+              {'id':'ka26-41','identityId':'lin-yu-ren','number':2,'name':'林郁任','englishName':'LIN YU REN','gender':'男','nationality':'台灣','age':25},
+              {'id':'ka26-42','identityId':'lin-pin-hua','number':23,'name':'林品華','englishName':'LIN PIN HUA','gender':'男','nationality':'台灣','age':24},
+          ]
+
+          # Preserve stable IDs for the two players that already exist on master.
+          for p in desired:
+              old = existing_by_name.get(p['name'])
+              if old and p['name'] in {'劉力瑋','李昆鴻'}:
+                  p['id'] = old['id']
+                  p['identityId'] = old['identityId']
+              p['teamId'] = team_id
+
+          old_ids = {p['id'] for p in existing}
+          all_other_ids = {p['id'] for p in players if p.get('teamId') != team_id}
+          new_ids = [p['id'] for p in desired]
+          if len(new_ids) != len(set(new_ids)):
+              raise SystemExit('duplicate desired player id')
+          if set(new_ids) & all_other_ids:
+              raise SystemExit('desired player id conflicts with another team')
+
+          first_index = next(i for i,p in enumerate(players) if p.get('teamId') == team_id)
+          without_team = [p for p in players if p.get('teamId') != team_id]
+          # Reinsert at the original team block position.
+          before_count = sum(1 for p in players[:first_index] if p.get('teamId') != team_id)
+          updated = without_team[:before_count] + desired + without_team[before_count:]
+
+          check = [p for p in updated if p.get('teamId') == team_id]
+          if len(check) != 16:
+              raise SystemExit(f'expected 16 players, got {len(check)}')
+          expected_names = [p['name'] for p in desired]
+          if [p['name'] for p in check] != expected_names:
+              raise SystemExit('roster order/name verification failed')
+
+          content = json.dumps(updated, ensure_ascii=False, indent=2) + '\n'
+          payload = json.dumps({
+              'content': base64.b64encode(content.encode('utf-8')).decode('ascii'),
+              'encoding': 'base64'
+          }).encode('utf-8')
+          req = urllib.request.Request(
+              f"https://api.github.com/repos/{os.environ['GH_REPOSITORY']}/git/blobs",
+              data=payload,
+              method='POST',
+              headers={
+                  'Authorization': f"Bearer {os.environ['GH_TOKEN']}",
+                  'Accept': 'application/vnd.github+json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+                  'Content-Type': 'application/json',
+              },
+          )
+          with urllib.request.urlopen(req) as resp:
+              result = json.load(resp)
+
+          print('UPDATED_BLOB_SHA=' + result['sha'])
+          print('ROSTER_COUNT=16')
+          print('ROSTER_NAMES=' + ','.join(expected_names))
+          PY

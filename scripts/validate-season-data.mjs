@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 
@@ -145,7 +145,20 @@ for (const season of seasons) {
     }
   }
 
-  for (const [name, path] of Object.entries(images)) asset(path, `${season} player image ${name}`);
+  const playerNames = new Set(players.map((player) => player.name));
+  for (const [name, path] of Object.entries(images)) {
+    asset(path, `${season} player image ${name}`);
+    if (!playerNames.has(name)) fail(`${season} player image ${name}: unknown player`);
+    if (season === CURRENT_SEASON_ID) {
+      const expectedPrefix = `assets/seasons/${CURRENT_SEASON_ID}/players/`;
+      if (!path.startsWith(expectedPrefix)) {
+        fail(`${season} player image ${name}: must use a current-season asset`);
+      }
+      if (!existsSync(join(root, 'public', path))) {
+        fail(`${season} player image ${name}: missing asset ${path}`);
+      }
+    }
+  }
 
   for (const match of matches) {
     if (!teamIds.has(match.homeTeamId) || !teamIds.has(match.awayTeamId)) fail(`${season} match ${match.id}: unknown team`);
@@ -275,7 +288,6 @@ if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-2
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
 
 for (const file of [
-  'playerImages.json',
   'matches.json',
   'matchEvents.json',
   'disciplineDecisions.json',

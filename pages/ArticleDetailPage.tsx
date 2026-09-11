@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
@@ -22,6 +22,11 @@ type ArticleContentBlock =
   | { type: 'info'; lines: string[] }
   | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'paragraph'; text: string };
+
+type GalleryItem = {
+  src: string;
+  alt: string;
+};
 
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
 const ORDERED_PATTERN = /^\d+[.、]\s*(.+)$/;
@@ -123,6 +128,28 @@ const ArticleHighlight: React.FC<{ text: string }> = ({ text }) => (
     </p>
   </blockquote>
 );
+
+const SponsorGalleryImage: React.FC<GalleryItem> = ({ src, alt }) => {
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
+      {!hasError ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="h-full w-full object-cover"
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <div className="flex h-full items-center justify-center px-6 text-center text-xs font-semibold tracking-[0.08em] text-neutral-400">
+          照片上傳後顯示
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ArticleBody: React.FC<{
   text: string;
@@ -255,6 +282,19 @@ const ArticleDetailPage: React.FC = () => {
   const contentText = article.content || article.summary || '';
   const highlightText = article.highlight || article.summary;
   const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
+  const sponsorGallery: GalleryItem[] | null =
+    article.id === '2026-27-chaome-tea-sponsor'
+      ? [
+          {
+            src: 'assets/news/2026-27-chaome-tea-food-1.png',
+            alt: '超咩茶舖餐點照片 1',
+          },
+          {
+            src: 'assets/news/2026-27-chaome-tea-food-2.png',
+            alt: '超咩茶舖餐點照片 2',
+          },
+        ]
+      : null;
 
   return (
     <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
@@ -268,7 +308,7 @@ const ArticleDetailPage: React.FC = () => {
         </nav>
 
         <header className="border-b border-neutral-200 pb-9 md:pb-12">
-          <div className="max-w-5xl">
+          <div className="max-w-5xl lg:mx-auto lg:max-w-[920px]">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span
                 className={`inline-flex items-center rounded-sm px-2.5 py-1.5 text-[11px] font-bold tracking-[0.12em] ${getBadgeStyle(
@@ -321,6 +361,24 @@ const ArticleDetailPage: React.FC = () => {
           >
             <ArticleBody text={contentText} category={article.category} />
           </section>
+
+          {sponsorGallery && (
+            <section className="mt-12 border-t border-neutral-200 pt-8 md:mt-14 md:pt-10" aria-label="店家餐點照片">
+              <div className="mb-5 md:mb-6">
+                <p className="font-display text-xs font-bold tracking-[0.18em] text-brand-blue">
+                  店家餐點
+                </p>
+                <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-brand-black md:text-[28px]">
+                  超咩茶舖
+                </h2>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
+                {sponsorGallery.map((item) => (
+                  <SponsorGalleryImage key={item.src} {...item} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">

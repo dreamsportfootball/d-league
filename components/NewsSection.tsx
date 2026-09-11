@@ -45,38 +45,38 @@ const NewsSection: React.FC = () => {
                 key={`${article.seasonId ?? 'global'}-${article.id}`}
                 to={`/news/${article.id}`}
                 data-scroll-anchor-id={`home-news-article-${article.seasonId ?? 'global'}-${article.id}`}
-                className="group relative flex cursor-pointer items-start space-x-5 overflow-hidden p-5 text-left transition-colors hover:bg-neutral-50"
+                className="group relative grid cursor-pointer grid-cols-[minmax(0,1fr)_7rem] gap-x-5 gap-y-2 overflow-hidden p-5 text-left transition-colors hover:bg-neutral-50 md:grid-cols-[minmax(0,1fr)_8rem]"
               >
                 <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
 
-                <div className="z-10 min-w-0 flex-1">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span
-                      className={`inline-flex h-[18px] items-center justify-center rounded-sm px-2 text-[10px] font-bold uppercase leading-none tracking-wider shadow-sm ${getBadgeStyle(
-                        article.category,
-                      )}`}
-                    >
-                      {getBadgeName(article.category)}
+                <div className="z-10 col-span-2 flex min-w-0 flex-wrap items-center gap-2 md:col-span-1">
+                  <span
+                    className={`inline-flex h-[18px] items-center justify-center rounded-sm px-2 text-[10px] font-bold uppercase leading-none tracking-wider shadow-sm ${getBadgeStyle(
+                      article.category,
+                    )}`}
+                  >
+                    {getBadgeName(article.category)}
+                  </span>
+                  {seasonLabel && (
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-blue">
+                      {seasonLabel}
                     </span>
-                    {seasonLabel && (
-                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-blue">
-                        {seasonLabel}
-                      </span>
-                    )}
-                    <span className="text-[10px] font-bold text-neutral-400">
-                      {formatTaipeiDate(article.timestamp)}
-                    </span>
-                  </div>
-                  <h4 className="mb-2 line-clamp-2 font-display text-lg font-bold uppercase leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
-                    {article.title}
-                  </h4>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">
-                    {article.summary}
-                  </p>
+                  )}
+                  <span className="text-[10px] font-bold text-neutral-400">
+                    {formatTaipeiDate(article.timestamp)}
+                  </span>
                 </div>
 
+                <h4 className="z-10 col-span-2 line-clamp-2 min-w-0 font-display text-lg font-bold uppercase leading-tight text-brand-black transition-colors group-hover:text-brand-blue md:col-span-1">
+                  {article.title}
+                </h4>
+
+                <p className="z-10 min-w-0 line-clamp-2 text-sm leading-relaxed text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">
+                  {article.summary}
+                </p>
+
                 {article.imageUrl && (
-                  <div className="relative z-10 h-20 w-28 shrink-0 overflow-hidden rounded bg-neutral-100 shadow-sm transition-shadow group-hover:shadow-md md:h-24 md:w-32">
+                  <div className="relative z-10 col-start-2 row-start-3 h-20 w-28 shrink-0 overflow-hidden rounded bg-neutral-100 shadow-sm transition-shadow group-hover:shadow-md md:row-span-3 md:row-start-1 md:h-24 md:w-32">
                     <img
                       src={article.imageUrl}
                       alt={article.title}

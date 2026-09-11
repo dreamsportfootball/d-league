@@ -12,6 +12,21 @@ import type { SeasonId } from '../types/season';
 const formatMediaDate = (value: string): string =>
   value.replaceAll('.', '/').replaceAll('-', '/');
 
+const getInstagramEmbedUrl = (link: string): string | null => {
+  try {
+    const url = new URL(link);
+    if (!url.hostname.endsWith('instagram.com')) return null;
+
+    const match = url.pathname.match(/^\/(?:reel|reels|p)\/([^/]+)/i);
+    if (!match) return null;
+
+    const type = url.pathname.toLowerCase().startsWith('/p/') ? 'p' : 'reel';
+    return `https://www.instagram.com/${type}/${match[1]}/embed/`;
+  } catch {
+    return null;
+  }
+};
+
 const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   <a
     href={album.link}
@@ -41,35 +56,72 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   </a>
 );
 
-const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
-  <a
-    href={video.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-  >
-    <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
-      <img
-        src={video.thumbnail}
-        alt={video.title || 'D LEAGUE 賽事精華'}
-        loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
-      />
-      <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
-          <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
-        </span>
+const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const embedUrl = useMemo(() => getInstagramEmbedUrl(video.link), [video.link]);
+
+  return (
+    <article className="group block">
+      <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
+        {isPlaying && embedUrl ? (
+          <iframe
+            src={embedUrl}
+            title={video.title || 'D LEAGUE 賽事精華'}
+            className="h-full w-full border-0 bg-white"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              if (embedUrl) {
+                setIsPlaying(true);
+              } else {
+                window.open(video.link, '_blank', 'noopener,noreferrer');
+              }
+            }}
+            className="relative h-full w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset"
+            aria-label={`播放 ${video.title || '賽事精華'}`}
+          >
+            <img
+              src={video.thumbnail}
+              alt={video.title || 'D LEAGUE 賽事精華'}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
+                <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
+              </span>
+            </div>
+          </button>
+        )}
       </div>
-    </div>
-    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
-      <span>{formatMediaDate(video.date)}</span>
-      <span>{video.duration}</span>
-    </div>
-    <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
-      {video.title || '賽事精華'}
-    </h3>
-  </a>
-);
+
+      <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
+        <span>{formatMediaDate(video.date)}</span>
+        <span>{video.duration}</span>
+      </div>
+
+      <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black">
+        {video.title || '賽事精華'}
+      </h3>
+
+      <a
+        href={video.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-flex min-h-11 items-center gap-1 text-[11px] font-bold text-brand-blue transition-colors hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+      >
+        <Instagram className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>在 Instagram 查看</span>
+        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+      </a>
+    </article>
+  );
+};
 
 const MediaPage: React.FC = () => {
   const {

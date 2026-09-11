@@ -134,9 +134,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={14}
-                          minFontSize={10}
+                          minFontSize={6}
                           fitPadding={1}
-                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                       <img
@@ -172,9 +172,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={14}
-                          minFontSize={10}
+                          minFontSize={6}
                           fitPadding={1}
-                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                     </div>
@@ -284,9 +284,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={16}
-                          minFontSize={10}
+                          minFontSize={6}
                           fitPadding={2}
-                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                       <img
@@ -322,9 +322,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={16}
-                          minFontSize={10}
+                          minFontSize={6}
                           fitPadding={2}
-                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
+                          className="font-bold text-brand-black"
                         />
                       </div>
                     </div>

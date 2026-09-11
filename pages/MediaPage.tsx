@@ -41,62 +41,35 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   </a>
 );
 
-const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  return (
-    <article className="group block">
-      <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-black">
-        {isPlaying && video.videoUrl ? (
-          <video
-            src={video.videoUrl}
-            poster={video.thumbnail}
-            className="h-full w-full object-contain"
-            controls
-            autoPlay
-            playsInline
-            preload="metadata"
-          >
-            你的瀏覽器不支援影片播放。
-          </video>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              if (video.videoUrl) setIsPlaying(true);
-            }}
-            disabled={!video.videoUrl}
-            className="relative h-full w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset disabled:cursor-default"
-            aria-label={`播放 ${video.title || '賽事精華'}`}
-          >
-            <img
-              src={video.thumbnail}
-              alt={video.title || 'D LEAGUE 賽事精華'}
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
-            />
-            {video.videoUrl && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
-                  <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
-                </span>
-              </div>
-            )}
-          </button>
-        )}
+const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
+  <a
+    href={video.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+  >
+    <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
+      <img
+        src={video.thumbnail}
+        alt={video.title || 'D LEAGUE 賽事精華'}
+        loading="lazy"
+        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+      />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
+          <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
+        </span>
       </div>
-
-      <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
-        <span>{formatMediaDate(video.date)}</span>
-        <span>{video.duration}</span>
-      </div>
-
-      <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black">
-        {video.title || '賽事精華'}
-      </h3>
-    </article>
-  );
-};
+    </div>
+    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
+      <span>{formatMediaDate(video.date)}</span>
+      <span>{video.duration}</span>
+    </div>
+    <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
+      {video.title || '賽事精華'}
+    </h3>
+  </a>
+);
 
 const MediaPage: React.FC = () => {
   const {

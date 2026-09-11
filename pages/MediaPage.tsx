@@ -17,11 +17,15 @@ const getInstagramEmbedUrl = (link: string): string | null => {
     const url = new URL(link);
     if (!url.hostname.endsWith('instagram.com')) return null;
 
-    const match = url.pathname.match(/^\/(?:reel|reels|p)\/([^/]+)/i);
-    if (!match) return null;
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const mediaIndex = pathParts.findIndex((part) =>
+      ['reel', 'reels', 'p'].includes(part.toLowerCase()),
+    );
+    if (mediaIndex < 0 || !pathParts[mediaIndex + 1]) return null;
 
-    const type = url.pathname.toLowerCase().startsWith('/p/') ? 'p' : 'reel';
-    return `https://www.instagram.com/${type}/${match[1]}/embed/`;
+    const mediaType = pathParts[mediaIndex].toLowerCase() === 'p' ? 'p' : 'reel';
+    const shortcode = pathParts[mediaIndex + 1];
+    return `https://www.instagram.com/${mediaType}/${shortcode}/embed/`;
   } catch {
     return null;
   }

@@ -66,6 +66,7 @@
       "teamId": "t_niaoshi_2026",
       "number": 25,
       "name": "王竣弘",
+      "englishName": "WANG, JUN-HONG",
       "gender": "男",
       "nationality": "台灣",
       "birthDate": "2001-06-25",
@@ -75,7 +76,7 @@
       "id": "ns26-04",
       "identityId": "ns-08",
       "teamId": "t_niaoshi_2026",
-      "number": null,
+      "number": 99,
       "name": "于克元",
       "englishName": "Yu Ke Yuan",
       "gender": "男",
@@ -214,6 +215,18 @@
       "nationality": "台灣",
       "birthDate": "1992-11-28",
       "age": 33
+    },
+    {
+      "id": "ns26-16",
+      "identityId": "wei-chia-cheng",
+      "teamId": "t_niaoshi_2026",
+      "number": 11,
+      "name": "魏嘉成",
+      "englishName": "WEI, CHIA-CHENG",
+      "gender": "男",
+      "nationality": "台灣",
+      "birthDate": "2002-04-28",
+      "age": 24
     }
   ]
 }

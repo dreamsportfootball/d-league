@@ -13,6 +13,22 @@ const getBadgeStyle = (category: string) =>
 const getBadgeName = (category: string) =>
   category === 'Match Report' ? '戰報' : '公告';
 
+const renderNewsTitle = (title: string): React.ReactNode => {
+  const separatorIndex = title.indexOf('｜');
+  if (separatorIndex === -1 || separatorIndex === title.length - 1) return title;
+
+  const prefix = title.slice(0, separatorIndex + 1);
+  const suffix = title.slice(separatorIndex + 1);
+
+  return (
+    <>
+      <span className="whitespace-nowrap">{prefix}</span>
+      <wbr />
+      <span className="whitespace-nowrap">{suffix}</span>
+    </>
+  );
+};
+
 const NewsSection: React.FC = () => {
   const displayNews = useMemo(
     () =>
@@ -68,7 +84,7 @@ const NewsSection: React.FC = () => {
                     </span>
                   </div>
                   <h4 className="mb-2 line-clamp-2 font-display text-lg font-bold uppercase leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
-                    {article.title}
+                    {renderNewsTitle(article.title)}
                   </h4>
                   <p className="line-clamp-2 text-sm leading-relaxed text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">
                     {article.summary}

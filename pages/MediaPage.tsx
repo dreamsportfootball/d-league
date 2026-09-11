@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Instagram, Play, Youtube } from 'lucide-react';
+import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
-import type { Video } from '../types';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
@@ -41,36 +40,6 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   </a>
 );
 
-const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => (
-  <a
-    href={video.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-  >
-    <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
-      <img
-        src={video.thumbnail}
-        alt={video.title || 'D LEAGUE 賽事精華'}
-        loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
-      />
-      <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
-          <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
-        </span>
-      </div>
-    </div>
-    <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">
-      <span>{formatMediaDate(video.date)}</span>
-      <span>{video.duration}</span>
-    </div>
-    <h3 className="mt-2 font-display text-lg font-bold leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
-      {video.title || '賽事精華'}
-    </h3>
-  </a>
-);
-
 const MediaPage: React.FC = () => {
   const {
     activeSeasonId,
@@ -93,10 +62,6 @@ const MediaPage: React.FC = () => {
   const reversedAlbums = useMemo(
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
-  );
-  const highlights = useMemo(
-    () => seasonData.media.slice().sort((a, b) => b.date.localeCompare(a.date)),
-    [seasonData.media],
   );
 
   const updateGalleryControls = () => {
@@ -130,10 +95,9 @@ const MediaPage: React.FC = () => {
 
   const hasMedia =
     reversedAlbums.length > 0 ||
-    highlights.length > 0 ||
     Boolean(activeSeason.youtubePlaylistEmbedUrl);
   const mediaItemCount =
-    reversedAlbums.length + highlights.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
+    reversedAlbums.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
   const seasonField: FilterDrawerField = {
     id: 'season',
     label: '賽季',
@@ -228,22 +192,6 @@ const MediaPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-            )}
-
-            {highlights.length > 0 && (
-              <section className="mb-12 md:mb-24">
-                <div className="mb-8 flex items-center">
-                  <div className="mr-4 h-[2px] w-8 bg-brand-black" />
-                  <h2 className="font-display text-xl font-bold uppercase tracking-widest text-brand-black">
-                    賽事精華
-                  </h2>
-                </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-8">
-                  {highlights.map((video) => (
-                    <HighlightVideo key={video.id} video={video} />
-                  ))}
-                </div>
-              </section>
             )}
 
             {activeSeason.youtubePlaylistEmbedUrl && (

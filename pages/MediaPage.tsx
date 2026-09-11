@@ -62,7 +62,7 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => {
 
   return (
     <article className="group block">
-      <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
+      <div className="relative mb-4 aspect-[9/16] overflow-hidden bg-neutral-100">
         {isPlaying && embedUrl ? (
           <iframe
             src={embedUrl}

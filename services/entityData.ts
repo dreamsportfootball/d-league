@@ -222,15 +222,8 @@ export const getPlayerSeasonStats = (
     });
   });
 
-  const displayGoals =
-    record.seasonId === '2026-27' &&
-    getPlayerIdentity(record.player) === 'tam-wang-chi' &&
-    (!teamId || teamId === record.player.teamId)
-      ? 100
-      : goals;
-
   return {
-    goals: displayGoals,
+    goals,
     yellowCards,
     secondYellowDismissals,
     directRedCards,

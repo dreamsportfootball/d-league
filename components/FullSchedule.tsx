@@ -117,9 +117,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`w-full border-b border-neutral-100 px-1.5 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
+                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1.5 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
                 >
-                  <div className="grid min-h-12 grid-cols-[80px_minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1">
+                  <div className="grid w-full min-w-0 max-w-full min-h-12 grid-cols-[80px_minmax(0,1fr)_48px_minmax(0,1fr)] items-center gap-1">
                     <div className="flex min-w-0 flex-col items-start justify-center leading-none">
                       <span className="whitespace-nowrap font-display text-[9px] font-semibold tracking-[0.02em] text-neutral-500">
                         {mobileDateHeader}
@@ -129,14 +129,14 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex min-w-0 items-center justify-end gap-1">
-                      <div className="min-w-0 flex-1 text-right">
+                    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_24px] items-center gap-1 overflow-hidden">
+                      <div className="min-w-0 overflow-hidden text-right">
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={14}
                           minFontSize={10}
                           fitPadding={1}
-                          className="font-bold text-brand-black"
+                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
                         />
                       </div>
                       <img
@@ -160,7 +160,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       )}
                     </div>
 
-                    <div className="flex min-w-0 items-center justify-start gap-1">
+                    <div className="grid min-w-0 grid-cols-[24px_minmax(0,1fr)] items-center gap-1 overflow-hidden">
                       <img
                         src={awayTeam.logo}
                         alt={awayTeam.name}
@@ -168,13 +168,13 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         decoding="async"
                         className="h-6 w-6 shrink-0 object-contain"
                       />
-                      <div className="min-w-0 flex-1 text-left">
+                      <div className="min-w-0 overflow-hidden text-left">
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={14}
                           minFontSize={10}
                           fitPadding={1}
-                          className="font-bold text-brand-black"
+                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
                         />
                       </div>
                     </div>
@@ -265,7 +265,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className="w-full border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
+                  className="w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
                 >
                   <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
                     <div className="flex shrink-0 items-center gap-2.5">
@@ -278,15 +278,15 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-[minmax(0,1fr)_52px_minmax(0,1fr)] items-center gap-2">
-                    <div className="flex min-w-0 items-center justify-end gap-1.5">
-                      <div className="min-w-0 flex-1 text-right">
+                  <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_52px_minmax(0,1fr)] items-center gap-2">
+                    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_30px] items-center gap-1.5 overflow-hidden">
+                      <div className="min-w-0 overflow-hidden text-right">
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={16}
                           minFontSize={10}
                           fitPadding={2}
-                          className="font-bold text-brand-black"
+                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
                         />
                       </div>
                       <img
@@ -310,7 +310,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       )}
                     </div>
 
-                    <div className="flex min-w-0 items-center justify-start gap-1.5">
+                    <div className="grid min-w-0 grid-cols-[30px_minmax(0,1fr)] items-center gap-1.5 overflow-hidden">
                       <img
                         src={awayTeam.logo}
                         alt={awayTeam.name}
@@ -318,13 +318,13 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         decoding="async"
                         className="h-[30px] w-[30px] shrink-0 object-contain"
                       />
-                      <div className="min-w-0 flex-1 text-left">
+                      <div className="min-w-0 overflow-hidden text-left">
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={16}
                           minFontSize={10}
                           fitPadding={2}
-                          className="font-bold text-brand-black"
+                          className="overflow-hidden text-ellipsis font-bold text-brand-black"
                         />
                       </div>
                     </div>

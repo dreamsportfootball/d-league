@@ -81,7 +81,6 @@ export interface Video {
   thumbnail: string;
   date: string;
   link?: string;
-  videoUrl?: string;
 }
 
 export type MatchEventType = 'GOAL' | 'YELLOW_CARD' | 'RED_CARD' | 'SECOND_YELLOW';

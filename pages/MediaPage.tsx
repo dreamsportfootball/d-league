@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import { ArrowUpRight, Instagram, Play, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -57,26 +57,29 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
 );
 
 const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
   const embedUrl = useMemo(() => getInstagramEmbedUrl(video.link), [video.link]);
 
   return (
     <article className="group block">
-      <div className="relative mb-4 aspect-[9/16] overflow-hidden bg-neutral-100">
-        {embedUrl ? (
+      <div className="relative mb-4 aspect-[4/5] overflow-hidden bg-neutral-100">
+        {isPlaying && embedUrl ? (
           <iframe
             src={embedUrl}
             title={video.title || 'D LEAGUE 賽事精華'}
             className="h-full w-full border-0 bg-white"
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
-            loading="lazy"
           />
         ) : (
-          <a
-            href={video.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset"
+          <button
+            type="button"
+            onClick={() => {
+              if (embedUrl) setIsPlaying(true);
+            }}
+            disabled={!embedUrl}
+            className="relative h-full w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset disabled:cursor-default"
+            aria-label={`播放 ${video.title || '賽事精華'}`}
           >
             <img
               src={video.thumbnail}
@@ -84,7 +87,14 @@ const HighlightVideo: React.FC<{ video: Video }> = ({ video }) => {
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
             />
-          </a>
+            {embedUrl && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-brand-black shadow-lg">
+                  <Play className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true" />
+                </span>
+              </div>
+            )}
+          </button>
         )}
       </div>
 

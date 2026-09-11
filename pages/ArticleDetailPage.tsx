@@ -286,11 +286,11 @@ const ArticleDetailPage: React.FC = () => {
     article.id === '2026-27-chaome-tea-sponsor'
       ? [
           {
-            src: 'assets/news/2026-27-chaome-tea-food-1.jpg',
+            src: 'assets/news/2026-27-chaome-tea-food-1.png',
             alt: '超咩茶舖餐點照片 1',
           },
           {
-            src: 'assets/news/2026-27-chaome-tea-food-2.jpg',
+            src: 'assets/news/2026-27-chaome-tea-food-2.png',
             alt: '超咩茶舖餐點照片 2',
           },
         ]

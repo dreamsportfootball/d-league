@@ -268,7 +268,7 @@ const ArticleDetailPage: React.FC = () => {
         </nav>
 
         <header className="border-b border-neutral-200 pb-9 md:pb-12">
-          <div className="max-w-5xl">
+          <div className="max-w-5xl lg:mx-auto lg:max-w-[920px]">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span
                 className={`inline-flex items-center rounded-sm px-2.5 py-1.5 text-[11px] font-bold tracking-[0.12em] ${getBadgeStyle(

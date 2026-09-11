@@ -1,8 +1,9 @@
 import React, { Fragment, useMemo } from 'react';
-import { ArrowRight, ExternalLink, Newspaper } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 import { getSeasonConfig } from '../config/seasons';
-import { getAllNews, getNewsArticle } from '../services/seasonDataJson';
+import { getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
 const CATEGORY_META = {
@@ -10,18 +11,21 @@ const CATEGORY_META = {
   Official: { label: '官方公告' },
 } as const;
 
+const getBadgeStyle = (category: 'Match Report' | 'Official') =>
+  category === 'Match Report'
+    ? 'bg-brand-accent text-brand-black'
+    : 'bg-brand-blue text-white';
+
 type ArticleContentBlock =
   | { type: 'label'; text: string }
   | { type: 'heading'; text: string }
   | { type: 'info'; lines: string[] }
   | { type: 'list'; ordered: boolean; items: string[] }
-  | { type: 'cta'; label: string; url: string }
   | { type: 'paragraph'; text: string };
 
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
 const ORDERED_PATTERN = /^\d+[.、]\s*(.+)$/;
 const URL_PATTERN = /(https?:\/\/[^\s]+)/g;
-const STANDALONE_URL_PATTERN = /^https?:\/\/[^\s]+$/;
 const PARAGRAPH_START_PATTERN = /^(?:第\s*\d|開賽|賽前|上半場|下半場|半場前|進入|比賽|最終|經歷|主辦單位|D LEAGUE)/;
 
 const parseArticleBlock = (
@@ -35,23 +39,7 @@ const parseArticleBlock = (
     .filter(Boolean);
 
   if (lines.length === 1 && /^【.+】$/.test(lines[0])) {
-    return { type: 'label', text: lines[0].slice(1, -1).trim() };
-  }
-
-  if (
-    lines.length === 2 &&
-    lines[0].length <= 80 &&
-    STANDALONE_URL_PATTERN.test(lines[1])
-  ) {
-    return {
-      type: 'cta',
-      label: lines[0].replace(/[：:]$/, '').trim() || '前往相關網站',
-      url: lines[1],
-    };
-  }
-
-  if (lines.length === 1 && STANDALONE_URL_PATTERN.test(lines[0])) {
-    return { type: 'cta', label: '前往相關網站', url: lines[0] };
+    return { type: 'label', text: lines[0] };
   }
 
   if (lines.length > 0 && lines.every((line) => BULLET_PATTERN.test(line))) {
@@ -126,21 +114,14 @@ const renderMultilineText = (text: string): React.ReactNode[] =>
   ));
 
 const ArticleHighlight: React.FC<{ text: string }> = ({ text }) => (
-  <div aria-label="文章重點">
-    <p className="text-[18px] font-semibold leading-[1.75] text-neutral-700 md:text-[22px] md:leading-[1.68]">
+  <blockquote
+    className="border-l-[3px] border-brand-blue pl-5 md:pl-7"
+    aria-label="文章重點"
+  >
+    <p className="text-[18px] font-semibold leading-[1.75] text-neutral-700 md:text-[21px] md:leading-[1.7]">
       {text}
     </p>
-    <div className="mt-6 h-1 w-10 bg-brand-accent" aria-hidden="true" />
-  </div>
-);
-
-const ArticleSectionHeading: React.FC<{ text: string }> = ({ text }) => (
-  <div className="mb-6 mt-12 first:mt-0 md:mb-7 md:mt-14">
-    <h2 className="font-display text-[22px] font-bold leading-tight tracking-tight text-brand-black md:text-[26px]">
-      {renderInlineText(text)}
-    </h2>
-    <div className="mt-3 h-1 w-10 bg-brand-accent" aria-hidden="true" />
-  </div>
+  </blockquote>
 );
 
 const ArticleBody: React.FC<{
@@ -175,19 +156,37 @@ const ArticleBody: React.FC<{
   if (blocks.length === 0) return null;
 
   return (
-    <div className="break-words text-left text-[16px] font-normal leading-[1.9] text-neutral-800 md:text-[17px] md:leading-[1.92]">
+    <div className="break-words text-left text-[16px] font-normal leading-[1.9] text-neutral-800 md:text-[17px] md:leading-[1.95]">
       {blocks.map((block, index) => {
         const key = `${block.type}-${index}`;
 
-        if (block.type === 'label' || block.type === 'heading') {
-          return <ArticleSectionHeading key={key} text={block.text} />;
+        if (block.type === 'label') {
+          return (
+            <p
+              key={key}
+              className="mb-5 mt-10 font-display text-xs font-bold tracking-[0.18em] text-brand-blue first:mt-0"
+            >
+              {block.text}
+            </p>
+          );
+        }
+
+        if (block.type === 'heading') {
+          return (
+            <h2
+              key={key}
+              className="mb-5 mt-10 font-display text-2xl font-bold leading-snug tracking-tight text-brand-black first:mt-0 md:text-[28px]"
+            >
+              {renderInlineText(block.text)}
+            </h2>
+          );
         }
 
         if (block.type === 'info') {
           return (
             <section
               key={key}
-              className="my-9 border-y border-neutral-200 py-5 md:my-10 md:py-6"
+              className="my-8 border-y border-neutral-200 bg-neutral-50 px-5 py-5 md:px-6"
               aria-label="賽事資訊"
             >
               <div className="space-y-1.5 font-display text-lg font-semibold leading-relaxed text-brand-black md:text-xl">
@@ -199,57 +198,26 @@ const ArticleBody: React.FC<{
           );
         }
 
-        if (block.type === 'cta') {
-          return (
-            <div key={key} className="mb-8 mt-9">
-              <a
-                href={block.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex min-h-11 items-center border-b-2 border-brand-black pb-1 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-              >
-                {block.label}
-                <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-              </a>
-            </div>
-          );
-        }
-
         if (block.type === 'list') {
-          if (block.ordered) {
-            return (
-              <ol
-                key={key}
-                className="mb-8 list-decimal space-y-3 pl-6 marker:font-bold marker:text-brand-blue"
-              >
-                {block.items.map((item, itemIndex) => (
-                  <li key={`${itemIndex}-${item.slice(0, 16)}`} className="pl-1">
-                    {renderInlineText(item)}
-                  </li>
-                ))}
-              </ol>
-            );
-          }
-
+          const ListElement = block.ordered ? 'ol' : 'ul';
           return (
-            <ul key={key} className="mb-8 space-y-3">
+            <ListElement
+              key={key}
+              className={`mb-7 space-y-2.5 pl-6 ${
+                block.ordered ? 'list-decimal' : 'list-disc'
+              } marker:font-bold marker:text-brand-blue`}
+            >
               {block.items.map((item, itemIndex) => (
-                <li
-                  key={`${itemIndex}-${item.slice(0, 16)}`}
-                  className="grid grid-cols-[20px_1fr] gap-2"
-                >
-                  <span className="font-bold text-brand-blue" aria-hidden="true">
-                    —
-                  </span>
-                  <span>{renderInlineText(item)}</span>
+                <li key={`${itemIndex}-${item.slice(0, 16)}`} className="pl-1">
+                  {renderInlineText(item)}
                 </li>
               ))}
-            </ul>
+            </ListElement>
           );
         }
 
         return (
-          <p key={key} className="mb-8 last:mb-0">
+          <p key={key} className="mb-7 last:mb-0">
             {renderMultilineText(block.text)}
           </p>
         );
@@ -261,22 +229,6 @@ const ArticleBody: React.FC<{
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const article = useMemo(() => (id ? getNewsArticle(id) : null), [id]);
-
-  const relatedArticles = useMemo(() => {
-    if (!article) return [];
-
-    const candidates = getAllNews()
-      .filter((item) => item.id !== article.id)
-      .sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-      );
-
-    const sameSeason = candidates.filter((item) => item.seasonId === article.seasonId);
-    const otherSeasons = candidates.filter((item) => item.seasonId !== article.seasonId);
-
-    return [...sameSeason, ...otherSeasons].slice(0, 2);
-  }, [article]);
 
   if (!article) {
     return (
@@ -291,13 +243,10 @@ const ArticleDetailPage: React.FC = () => {
           <p className="mt-4 text-sm leading-7 text-neutral-500">
             此文章可能已移除，或網址內容不正確
           </p>
-          <Link
-            to="/news"
+          <BackButton
+            fallbackTo="/news"
             className="mt-7 inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-brand-blue transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            返回最新消息
-            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-          </Link>
+          />
         </div>
       </main>
     );
@@ -308,57 +257,48 @@ const ArticleDetailPage: React.FC = () => {
   const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
   return (
-    <article className="min-h-screen bg-white pb-24 pt-7 md:pb-32 md:pt-16">
-      <div className="mx-auto max-w-6xl px-5 md:px-8 lg:px-12">
+    <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
+      <div className="mx-auto max-w-6xl px-5 md:px-10 lg:px-12">
         <nav className="mb-8 md:mb-12" aria-label="文章導覽">
-          <Link
-            to="/news"
+          <BackButton
+            fallbackTo="/news"
             className="group inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-neutral-500 transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
-          >
-            <span className="mr-2 transition-transform group-hover:-translate-x-1" aria-hidden="true">
-              ←
-            </span>
-            最新消息
-          </Link>
+            iconClassName="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+          />
         </nav>
 
-        <header className="border-b border-neutral-200 pb-8 md:pb-12">
+        <header className="border-b border-neutral-200 pb-9 md:pb-12">
           <div className="max-w-5xl">
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2 text-[10px] font-bold tracking-[0.13em] md:text-[11px]">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
               <span
-                className={`inline-flex items-center gap-2 ${
-                  article.category === 'Match Report' ? 'text-brand-black' : 'text-brand-blue'
-                }`}
+                className={`inline-flex items-center rounded-sm px-2.5 py-1.5 text-[11px] font-bold tracking-[0.12em] ${getBadgeStyle(
+                  article.category,
+                )}`}
               >
-                <span
-                  className={`h-2 w-2 ${
-                    article.category === 'Match Report' ? 'bg-brand-accent' : 'bg-brand-blue'
-                  }`}
-                  aria-hidden="true"
-                />
                 {CATEGORY_META[article.category].label}
               </span>
               {seasonLabel && (
-                <>
-                  <span className="text-neutral-300">/</span>
-                  <span className="text-neutral-500">{seasonLabel}</span>
-                </>
+                <span className="text-[11px] font-bold tracking-[0.14em] text-brand-blue">
+                  {seasonLabel} 賽季
+                </span>
               )}
-              <span className="text-neutral-300">/</span>
-              <time dateTime={article.timestamp} className="font-mono text-neutral-400">
+              <time
+                dateTime={article.timestamp}
+                className="font-mono text-[11px] tracking-[0.08em] text-neutral-400"
+              >
                 {formatTaipeiDate(article.timestamp, '.')}
               </time>
             </div>
 
-            <h1 className="mt-5 max-w-[980px] font-display text-[34px] font-bold leading-[1.15] tracking-tight text-brand-black md:mt-6 md:text-[48px] md:leading-[1.13] lg:text-[56px]">
+            <h1 className="mt-6 max-w-[980px] font-display text-[34px] font-bold leading-[1.16] tracking-tight text-brand-black md:text-5xl md:leading-[1.14] lg:text-[54px]">
               {article.title}
             </h1>
           </div>
         </header>
 
         {article.imageUrl && (
-          <figure className="-mx-5 mt-8 sm:mx-0 md:mt-12">
-            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden bg-neutral-50/70 py-4 sm:px-4 md:min-h-[360px] md:px-6 md:py-7">
+          <figure className="mt-9 md:mt-12">
+            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
               <img
                 src={article.imageUrl}
                 alt={article.title}
@@ -369,8 +309,8 @@ const ArticleDetailPage: React.FC = () => {
         )}
 
         <div
-          className={`mx-auto max-w-[740px] ${
-            article.imageUrl ? 'mt-9 md:mt-12' : 'mt-9 md:mt-12'
+          className={`mx-auto max-w-[720px] ${
+            article.imageUrl ? 'mt-8 md:mt-10' : 'mt-9 md:mt-12'
           }`}
         >
           {highlightText && <ArticleHighlight text={highlightText} />}
@@ -383,71 +323,13 @@ const ArticleDetailPage: React.FC = () => {
           </section>
         </div>
 
-        {relatedArticles.length > 0 && (
-          <section className="mx-auto mt-20 max-w-5xl border-t border-neutral-200 pt-8 md:mt-24 md:pt-10" aria-labelledby="related-news-heading">
-            <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
-              <div>
-                <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.22em] text-neutral-400">
-                  More from D League
-                </span>
-                <h2 id="related-news-heading" className="font-display text-2xl font-bold tracking-tight text-brand-black md:text-3xl">
-                  更多最新消息
-                </h2>
-              </div>
-              <Link
-                to="/news"
-                className="hidden min-h-11 items-center text-xs font-bold tracking-[0.12em] text-brand-blue transition-colors hover:text-brand-black md:inline-flex"
-              >
-                查看全部
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-              {relatedArticles.map((item) => (
-                <Link
-                  key={`${item.seasonId ?? 'global'}-${item.id}-related`}
-                  to={`/news/${item.id}`}
-                  className="group flex gap-4 border-b border-neutral-200 pb-5 md:block md:border-b-0 md:pb-0"
-                >
-                  <div className="aspect-[4/3] w-28 shrink-0 overflow-hidden bg-neutral-100 md:aspect-[16/9] md:w-full">
-                    {item.imageUrl ? (
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        loading="lazy"
-                        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.025]"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Newspaper className="h-7 w-7 text-neutral-300" aria-hidden="true" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 md:pt-4">
-                    <div className="mb-2 flex flex-wrap items-center gap-x-2 text-[9px] font-bold tracking-[0.12em] text-neutral-400 md:text-[10px]">
-                      <span className="text-brand-blue">{CATEGORY_META[item.category].label}</span>
-                      <span className="text-neutral-300">/</span>
-                      <time dateTime={item.timestamp}>{formatTaipeiDate(item.timestamp, '.')}</time>
-                    </div>
-                    <h3 className="line-clamp-2 font-display text-lg font-bold leading-tight tracking-tight text-brand-black transition-colors group-hover:text-brand-blue md:text-xl">
-                      {item.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <Link
-              to="/news"
-              className="mt-7 inline-flex min-h-11 items-center text-xs font-bold tracking-[0.12em] text-brand-blue transition-colors hover:text-brand-black md:hidden"
-            >
-              查看全部最新消息
-              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-            </Link>
-          </section>
-        )}
+        <footer className="mx-auto mt-16 max-w-[720px] border-t border-neutral-200 pt-7 md:mt-20">
+          <BackButton
+            fallbackTo="/news"
+            className="group inline-flex min-h-11 items-center text-xs font-bold tracking-[0.14em] text-brand-blue transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+            iconClassName="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+          />
+        </footer>
       </div>
     </article>
   );

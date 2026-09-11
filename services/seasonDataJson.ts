@@ -139,6 +139,10 @@ const DATA = Object.fromEntries(
   ]),
 ) as Record<SeasonId, SeasonData>;
 
+if (DATA['2026-27']) {
+  DATA['2026-27'].playerImages['魏嘉成'] = assetUrl('assets/seasons/2026-27/players/ns26-16.jpg');
+}
+
 const applyPlayerImageFallbacks = (dataBySeason: Record<SeasonId, SeasonData>): void => {
   const imageByIdentity = new Map<string, string>();
 

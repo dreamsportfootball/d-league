@@ -3,7 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import { getSeasonConfig } from '../config/seasons';
-import { getNewsArticle } from '../services/seasonDataJson';
+import { assetUrl, getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
 const CATEGORY_META = {
@@ -286,11 +286,11 @@ const ArticleDetailPage: React.FC = () => {
     article.id === '2026-27-chaome-tea-sponsor'
       ? [
           {
-            src: 'assets/news/2026-27-chaome-tea-food-1.png',
+            src: assetUrl('assets/news/2026-27-chaome-tea-food-1.png'),
             alt: '超咩茶舖餐點照片 1',
           },
           {
-            src: 'assets/news/2026-27-chaome-tea-food-2.png',
+            src: assetUrl('assets/news/2026-27-chaome-tea-food-2.png'),
             alt: '超咩茶舖餐點照片 2',
           },
         ]

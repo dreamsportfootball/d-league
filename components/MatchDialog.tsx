@@ -93,8 +93,12 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   useEffect(() => {
     if (!match) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
+    const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(
+      () => closeButtonRef.current?.focus({ preventScroll: true }),
+      0,
+    );
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -124,9 +128,13 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-      previousFocusRef.current?.focus();
+      document.body.style.overflow = previousBodyOverflow;
+      const previousFocus = previousFocusRef.current;
+      if (previousFocus?.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
     };
   }, [match, onClose]);
 

@@ -289,8 +289,14 @@ if (read('2025-26', 'matches.json').length !== 48) fail('2025-26: expected 48 ma
 if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-26: expected events for 48 matches');
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
 
+const currentMatches = read(CURRENT_SEASON_ID, 'matches.json');
+if (currentMatches.length !== 90) fail(`${CURRENT_SEASON_ID}: expected 90 official league matches`);
+for (const leagueId of ['L1', 'L2', 'L3']) {
+  const leagueMatchCount = currentMatches.filter((match) => match.league === leagueId).length;
+  if (leagueMatchCount !== 30) fail(`${CURRENT_SEASON_ID} ${leagueId}: expected 30 official league matches`);
+}
+
 for (const file of [
-  'matches.json',
   'matchEvents.json',
   'disciplineDecisions.json',
   'lineups.json',

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CalendarDays, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
@@ -279,13 +280,14 @@ const MatchCenter: React.FC = () => {
         </div>
       </div>
 
-      {selectedMatchId && (
+      {selectedMatchId && typeof document !== 'undefined' && createPortal(
         <MatchDialog
           matchId={selectedMatchId}
           onClose={() => setSelectedMatchId(null)}
           onSelectMatch={setSelectedMatchId}
           navigationMatchIds={filteredMatches.map((match) => match.id)}
-        />
+        />,
+        document.body,
       )}
     </>
   );

@@ -87,6 +87,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-navigation-visual-stability.mjs
 
+      - name: Validate match dialog scroll stability
+        if: always()
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-match-dialog-scroll-stability.mjs
+
       - name: Validate round entity page
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

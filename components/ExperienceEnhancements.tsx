@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { CalendarClock, MapPin } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation } from 'react-router-dom';
@@ -11,9 +11,82 @@ import { formatTaipeiDate, formatTaipeiDateWithWeekday, formatTaipeiMonthDayWeek
 
 const VENUE_MAP_URL = 'https://share.google/rI921QclMDxQ37xFg';
 
+interface ScheduleViewSnapshot {
+  pathname: string;
+  search: string;
+  hash: string;
+  scrollY: number;
+}
+
+const getScheduleViewKey = (pathname: string, search: string): string => {
+  const params = new URLSearchParams(search);
+  params.delete('match');
+  params.sort();
+  const normalizedSearch = params.toString();
+  return `${pathname}${normalizedSearch ? `?${normalizedSearch}` : ''}`;
+};
+
+const isScheduleMatchDialogTransition = (
+  previous: ScheduleViewSnapshot,
+  current: Pick<ScheduleViewSnapshot, 'pathname' | 'search' | 'hash'>,
+): boolean => {
+  if (previous.pathname !== '/schedule' || current.pathname !== '/schedule') return false;
+  if (previous.hash !== current.hash) return false;
+
+  const previousParams = new URLSearchParams(previous.search);
+  const currentParams = new URLSearchParams(current.search);
+  const previousMatchId = previousParams.get('match');
+  const currentMatchId = currentParams.get('match');
+  if (previousMatchId === currentMatchId) return false;
+
+  return getScheduleViewKey(previous.pathname, previous.search) ===
+    getScheduleViewKey(current.pathname, current.search);
+};
+
+const ScheduleMatchScrollGuard: React.FC = () => {
+  const location = useLocation();
+  const previousLocationRef = useRef<ScheduleViewSnapshot | null>(null);
+
+  useLayoutEffect(() => {
+    const previous = previousLocationRef.current;
+    const shouldRestore = Boolean(previous && isScheduleMatchDialogTransition(previous, location));
+    const restoredScrollY = shouldRestore && previous ? previous.scrollY : window.scrollY;
+
+    if (shouldRestore) {
+      window.scrollTo({ top: restoredScrollY, behavior: 'auto' });
+    }
+
+    const currentSnapshot: ScheduleViewSnapshot = {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash,
+      scrollY: restoredScrollY,
+    };
+    previousLocationRef.current = currentSnapshot;
+
+    const handleScroll = () => {
+      if (previousLocationRef.current === currentSnapshot) {
+        currentSnapshot.scrollY = window.scrollY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [location.hash, location.pathname, location.search]);
+
+  return null;
+};
+
 const ScheduleAutoPosition: React.FC = () => {
   const location = useLocation();
   const { seasonData } = useSeason();
+  const positionedViewRef = useRef<string | null>(null);
+  const scheduleViewKey = useMemo(
+    () => getScheduleViewKey(location.pathname, location.search),
+    [location.pathname, location.search],
+  );
   const targetMatch = useMemo(() => {
     if (location.pathname !== '/schedule' || seasonData.matches.length === 0) return null;
     const sorted = seasonData.matches.slice().sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
@@ -22,7 +95,14 @@ const ScheduleAutoPosition: React.FC = () => {
   }, [location.pathname, seasonData.matches]);
 
   useEffect(() => {
-    if (!targetMatch || location.pathname !== '/schedule' || new URLSearchParams(location.search).has('match')) return;
+    if (location.pathname !== '/schedule') return;
+    if (new URLSearchParams(location.search).has('match')) {
+      positionedViewRef.current = scheduleViewKey;
+      return;
+    }
+    if (!targetMatch || positionedViewRef.current === scheduleViewKey) return;
+    positionedViewRef.current = scheduleViewKey;
+
     const timer = window.setTimeout(() => {
       if (window.scrollY > 420) return;
       const desktopLabel = formatTaipeiDate(targetMatch.timestamp);
@@ -36,7 +116,7 @@ const ScheduleAutoPosition: React.FC = () => {
       window.scrollBy({ top: -82, behavior: 'auto' });
     }, 420);
     return () => window.clearTimeout(timer);
-  }, [location.pathname, location.search, targetMatch]);
+  }, [location.pathname, location.search, scheduleViewKey, targetMatch]);
 
   return null;
 };
@@ -193,6 +273,7 @@ const MatchVenuePortal: React.FC = () => {
 
 const ExperienceEnhancements: React.FC = () => (
   <>
+    <ScheduleMatchScrollGuard />
     <ScheduleAutoPosition />
     <TeamQuickSummary />
     <MatchVenuePortal />

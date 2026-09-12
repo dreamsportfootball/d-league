@@ -16,6 +16,22 @@ const getBadgeStyle = (category: 'Match Report' | 'Official') =>
     ? 'bg-brand-accent text-brand-black'
     : 'bg-brand-blue text-white';
 
+const renderArticleTitle = (title: string): React.ReactNode => {
+  const separatorIndex = title.indexOf('｜');
+  if (separatorIndex === -1 || separatorIndex === title.length - 1) return title;
+
+  const prefix = title.slice(0, separatorIndex + 1);
+  const suffix = title.slice(separatorIndex + 1);
+
+  return (
+    <>
+      <span className="whitespace-nowrap">{prefix}</span>
+      <wbr />
+      <span className="whitespace-nowrap">{suffix}</span>
+    </>
+  );
+};
+
 type ArticleContentBlock =
   | { type: 'label'; text: string }
   | { type: 'heading'; text: string }
@@ -331,7 +347,7 @@ const ArticleDetailPage: React.FC = () => {
             </div>
 
             <h1 className="mt-6 max-w-[980px] font-display text-[34px] font-bold leading-[1.16] tracking-tight text-brand-black md:text-5xl md:leading-[1.14] lg:text-[54px]">
-              {article.title}
+              {renderArticleTitle(article.title)}
             </h1>
           </div>
         </header>

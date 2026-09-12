@@ -3,7 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import { getSeasonConfig } from '../config/seasons';
-import { getNewsArticle } from '../services/seasonDataJson';
+import { assetUrl, getNewsArticle } from '../services/seasonDataJson';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
 const CATEGORY_META = {
@@ -15,6 +15,22 @@ const getBadgeStyle = (category: 'Match Report' | 'Official') =>
   category === 'Match Report'
     ? 'bg-brand-accent text-brand-black'
     : 'bg-brand-blue text-white';
+
+const renderArticleTitle = (title: string): React.ReactNode => {
+  const separatorIndex = title.indexOf('｜');
+  if (separatorIndex === -1 || separatorIndex === title.length - 1) return title;
+
+  const prefix = title.slice(0, separatorIndex + 1);
+  const suffix = title.slice(separatorIndex + 1);
+
+  return (
+    <>
+      <span className="whitespace-nowrap">{prefix}</span>
+      <wbr />
+      <span className="whitespace-nowrap">{suffix}</span>
+    </>
+  );
+};
 
 type ArticleContentBlock =
   | { type: 'label'; text: string }
@@ -286,11 +302,11 @@ const ArticleDetailPage: React.FC = () => {
     article.id === '2026-27-chaome-tea-sponsor'
       ? [
           {
-            src: 'assets/news/2026-27-chaome-tea-food-1.png',
+            src: assetUrl('assets/news/2026-27-chaome-tea-food-1.png'),
             alt: '超咩茶舖餐點照片 1',
           },
           {
-            src: 'assets/news/2026-27-chaome-tea-food-2.png',
+            src: assetUrl('assets/news/2026-27-chaome-tea-food-2.png'),
             alt: '超咩茶舖餐點照片 2',
           },
         ]
@@ -331,7 +347,7 @@ const ArticleDetailPage: React.FC = () => {
             </div>
 
             <h1 className="mt-6 max-w-[980px] font-display text-[34px] font-bold leading-[1.16] tracking-tight text-brand-black md:text-5xl md:leading-[1.14] lg:text-[54px]">
-              {article.title}
+              {renderArticleTitle(article.title)}
             </h1>
           </div>
         </header>

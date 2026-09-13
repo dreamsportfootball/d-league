@@ -68,25 +68,25 @@ const NewsSection: React.FC = () => {
                 <div className="z-10 min-w-0 flex-1">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span
-                      className={`inline-flex h-[18px] items-center justify-center rounded-sm px-2 text-[10px] font-bold uppercase leading-none tracking-wider shadow-sm ${getBadgeStyle(
+                      className={`inline-flex h-[18px] items-center justify-center rounded-sm px-2 text-[10px] font-bold uppercase leading-none tracking-[0.08em] shadow-sm ${getBadgeStyle(
                         article.category,
                       )}`}
                     >
                       {getBadgeName(article.category)}
                     </span>
                     {seasonLabel && (
-                      <span className="text-[10px] font-black uppercase tracking-[0.15em] text-brand-blue">
+                      <span className="text-[10px] font-black uppercase tracking-[0.08em] text-brand-blue">
                         {seasonLabel}
                       </span>
                     )}
-                    <span className="text-[10px] font-bold text-neutral-400">
+                    <span className="text-[10px] font-bold tracking-[0.06em] text-neutral-400">
                       {formatTaipeiDate(article.timestamp)}
                     </span>
                   </div>
-                  <h4 className="mb-2 line-clamp-2 font-display text-lg font-bold uppercase leading-tight text-brand-black transition-colors group-hover:text-brand-blue">
+                  <h4 className="mb-1.5 line-clamp-2 font-display text-lg font-bold uppercase leading-[1.15] tracking-[-0.025em] text-brand-black transition-colors group-hover:text-brand-blue">
                     {renderNewsTitle(article.title)}
                   </h4>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">
+                  <p className="line-clamp-2 text-sm leading-[1.65] tracking-[0.005em] text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">
                     {article.summary}
                   </p>
                 </div>

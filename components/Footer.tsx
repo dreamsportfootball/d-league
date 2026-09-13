@@ -3,11 +3,13 @@ import { ExternalLink, Facebook, Instagram, Mail, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import {
+  CHAOME_TEA_INSTAGRAM_URL,
   CURRENT_SEASON_ID,
   D_LEAGUE_EMAIL_URL,
   D_LEAGUE_FACEBOOK_URL,
   D_LEAGUE_INSTAGRAM_URL,
   D_LEAGUE_YOUTUBE_URL,
+  DREAMSPORT_INSTAGRAM_URL,
   SHOW_REGISTRATION_NAV,
 } from '../config/siteConfig';
 
@@ -15,10 +17,16 @@ const SocialButton: React.FC<{ icon: React.ReactNode; href: string; label: strin
   <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-800 bg-neutral-900 text-neutral-400 transition-all duration-300 hover:-translate-y-1 hover:border-brand-accent hover:bg-brand-accent hover:text-brand-black">{icon}</a>
 );
 
-const PartnerLogo: React.FC<{ src: string; alt: string; className?: string }> = ({ src, alt, className }) => (
-  <div className="group/logo flex h-10 w-auto items-center justify-center transition-all duration-300 md:h-12">
-    <img src={src} alt={alt} className={`max-h-full w-auto object-contain transition-all duration-300 group-hover/logo:scale-105 ${className ?? ''}`} />
-  </div>
+const PartnerLogo: React.FC<{ src: string; alt: string; href: string; className?: string }> = ({ src, alt, href, className }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`前往 ${alt} Instagram`}
+    className="group/logo flex min-h-11 w-auto items-center justify-center rounded-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 md:h-12"
+  >
+    <img src={src} alt={alt} className={`max-h-10 w-auto object-contain transition-all duration-300 group-hover/logo:scale-105 md:max-h-full ${className ?? ''}`} />
+  </a>
 );
 
 const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, children }) => (
@@ -65,8 +73,8 @@ const Footer: React.FC = () => {
           <div className="md:col-span-4">
             <h4 className="mb-3 border-l-4 border-brand-accent pl-3 font-display text-lg font-bold uppercase tracking-widest text-white md:mb-6">官方合作夥伴</h4>
             <div className="flex max-w-sm flex-wrap items-center justify-start gap-x-6 gap-y-4">
-              <PartnerLogo alt="Dreamsport 夢達足球" className="brightness-0 invert" src="https://cdn.store-assets.com/s/783745/f/15684770.png" />
-              <PartnerLogo alt="超咩茶舖" src={chaomeTeaLogoUrl} />
+              <PartnerLogo alt="Dreamsport 夢達足球" className="brightness-0 invert" href={DREAMSPORT_INSTAGRAM_URL} src="https://cdn.store-assets.com/s/783745/f/15684770.png" />
+              <PartnerLogo alt="超咩茶舖" href={CHAOME_TEA_INSTAGRAM_URL} src={chaomeTeaLogoUrl} />
             </div>
           </div>
         </div>

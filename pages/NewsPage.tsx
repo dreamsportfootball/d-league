@@ -52,26 +52,26 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <span
-              className={`inline-flex shrink-0 items-center justify-center rounded-sm px-2 py-1 text-[10px] font-bold uppercase leading-none tracking-[0.15em] ${TAG_COLOR_MAP[article.category]}`}
+              className={`inline-flex shrink-0 items-center justify-center rounded-sm px-2 py-1 text-[10px] font-bold uppercase leading-none tracking-[0.08em] ${TAG_COLOR_MAP[article.category]}`}
             >
               {CATEGORY_MAP[article.category]}
             </span>
             {seasonLabel && (
-              <span className="truncate text-[10px] font-black uppercase tracking-[0.15em] text-brand-blue">
+              <span className="truncate text-[10px] font-black uppercase tracking-[0.08em] text-brand-blue">
                 {seasonLabel}
               </span>
             )}
           </div>
-          <span className="shrink-0 font-mono text-[11px] text-neutral-500">
+          <span className="shrink-0 font-mono text-[11px] tracking-[0.06em] text-neutral-500">
             {formatTaipeiDate(article.timestamp)}
           </span>
         </div>
 
-        <h3 className="mb-2 line-clamp-2 font-display text-lg font-bold leading-snug text-neutral-900 transition-colors group-hover:text-brand-blue">
+        <h3 className="mb-1.5 line-clamp-2 font-display text-lg font-bold leading-[1.15] tracking-[-0.025em] text-neutral-900 transition-colors group-hover:text-brand-blue">
           {article.title}
         </h3>
 
-        <p className="mb-4 line-clamp-2 text-xs leading-normal text-neutral-500">
+        <p className="mb-4 line-clamp-2 text-xs leading-[1.65] tracking-[0.005em] text-neutral-500">
           {article.summary}
         </p>
 

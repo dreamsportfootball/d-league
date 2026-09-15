@@ -4,7 +4,6 @@ import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
 import { isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
-import { MATCH_MEDIA_PREVIEW_FIXTURE } from '../data/demo/matchMediaPreview';
 import { useSeason } from '../hooks/useSeason';
 import { getMatchRecord } from '../services/entityData';
 import { getMatchRoute } from '../utils/matchPermalink';
@@ -37,28 +36,7 @@ const MatchPage: React.FC = () => {
   }
 
   const { seasonId, season, data, match } = record;
-  const mediaDemoEnabled = import.meta.env.VITE_MEDIA_DEMO_ENABLED === 'true'
-    && searchParams.get('mediaDemo') === '1'
-    && seasonId === MATCH_MEDIA_PREVIEW_FIXTURE.album.seasonId;
-  const demoMatch = mediaDemoEnabled
-    ? {
-        ...match,
-        timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-        videoUrls: MATCH_MEDIA_PREVIEW_FIXTURE.videoUrls,
-        albumId: MATCH_MEDIA_PREVIEW_FIXTURE.album.id,
-      }
-    : match;
-  const seasonData = mediaDemoEnabled
-    ? {
-        ...data,
-        matches: data.matches.map((candidate) => candidate.id === match.id ? demoMatch : candidate),
-        albums: [
-          ...data.albums.filter((album) => album.id !== MATCH_MEDIA_PREVIEW_FIXTURE.album.id),
-          MATCH_MEDIA_PREVIEW_FIXTURE.album,
-        ],
-      }
-    : data;
-  const navigationMatchIds = seasonData.matches
+  const navigationMatchIds = data.matches
     .filter((candidate) => candidate.league === match.league)
     .slice()
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
@@ -66,7 +44,7 @@ const MatchPage: React.FC = () => {
   const matchSeasonContext = {
     activeSeasonId: seasonId,
     activeSeason: season,
-    seasonData,
+    seasonData: data,
     availableSeasons,
     setActiveSeason: () => {},
   };

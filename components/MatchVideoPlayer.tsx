@@ -48,7 +48,7 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
     return (
       <div className="py-4">
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
-        <div className="aspect-video overflow-hidden rounded-lg bg-black">
+        <div className="aspect-video overflow-hidden bg-black">
           <iframe
             src={youtubeEmbedUrl}
             title={`${label}比賽影片`}
@@ -70,7 +70,7 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
           controls
           playsInline
           preload="metadata"
-          className="aspect-video w-full rounded-lg bg-black object-contain"
+          className="aspect-video w-full bg-black object-contain"
         >
           <source src={url} />
           你的瀏覽器目前無法播放此影片

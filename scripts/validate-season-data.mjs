@@ -74,6 +74,8 @@ for (const season of seasons) {
   const playerMap = Object.fromEntries(players.map((player) => [player.id, player]));
   const matchIds = new Set(matches.map((match) => match.id));
   const matchMap = Object.fromEntries(matches.map((match) => [match.id, match]));
+  const albumIds = new Set(albums.map((album) => album.id));
+  const newsIds = new Set(news.map((article) => article.id));
 
   const teamIdentityIds = new Set();
   for (const team of teams) {
@@ -180,6 +182,25 @@ for (const season of seasons) {
     }
     if (match.resultType === 'DOUBLE_FORFEIT' && (match.homeScore !== null || match.awayScore !== null)) {
       fail(`${season} match ${match.id}: double forfeit must use null scores`);
+    }
+    if (match.videoUrl !== undefined && !validExternalUrl(match.videoUrl)) {
+      fail(`${season} match ${match.id}: invalid videoUrl`);
+    }
+    if (match.videoUrls !== undefined) {
+      if (!match.videoUrls || typeof match.videoUrls !== 'object' || Array.isArray(match.videoUrls)) {
+        fail(`${season} match ${match.id}: videoUrls must be an object`);
+      }
+      const supportedVideoKeys = new Set(['firstHalf', 'secondHalf']);
+      for (const [key, url] of Object.entries(match.videoUrls)) {
+        if (!supportedVideoKeys.has(key)) fail(`${season} match ${match.id}: unsupported videoUrls key ${key}`);
+        if (!validExternalUrl(url)) fail(`${season} match ${match.id}: invalid ${key} video URL`);
+      }
+    }
+    if (match.albumId !== undefined && !albumIds.has(match.albumId)) {
+      fail(`${season} match ${match.id}: unknown albumId ${match.albumId}`);
+    }
+    if (match.reportArticleId !== undefined && !newsIds.has(match.reportArticleId)) {
+      fail(`${season} match ${match.id}: unknown reportArticleId ${match.reportArticleId}`);
     }
   }
 

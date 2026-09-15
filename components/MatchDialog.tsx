@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
@@ -22,6 +23,7 @@ import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
 import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
+import MatchVideoPlayer from './MatchVideoPlayer';
 
 interface MatchDialogProps {
   matchId: string | null;
@@ -110,7 +112,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
       if (event.key !== 'Tab' || !dialogRef.current) return;
       const focusable = Array.from(
         dialogRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          'a[href], button:not([disabled]), iframe, video[controls], [tabindex]:not([tabindex="-1"])',
         ),
       ) as HTMLElement[];
       const enabledFocusable = focusable.filter((element) => !element.hasAttribute('disabled'));
@@ -171,6 +173,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const isFinished = match.status === MatchStatus.FINISHED;
   const hasStarted = isFinished || new Date(match.timestamp).getTime() <= Date.now();
   const displayStatusLabel = isFinished ? '比賽結束' : hasStarted ? '已開賽' : '尚未開賽';
+  const usesCurrentSeasonMedia = activeSeason.id === CURRENT_SEASON_ID;
   const matchPermalink = buildMatchPermalink(match.id);
   const matchInfoText = buildMatchInfoText({
     match,
@@ -354,7 +357,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
             </p>
           </section>
 
-          {hasStarted ? (
+          {usesCurrentSeasonMedia && hasStarted ? (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-12 sm:py-9" aria-labelledby="match-media-title">
               <div className="mb-5 flex items-center">
                 <Video className="mr-2 h-4 w-4 shrink-0 text-brand-blue" aria-hidden="true" />
@@ -365,18 +368,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
 
               <div className="divide-y divide-neutral-100 border-y border-neutral-100">
                 {halfVideos.map(({ label, url }) => url ? (
-                  <a
-                    key={label}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
-                  >
-                    <span>{label}</span>
-                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
-                      觀看影片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
-                    </span>
-                  </a>
+                  <MatchVideoPlayer key={label} label={label} url={url} />
                 ) : (
                   <div key={label} className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-neutral-500">
                     <span>{label}</span>
@@ -384,17 +376,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                   </div>
                 ))}
                 {match.videoUrl && !hasSplitVideo && (
-                  <a
-                    href={match.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
-                  >
-                    <span>完整比賽</span>
-                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
-                      觀看影片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
-                    </span>
-                  </a>
+                  <MatchVideoPlayer label="完整比賽" url={match.videoUrl} />
                 )}
               </div>
 

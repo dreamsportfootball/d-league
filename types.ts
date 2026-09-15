@@ -20,6 +20,11 @@ export type LeagueCode = 'L1' | 'L2' | 'L3' | 'CUP';
 
 export type MatchResultType = 'PLAYED' | 'FORFEIT' | 'DOUBLE_FORFEIT' | 'VOID';
 
+export interface MatchVideoUrls {
+  firstHalf?: string;
+  secondHalf?: string;
+}
+
 export interface Match {
   id: string;
   homeTeamId: string;
@@ -36,6 +41,7 @@ export interface Match {
   countsForPlayerStats?: boolean;
   countsForSuspensionService?: boolean;
   administrativeNote?: string;
+  videoUrls?: MatchVideoUrls;
   videoUrl?: string;
   albumId?: string;
   reportArticleId?: string;

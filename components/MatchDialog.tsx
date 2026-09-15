@@ -16,7 +16,7 @@ import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
-import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
+import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
@@ -158,9 +158,10 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     .map((playerId) => seasonData.players.find((player) => player.id === playerId))
     .filter(Boolean)
     .sort((a, b) => (a?.number ?? 0) - (b?.number ?? 0));
-  const album = match.albumId
+  const matchDateKey = formatTaipeiDateKey(match.timestamp);
+  const album = (match.albumId
     ? seasonData.albums.find((item) => item.id === match.albumId)
-    : undefined;
+    : undefined) ?? seasonData.albums.find((item) => item.date.replaceAll('/', '-') === matchDateKey);
   const report = match.reportArticleId
     ? seasonData.news.find((item) => item.id === match.reportArticleId)
     : undefined;
@@ -168,7 +169,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const displayDate = formatTaipeiMonthDayWeekday(match.timestamp);
   const time = formatTaipeiTime(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
-  const displayStatusLabel = isFinished ? '比賽結束' : '尚未開賽';
+  const hasStarted = isFinished || new Date(match.timestamp).getTime() <= Date.now();
+  const displayStatusLabel = isFinished ? '比賽結束' : hasStarted ? '已開賽' : '尚未開賽';
   const matchPermalink = buildMatchPermalink(match.id);
   const matchInfoText = buildMatchInfoText({
     match,
@@ -180,6 +182,11 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     events: matchEvents,
     detailUrl: matchPermalink,
   });
+  const halfVideos = [
+    { label: '上半場', url: match.videoUrls?.firstHalf },
+    { label: '下半場', url: match.videoUrls?.secondHalf },
+  ];
+  const hasSplitVideo = halfVideos.some((item) => Boolean(item.url));
 
   const handleShare = async () => {
     const shareData = {
@@ -347,7 +354,78 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
             </p>
           </section>
 
-          <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
+          {hasStarted ? (
+            <section className="border-b border-neutral-100 px-5 py-7 sm:px-12 sm:py-9" aria-labelledby="match-media-title">
+              <div className="mb-5 flex items-center">
+                <Video className="mr-2 h-4 w-4 shrink-0 text-brand-blue" aria-hidden="true" />
+                <h3 id="match-media-title" className="text-xs font-black tracking-[0.12em] text-neutral-500">
+                  比賽影片
+                </h3>
+              </div>
+
+              <div className="divide-y divide-neutral-100 border-y border-neutral-100">
+                {halfVideos.map(({ label, url }) => url ? (
+                  <a
+                    key={label}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
+                  >
+                    <span>{label}</span>
+                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
+                      觀看影片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    </span>
+                  </a>
+                ) : (
+                  <div key={label} className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-neutral-500">
+                    <span>{label}</span>
+                    <span className="shrink-0 text-xs font-medium text-neutral-400">影片整理中</span>
+                  </div>
+                ))}
+                {match.videoUrl && !hasSplitVideo && (
+                  <a
+                    href={match.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
+                  >
+                    <span>完整比賽</span>
+                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
+                      觀看影片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    </span>
+                  </a>
+                )}
+              </div>
+
+              <div className="mt-7 flex items-center">
+                <ImageIcon className="mr-2 h-4 w-4 shrink-0 text-brand-blue" aria-hidden="true" />
+                <h3 className="text-xs font-black tracking-[0.12em] text-neutral-500">比賽照片</h3>
+              </div>
+              <div className="mt-3 border-y border-neutral-100">
+                {album ? (
+                  <a
+                    href={album.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
+                  >
+                    <span className="min-w-0 truncate">{album.title || '比賽相簿'}</span>
+                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
+                      查看照片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    </span>
+                  </a>
+                ) : (
+                  <div className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-neutral-500">
+                    <span>比賽照片</span>
+                    <span className="shrink-0 text-xs font-medium text-neutral-400">照片整理中</span>
+                  </div>
+                )}
+              </div>
+            </section>
+          ) : (
+            <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
+          )}
 
           {lineup && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">
@@ -385,42 +463,18 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
             </section>
           )}
 
-          {(match.videoUrl || album || report) && (
+          {report && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">
               <h3 className="mb-4 text-xs font-black tracking-[0.12em] text-neutral-500">相關內容</h3>
               <div className="grid gap-3 sm:grid-cols-3">
-                {match.videoUrl && (
-                  <a
-                    href={match.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
-                  >
-                    <span className="flex items-center"><Video className="mr-2 h-4 w-4" />比賽影片</span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-                {album && (
-                  <a
-                    href={album.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
-                  >
-                    <span className="flex items-center"><ImageIcon className="mr-2 h-4 w-4" />比賽相簿</span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-                {report && (
-                  <Link
-                    to={`/news/${report.id}?season=${activeSeason.id}`}
-                    onClick={onClose}
-                    className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
-                  >
-                    <span className="flex items-center"><Newspaper className="mr-2 h-4 w-4" />賽事戰報</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                )}
+                <Link
+                  to={`/news/${report.id}?season=${activeSeason.id}`}
+                  onClick={onClose}
+                  className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
+                >
+                  <span className="flex items-center"><Newspaper className="mr-2 h-4 w-4" />賽事戰報</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
               </div>
             </section>
           )}

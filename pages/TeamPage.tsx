@@ -258,9 +258,6 @@ const TeamPage: React.FC = () => {
       : undefined) ?? history[0];
   const { team, data, season, seasonId } = selectedRecord;
   const socialLinks = getTeamSocialLinks(team);
-  const displayShortName = team.shortName?.trim() && team.shortName.trim() !== team.name.trim()
-    ? team.shortName.trim()
-    : '';
   const players = data.players
     .filter((player) => player.teamId === team.id)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
@@ -449,7 +446,6 @@ const TeamPage: React.FC = () => {
               </p>
               <h1 className="min-w-0"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {socialLinks.length > 0 && renderSocialLinks()}
-              {displayShortName && <p className="mt-2 text-xs font-semibold text-neutral-500">球隊簡稱 <span className="ml-2 font-bold text-brand-black">{displayShortName}</span></p>}
             </div>
           </div>
 

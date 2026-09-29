@@ -42,7 +42,7 @@ type ArticleContentBlock =
 type GalleryItem = {
   src: string;
   alt: string;
-  aspectRatio?: '4/3' | '16/9';
+  aspectRatio?: '4/3' | '16/9' | '1124/1458';
 };
 
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
@@ -152,7 +152,11 @@ const SponsorGalleryImage: React.FC<GalleryItem> = ({ src, alt, aspectRatio = '4
   return (
     <div
       className={`relative overflow-hidden bg-neutral-100 ${
-        aspectRatio === '16/9' ? 'aspect-video' : 'aspect-[4/3]'
+        aspectRatio === '16/9'
+          ? 'aspect-video'
+          : aspectRatio === '1124/1458'
+            ? 'aspect-[1124/1458]'
+            : 'aspect-[4/3]'
       }`}
     >
       {!hasError ? (
@@ -320,12 +324,12 @@ const ArticleDetailPage: React.FC = () => {
             {
               src: assetUrl('assets/news/2026-27-entes-official-match-ball-1.png'),
               alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 1',
-              aspectRatio: '4/3',
+              aspectRatio: '1124/1458',
             },
             {
               src: assetUrl('assets/news/2026-27-entes-official-match-ball-2.png'),
               alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 2',
-              aspectRatio: '4/3',
+              aspectRatio: '1124/1458',
             },
           ]
         : null;

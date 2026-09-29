@@ -10,6 +10,7 @@ import {
   D_LEAGUE_INSTAGRAM_URL,
   D_LEAGUE_YOUTUBE_URL,
   DREAMSPORT_INSTAGRAM_URL,
+  ENTES_WEBSITE_URL,
   SHOW_REGISTRATION_NAV,
 } from '../config/siteConfig';
 
@@ -22,7 +23,7 @@ const PartnerLogo: React.FC<{ src: string; alt: string; href: string; className?
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    aria-label={`前往 ${alt} Instagram`}
+    aria-label={`前往 ${alt}`}
     className="group/logo flex min-h-11 w-auto items-center justify-center rounded-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 md:h-12"
   >
     <img src={src} alt={alt} className={`max-h-10 w-auto object-contain transition-all duration-300 group-hover/logo:scale-105 md:max-h-full ${className ?? ''}`} />
@@ -39,6 +40,7 @@ const FooterLink: React.FC<React.PropsWithChildren<{ to: string }>> = ({ to, chi
 const Footer: React.FC = () => {
   const currentSeason = getSeasonConfig(CURRENT_SEASON_ID);
   const chaomeTeaLogoUrl = `${import.meta.env.BASE_URL}assets/news/2026-27-chaome-tea-sponsor.jpg`;
+  const entesLogoUrl = `${import.meta.env.BASE_URL}assets/partners/partner-entes.png`;
 
   return (
     <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-6 pt-10 text-white md:pb-5 md:pt-20">
@@ -75,6 +77,7 @@ const Footer: React.FC = () => {
             <div className="flex max-w-sm flex-wrap items-center justify-start gap-x-6 gap-y-4">
               <PartnerLogo alt="Dreamsport 夢達足球" className="brightness-0 invert" href={DREAMSPORT_INSTAGRAM_URL} src="https://cdn.store-assets.com/s/783745/f/15684770.png" />
               <PartnerLogo alt="超咩茶舖" href={CHAOME_TEA_INSTAGRAM_URL} src={chaomeTeaLogoUrl} />
+              <PartnerLogo alt="ENTES" href={ENTES_WEBSITE_URL} src={entesLogoUrl} />
             </div>
           </div>
         </div>

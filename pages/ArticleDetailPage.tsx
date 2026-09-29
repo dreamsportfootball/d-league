@@ -42,6 +42,7 @@ type ArticleContentBlock =
 type GalleryItem = {
   src: string;
   alt: string;
+  aspectRatio?: '4/3' | '16/9' | '1124/1458';
 };
 
 const BULLET_PATTERN = /^(?:[-*•▪・])\s*(.+)$/;
@@ -145,11 +146,19 @@ const ArticleHighlight: React.FC<{ text: string }> = ({ text }) => (
   </blockquote>
 );
 
-const SponsorGalleryImage: React.FC<GalleryItem> = ({ src, alt }) => {
+const SponsorGalleryImage: React.FC<GalleryItem> = ({ src, alt, aspectRatio = '4/3' }) => {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100">
+    <div
+      className={`relative overflow-hidden bg-neutral-100 ${
+        aspectRatio === '16/9'
+          ? 'aspect-video'
+          : aspectRatio === '1124/1458'
+            ? 'aspect-[1124/1458]'
+            : 'aspect-[4/3]'
+      }`}
+    >
       {!hasError ? (
         <img
           src={src}
@@ -310,7 +319,20 @@ const ArticleDetailPage: React.FC = () => {
             alt: '超咩茶舖餐點照片 2',
           },
         ]
-      : null;
+      : article.id === '2026-27-entes-match-ball-partner'
+        ? [
+            {
+              src: assetUrl('assets/news/2026-27-entes-official-match-ball-1.png'),
+              alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 1',
+              aspectRatio: '1124/1458',
+            },
+            {
+              src: assetUrl('assets/news/2026-27-entes-official-match-ball-2.png'),
+              alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 2',
+              aspectRatio: '1124/1458',
+            },
+          ]
+        : null;
 
   return (
     <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
@@ -379,13 +401,16 @@ const ArticleDetailPage: React.FC = () => {
           </section>
 
           {sponsorGallery && (
-            <section className="mt-12 border-t border-neutral-200 pt-8 md:mt-14 md:pt-10" aria-label="店家餐點照片">
+            <section
+              className="mt-12 border-t border-neutral-200 pt-8 md:mt-14 md:pt-10"
+              aria-label={article.id === '2026-27-entes-match-ball-partner' ? '官方比賽用球照片' : '店家餐點照片'}
+            >
               <div className="mb-5 md:mb-6">
                 <p className="font-display text-xs font-bold tracking-[0.18em] text-brand-blue">
-                  店家餐點
+                  {article.id === '2026-27-entes-match-ball-partner' ? '官方比賽用球' : '店家餐點'}
                 </p>
                 <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-brand-black md:text-[28px]">
-                  超咩茶舖
+                  {article.id === '2026-27-entes-match-ball-partner' ? 'ENTES × D LEAGUE' : '超咩茶舖'}
                 </h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 md:gap-5">

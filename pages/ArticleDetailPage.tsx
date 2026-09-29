@@ -182,14 +182,14 @@ const InlineArticleImage: React.FC<{ src: string; alt: string }> = ({ src, alt }
   if (hasError) return null;
 
   return (
-    <figure className="relative left-1/2 my-10 w-[1124px] max-w-[calc(100vw-40px)] -translate-x-1/2 overflow-hidden md:my-12 md:max-w-[calc(100vw-80px)]">
+    <figure className="my-10 aspect-[4/3] w-full overflow-hidden bg-white md:my-12">
       <img
         src={src}
         alt={alt}
         width={1124}
         height={1458}
         loading="lazy"
-        className="h-auto w-full"
+        className="h-full w-full object-contain"
         onError={() => setHasError(true)}
       />
     </figure>

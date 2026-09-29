@@ -30,6 +30,7 @@ export const D_LEAGUE_EMAIL = 'dleague.tw@gmail.com';
 export const D_LEAGUE_EMAIL_URL = `mailto:${D_LEAGUE_EMAIL}`;
 export const DREAMSPORT_INSTAGRAM_URL = 'https://www.instagram.com/dreamsport_football/';
 export const CHAOME_TEA_INSTAGRAM_URL = 'https://www.instagram.com/hkks_sctw/';
+export const ENTES_WEBSITE_URL = 'https://www.entes.com.tw/';
 export const MATCH_VENUE_NAME = '台南市立仁德文賢國中人工草';
 
 export const CURRENT_REGISTRATION_PROGRESS: RegistrationProgressConfig = {

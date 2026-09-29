@@ -310,7 +310,18 @@ const ArticleDetailPage: React.FC = () => {
             alt: '超咩茶舖餐點照片 2',
           },
         ]
-      : null;
+      : article.id === '2026-27-entes-match-ball-partner'
+        ? [
+            {
+              src: assetUrl('assets/news/2026-27-entes-official-match-ball-1.jpg'),
+              alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 1',
+            },
+            {
+              src: assetUrl('assets/news/2026-27-entes-official-match-ball-2.jpg'),
+              alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 2',
+            },
+          ]
+        : null;
 
   return (
     <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
@@ -379,13 +390,16 @@ const ArticleDetailPage: React.FC = () => {
           </section>
 
           {sponsorGallery && (
-            <section className="mt-12 border-t border-neutral-200 pt-8 md:mt-14 md:pt-10" aria-label="店家餐點照片">
+            <section
+              className="mt-12 border-t border-neutral-200 pt-8 md:mt-14 md:pt-10"
+              aria-label={article.id === '2026-27-entes-match-ball-partner' ? '官方比賽用球照片' : '店家餐點照片'}
+            >
               <div className="mb-5 md:mb-6">
                 <p className="font-display text-xs font-bold tracking-[0.18em] text-brand-blue">
-                  店家餐點
+                  {article.id === '2026-27-entes-match-ball-partner' ? '官方比賽用球' : '店家餐點'}
                 </p>
                 <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-brand-black md:text-[28px]">
-                  超咩茶舖
+                  {article.id === '2026-27-entes-match-ball-partner' ? 'ENTES × D LEAGUE' : '超咩茶舖'}
                 </h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 md:gap-5">

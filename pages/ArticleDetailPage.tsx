@@ -320,12 +320,12 @@ const ArticleDetailPage: React.FC = () => {
             {
               src: assetUrl('assets/news/2026-27-entes-official-match-ball-1.png'),
               alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 1',
-              aspectRatio: '16/9',
+              aspectRatio: '4/3',
             },
             {
               src: assetUrl('assets/news/2026-27-entes-official-match-ball-2.png'),
               alt: 'ENTES D LEAGUE 2026/27 官方比賽用球照片 2',
-              aspectRatio: '16/9',
+              aspectRatio: '4/3',
             },
           ]
         : null;

@@ -182,7 +182,7 @@ const InlineArticleImage: React.FC<{ src: string; alt: string }> = ({ src, alt }
   if (hasError) return null;
 
   return (
-    <figure className="mx-auto my-10 w-full max-w-[640px] overflow-hidden bg-neutral-100 md:my-12">
+    <figure className="my-10 w-full overflow-hidden bg-neutral-100 md:my-12">
       <img
         src={src}
         alt={alt}

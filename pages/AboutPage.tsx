@@ -50,7 +50,7 @@ const OriginVisionSection: React.FC = () => (
               整個賽季將由資深裁判帶領資淺裁判，因為我們相信，真正的比賽，就是最好的養分
             </p>
             <p className="mb-6 text-sm font-medium leading-loose text-neutral-600 md:text-base">
-              Dreamsport 背後帶著「夢想的港口」之意<br />
+              DREAMSPORT 背後帶著「夢想的港口」之意<br />
               我們希望創造一個環境、一個平台，讓每一個熱愛足球的人，都能在這裡找到屬於自己的位置
             </p>
             <p className="mb-8 text-sm font-medium leading-loose text-neutral-600 md:text-base">

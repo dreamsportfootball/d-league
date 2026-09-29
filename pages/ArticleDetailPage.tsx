@@ -239,7 +239,7 @@ const ArticleBody: React.FC<{
             <Fragment key={key}>
               {showEntesMatchBallImage && (
                 <InlineArticleImage
-                  src={assetUrl('assets/news/2026-27-entes-official-match-ball-1.png')}
+                  src={assetUrl('assets/news/2026-27-entes-official-match-ball-1.jpg')}
                   alt="D LEAGUE 2026/27 ENTES 官方比賽用球"
                 />
               )}

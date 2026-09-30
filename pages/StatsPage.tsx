@@ -316,8 +316,8 @@ const StatsPage: React.FC = () => {
           secondaryText={tabLabels[activeTab]}
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
-          buttonLabel="調整"
-          ariaLabel="調整數據中心賽季與級別"
+          buttonLabel="篩選"
+          ariaLabel="開啟數據中心賽季與級別篩選"
         />
 
         <div className="mb-8 border-b border-neutral-100">

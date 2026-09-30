@@ -133,7 +133,7 @@ const MediaPage: React.FC = () => {
           secondaryText={`${mediaItemCount} 項媒體`}
           onOpen={openFilters}
           buttonLabel="切換賽季"
-          ariaLabel="切換賽事媒體賽季"
+          ariaLabel="選擇賽事媒體賽季"
         />
 
         {!hasMedia ? (

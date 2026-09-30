@@ -157,8 +157,8 @@ const StandingsPage: React.FC = () => {
           secondaryText="排名與積分"
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
-          buttonLabel="調整"
-          ariaLabel="調整積分榜賽季與級別"
+          buttonLabel="篩選"
+          ariaLabel="開啟積分榜賽季與級別篩選"
         />
 
         {shouldShowEmptyState ? (

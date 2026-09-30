@@ -335,12 +335,12 @@ const StatsPage: React.FC = () => {
             eyebrow={activeTab === 'SUSPENSIONS' ? '紀律狀態' : '數據更新'}
             title={
               activeTab === 'SUSPENSIONS'
-                ? `${activeSeason.shortName} ${activeLeague} 目前沒有執行中的停賽`
+                ? '目前沒有執行中的停賽'
                 : '新賽季尚未開始'
             }
             description={
               activeTab === 'SUSPENSIONS'
-                ? '停賽名單與紀律公告會依正式賽事紀錄及主辦單位決議更新。'
+                ? '停賽名單及紀律公告將依正式賽事紀錄更新'
                 : '射手榜及紅黃牌紀錄將於首輪比賽後更新'
             }
             showRegistrationLink={activeSeason.status === 'registration'}

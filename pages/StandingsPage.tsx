@@ -158,7 +158,7 @@ const StandingsPage: React.FC = () => {
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
           buttonLabel="篩選"
-          ariaLabel="開啟積分榜賽季與級別篩選"
+          ariaLabel="篩選積分榜"
         />
 
         {shouldShowEmptyState ? (

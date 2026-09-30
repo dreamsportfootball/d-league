@@ -51,7 +51,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
       onClick={() => onOpenMatch(match.id)}
       data-analytics-event="match_open"
       data-analytics-label={match.id}
-      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-all duration-200 last:mr-0 hover:-translate-y-1 hover:shadow-lg active:scale-95 md:mr-4 md:w-80"
+      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
     >
       <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">
@@ -99,12 +99,12 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
         <div className="mt-5 flex shrink-0 items-center justify-between border-t border-neutral-100 pt-3 text-xs">
           {!isFinished ? (
             <div className="flex min-w-0 items-center truncate font-medium text-neutral-400">
-              <MapPin className="mr-1 h-3 w-3 shrink-0" />
+              <MapPin className="mr-1 h-3 w-3 shrink-0" aria-hidden="true" />
               <span className="truncate">{match.venue}</span>
             </div>
           ) : (
             <div className="flex w-full items-center justify-center font-bold text-brand-blue group-hover:underline">
-              查看比賽 <ChevronRight className="ml-1 h-3 w-3" />
+              查看比賽 <ChevronRight className="ml-1 h-3 w-3" aria-hidden="true" />
             </div>
           )}
         </div>
@@ -222,23 +222,23 @@ const MatchCenter: React.FC = () => {
               <button
                 type="button"
                 onClick={() => scroll('left')}
-                className="rounded-full border border-neutral-200 p-2 text-neutral-500"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
                 aria-label="向左捲動"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={() => scroll('right')}
-                className="rounded-full border border-neutral-200 p-2 text-neutral-500"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
                 aria-label="向右捲動"
               >
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </button>
               <Link
                 to={`/schedule?season=${activeSeason.id}`}
                 data-scroll-anchor-id={`home-full-schedule-${activeSeason.id}`}
-                className="ml-4 flex items-center text-sm font-bold text-neutral-500 hover:text-brand-black"
+                className="ml-4 flex min-h-11 items-center rounded-sm text-sm font-bold text-neutral-500 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
               >
                 完整賽程 <ChevronRight className="ml-1 h-4 w-4" />
               </Link>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -32,10 +32,10 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
         {formatMediaDate(album.date)}
       </span>
       <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
-        <span className="border-b border-transparent pb-0.5 transition-all group-hover:border-blue-800">查看相簿</span>
+        <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">查看相簿</span>
         <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
       </span>
-      <h3 className="font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
+      <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
     </div>
   </a>
 );
@@ -163,19 +163,19 @@ const MediaPage: React.FC = () => {
                       type="button"
                       onClick={() => scrollGallery('left')}
                       disabled={!canScrollLeft}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:border-brand-blue hover:bg-neutral-50 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-300 disabled:hover:bg-transparent disabled:hover:text-inherit"
                       aria-label="上一組相簿"
                     >
-                      <span className="text-lg leading-none">‹</span>
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                     </button>
                     <button
                       type="button"
                       onClick={() => scrollGallery('right')}
                       disabled={!canScrollRight}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:border-brand-blue hover:bg-neutral-50 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-300 disabled:hover:bg-transparent disabled:hover:text-inherit"
                       aria-label="下一組相簿"
                     >
-                      <span className="text-lg leading-none">›</span>
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -237,20 +237,20 @@ const MediaPage: React.FC = () => {
                 href="https://www.youtube.com/@DreamSportFootball"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-red-600"
+                className="group flex min-h-11 items-center rounded-sm text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
               >
-                <Youtube className="mr-2 h-4 w-4" />
-                <span className="translate-y-[1px] border-b border-transparent transition-all group-hover:border-red-600">YouTube</span>
+                <Youtube className="mr-2 h-4 w-4" aria-hidden="true" />
+                <span className="translate-y-[1px] border-b border-transparent transition-colors group-hover:border-red-600">YouTube</span>
               </a>
 
               <a
                 href="https://www.instagram.com/d.league_tw/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-pink-600"
+                className="group flex min-h-11 items-center rounded-sm text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-pink-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
               >
-                <Instagram className="mr-2 h-4 w-4" />
-                <span className="translate-y-[1px] border-b border-transparent transition-all group-hover:border-pink-600">Instagram</span>
+                <Instagram className="mr-2 h-4 w-4" aria-hidden="true" />
+                <span className="translate-y-[1px] border-b border-transparent transition-colors group-hover:border-pink-600">Instagram</span>
               </a>
             </div>
           </div>

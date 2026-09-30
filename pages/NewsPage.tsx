@@ -30,7 +30,7 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
     <Link
       to={`/news/${article.id}`}
       data-scroll-anchor-id={`news-${article.seasonId ?? 'global'}-${article.id}`}
-      className="group flex h-full cursor-pointer flex-col"
+      className="group flex h-full cursor-pointer flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
     >
       <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
         {article.imageUrl ? (
@@ -67,11 +67,11 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
           </span>
         </div>
 
-        <h3 className="mb-1.5 line-clamp-2 font-display text-lg font-bold leading-[1.15] tracking-[-0.025em] text-neutral-900 transition-colors group-hover:text-brand-blue">
+        <h3 className="mb-1.5 line-clamp-2 text-pretty font-display text-lg font-bold leading-[1.15] tracking-[-0.025em] text-neutral-900 transition-colors group-hover:text-brand-blue">
           {article.title}
         </h3>
 
-        <p className="mb-4 line-clamp-2 text-xs leading-[1.65] tracking-[0.005em] text-neutral-500">
+        <p className="mb-4 line-clamp-2 text-pretty text-xs leading-[1.65] tracking-[0.005em] text-neutral-500">
           {article.summary}
         </p>
 
@@ -167,7 +167,7 @@ const NewsPage: React.FC = () => {
               key={filter.key}
               type="button"
               onClick={() => updateFilter(filter.key)}
-              className={`relative min-h-11 border-b-2 pb-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 ${
+              className={`relative min-h-11 border-b-2 pb-3 text-sm font-bold uppercase tracking-widest transition-colors duration-300 ${
                 activeFilter === filter.key
                   ? 'border-brand-blue text-brand-black'
                   : 'border-transparent text-neutral-400 hover:text-neutral-600'
@@ -191,7 +191,7 @@ const NewsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={loadMoreNews}
-                  className="inline-flex min-h-12 items-center justify-center border border-neutral-300 bg-white px-7 text-sm font-black tracking-wide text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
+                  className="inline-flex min-h-12 items-center justify-center border border-neutral-300 bg-white px-7 text-sm font-black tracking-wide text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
                 >
                   載入更多消息
                   <ChevronDown className="ml-2 h-4 w-4" aria-hidden="true" />

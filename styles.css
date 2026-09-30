@@ -29,6 +29,20 @@
     background: var(--color-brand-white);
     color: var(--color-brand-text);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-brand-accent);
+    color: var(--color-brand-black);
+  }
+
+  a,
+  button,
+  [role="button"],
+  [role="tab"] {
+    touch-action: manipulation;
   }
 
   #root {

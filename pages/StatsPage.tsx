@@ -313,9 +313,11 @@ const StatsPage: React.FC = () => {
 
         <DataFilterToolbar
           primaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          secondaryText={tabLabels[activeTab]}
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
-          ariaLabel="開啟數據中心篩選"
+          buttonLabel="調整"
+          ariaLabel="調整數據中心賽季與級別"
         />
 
         <div className="mb-8 border-b border-neutral-100">
@@ -330,11 +332,16 @@ const StatsPage: React.FC = () => {
 
         {!hasData ? (
           <EmptyState
-            title={activeTab === 'SUSPENSIONS' ? '目前沒有執行中的停賽' : '新賽季尚未開始'}
+            eyebrow={activeTab === 'SUSPENSIONS' ? '紀律狀態' : '數據更新'}
+            title={
+              activeTab === 'SUSPENSIONS'
+                ? `${activeSeason.shortName} ${activeLeague} 目前沒有執行中的停賽`
+                : `${tabLabels[activeTab]}將於首輪比賽後更新`
+            }
             description={
               activeTab === 'SUSPENSIONS'
-                ? '停賽名單及紀律公告將依正式賽事紀錄更新'
-                : '射手榜及紅黃牌紀錄將於首輪比賽後更新'
+                ? '停賽名單與紀律公告會依正式賽事紀錄及主辦單位決議更新。'
+                : `${activeSeason.shortName} ${activeLeague} 的球員數據會在正式比賽完成並確認紀錄後顯示。`
             }
             showRegistrationLink={activeSeason.status === 'registration'}
             primaryAction={historicalSeason ? {

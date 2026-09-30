@@ -200,6 +200,9 @@ const MatchCenter: React.FC = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-4 flex flex-col items-end justify-between md:mb-6 md:flex-row">
             <div className="w-full md:w-auto">
+              <p className="mb-1 text-[9px] font-black uppercase tracking-[0.18em] text-neutral-400 md:text-[10px]">
+                {activeSeason.shortName} · MATCH CENTRE
+              </p>
               <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">
                 賽事 <span className="text-brand-blue">中心</span>
               </h2>
@@ -240,7 +243,7 @@ const MatchCenter: React.FC = () => {
                 data-scroll-anchor-id={`home-full-schedule-${activeSeason.id}`}
                 className="ml-4 flex min-h-11 items-center rounded-sm text-sm font-bold text-neutral-500 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
               >
-                完整賽程 <ChevronRight className="ml-1 h-4 w-4" />
+                完整賽程 <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -276,6 +279,17 @@ const MatchCenter: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="mt-1 flex justify-end md:hidden">
+            <Link
+              to={`/schedule?season=${activeSeason.id}`}
+              data-scroll-anchor-id={`home-full-schedule-mobile-${activeSeason.id}`}
+              className="inline-flex min-h-11 items-center text-xs font-black text-brand-blue transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+            >
+              查看完整賽程
+              <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>

@@ -129,17 +129,18 @@ const MediaPage: React.FC = () => {
         />
 
         <DataFilterToolbar
-          primaryText={`${mediaItemCount} 項媒體`}
-          secondaryText={activeSeason.shortName}
+          primaryText={activeSeason.shortName}
+          secondaryText={`${mediaItemCount} 項媒體`}
           onOpen={openFilters}
-          buttonLabel="賽季"
-          ariaLabel="開啟賽事媒體賽季篩選"
+          buttonLabel="切換賽季"
+          ariaLabel="切換賽事媒體賽季"
         />
 
         {!hasMedia ? (
           <EmptyState
-            title="新賽季媒體內容尚未發布"
-            description="相簿及比賽影片將於新賽季開始後陸續更新"
+            eyebrow="媒體更新"
+            title={`${activeSeason.shortName} 賽事媒體尚未發布`}
+            description="比賽日後會陸續上架賽事相簿與全場影片；目前可以先查看上一賽季內容。"
             showRegistrationLink={false}
             primaryAction={{
               label: '查看 2025/26 賽事媒體',

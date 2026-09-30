@@ -723,19 +723,16 @@ const SchedulePage: React.FC = () => {
           ref={mobileFilterTriggerRef}
           type="button"
           onClick={openMobileFilters}
-          className="mb-5 grid min-h-16 w-full grid-cols-[minmax(0,1fr)_auto] items-center border-y border-neutral-100 py-2.5 text-left md:hidden"
+          className="mb-5 flex min-h-12 w-full items-center justify-between gap-3 py-1 text-left md:hidden"
           aria-label={`開啟賽程篩選，目前顯示 ${activeSeason.shortName} ${leagueSummary}，共 ${filteredMatches.length} 場`}
         >
-          <span className="min-w-0">
-            <span className="block text-[9px] font-black uppercase tracking-[0.16em] text-neutral-400">目前查看</span>
-            <span className="mt-1 block truncate font-display text-[13px] font-black tracking-wide text-brand-black">
-              {activeSeason.shortName} · {leagueSummary}
-              <span className="ml-2 font-sans text-[10px] font-bold tracking-normal text-neutral-400">
-                {filteredMatches.length} 場
-              </span>
+          <span className="min-w-0 truncate font-display text-[13px] font-black tracking-wide text-brand-black">
+            {activeSeason.shortName} · {leagueSummary}
+            <span className="ml-2 font-sans text-[10px] font-bold tracking-normal text-neutral-400">
+              {filteredMatches.length} 場
             </span>
           </span>
-          <span className={`ml-4 flex min-h-11 items-center border-l border-neutral-100 pl-4 text-[12px] font-black ${
+          <span className={`flex min-h-11 shrink-0 items-center text-[12px] font-black ${
             activeMobileFilterCount > 0 ? 'text-brand-blue' : 'text-brand-black'
           }`}>
             <Filter className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
@@ -747,44 +744,37 @@ const SchedulePage: React.FC = () => {
           </span>
         </button>
 
-        <div className="relative mb-8 hidden md:block">
-          <div className="grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-stretch border-y border-neutral-100">
-            <div className="flex min-w-0 flex-col justify-center py-2.5 pr-4">
-              <span className="mb-1 text-[10px] font-black uppercase tracking-[0.16em] text-neutral-400">
-                目前查看
-              </span>
-              <div className="flex items-baseline gap-3">
-                <span className="font-display text-base font-black tracking-wide text-brand-black">
-                  {activeSeason.shortName} · {desktopLeagueSummary}
-                </span>
-                <span className="text-xs font-bold text-neutral-400">
-                  {filteredMatches.length} 場比賽
-                </span>
-              </div>
-            </div>
-            <button
-              ref={desktopFilterTriggerRef}
-              type="button"
-              onClick={toggleDesktopFilters}
-              aria-expanded={desktopFiltersOpen}
-              aria-controls="desktop-schedule-filters"
-              className={`inline-flex min-h-11 items-center border-l border-neutral-100 pl-6 text-sm font-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue ${
-                desktopFiltersOpen || desktopActiveFilterCount > 0
-                  ? 'text-brand-blue'
-                  : 'text-brand-black hover:text-brand-blue'
-              }`}
-            >
-              <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
-              調整篩選
-              {desktopActiveFilterCount > 0 && (
-                <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
-              )}
-              <ChevronRight
-                className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
-                aria-hidden="true"
-              />
-            </button>
+        <div className="relative mb-8 hidden md:flex min-h-12 items-center justify-between gap-4">
+          <div className="flex min-w-0 items-baseline gap-3">
+            <span className="font-display text-base font-black tracking-wide text-brand-black">
+              {activeSeason.shortName} · {desktopLeagueSummary}
+            </span>
+            <span className="text-xs font-bold text-neutral-400">
+              {filteredMatches.length} 場比賽
+            </span>
           </div>
+          <button
+            ref={desktopFilterTriggerRef}
+            type="button"
+            onClick={toggleDesktopFilters}
+            aria-expanded={desktopFiltersOpen}
+            aria-controls="desktop-schedule-filters"
+            className={`-mr-2 inline-flex min-h-11 shrink-0 items-center px-2 text-sm font-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
+              desktopFiltersOpen || desktopActiveFilterCount > 0
+                ? 'text-brand-blue'
+                : 'text-brand-black hover:text-brand-blue'
+            }`}
+          >
+            <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
+            篩選
+            {desktopActiveFilterCount > 0 && (
+              <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
+            )}
+            <ChevronRight
+              className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
+              aria-hidden="true"
+            />
+          </button>
         </div>
 
         <div className="mb-20">

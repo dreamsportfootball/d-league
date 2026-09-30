@@ -32,7 +32,7 @@ function Tabs<T extends string>({
           role="tab"
           aria-selected={active === option}
           onClick={() => onChange(option)}
-          className={`shrink-0 whitespace-nowrap transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
+          className={`shrink-0 whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transform-none focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
             compact
               ? `rounded-full px-4 py-1.5 text-xs font-bold ${
                   active === option

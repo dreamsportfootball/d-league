@@ -118,7 +118,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
         aria-haspopup="listbox"
         aria-controls={listboxId}
         aria-expanded={open}
-        className={`group flex w-full items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm outline-none transition-all hover:border-brand-blue hover:shadow-md focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 ${
+        className={`group flex w-full items-center justify-between border border-neutral-200 bg-white font-bold text-brand-black shadow-sm transition-[border-color,box-shadow,color] hover:border-brand-blue hover:shadow-md focus-visible:outline-none focus-visible:border-brand-blue focus-visible:ring-2 focus-visible:ring-brand-blue/20 ${
           compact ? 'h-11 rounded-lg px-2.5 md:h-9 md:px-3' : 'h-9 rounded-lg px-3'
         }`}
       >
@@ -161,7 +161,7 @@ const SeasonSelector: React.FC<SeasonSelectorProps> = ({ compact = false }) => {
                   onFocus={() => setFocusedIndex(index)}
                   onKeyDown={(event) => handleOptionKeyDown(event, season.id, index)}
                   onClick={() => selectSeason(season.id)}
-                  className={`flex min-h-11 w-full items-center justify-between rounded-lg px-2.5 text-left transition-all ${
+                  className={`flex min-h-11 w-full items-center justify-between rounded-lg px-2.5 text-left transition-colors ${
                     isActive
                       ? 'bg-brand-blue text-white shadow-sm'
                       : 'text-brand-black hover:bg-neutral-100'

@@ -525,6 +525,12 @@ const SchedulePage: React.FC = () => {
     closeMobileFilters();
   };
 
+  const clearAppliedFilters = () => {
+    const nextFilters = { ...EMPTY_FILTERS };
+    writeScheduleFilters(activeSeasonId, nextFilters);
+    setFilters(nextFilters);
+  };
+
   const selectMatch = (matchId: string) => {
     const next = new URLSearchParams(searchParams);
     next.set('match', matchId);
@@ -717,62 +723,64 @@ const SchedulePage: React.FC = () => {
           ref={mobileFilterTriggerRef}
           type="button"
           onClick={openMobileFilters}
-          className="mb-5 flex min-h-12 w-full items-center justify-between border-y border-neutral-100 py-3 text-left md:hidden"
-          aria-label={`開啟賽程篩選，目前顯示${leagueSummary}，共 ${filteredMatches.length} 場`}
+          className="mb-5 flex min-h-12 w-full items-center justify-between gap-3 py-1 text-left md:hidden"
+          aria-label={`開啟賽程篩選，目前顯示 ${activeSeason.shortName} ${leagueSummary}，共 ${filteredMatches.length} 場`}
         >
-          <span className="flex items-center text-[13px] font-black text-brand-black">
-            <Filter className="mr-2 h-3.5 w-3.5 text-brand-blue" aria-hidden="true" />
+          <span className="min-w-0 truncate font-display text-[13px] font-black tracking-wide text-brand-black">
+            {activeSeason.shortName} · {leagueSummary}
+            <span className="ml-2 font-sans text-[10px] font-bold tracking-normal text-neutral-400">
+              {filteredMatches.length} 場
+            </span>
+          </span>
+          <span className={`flex min-h-11 shrink-0 items-center text-[12px] font-black ${
+            activeMobileFilterCount > 0 ? 'text-brand-blue' : 'text-brand-black'
+          }`}>
+            <Filter className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
             篩選
             {activeMobileFilterCount > 0 && (
-              <span className="ml-1.5 text-[11px] font-black text-brand-blue">
-                {activeMobileFilterCount}
-              </span>
+              <span className="ml-1 text-[10px]">{activeMobileFilterCount}</span>
             )}
-          </span>
-          <span className="flex items-center text-[11px] font-bold text-neutral-400">
-            {activeSeason.shortName} · {leagueSummary} · {filteredMatches.length} 場
             <ChevronRight className="ml-1 h-3.5 w-3.5" aria-hidden="true" />
           </span>
         </button>
 
-        <div className="relative mb-8 hidden md:block">
-          <div className="flex min-h-14 items-center justify-between border-b border-neutral-100">
-            <div className="flex items-baseline gap-3">
-              <span className="font-display text-sm font-black tracking-wide text-brand-black">
-                {filteredMatches.length} 場比賽
-              </span>
-              <span className="text-[11px] font-bold text-neutral-400">
-                {activeSeason.shortName} · {desktopLeagueSummary}
-              </span>
-            </div>
-            <button
-              ref={desktopFilterTriggerRef}
-              type="button"
-              onClick={toggleDesktopFilters}
-              aria-expanded={desktopFiltersOpen}
-              aria-controls="desktop-schedule-filters"
-              className={`inline-flex min-h-11 items-center text-sm font-black transition-colors ${
-                desktopFiltersOpen || desktopActiveFilterCount > 0
-                  ? 'text-brand-blue'
-                  : 'text-brand-black hover:text-brand-blue'
-              }`}
-            >
-              <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
-              篩選
-              {desktopActiveFilterCount > 0 && (
-                <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
-              )}
-              <ChevronRight
-                className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
-                aria-hidden="true"
-              />
-            </button>
+        <div className="relative mb-8 hidden md:flex min-h-12 items-center justify-between gap-4">
+          <div className="flex min-w-0 items-baseline gap-3">
+            <span className="font-display text-base font-black tracking-wide text-brand-black">
+              {activeSeason.shortName} · {desktopLeagueSummary}
+            </span>
+            <span className="text-xs font-bold text-neutral-400">
+              {filteredMatches.length} 場比賽
+            </span>
           </div>
+          <button
+            ref={desktopFilterTriggerRef}
+            type="button"
+            onClick={toggleDesktopFilters}
+            aria-expanded={desktopFiltersOpen}
+            aria-controls="desktop-schedule-filters"
+            className={`-mr-2 inline-flex min-h-11 shrink-0 items-center px-2 text-sm font-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
+              desktopFiltersOpen || desktopActiveFilterCount > 0
+                ? 'text-brand-blue'
+                : 'text-brand-black hover:text-brand-blue'
+            }`}
+          >
+            <Filter className="mr-2 h-4 w-4" aria-hidden="true" />
+            篩選
+            {desktopActiveFilterCount > 0 && (
+              <span className="ml-1.5 text-xs font-black">{desktopActiveFilterCount}</span>
+            )}
+            <ChevronRight
+              className={`ml-2 h-4 w-4 transition-transform ${desktopFiltersOpen ? 'rotate-180' : 'rotate-0'}`}
+              aria-hidden="true"
+            />
+          </button>
         </div>
 
         <div className="mb-20">
           {seasonData.matches.length === 0 ? (
             <EmptyState
+              eyebrow="賽程狀態"
               title={`${activeSeason.shortName} 賽程尚未公布`}
               description={activeSeason.seasonParticipants
                 ? `${activeSeason.shortName} 賽程將於球員登錄及賽程編排完成後統一公布`
@@ -784,7 +792,12 @@ const SchedulePage: React.FC = () => {
               } : undefined}
             />
           ) : filteredMatches.length === 0 ? (
-            <EmptyState title="沒有符合條件的賽事" description="請調整篩選條件後再查看" />
+            <EmptyState
+              eyebrow="篩選結果"
+              title="找不到符合條件的賽事"
+              description="目前的篩選組合沒有賽事。清除條件後即可返回本季完整賽程。"
+              primaryButton={{ label: '清除篩選', onClick: clearAppliedFilters }}
+            />
           ) : (
             <FullSchedule
               matches={filteredMatches}

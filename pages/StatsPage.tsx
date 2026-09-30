@@ -93,6 +93,15 @@ const StatsPage: React.FC = () => {
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
 
+  const playerById = useMemo(
+    () => new Map(seasonData.players.map((player) => [player.id, player])),
+    [seasonData.players],
+  );
+  const matchById = useMemo(
+    () => new Map(seasonData.matches.map((match) => [match.id, match])),
+    [seasonData.matches],
+  );
+
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
       const fallbackLeague = activeSeason.enabledLeagues[0];
@@ -148,7 +157,7 @@ const StatsPage: React.FC = () => {
     });
 
     grouped.forEach((row) => {
-      const player = seasonData.players.find((item) => item.id === row.subjectId);
+      const player = playerById.get(row.subjectId);
       const currentTeam = player ? seasonData.teamMap[player.teamId] : undefined;
       if (
         currentTeam?.leagueId === activeLeague &&
@@ -159,7 +168,7 @@ const StatsPage: React.FC = () => {
     });
 
     return [...grouped.values()];
-  }, [activeLeague, playerTeamStats, seasonData.players, seasonData.teamMap]);
+  }, [activeLeague, playerById, playerTeamStats, seasonData.teamMap]);
 
   const discipline = useMemo(
     () =>
@@ -179,6 +188,11 @@ const StatsPage: React.FC = () => {
       seasonData.matches,
       seasonData.players,
     ],
+  );
+
+  const disciplineSummaryBySubjectId = useMemo(
+    () => new Map(discipline.summaries.map((summary) => [summary.subjectId, summary])),
+    [discipline.summaries],
   );
 
   const rankedList = useMemo<RankedPlayerRow[]>(() => {
@@ -218,12 +232,12 @@ const StatsPage: React.FC = () => {
       discipline.suspensions
         .filter((suspension) => {
           if (suspension.remainingMatches <= 0) return false;
-          const summary = discipline.summaries.find((item) => item.subjectId === suspension.subjectId);
+          const summary = disciplineSummaryBySubjectId.get(suspension.subjectId);
           const team = seasonData.teamMap[summary?.currentTeamId ?? suspension.teamIdAtIssue];
           return team?.leagueId === activeLeague;
         })
         .sort((a, b) => b.remainingMatches - a.remainingMatches || a.subjectName.localeCompare(b.subjectName, 'zh-TW')),
-    [activeLeague, discipline.summaries, discipline.suspensions, seasonData.teamMap],
+    [activeLeague, discipline.suspensions, disciplineSummaryBySubjectId, seasonData.teamMap],
   );
 
   const publicDecisions = useMemo(
@@ -299,9 +313,11 @@ const StatsPage: React.FC = () => {
 
         <DataFilterToolbar
           primaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          secondaryText={tabLabels[activeTab]}
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
-          ariaLabel="開啟數據中心篩選"
+          buttonLabel="篩選"
+          ariaLabel="開啟數據中心賽季與級別篩選"
         />
 
         <div className="mb-8 border-b border-neutral-100">
@@ -316,7 +332,12 @@ const StatsPage: React.FC = () => {
 
         {!hasData ? (
           <EmptyState
-            title={activeTab === 'SUSPENSIONS' ? '目前沒有執行中的停賽' : '新賽季尚未開始'}
+            eyebrow={activeTab === 'SUSPENSIONS' ? '紀律狀態' : '數據更新'}
+            title={
+              activeTab === 'SUSPENSIONS'
+                ? '目前沒有執行中的停賽'
+                : '新賽季尚未開始'
+            }
             description={
               activeTab === 'SUSPENSIONS'
                 ? '停賽名單及紀律公告將依正式賽事紀錄更新'
@@ -338,11 +359,11 @@ const StatsPage: React.FC = () => {
                 </div>
                 <div className="divide-y divide-neutral-100 border-y border-neutral-200">
                   {activeSuspensions.map((suspension) => {
-                    const summary = discipline.summaries.find((item) => item.subjectId === suspension.subjectId);
+                    const summary = disciplineSummaryBySubjectId.get(suspension.subjectId);
                     const team = seasonData.teamMap[summary?.currentTeamId ?? suspension.teamIdAtIssue];
-                    const playerProfile = seasonData.players.find((item) => item.id === suspension.subjectId);
+                    const playerProfile = playerById.get(suspension.subjectId);
                     const nextMatch = suspension.nextMatchId
-                      ? seasonData.matches.find((match) => match.id === suspension.nextMatchId)
+                      ? matchById.get(suspension.nextMatchId)
                       : undefined;
                     return (
                       <div key={suspension.id} className="grid gap-4 py-5 md:grid-cols-[1fr_auto] md:items-center">
@@ -423,7 +444,7 @@ const StatsPage: React.FC = () => {
             {rankedList.map((player, index) => {
               const team = seasonData.teamMap[player.teamId];
               if (!team) return null;
-              const playerProfile = seasonData.players.find((item) => item.id === player.subjectId);
+              const playerProfile = playerById.get(player.subjectId);
               const playerImage = playerProfile ? getLatestPlayerImageUrl(playerProfile) : undefined;
               const isTopScorer = activeTab === 'SCORERS' && index === 0;
               const nameClass = `block break-words tracking-tight text-brand-black transition-colors hover:text-brand-blue ${isTopScorer ? 'font-display text-2xl font-black italic text-brand-blue md:text-3xl' : 'text-sm font-bold md:text-base'}`;

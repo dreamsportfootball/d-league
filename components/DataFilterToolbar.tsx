@@ -25,8 +25,8 @@ const DataFilterToolbar: React.FC<DataFilterToolbarProps> = ({
   const hasDesktopLabel = desktopPrimaryText !== primaryText;
 
   return (
-    <div className="mb-8 flex min-h-14 items-center justify-between border-b border-neutral-100">
-      <div className="flex min-w-0 items-baseline gap-3">
+    <div className="mb-8 flex min-h-12 items-center justify-between gap-4">
+      <div className="flex min-w-0 items-baseline gap-2.5">
         <span className={`shrink-0 font-display text-sm font-black tracking-wide text-brand-black md:text-base ${hasDesktopLabel ? 'md:hidden' : ''}`}>
           {primaryText}
         </span>
@@ -36,7 +36,7 @@ const DataFilterToolbar: React.FC<DataFilterToolbarProps> = ({
           </span>
         )}
         {secondaryText && (
-          <span className="truncate text-[11px] font-bold text-neutral-500 md:text-xs">
+          <span className="truncate text-[11px] font-bold text-neutral-400 md:text-xs">
             {secondaryText}
           </span>
         )}
@@ -46,7 +46,7 @@ const DataFilterToolbar: React.FC<DataFilterToolbarProps> = ({
         type="button"
         onClick={onOpen}
         aria-label={ariaLabel ?? buttonLabel}
-        className={`ml-4 inline-flex min-h-11 shrink-0 items-center text-sm font-black transition-colors ${
+        className={`-mr-2 inline-flex min-h-11 shrink-0 items-center px-2 text-sm font-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
           activeFilterCount > 0 ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
         }`}
       >

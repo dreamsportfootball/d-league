@@ -45,7 +45,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
             )}
           </div>
 
-          <div className="mt-2 text-xs font-medium tracking-wide text-neutral-500 md:mt-0 md:text-base [&>div>span:nth-child(n+2)]:hidden md:[&>div>span:nth-child(n+2)]:flex">
+          <div className="mt-2 text-pretty text-xs font-medium leading-5 tracking-wide text-neutral-500 md:mt-0 md:text-base md:leading-7 [&>div>span:nth-child(n+2)]:hidden md:[&>div>span:nth-child(n+2)]:flex">
             {hasDesktopDescription ? (
               <>
                 <span className="md:hidden">{stringDescription}</span>

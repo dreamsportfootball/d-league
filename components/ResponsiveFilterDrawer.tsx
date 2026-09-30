@@ -63,19 +63,19 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
             type="button"
             onClick={() => setActiveFieldId(null)}
             data-filter-initial-focus
-            className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+            className="flex h-11 w-11 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
             aria-label="返回篩選"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <h2 className="text-center font-display text-lg font-black text-brand-black">選擇{activeField.label}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+            className="flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
             aria-label="取消並關閉"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -95,7 +95,7 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
                   activeField.onChange(option.value);
                   setActiveFieldId(null);
                 }}
-                className={`flex min-h-[56px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
+                className={`flex min-h-[56px] w-full items-center justify-between border-b border-neutral-100 text-left text-sm font-bold last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                   selected ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
                 }`}
               >
@@ -129,10 +129,10 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
             type="button"
             onClick={onClose}
             data-filter-initial-focus
-            className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+            className="-mr-2 -mt-2 flex h-11 w-11 items-center justify-center text-neutral-400 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
             aria-label="取消並關閉"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -143,7 +143,7 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
             key={field.id}
             type="button"
             onClick={() => setActiveFieldId(field.id)}
-            className="flex min-h-[64px] w-full items-center border-b border-neutral-100 text-left last:border-b-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset"
+            className="flex min-h-[64px] w-full items-center border-b border-neutral-100 text-left last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset"
           >
             <span className="w-24 shrink-0 text-xs font-black text-neutral-500">{field.label}</span>
             <span className="min-w-0 flex-1 truncate text-right text-sm font-bold text-brand-black">
@@ -159,16 +159,16 @@ const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
           type="button"
           onClick={onClear}
           disabled={clearDisabled}
-          className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue disabled:opacity-30 disabled:hover:text-neutral-500"
+          className="inline-flex min-h-12 items-center justify-center px-2 text-sm font-black text-neutral-500 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue disabled:opacity-30 disabled:hover:text-neutral-500"
         >
-          <RotateCcw className="mr-2 h-4 w-4" /> 清除
+          <RotateCcw className="mr-2 h-4 w-4" aria-hidden="true" /> 清除
         </button>
         <button
           type="button"
           onClick={onApply}
-          className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 active:bg-blue-800"
+          className="inline-flex min-h-12 items-center justify-center rounded-lg bg-brand-blue px-5 text-sm font-black text-white transition-colors hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 active:bg-blue-800"
         >
-          <Check className="mr-2 h-4 w-4" /> {applyLabel}
+          <Check className="mr-2 h-4 w-4" aria-hidden="true" /> {applyLabel}
         </button>
       </div>
     </>

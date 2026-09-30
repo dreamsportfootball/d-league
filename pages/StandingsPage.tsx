@@ -154,15 +154,18 @@ const StandingsPage: React.FC = () => {
 
         <DataFilterToolbar
           primaryText={`${activeSeason.shortName} · ${activeLeague}`}
+          secondaryText="排名與積分"
           onOpen={openFilters}
           activeFilterCount={activeFilterCount}
+          buttonLabel="篩選"
           ariaLabel="篩選積分榜"
         />
 
         {shouldShowEmptyState ? (
           <EmptyState
-            title="新賽季尚未開始"
-            description="積分榜將於正式參賽隊伍資料完成後顯示"
+            eyebrow="積分榜狀態"
+            title={`${activeSeason.shortName} ${activeLeague} 尚無積分紀錄`}
+            description="積分榜會在首輪正式比賽完成並確認結果後更新。"
             showRegistrationLink={activeSeason.status === 'registration'}
             primaryAction={historicalSeason ? {
               label: `查看 ${historicalSeason.shortName} 積分榜`,

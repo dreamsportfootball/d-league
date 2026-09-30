@@ -100,7 +100,7 @@ const Header: React.FC = () => {
         <div className="flex shrink-0 items-center">
           <Link
             to="/"
-            className="group flex items-center"
+            className="group flex items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
             onClick={() => {
               closeAllMenus();
               handleHomeScroll('/');
@@ -158,7 +158,7 @@ const Header: React.FC = () => {
                       aria-haspopup="menu"
                       aria-expanded={desktopExpanded}
                       onClick={() => setDesktopDropdownOpen(desktopExpanded ? null : item.name)}
-                      className={`flex items-center transition-colors hover:text-brand-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 ${
+                      className={`flex items-center transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 ${
                         childActive ? 'text-brand-blue' : ''
                       }`}
                     >
@@ -181,7 +181,7 @@ const Header: React.FC = () => {
                           to={child.href}
                           role="menuitem"
                           aria-current={isPathActive(child.href) ? 'page' : undefined}
-                          className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue focus:bg-neutral-50 focus:text-brand-blue focus:outline-none"
+                          className="block border-b border-neutral-50 px-6 py-4 text-sm text-neutral-600 transition-colors last:border-none hover:bg-neutral-50 hover:text-brand-blue focus-visible:bg-neutral-50 focus-visible:text-brand-blue focus-visible:outline-none"
                           onClick={closeAllMenus}
                         >
                           {child.name}
@@ -202,7 +202,7 @@ const Header: React.FC = () => {
                   <Link
                     to={item.href}
                     aria-current={isPathActive(item.href) ? 'page' : undefined}
-                    className={`relative flex h-full items-center transition-colors ${
+                    className={`relative flex h-full items-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 focus-visible:ring-offset-2 ${
                       isPathActive(item.href) ? 'text-brand-blue' : 'hover:text-brand-blue'
                     }`}
                     onClick={() => {
@@ -223,12 +223,12 @@ const Header: React.FC = () => {
 
         <button
           type="button"
-          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg xl:hidden"
+          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 xl:hidden"
           onClick={() => setMobileMenuOpen((open) => !open)}
           aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
       </div>
 
@@ -249,7 +249,7 @@ const Header: React.FC = () => {
                         type="button"
                         onClick={() => setMobileDropdownOpen(expanded ? null : item.name)}
                         aria-expanded={expanded}
-                        className={`flex min-h-11 w-full items-center justify-between py-2 font-display text-xl font-bold uppercase ${
+                        className={`flex min-h-11 w-full items-center justify-between rounded-sm py-2 font-display text-xl font-bold uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                           active ? 'text-brand-blue' : 'text-brand-black'
                         }`}
                       >
@@ -268,7 +268,7 @@ const Header: React.FC = () => {
                                 key={child.name}
                                 to={child.href}
                                 aria-current={childActive ? 'page' : undefined}
-                                className={`min-h-11 rounded-md px-3 py-3 text-base font-medium ${
+                                className={`min-h-11 rounded-md px-3 py-3 text-base font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                                   childActive
                                     ? 'bg-white text-brand-blue'
                                     : 'text-neutral-600 hover:text-brand-blue'
@@ -286,7 +286,7 @@ const Header: React.FC = () => {
                     <Link
                       to={item.href}
                       aria-current={active ? 'page' : undefined}
-                      className={`flex min-h-11 items-center justify-between py-2 font-display text-xl font-bold uppercase ${
+                      className={`flex min-h-11 items-center justify-between rounded-sm py-2 font-display text-xl font-bold uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-inset ${
                         active ? 'text-brand-blue' : 'text-brand-black hover:text-brand-blue'
                       }`}
                       onClick={() => {

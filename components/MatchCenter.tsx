@@ -51,7 +51,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
       onClick={() => onOpenMatch(match.id)}
       data-analytics-event="match_open"
       data-analytics-label={match.id}
-      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
+      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
     >
       <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">

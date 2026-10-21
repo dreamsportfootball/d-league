@@ -54,19 +54,22 @@ const OpeningCountdown: React.FC = () => {
 
   return (
     <section
-      className="border-y border-white/15 bg-brand-black text-white"
+      className="bg-brand-black text-white"
       aria-label={`${activeSeason.shortName} 賽季開幕戰倒數`}
     >
-      <div className="container mx-auto flex flex-col items-center gap-6 px-4 py-7 md:flex-row md:justify-between md:gap-10 md:px-6 md:py-8">
-        <div className="min-w-0 text-center md:text-left">
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-brand-accent">
-            {activeSeason.shortName} · SEASON KICKOFF
+      <div className="container mx-auto flex flex-col gap-6 px-4 py-7 md:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10 lg:py-8">
+        <div className="min-w-0">
+          <p className="font-sans text-[10px] font-extrabold uppercase tracking-[0.2em] text-brand-accent">
+            D LEAGUE {activeSeason.shortName} · KICKOFF
           </p>
-          <h2 className="mt-2 font-display text-[26px] font-bold uppercase leading-tight tracking-wide sm:text-3xl">
+          <h2 className="mt-1 font-display text-3xl font-bold leading-tight tracking-wide text-white sm:text-4xl">
             開幕戰倒數
           </h2>
-          <p className="mt-2 text-xs font-medium tracking-wide text-white/65 sm:text-sm">
-            {formatTaipeiDateWithWeekday(kickoffDate)} {formatTaipeiTime(kickoffDate)} · 台灣時間
+          <p className="mt-2 font-sans text-xs font-semibold leading-relaxed text-white/75 sm:text-sm">
+            {formatTaipeiDateWithWeekday(kickoffDate)} · {formatTaipeiTime(kickoffDate)} 開球
+          </p>
+          <p className="mt-1 font-sans text-xs leading-relaxed text-white/50">
+            {activeSeason.venue} · 台灣時間
           </p>
         </div>
 
@@ -74,14 +77,16 @@ const OpeningCountdown: React.FC = () => {
           role="timer"
           aria-label={`距離開幕戰還有 ${days} 天 ${hours} 小時 ${minutes} 分鐘 ${seconds} 秒`}
           aria-live="off"
-          className="grid w-full grid-cols-4 md:w-[448px]"
+          className="grid w-full grid-cols-4 gap-x-2 sm:gap-x-3 lg:max-w-[568px]"
         >
           {values.map(({ label, value }) => (
-            <div key={label} className="flex min-w-0 flex-col items-center px-1 sm:px-3">
-              <span className="font-display text-[42px] font-semibold leading-none tracking-tight tabular-nums text-white sm:text-5xl md:text-[60px]">
+            <div key={label} className="flex min-w-0 items-baseline justify-center gap-1 lg:justify-end">
+              <span
+                className={`font-display text-[clamp(2.7rem,9vw,4.5rem)] font-bold leading-none tracking-tight tabular-nums ${label === '天' ? 'text-brand-accent' : 'text-white'}`}
+              >
                 {value}
               </span>
-              <span className="mt-2 text-[11px] font-bold tracking-widest text-white/55">
+              <span className="shrink-0 font-sans text-[11px] font-bold text-white/65 sm:text-xs">
                 {label}
               </span>
             </div>

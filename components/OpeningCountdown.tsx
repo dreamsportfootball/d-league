@@ -77,7 +77,7 @@ const OpeningCountdown: React.FC = () => {
           className="grid w-full grid-cols-4 md:w-[448px]"
         >
           {values.map(({ label, value }) => (
-            <div key={label} className="flex min-w-0 flex-col items-center border-r border-white/20 px-1 last:border-r-0 sm:px-3">
+            <div key={label} className="flex min-w-0 flex-col items-center px-1 sm:px-3">
               <span className="font-display text-[42px] font-semibold leading-none tracking-tight tabular-nums text-white sm:text-5xl md:text-[60px]">
                 {value}
               </span>

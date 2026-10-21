@@ -21,9 +21,8 @@ const ActiveHomeContent: React.FC = () => {
   const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
     try {
       const saved = window.sessionStorage.getItem(HOME_STANDINGS_LEAGUE_STORAGE_KEY);
-      if (saved === 'L1' || saved === 'L2' || saved === 'L3') {
-        return activeSeason.enabledLeagues.includes(saved) ? saved : activeSeason.enabledLeagues[0];
-      }
+      const validLeague = activeSeason.enabledLeagues.find((league) => league === saved);
+      if (validLeague) return validLeague;
     } catch {
       // Session storage may be unavailable.
     }

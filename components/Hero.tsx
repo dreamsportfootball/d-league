@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
+import OpeningCountdown from './OpeningCountdown';
 import { useSeason } from '../hooks/useSeason';
 import { assetUrl } from '../services/seasonData';
 
@@ -74,6 +75,8 @@ const Hero: React.FC = () => {
             className="block h-auto w-full"
           />
         </picture>
+
+        <OpeningCountdown />
 
         {showSeasonPosterActions && (
           <div className="border-t border-white/10 bg-brand-black">

@@ -14,32 +14,22 @@ import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import { getSeasonData } from '../services/seasonDataJson';
-import type { Match } from '../types';
-import { MatchStatus } from '../types';
-import type { LeagueId, SeasonId } from '../types/season';
-import type { SeasonTeam } from '../types/team';
+import type { SeasonId } from '../types/season';
+import {
+  EMPTY_FILTERS,
+  getFacetOptions,
+  getStatusSummary,
+  matchPassesFilters,
+  readScheduleFilters,
+  reconcileFilters,
+  writeScheduleFilters,
+  type FacetKey,
+  type LeagueFilter,
+  type ScheduleFilters,
+} from '../services/scheduleFilters';
 
-type LeagueFilter = LeagueId | 'ALL';
-type StatusFilter = 'ALL' | 'UPCOMING' | 'FINISHED';
 type MobileFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
-type DesktopFilterView = 'ROOT' | 'SEASON' | 'LEAGUE' | 'STATUS' | 'TEAM' | 'DATE' | 'ROUND';
-type FacetKey = 'league' | 'team' | 'round' | 'date' | 'status';
-
-interface ScheduleFilters {
-  league: LeagueFilter;
-  team: string;
-  round: string;
-  date: string;
-  status: StatusFilter;
-}
-
-interface FacetOptions {
-  leagueIds: LeagueId[];
-  teams: SeasonTeam[];
-  rounds: string[];
-  dates: string[];
-  statuses: StatusFilter[];
-}
+type DesktopFilterView = MobileFilterView;
 
 interface ScheduleFilterDraft {
   seasonId: SeasonId;
@@ -57,14 +47,6 @@ interface FilterSelectorConfig {
   options: FilterSelectOption[];
   onSelect: (value: string) => void;
 }
-
-const EMPTY_FILTERS: ScheduleFilters = {
-  league: 'ALL',
-  team: 'ALL',
-  round: 'ALL',
-  date: 'ALL',
-  status: 'ALL',
-};
 
 const getFocusableElements = (container: HTMLElement): HTMLElement[] =>
   Array.from(
@@ -89,190 +71,6 @@ const trapDialogFocus = (event: KeyboardEvent, dialog: HTMLElement | null): void
   } else if (!event.shiftKey && document.activeElement === last) {
     event.preventDefault();
     first.focus();
-  }
-};
-
-const matchPassesFilters = (
-  match: Match,
-  filters: ScheduleFilters,
-  excludedFacet?: FacetKey,
-): boolean => {
-  if (excludedFacet !== 'league' && filters.league !== 'ALL' && match.league !== filters.league) {
-    return false;
-  }
-  if (
-    excludedFacet !== 'team' &&
-    filters.team !== 'ALL' &&
-    match.homeTeamId !== filters.team &&
-    match.awayTeamId !== filters.team
-  ) {
-    return false;
-  }
-  if (excludedFacet !== 'round' && filters.round !== 'ALL' && String(match.round) !== filters.round) {
-    return false;
-  }
-  if (excludedFacet !== 'date' && filters.date !== 'ALL' && !match.timestamp.startsWith(filters.date)) {
-    return false;
-  }
-  if (excludedFacet !== 'status') {
-    if (filters.status === 'UPCOMING' && match.status !== MatchStatus.SCHEDULED) return false;
-    if (filters.status === 'FINISHED' && match.status !== MatchStatus.FINISHED) return false;
-  }
-  return true;
-};
-
-const getFacetOptions = (
-  matches: Match[],
-  teams: SeasonTeam[],
-  filters: ScheduleFilters,
-  enabledLeagues: LeagueId[],
-): FacetOptions => {
-  const leagueIdsWithMatches = new Set(
-    matches
-      .filter((match) => matchPassesFilters(match, filters, 'league'))
-      .map((match) => match.league),
-  );
-  const leagueIds = enabledLeagues.filter((leagueId) => leagueIdsWithMatches.has(leagueId));
-
-  const teamIds = new Set<string>();
-  matches
-    .filter((match) => matchPassesFilters(match, filters, 'team'))
-    .forEach((match) => {
-      teamIds.add(match.homeTeamId);
-      teamIds.add(match.awayTeamId);
-    });
-  const availableTeams = teams
-    .filter((team) => teamIds.has(team.id))
-    .sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
-
-  const rounds = [...new Set(
-    matches
-      .filter((match) => matchPassesFilters(match, filters, 'round'))
-      .map((match) => String(match.round)),
-  )].sort((a, b) => Number(a) - Number(b));
-
-  const dates = [...new Set(
-    matches
-      .filter((match) => matchPassesFilters(match, filters, 'date'))
-      .map((match) => match.timestamp.split('T')[0]),
-  )].sort();
-
-  const statusMatches = matches.filter((match) => matchPassesFilters(match, filters, 'status'));
-  const statuses: StatusFilter[] = ['ALL'];
-  if (statusMatches.some((match) => match.status === MatchStatus.FINISHED)) statuses.push('FINISHED');
-  if (statusMatches.some((match) => match.status === MatchStatus.SCHEDULED)) statuses.push('UPCOMING');
-
-  return { leagueIds, teams: availableTeams, rounds, dates, statuses };
-};
-
-const isFacetValueAvailable = (
-  facet: FacetKey,
-  value: string,
-  matches: Match[],
-  filters: ScheduleFilters,
-): boolean => {
-  if (value === 'ALL') return true;
-  const candidateFilters = { ...filters, [facet]: value } as ScheduleFilters;
-  return matches.some((match) => matchPassesFilters(match, candidateFilters));
-};
-
-const reconcileFilters = (
-  proposedFilters: ScheduleFilters,
-  changedFacet: FacetKey,
-  matches: Match[],
-): ScheduleFilters => {
-  const nextFilters = { ...proposedFilters };
-  const facets: FacetKey[] = ['league', 'status', 'team', 'date', 'round'];
-
-  for (let pass = 0; pass < facets.length; pass += 1) {
-    let changed = false;
-    for (const facet of facets) {
-      if (facet === changedFacet || nextFilters[facet] === 'ALL') continue;
-      if (!isFacetValueAvailable(facet, nextFilters[facet], matches, nextFilters)) {
-        nextFilters[facet] = 'ALL';
-        changed = true;
-      }
-    }
-    if (!changed) break;
-  }
-
-  return nextFilters;
-};
-
-const getStatusSummary = (status: StatusFilter): string => {
-  if (status === 'FINISHED') return '已完賽';
-  if (status === 'UPCOMING') return '即將開賽';
-  return '全部狀態';
-};
-
-const SCHEDULE_FILTERS_STORAGE_PREFIX = 'dleague:schedule-filters:';
-
-const getScheduleFiltersStorageKey = (seasonId: SeasonId): string =>
-  `${SCHEDULE_FILTERS_STORAGE_PREFIX}${seasonId}`;
-
-const readScheduleFilters = (
-  seasonId: SeasonId,
-  enabledLeagues: LeagueId[],
-  matches: Match[],
-  teams: SeasonTeam[],
-): ScheduleFilters => {
-  try {
-    const raw = window.sessionStorage.getItem(getScheduleFiltersStorageKey(seasonId));
-    if (!raw) return { ...EMPTY_FILTERS };
-
-    const value = JSON.parse(raw) as Partial<Record<keyof ScheduleFilters, unknown>>;
-    const savedLeague = value.league;
-    const savedTeam = value.team;
-    const savedRound = value.round;
-    const savedDate = value.date;
-    const savedStatus = value.status;
-    const league: LeagueFilter =
-      savedLeague === 'ALL' ||
-      (typeof savedLeague === 'string' && enabledLeagues.includes(savedLeague as LeagueId))
-        ? savedLeague as LeagueFilter
-        : 'ALL';
-    const team = typeof savedTeam === 'string' &&
-      (savedTeam === 'ALL' || teams.some((candidate) => candidate.id === savedTeam))
-      ? savedTeam
-      : 'ALL';
-    const round = typeof savedRound === 'string' &&
-      (savedRound === 'ALL' || matches.some((match) => String(match.round) === savedRound))
-      ? savedRound
-      : 'ALL';
-    const date = typeof savedDate === 'string' &&
-      (savedDate === 'ALL' || matches.some((match) => match.timestamp.startsWith(savedDate)))
-      ? savedDate
-      : 'ALL';
-    const status: StatusFilter =
-      savedStatus === 'ALL' || savedStatus === 'UPCOMING' || savedStatus === 'FINISHED'
-        ? savedStatus
-        : 'ALL';
-
-    const nextFilters: ScheduleFilters = { league, team, round, date, status };
-    const facets: FacetKey[] = ['league', 'status', 'team', 'date', 'round'];
-    for (let pass = 0; pass < facets.length; pass += 1) {
-      let changed = false;
-      for (const facet of facets) {
-        if (nextFilters[facet] === 'ALL') continue;
-        if (!isFacetValueAvailable(facet, nextFilters[facet], matches, nextFilters)) {
-          nextFilters[facet] = 'ALL';
-          changed = true;
-        }
-      }
-      if (!changed) break;
-    }
-
-    return nextFilters;
-  } catch {
-    return { ...EMPTY_FILTERS };
-  }
-};
-
-const writeScheduleFilters = (seasonId: SeasonId, filters: ScheduleFilters): void => {
-  try {
-    window.sessionStorage.setItem(getScheduleFiltersStorageKey(seasonId), JSON.stringify(filters));
-  } catch {
-    // Session storage may be unavailable.
   }
 };
 

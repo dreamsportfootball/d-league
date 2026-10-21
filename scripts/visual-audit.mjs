@@ -309,8 +309,8 @@ const auditInteractiveCase = async (testCase) => {
       ? await page.evaluate((shouldShowSeasonInfo) => {
           const bodyText = document.body.innerText;
           const seasonInfoMatchesExpectation = shouldShowSeasonInfo
-            ? bodyText.includes('賽季資訊')
-            : !bodyText.includes('賽季資訊');
+            ? bodyText.includes('賽季報名')
+            : !bodyText.includes('賽季報名');
           return (
             getComputedStyle(document.body).overflow === 'hidden' &&
             bodyText.includes('首頁') &&

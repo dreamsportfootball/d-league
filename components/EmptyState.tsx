@@ -23,11 +23,16 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   showRegistrationLink = false,
   primaryAction,
   primaryButton,
+  eyebrow,
 }) => (
   <div className="flex min-h-[360px] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
     <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-neutral-200">
       <ClipboardList className="h-6 w-6 text-brand-blue" aria-hidden="true" />
     </div>
+
+    {eyebrow && (
+      <p className="mb-3 text-[11px] font-bold uppercase tracking-widest text-neutral-500">{eyebrow}</p>
+    )}
 
     <h2 className="font-display text-2xl font-black uppercase tracking-wide text-brand-black md:text-3xl">
       {title}

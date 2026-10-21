@@ -33,7 +33,7 @@ function Tabs<T extends string>({
           aria-selected={active === option}
           tabIndex={active === option ? 0 : -1}
           onClick={() => onChange(option)}
-          onKeyDown={(event) => {
+          onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
             let nextIndex: number;
             if (event.key === 'ArrowRight') nextIndex = (index + 1) % options.length;
             else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + options.length) % options.length;

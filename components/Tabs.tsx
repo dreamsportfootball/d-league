@@ -25,24 +25,38 @@ function Tabs<T extends string>({
       aria-label={ariaLabel}
       className={`no-scrollbar flex min-w-0 items-center overflow-x-auto ${compact ? 'gap-2' : 'gap-4'}`}
     >
-      {options.map((option) => (
+      {options.map((option, index) => (
         <button
           key={option}
           type="button"
           role="tab"
           aria-selected={active === option}
+          tabIndex={active === option ? 0 : -1}
           onClick={() => onChange(option)}
+          onKeyDown={(event) => {
+            let nextIndex: number;
+            if (event.key === 'ArrowRight') nextIndex = (index + 1) % options.length;
+            else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + options.length) % options.length;
+            else if (event.key === 'Home') nextIndex = 0;
+            else if (event.key === 'End') nextIndex = options.length - 1;
+            else return;
+            event.preventDefault();
+            onChange(options[nextIndex]);
+            event.currentTarget.parentElement
+              ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[nextIndex]
+              ?.focus();
+          }
           className={`shrink-0 whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transform-none focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
             compact
-              ? `rounded-full px-4 py-1.5 text-xs font-bold ${
+              ? `min-h-11 rounded-full px-4 py-1.5 text-xs font-bold ${
                   active === option
                     ? 'bg-white text-brand-black shadow-sm'
-                    : 'text-neutral-400 hover:text-neutral-600'
+                    : 'text-neutral-600 hover:text-brand-blue'
                 }`
               : `min-h-11 border-b-2 px-1 py-2 text-xs font-bold md:text-sm ${
                   active === option
                     ? 'border-brand-blue text-brand-black'
-                    : 'border-transparent font-medium text-neutral-400 hover:text-neutral-600'
+                    : 'border-transparent font-medium text-neutral-600 hover:text-brand-blue'
                 }`
           }`}
         >

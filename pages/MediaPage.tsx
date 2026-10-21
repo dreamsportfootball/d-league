@@ -5,6 +5,7 @@ import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import { getSeasonData } from '../services/seasonDataJson';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
@@ -59,6 +60,10 @@ const MediaPage: React.FC = () => {
     [availableSeasons],
   );
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
+  const alternativeSeason = sortedSeasons.find((season) =>
+    season.id !== activeSeasonId &&
+    (getSeasonData(season.id).albums.length > 0 || Boolean(season.youtubePlaylistEmbedUrl)),
+  );
   const reversedAlbums = useMemo(
     () => seasonData.albums.slice().reverse(),
     [seasonData.albums],
@@ -140,12 +145,12 @@ const MediaPage: React.FC = () => {
           <EmptyState
             eyebrow="媒體更新"
             title={`${activeSeason.shortName} 賽事媒體尚未發布`}
-            description="比賽日後會陸續上架賽事相簿與全場影片；目前可以先查看上一賽季內容。"
+            description="賽事相簿及全場影片會在比賽日後陸續更新。"
             showRegistrationLink={false}
-            primaryAction={{
-              label: '查看 2025/26 賽事媒體',
-              to: '/media?season=2025-26',
-            }}
+            primaryAction={alternativeSeason ? {
+              label: `查看 ${alternativeSeason.shortName} 賽事媒體`,
+              to: `/media?season=${alternativeSeason.id}`,
+            } : undefined}
           />
         ) : (
           <>

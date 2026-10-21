@@ -22,9 +22,9 @@ const StandingsPage: React.FC = () => {
   const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
     try {
       const saved = window.sessionStorage.getItem('standingsActiveLeague');
-      return saved === 'L1' || saved === 'L2' || saved === 'L3' ? saved : 'L1';
+      return activeSeason.enabledLeagues.find((league) => league === saved) ?? activeSeason.enabledLeagues[0];
     } catch {
-      return 'L1';
+      return activeSeason.enabledLeagues[0];
     }
   });
   const [filtersOpen, setFiltersOpen] = useState(false);

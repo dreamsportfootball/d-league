@@ -45,7 +45,7 @@ function Tabs<T extends string>({
             event.currentTarget.parentElement
               ?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[nextIndex]
               ?.focus();
-          }
+          }}
           className={`shrink-0 whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 motion-reduce:transform-none focus-visible:ring-brand-blue focus-visible:ring-offset-2 ${
             compact
               ? `min-h-11 rounded-full px-4 py-1.5 text-xs font-bold ${

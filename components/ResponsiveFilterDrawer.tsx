@@ -37,7 +37,7 @@ const formatDesktopLeagueText = (value: string): string =>
   value.replace(/\bL(\d+)\b/g, 'LEAGUE $1');
 
 const formatMobileOptionLabel = (option: FilterDrawerOption): string =>
-  /^L[123]$/.test(option.value) ? option.value : option.label;
+  /^L\d+$/.test(option.value) ? option.value : option.label;
 
 const FilterPanelContent: React.FC<FilterPanelContentProps> = ({
   fields,

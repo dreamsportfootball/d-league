@@ -19,7 +19,7 @@ const Header: React.FC = () => {
 
   const navItems = useMemo<NavItem[]>(() => [
     { name: '首頁', href: '/' },
-    ...(SHOW_REGISTRATION_NAV ? [{ name: '賽季報名', href: '/registration' }] : []),
+    ...(SHOW_REGISTRATION_NAV ? [{ name: '賽季資訊', href: '/registration' }] : []),
     { name: '賽程與結果', href: '/schedule' },
     { name: '積分榜', href: '/standings' },
     { name: '數據中心', href: '/stats' },

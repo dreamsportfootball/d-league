@@ -94,7 +94,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
               <>
                 <div className="mt-4 flex items-center border-b border-neutral-100 pb-2 pt-1 md:hidden">
                   <span className="mr-2 h-3.5 w-[3px] bg-brand-accent" aria-hidden="true" />
-                  <span className="font-display text-[12px] font-black tracking-[0.08em] text-brand-black">
+                  <span className="font-display text-[13px] font-black tracking-[0.08em] text-brand-black">
                     {mobileDateHeader}
                   </span>
                 </div>
@@ -123,7 +123,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     <span className="whitespace-nowrap font-display text-[10px] font-semibold tracking-[0.02em] text-neutral-500">
                       {mobileDateHeader}
                     </span>
-                    <span className="whitespace-nowrap text-[9px] font-medium tracking-wide text-neutral-400">
+                    <span className="whitespace-nowrap text-[11px] font-medium tracking-wide text-neutral-600">
                       {timeStr} · {match.league} 第{match.round}輪
                     </span>
                   </div>
@@ -180,7 +180,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
                   </div>
                   {administrativeNote && (
-                    <p className="mt-1 truncate text-[9px] font-semibold text-amber-700" title={administrativeNote}>
+                    <p className="mt-1 truncate text-[11px] font-semibold text-amber-700" title={administrativeNote}>
                       {administrativeNote}
                     </p>
                   )}
@@ -272,7 +272,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
                         {timeStr}
                       </span>
-                      <span className="text-[9px] font-bold tracking-[0.08em] text-neutral-400">
+                      <span className="text-[11px] font-bold tracking-[0.05em] text-neutral-600">
                         {match.league} 第{match.round}輪
                       </span>
                     </div>

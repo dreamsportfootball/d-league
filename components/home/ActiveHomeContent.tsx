@@ -72,7 +72,7 @@ const ActiveHomeContent: React.FC = () => {
         </div>
       </div>
 
-      <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-4 md:px-6">
+      <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-6 md:px-6 md:py-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
           <div className="order-2 lg:order-1 lg:col-span-4">
             <div className="mb-4 flex items-end justify-between gap-4 border-b border-neutral-100 pb-2">

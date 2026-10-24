@@ -176,13 +176,13 @@ const SponsorGalleryImage: React.FC<GalleryItem> = ({ src, alt, aspectRatio = '4
   );
 };
 
-const InlineArticleImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+const InlineArticleImage: React.FC<{ src: string; alt: string; whiteBackground?: boolean }> = ({ src, alt, whiteBackground = false }) => {
   const [hasError, setHasError] = useState(false);
 
   if (hasError) return null;
 
   return (
-    <figure className="my-10 aspect-[4/3] w-full overflow-hidden bg-neutral-100 md:my-12">
+    <figure className={`my-10 aspect-[4/3] w-full overflow-hidden md:my-12 ${whiteBackground ? 'bg-white' : 'bg-neutral-100'}`}>
       <img
         src={src}
         alt={alt}
@@ -308,6 +308,7 @@ const ArticleBody: React.FC<{
               <InlineArticleImage
                 src={assetUrl('assets/news/2026-27-entes-official-match-ball-2.png')}
                 alt="ENTES × D LEAGUE 2026/27 官方比賽用球合作"
+                whiteBackground
               />
             )}
             <p className="mb-7 last:mb-0">{renderMultilineText(block.text)}</p>

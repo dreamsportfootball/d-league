@@ -34,7 +34,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
       <div className="md:flex md:items-end md:justify-between md:gap-8">
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3 md:block">
-            <h1 className="min-w-0 whitespace-nowrap font-display text-[32px] font-extrabold uppercase leading-none tracking-tight text-brand-black md:mb-4 md:text-6xl">
+            <h1 className="min-w-0 whitespace-nowrap font-display text-[32px] font-extrabold uppercase leading-none tracking-tight text-brand-black md:mb-5 md:text-6xl">
               {title}{' '}<span className="text-brand-blue">{accent}</span>
             </h1>
 
@@ -45,7 +45,7 @@ const SeasonPageHeader: React.FC<SeasonPageHeaderProps> = ({
             )}
           </div>
 
-          <div className="mt-2 text-pretty text-xs font-medium leading-5 tracking-wide text-neutral-500 md:mt-0 md:text-base md:leading-7 [&>div>span:nth-child(n+2)]:hidden md:[&>div>span:nth-child(n+2)]:flex">
+          <div className="mt-3 text-pretty text-xs font-medium leading-5 tracking-wide text-neutral-500 md:mt-0 md:text-base md:leading-7 [&>div>span:nth-child(n+2)]:hidden md:[&>div>span:nth-child(n+2)]:flex">
             {hasDesktopDescription ? (
               <>
                 <span className="md:hidden">{stringDescription}</span>

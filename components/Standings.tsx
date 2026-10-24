@@ -136,7 +136,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
       {!mobileExpanded && (
         <div className="md:hidden">
           <table className="w-full table-fixed border-collapse">
-            <thead className="border-b border-neutral-200 text-[10px] font-bold tracking-wider text-neutral-500">
+            <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-wider text-neutral-500">
               <tr>
                 <th className="w-9 px-1 py-3 text-left">名次</th>
                 <th className="py-3 pl-2 pr-1 text-left">球隊</th>
@@ -183,7 +183,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
       {mobileExpanded && (
         <div className="overflow-x-auto md:hidden">
           <table className="w-full min-w-[740px] border-collapse">
-            <thead className="border-b border-neutral-200 text-[10px] font-bold tracking-widest text-neutral-500">
+            <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-widest text-neutral-500">
               <tr>
                 <th className="w-8 px-1 py-3 text-left">名次</th><th className="w-[140px] py-3 pl-2 pr-2 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th>
               </tr>

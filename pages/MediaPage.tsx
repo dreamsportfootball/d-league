@@ -155,8 +155,8 @@ const MediaPage: React.FC = () => {
         ) : (
           <>
             {reversedAlbums.length > 0 && (
-              <div className="mb-12 md:mb-24">
-                <div className="mb-8 flex items-center justify-between">
+              <div className="mb-12 md:mb-16">
+                <div className="mb-6 flex items-center justify-between md:mb-8">
                   <div className="flex items-center">
                     <div className="mr-4 h-[2px] w-8 bg-brand-black" />
                     <h2 className="font-display text-xl font-bold uppercase tracking-widest text-brand-black">
@@ -201,8 +201,8 @@ const MediaPage: React.FC = () => {
             )}
 
             {activeSeason.youtubePlaylistEmbedUrl && (
-              <div className="mb-12">
-                <div className="mb-8 flex items-center">
+              <div className="mb-12 md:mb-16">
+                <div className="mb-6 flex items-center md:mb-8">
                   <div className="mr-4 h-[2px] w-8 bg-brand-black" />
                   <h2 className="font-display text-xl font-bold uppercase tracking-widest text-brand-black">
                     比賽全場影片

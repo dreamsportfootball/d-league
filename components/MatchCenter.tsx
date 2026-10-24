@@ -58,11 +58,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
           <span className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-neutral-500">
             {match.league} · 第{match.round}輪
           </span>
-          <span className="ml-2 truncate border-l border-neutral-200 pl-2 text-xs font-medium text-neutral-400">
+          <span className="ml-2 truncate border-l border-neutral-200 pl-2 text-xs font-medium text-neutral-600 md:text-neutral-400">
             {dateString}
           </span>
         </div>
-        <span className="ml-2 shrink-0 text-xs font-bold text-neutral-400">
+        <span className="ml-2 shrink-0 text-xs font-bold text-neutral-600 md:text-neutral-400">
           {isFinished ? '完賽' : timeString}
         </span>
       </div>
@@ -98,7 +98,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
         </div>
         <div className="mt-5 flex shrink-0 items-center justify-between border-t border-neutral-100 pt-3 text-xs">
           {!isFinished ? (
-            <div className="flex min-w-0 items-center truncate font-medium text-neutral-400">
+            <div className="flex min-w-0 items-center truncate font-medium text-neutral-600 md:text-neutral-400">
               <MapPin className="mr-1 h-3 w-3 shrink-0" aria-hidden="true" />
               <span className="truncate">{match.venue}</span>
             </div>
@@ -200,7 +200,7 @@ const MatchCenter: React.FC = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-4 flex flex-col items-end justify-between md:mb-6 md:flex-row">
             <div className="w-full md:w-auto">
-              <p className="mb-1 text-[9px] font-black uppercase tracking-[0.18em] text-neutral-400 md:text-[10px]">
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-neutral-600 md:text-[10px] md:text-neutral-400">
                 {activeSeason.shortName} · MATCH CENTRE
               </p>
               <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">
@@ -247,6 +247,18 @@ const MatchCenter: React.FC = () => {
               </Link>
             </div>
           </div>
+          {filteredMatches.length > 0 && (
+            <div className="mb-3 flex items-center justify-between gap-3 px-0.5 text-xs font-semibold text-neutral-600 md:hidden">
+              <span className="min-w-0 truncate">
+                {formatTaipeiMonthDayWeekday(filteredMatches[0].timestamp)} · {filteredMatches.length} 場比賽
+              </span>
+              {filteredMatches.length > 1 && (
+                <span className="inline-flex shrink-0 items-center text-brand-blue">
+                  左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
+                </span>
+              )}
+            </div>
+          )}
           <div className="group relative">
             <div
               ref={scrollContainerRef}

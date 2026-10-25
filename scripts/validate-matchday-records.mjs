@@ -26,6 +26,23 @@ try {
     'non-matchday must remain a compact teaser');
   await before.context.close();
 
+  const demo = await openAt('2026-10-25T04:00:00Z', '/?demo=matchday');
+  const demoSection = demo.page.locator('section[aria-label="MATCHDAY 示範"]');
+  await demoSection.waitFor({ state: 'visible' });
+  assert((await demoSection.innerText()).includes('示範模式'),
+    'demo page must be visibly labeled, not mistaken for live matchday');
+  assert((await demoSection.innerText()).includes('2026.11.01'),
+    'demo fixture date must be November 1, 2026');
+  assert(await demoSection.locator('[data-matchday-fixture]').count() === 6,
+    'preview-only demonstration must display all six opening fixtures');
+  assert(await demoSection.getByText('賽果未登錄').count() === 6,
+    'demo must not invent scores');
+  await demoSection.getByRole('link', { name: '退出示範' }).click();
+  await demo.page.locator('section[aria-label="下一個比賽日"]').waitFor({ state: 'visible' });
+  assert(await demo.page.locator('section[aria-label="MATCHDAY 示範"]').count() === 0,
+    'leaving demo must restore the real calendar mode');
+  await demo.context.close();
+
   const today = await openAt('2026-11-01T00:30:00Z', '/');
   const matchday = today.page.locator('section[aria-label="今日比賽日資訊"]');
   await matchday.waitFor({ state: 'visible' });

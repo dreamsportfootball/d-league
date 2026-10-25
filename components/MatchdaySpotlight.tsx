@@ -1,13 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus } from '../types';
 import { formatTaipeiDateKey, formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
 
 const MatchdaySpotlight: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
+  const location = useLocation();
+  // Only preview builds accept the explicit demonstration query; production never does.
+  const isDemo = import.meta.env.VITE_MATCHDAY_DEMO_ENABLED === 'true' &&
+    new URLSearchParams(location.search).get('demo') === 'matchday';
   const [today, setToday] = useState(() => formatTaipeiDateKey(new Date()));
+  const effectiveDate = isDemo ? '2026-11-01' : today;
 
   useEffect(() => {
     const refresh = () => setToday(formatTaipeiDateKey(new Date()));
@@ -25,7 +30,7 @@ const MatchdaySpotlight: React.FC = () => {
     const dates = seasonData.matches
       .filter((match) => activeSeason.enabledLeagues.some((league) => league === match.league))
       .map((match) => formatTaipeiDateKey(match.timestamp))
-      .filter((key) => Boolean(key) && key >= today);
+      .filter((key) => Boolean(key) && key >= effectiveDate);
     const closestDate = dates.sort()[0];
     const matches = closestDate
       ? seasonData.matches
@@ -33,8 +38,8 @@ const MatchdaySpotlight: React.FC = () => {
         .filter((match) => activeSeason.enabledLeagues.some((league) => league === match.league))
         .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
       : [];
-    return { dayMatches: matches, isMatchday: closestDate === today };
-  }, [activeSeason.enabledLeagues, seasonData.matches, today]);
+    return { dayMatches: matches, isMatchday: closestDate === effectiveDate };
+  }, [activeSeason.enabledLeagues, seasonData.matches, effectiveDate]);
 
   if (dayMatches.length === 0) return null;
 
@@ -44,15 +49,25 @@ const MatchdaySpotlight: React.FC = () => {
     match.homeScore !== null && match.awayScore !== null).length;
 
   return (
-    <section aria-label={isMatchday ? '今日比賽日資訊' : '下一個比賽日'} className="bg-brand-black text-white">
+    <section aria-label={isDemo ? 'MATCHDAY 示範' : isMatchday ? '今日比賽日資訊' : '下一個比賽日'} className="bg-brand-black text-white">
       <div className="container mx-auto px-4 py-5 md:px-6 md:py-6">
+        {isDemo && (
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2 border-b border-white/20 pb-3">
+            <p className="text-xs font-semibold leading-5 text-brand-accent">
+              示範模式 · 模擬 2026/11/01 開幕戰畫面，非即時賽況
+            </p>
+            <Link to="/" className="inline-flex min-h-11 items-center text-xs font-bold text-white underline underline-offset-4 hover:text-brand-accent">
+              退出示範
+            </Link>
+          </div>
+        )}
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
           <div className="min-w-0">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.19em] text-brand-accent">
-              {isMatchday ? 'MATCHDAY · TODAY' : 'NEXT MATCHDAY'}
+              {isDemo ? 'MATCHDAY · DEMO' : isMatchday ? 'MATCHDAY · TODAY' : 'NEXT MATCHDAY'}
             </p>
             <h2 className="mt-1 font-display text-2xl font-bold uppercase leading-tight tracking-wide md:text-3xl">
-              {isMatchday ? '今日賽事' : '下一比賽日'}
+              {isDemo ? '開幕戰比賽日示範' : isMatchday ? '今日賽事' : '下一比賽日'}
             </h2>
             <p className="mt-2 text-sm font-medium text-white/80">
               {matchDate} · {dayMatches.length} 場比賽

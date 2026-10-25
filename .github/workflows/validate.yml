@@ -106,6 +106,7 @@ jobs:
       - name: Build preview-mode site
         env:
           VITE_ROUTER_MODE: hash
+          VITE_MATCHDAY_DEMO_ENABLED: "true"
           VITE_USE_PREVIEW_DATA: "true"
           VITE_USE_OPTIMIZED_IMAGES: "true"
         run: npx vite build

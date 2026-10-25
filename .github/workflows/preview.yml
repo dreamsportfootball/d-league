@@ -55,6 +55,7 @@ jobs:
       - name: Build isolated preview and validate static SEO
         env:
           VITE_ROUTER_MODE: hash
+          VITE_MATCHDAY_DEMO_ENABLED: 'true'
           VITE_USE_OPTIMIZED_IMAGES: 'true'
           VITE_ANALYTICS_DISABLED: 'true'
         run: |

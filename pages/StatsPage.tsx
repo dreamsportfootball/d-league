@@ -5,6 +5,7 @@ import AutoFitText from '../components/AutoFitText';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
+import RecordsHall from '../components/RecordsHall';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
@@ -506,6 +507,7 @@ const StatsPage: React.FC = () => {
             })}
           </div>
         )}
+        <RecordsHall />
       </div>
 
       {selectedMatchId && (

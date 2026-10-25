@@ -89,7 +89,7 @@ export const getCompletedSeasonRecords = (): Map<LeagueId, LeagueRecord[]> => {
       totalGoals.forEach((value, teamId) => {
         candidates.push({
           kind: 'SEASON_GOALS', value, subject: teamNames(teamId),
-          detail: `${season.shortName} · ${league} 完整賽季`, seasonId, league,
+          detail: `${league} 完整賽季`, seasonId, league,
         });
       });
       results.forEach((games, teamId) => {
@@ -101,7 +101,7 @@ export const getCompletedSeasonRecords = (): Map<LeagueId, LeagueRecord[]> => {
         });
         if (longest > 0) candidates.push({
           kind: 'WIN_STREAK', value: longest, subject: teamNames(teamId),
-          detail: `${season.shortName} · ${league} 連續正式賽事`, seasonId, league,
+          detail: `${league} 連續正式賽事`, seasonId, league,
         });
       });
     });

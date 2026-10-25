@@ -78,7 +78,7 @@ const MatchdaySpotlight: React.FC = () => {
                 ? (match.videoUrl ?? match.videoUrls?.firstHalf ?? match.videoUrls?.secondHalf)
                 : undefined;
               return (
-                <div key={match.id} className="border-t border-white/20 py-3">
+                <div key={match.id} data-matchday-fixture={match.id} className="border-t border-white/20 py-3">
                   <div className="flex items-center justify-between gap-3 text-xs font-medium text-white/60">
                     <span>{match.league} · 第{match.round}輪</span>
                     <span>{formatTaipeiTime(match.timestamp)} · {hasScore ? '完賽' : '賽果未登錄'}</span>

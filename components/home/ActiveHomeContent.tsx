@@ -7,6 +7,7 @@ import type { LeagueId } from '../../types/season';
 import BrandStory from '../BrandStory';
 import ClubGrid from '../ClubGrid';
 import MatchCenter from '../MatchCenter';
+import MatchdaySpotlight from '../MatchdaySpotlight';
 import NewsSection from '../NewsSection';
 import PhotoCarousel from '../PhotoCarousel';
 import PreSeasonStandings from '../PreSeasonStandings';
@@ -71,6 +72,8 @@ const ActiveHomeContent: React.FC = () => {
           <MatchCenter />
         </div>
       </div>
+
+      <MatchdaySpotlight />
 
       <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-6 md:px-6 md:py-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">

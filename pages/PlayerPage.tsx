@@ -5,7 +5,6 @@ import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
 import PlayerHonours from '../components/PlayerHonours';
-import PlayerShareCard from '../components/PlayerShareCard';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
@@ -242,8 +241,6 @@ const PlayerPage: React.FC = () => {
       (a, b) => new Date(b.match.timestamp).getTime() - new Date(a.match.timestamp).getTime(),
     );
 
-  const hasSeasonResults = appearanceRecords.length > 0 || preferredSeasonStats.eventMatches > 0;
-
   const seasonRows = history.flatMap((record) => {
     const seasonTeams = getPlayerSeasonTeams(record);
     const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
@@ -316,22 +313,6 @@ const PlayerPage: React.FC = () => {
                     </div>
                   ))}
                 </dl>
-
-                <div className="mt-3 sm:mt-4">
-                  <PlayerShareCard
-                    player={player}
-                    team={preferredRecord.team}
-                    seasonId={preferredRecord.seasonId}
-                    seasonLabel={preferredRecord.season.shortName}
-                    leagueLabel={preferredRecord.team?.leagueId ?? 'D LEAGUE'}
-                    image={image}
-                    appearances={appearanceRecords.length}
-                    goals={preferredSeasonStats.goals}
-                    yellowCards={preferredSeasonStats.yellowCards}
-                    redCards={preferredSeasonRedCards}
-                    hasSeasonResults={hasSeasonResults}
-                  />
-                </div>
 
                 {preferredRecord.team && (
                   <Link

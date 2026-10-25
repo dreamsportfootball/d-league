@@ -17,7 +17,6 @@ import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
-import TeamRecentForm from '../components/TeamRecentForm';
 import { isSeasonId } from '../config/seasons';
 import { getTeamKitAssets } from '../config/teamKitAssets';
 import { SeasonContext } from '../contexts/SeasonContext';
@@ -466,14 +465,6 @@ const TeamPage: React.FC = () => {
           <div className="mb-3 flex items-center border-b border-neutral-200 pb-3"><TrendingUp className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">排名走勢</h2></div>
           {rankHistory.length > 0 ? <TeamRankChart points={rankHistory} teamCount={activeLeagueTeams.length} /> : <p className="py-10 text-sm text-neutral-400">{seasonHasStarted ? '目前尚未形成完整輪次排名走勢' : '完成首輪正式比賽後更新排名走勢'}</p>}
         </section>
-
-        <TeamRecentForm
-          teamId={team.id}
-          seasonLabel={season.shortName}
-          matches={eligibleLeagueMatches}
-          teamMap={data.teamMap}
-          onMatchClick={setSelectedMatchId}
-        />
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-500">共 {teamMatches.length} 場</span></div>

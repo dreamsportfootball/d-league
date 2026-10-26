@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
@@ -6,6 +6,7 @@ import { getTeamIdentity } from '../services/entityData';
 import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
 import AutoFitText from './AutoFitText';
+import { useRankingMotion } from '../hooks/useRankingMotion';
 
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   const colorClass = result === 'W' ? 'bg-green-500' : result === 'D' ? 'bg-neutral-400' : 'bg-red-500';
@@ -25,11 +26,6 @@ const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact
 const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   const { activeSeason, seasonData } = useSeason();
   const standingsContainerRef = useRef<HTMLDivElement>(null);
-  const previousLayoutRef = useRef<{
-    context: string;
-    ranks: Map<string, number>;
-    positions: Map<string, number>;
-  } | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState(() => {
     if (variant !== 'page') return false;
     try {
@@ -51,44 +47,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   const isWidget = variant === 'widget';
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
 
-  // FLIP-style movement, exclusively when a known team's actual rank changes.
-  // Switching seasons/leagues or expanding mobile columns does not animate rankings.
-  useLayoutEffect(() => {
-    const container = standingsContainerRef.current;
-    if (!container) return;
-    const context = `${activeSeason.id}:${league}:${variant}`;
-    const ranks = new Map(displayed.map((row) => [row.teamId, row.rank]));
-    const containerTop = container.getBoundingClientRect().top;
-    const elements = Array.from(container.querySelectorAll('[data-motion-standings-row]')) as HTMLElement[];
-    const positions = new Map(elements.map((element) => [
-      element.dataset.motionStandingsRow ?? '',
-      element.getBoundingClientRect().top - containerTop,
-    ]));
-    const previous = previousLayoutRef.current;
-    const rankChanged = previous?.context === context &&
-      displayed.some((row) => previous.ranks.has(row.teamId) && previous.ranks.get(row.teamId) !== row.rank);
-
-    if (rankChanged && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      elements.forEach((element) => {
-        if (element.getBoundingClientRect().width === 0) return;
-        const key = element.dataset.motionStandingsRow ?? '';
-        const before = previous.positions.get(key);
-        const after = positions.get(key);
-        if (before === undefined || after === undefined) return;
-        const offset = before - after;
-        if (Math.abs(offset) < 2 || Math.abs(offset) > 600) return;
-        element.animate?.(
-          [
-            { transform: `translateY(${offset}px)` },
-            { transform: 'translateY(0)' },
-          ],
-          { duration: 240, easing: 'ease-out' },
-        );
-      });
-    }
-
-    previousLayoutRef.current = { context, ranks, positions };
-  });
+  useRankingMotion(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`, displayed);
   const relegationStart = leagueConfig && leagueConfig.relegationPlaces > 0 ? standings.length - leagueConfig.relegationPlaces + 1 : Number.POSITIVE_INFINITY;
   const isPromotionRank = (row: Standing): boolean =>
     row.tieStatus === 'NONE' && Boolean(leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces);

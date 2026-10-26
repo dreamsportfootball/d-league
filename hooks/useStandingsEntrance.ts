@@ -13,9 +13,9 @@ export function useStandingsEntrance(
     const root = rootRef.current;
     if (!root || prefersReducedMotion()) return undefined;
 
-    const visibleRows = Array.from(
-      root.querySelectorAll<HTMLElement>('[data-motion-standings-row]'),
-    ).filter((row) => row.getClientRects().length > 0);
+    const visibleRows = (Array.from(
+      root.querySelectorAll('[data-motion-standings-row]'),
+    ) as HTMLElement[]).filter((row) => row.getClientRects().length > 0);
 
     const removeObservers = visibleRows.map((row, index) =>
       onVisibleOnce(row, () => {

@@ -558,5 +558,41 @@
       }
     ],
     "competitionStatus": "ACTIVE"
+  },
+  {
+    "id": "t_niaoshi_2026",
+    "identityId": "tainan-niaoshi-fc",
+    "seasonId": "2026-27",
+    "leagueId": "L3",
+    "name": "台南鳥仕足球俱樂部",
+    "shortName": "台南鳥仕足球俱樂部",
+    "logo": "assets/seasons/2026-27/teams/tainan-niaoshi-fc.png",
+    "primaryColor": "#be1920",
+    "secondaryColor": "#ffffff",
+    "kits": {
+      "home": "#c73037",
+      "away": "#ecdfbe"
+    },
+    "socialLinks": {
+      "instagram": "https://www.instagram.com/birdmenfc_tainan/"
+    },
+    "staff": [
+      {
+        "role": "領隊",
+        "name": "王志誠",
+        "englishName": "Wong Chi Shing"
+      },
+      {
+        "role": "管理",
+        "name": "許御力",
+        "englishName": "Yu Li Shu"
+      },
+      {
+        "role": "教練",
+        "name": "王志誠",
+        "englishName": "Wong Chi Shing"
+      }
+    ],
+    "competitionStatus": "ACTIVE"
   }
 ]

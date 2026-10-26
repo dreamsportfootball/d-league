@@ -5,6 +5,7 @@ import type { LeagueId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDate, formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import AutoFitText from './AutoFitText';
+import AnimatedScore from './AnimatedScore';
 
 type LeagueFilter = LeagueId | 'ALL';
 type FullScheduleVariant = 'default' | 'team';
@@ -24,13 +25,13 @@ const renderScore = (match: Match, compact = false) => {
     match.awayScore !== null
   ) {
     return (
-      <span
+      <AnimatedScore
+        identity={match.id}
+        value={`${match.homeScore} - ${match.awayScore}`}
         className={compact
           ? 'font-display text-[18px] font-black leading-none tracking-tight text-brand-black tabular-nums'
           : 'font-display text-xl font-black tracking-tight text-brand-black tabular-nums md:text-2xl'}
-      >
-        {`${match.homeScore} - ${match.awayScore}`}
-      </span>
+      />
     );
   }
 
@@ -150,9 +151,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
                     <div className="flex min-w-[40px] items-center justify-center text-center">
                       {hasScore ? (
-                        <span className="font-display text-[15px] font-black leading-none tracking-tight text-brand-black tabular-nums">
-                          {match.homeScore} - {match.awayScore}
-                        </span>
+                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[15px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
                       ) : (
                         <span className="font-display text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">
                           VS
@@ -300,9 +299,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
                     <div className="flex min-w-[40px] items-center justify-center text-center">
                       {hasScore ? (
-                        <span className="font-display text-[17px] font-black tracking-tight text-brand-black tabular-nums">
-                          {match.homeScore} - {match.awayScore}
-                        </span>
+                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[17px] font-black tracking-tight text-brand-black tabular-nums" />
                       ) : (
                         <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">
                           VS

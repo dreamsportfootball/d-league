@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
-import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
 import ExperienceEnhancements from './components/ExperienceEnhancements';
@@ -12,6 +12,8 @@ import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
+const MotionDemoPage = lazy(() => import('./pages/MotionDemoPage'));
+const showMotionDemo = import.meta.env.VITE_MOTION_DEMO === 'true';
 const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
@@ -469,6 +471,7 @@ const App: React.FC = () => (
               />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/standings" element={<StandingsPage />} />
+              {showMotionDemo && <Route path="/motion-demo" element={<MotionDemoPage />} />}
               <Route path="/news" element={<NewsPage />} />
               <Route path="/stats" element={<StatsPage />} />
               <Route path="/news/:id" element={<ArticleDetailPage />} />
@@ -485,6 +488,14 @@ const App: React.FC = () => (
         </AppErrorBoundary>
       </main>
 
+      {showMotionDemo && (
+        <Link
+          to="/motion-demo"
+          className="fixed bottom-5 right-5 z-[1100] flex min-h-11 items-center rounded-md bg-brand-blue px-4 py-2.5 text-sm font-bold text-white shadow-lg transition-colors hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+        >
+          動效測試
+        </Link>
+      )}
       <Footer />
     </div>
   </SeasonProvider>

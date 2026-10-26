@@ -12,6 +12,8 @@ const PhotoCarousel: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
   const [isNearViewport, setIsNearViewport] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
   const [loadedIndices, setLoadedIndices] = useState<Set<number>>(() => new Set([0]));
 
   const nextSlide = () => {
@@ -47,10 +49,18 @@ const PhotoCarousel: React.FC = () => {
   }, [activeIndex, isNearViewport]);
 
   useEffect(() => {
-    if (!isNearViewport) return undefined;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReducedMotion(media.matches);
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (!isNearViewport || reducedMotion || isInteracting) return undefined;
     const interval = window.setInterval(nextSlide, 5000);
     return () => window.clearInterval(interval);
-  }, [isNearViewport]);
+  }, [isNearViewport, reducedMotion, isInteracting]);
 
   const handleTouchEnd = (event: React.TouchEvent) => {
     const swipeDistance = event.changedTouches[0].clientX - touchStartX;
@@ -78,7 +88,17 @@ const PhotoCarousel: React.FC = () => {
           <div className="mt-4 h-1 w-12 rounded-full bg-brand-blue" />
         </div>
 
-        <div className="relative mx-auto w-full max-w-5xl">
+        <div
+          className="relative mx-auto w-full max-w-5xl"
+          onMouseEnter={() => setIsInteracting(true)}
+          onMouseLeave={() => setIsInteracting(false)}
+          onFocusCapture={() => setIsInteracting(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              setIsInteracting(false);
+            }
+          }}
+        >
           <div
             className="group relative aspect-[16/10] overflow-hidden rounded-lg bg-neutral-950 shadow-2xl md:aspect-[16/7]"
             onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
@@ -87,8 +107,8 @@ const PhotoCarousel: React.FC = () => {
             {carouselImages.map((image, index) => (
               <div
                 key={image.id}
-                className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                  index === activeIndex ? 'z-10 scale-100 opacity-100' : 'z-0 scale-105 opacity-0'
+                className={`absolute inset-0 transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
+                  index === activeIndex ? 'z-10 translate-x-0 opacity-100' : 'z-0 translate-x-3 opacity-0'
                 }`}
               >
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950 text-center text-white">
@@ -112,19 +132,23 @@ const PhotoCarousel: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-8 flex justify-center space-x-3">
+          <div className="mt-4 flex justify-center gap-1">
             {carouselImages.map((image, index) => (
               <button
                 key={image.id}
                 type="button"
                 onClick={() => setActiveIndex(index)}
-                className={`h-1.5 rounded-full transition-all duration-500 ease-out ${
-                  index === activeIndex
-                    ? 'w-8 bg-brand-blue shadow-lg shadow-brand-blue/30'
-                    : 'w-2 bg-neutral-300 hover:bg-neutral-400'
-                }`}
+                className="flex h-11 min-w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
                 aria-label={`前往第 ${index + 1} 張圖片`}
-              />
+                aria-current={index === activeIndex ? 'true' : undefined}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-1.5 rounded-full transition-[width,background-color] duration-300 motion-reduce:transition-none ${
+                    index === activeIndex ? 'w-8 bg-brand-blue' : 'w-2 bg-neutral-300'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
@@ -6,6 +6,7 @@ import { getTeamLogoUrl } from '../services/teamBranding';
 import type { LeagueId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 import AutoFitText from './AutoFitText';
+import { useStandingsEntrance } from '../hooks/useStandingsEntrance';
 
 interface PreSeasonStandingsProps {
   league: LeagueId;
@@ -71,6 +72,8 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
   variant = 'page',
 }) => {
   const { activeSeasonId, seasonData } = useSeason();
+  const rootRef = useRef<HTMLDivElement>(null);
+  useStandingsEntrance(rootRef, `${activeSeasonId}:${league}:${variant}:preseason`);
   const [mobileExpanded, setMobileExpanded] = useState(() => {
     if (variant !== 'page') return false;
     try {
@@ -107,7 +110,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
 
   if (variant === 'widget') {
     return (
-      <div className="w-full text-xs">
+      <div ref={rootRef} className="w-full text-xs">
         <p className="mb-2 text-[10px] font-medium leading-5 text-neutral-400">
           賽季尚未開賽，積分榜將於首輪比賽後更新
         </p>
@@ -120,6 +123,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
         {rows.map(({ teamName, team, logoUrl }) => (
           <div
             key={teamName}
+            data-motion-standings-row={`preseason-widget-${teamName}`}
             className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-2"
           >
             <span className="pl-2 font-medium tabular-nums text-neutral-400">-</span>
@@ -140,7 +144,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
   }
 
   return (
-    <div className="w-full">
+    <div ref={rootRef} className="w-full">
       <p className="mb-3 text-xs font-medium leading-5 text-neutral-500">
         賽季尚未開賽，所有球隊目前場次及積分均為 0，名次將於首輪正式比賽後產生
       </p>
@@ -170,7 +174,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
             </thead>
             <tbody>
               {rows.map(({ teamName, team, logoUrl }) => (
-                <tr key={teamName} className="border-b border-neutral-100">
+                <tr key={teamName} data-motion-standings-row={`preseason-compact-${teamName}`} className="border-b border-neutral-100">
                   <td className="px-1 py-3 font-mono text-xs font-bold text-neutral-400">-</td>
                   <td className="py-1.5 pl-2 pr-1">
                     <TeamCell
@@ -212,7 +216,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
             </thead>
             <tbody>
               {rows.map(({ teamName, team, logoUrl }) => (
-                <tr key={teamName} className="border-b border-neutral-100">
+                <tr key={teamName} data-motion-standings-row={`preseason-expanded-${teamName}`} className="border-b border-neutral-100">
                   <td className="px-1 py-3 font-mono text-xs font-bold text-neutral-400">-</td>
                   <td className="py-1.5 pl-2 pr-2">
                     <TeamCell
@@ -256,7 +260,7 @@ const PreSeasonStandings: React.FC<PreSeasonStandingsProps> = ({
           </thead>
           <tbody>
             {rows.map(({ teamName, team, logoUrl }) => (
-              <tr key={teamName} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50">
+              <tr key={teamName} data-motion-standings-row={`preseason-desktop-${teamName}`} className="border-b border-neutral-100 transition-colors hover:bg-neutral-50/50">
                 <td className="px-1 py-3 font-mono text-sm font-bold text-neutral-400">-</td>
                 <td className="px-4 py-1.5">
                   <TeamCell

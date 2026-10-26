@@ -21,6 +21,7 @@ import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } fr
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
+import AnimatedScore from './AnimatedScore';
 import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
 import MatchVideoPlayer from './MatchVideoPlayer';
@@ -300,9 +301,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               >
                 {isFinished ? (
                   <>
-                    <span>{match.homeScore ?? '-'}</span>
+                    <AnimatedScore identity={`${match.id}:home`} value={match.homeScore ?? '-'} />
                     <span aria-hidden="true">-</span>
-                    <span>{match.awayScore ?? '-'}</span>
+                    <AnimatedScore identity={`${match.id}:away`} value={match.awayScore ?? '-'} />
                   </>
                 ) : 'VS'}
               </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
@@ -15,6 +15,8 @@ const Header: React.FC = () => {
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
+  const desktopNavRef = useRef<HTMLElement | null>(null);
+  const [activeUnderline, setActiveUnderline] = useState<{ left: number; width: number } | null>(null);
   const location = useLocation();
 
   const navItems = useMemo<NavItem[]>(() => [
@@ -74,6 +76,37 @@ const Header: React.FC = () => {
     return location.pathname === href || location.pathname.startsWith(`${href}/`);
   };
 
+  // One shared indicator moves between route links without changing their hit areas.
+  useLayoutEffect(() => {
+    const nav = desktopNavRef.current;
+    if (!nav) return undefined;
+    let mounted = true;
+    const measure = () => {
+      if (!mounted) return;
+      const active = nav.querySelector<HTMLElement>('[data-motion-nav-active="true"]');
+      const container = nav.getBoundingClientRect();
+      if (!active || container.width === 0) {
+        setActiveUnderline(null);
+        return;
+      }
+      const rect = active.getBoundingClientRect();
+      const next = { left: rect.left - container.left, width: rect.width };
+      setActiveUnderline((previous) =>
+        previous?.left === next.left && previous.width === next.width ? previous : next,
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(nav);
+    window.addEventListener('resize', measure);
+    void document.fonts?.ready.then(measure);
+    return () => {
+      mounted = false;
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [location.pathname, navItems]);
+
   const handleHomeScroll = (href: string) => {
     if (href === '/' && location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -123,6 +156,7 @@ const Header: React.FC = () => {
         </div>
 
         <nav
+          ref={desktopNavRef}
           className="absolute left-1/2 top-0 hidden h-16 max-w-[calc(100%-520px)] -translate-x-1/2 items-center gap-6 whitespace-nowrap text-sm font-bold uppercase tracking-wider text-brand-black xl:flex 2xl:gap-8"
           aria-label="主要導覽"
         >
@@ -157,6 +191,7 @@ const Header: React.FC = () => {
                       type="button"
                       aria-haspopup="menu"
                       aria-expanded={desktopExpanded}
+                      data-motion-nav-active={childActive ? 'true' : undefined}
                       onClick={() => setDesktopDropdownOpen(desktopExpanded ? null : item.name)}
                       className={`flex items-center transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 ${
                         childActive ? 'text-brand-blue' : ''
@@ -202,6 +237,7 @@ const Header: React.FC = () => {
                   <Link
                     to={item.href}
                     aria-current={isPathActive(item.href) ? 'page' : undefined}
+                    data-motion-nav-active={isPathActive(item.href) ? 'true' : undefined}
                     className={`relative flex h-full items-center rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/40 focus-visible:ring-offset-2 ${
                       isPathActive(item.href) ? 'text-brand-blue' : 'hover:text-brand-blue'
                     }`}
@@ -211,14 +247,20 @@ const Header: React.FC = () => {
                     }}
                   >
                     {item.name}
-                    {isPathActive(item.href) && (
-                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand-blue" />
-                    )}
                   </Link>
                 )}
               </div>
             );
           })}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 h-0.5 bg-brand-blue transition-[transform,width,opacity] duration-200 ease-out motion-reduce:transition-none"
+            style={{
+              width: activeUnderline?.width ?? 0,
+              opacity: activeUnderline ? 1 : 0,
+              transform: `translateX(${activeUnderline?.left ?? 0}px)`,
+            }}
+          />
         </nav>
 
         <button

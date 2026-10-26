@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
@@ -6,6 +6,8 @@ import { getTeamIdentity } from '../services/entityData';
 import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
 import AutoFitText from './AutoFitText';
+import { useRankingMotion } from '../hooks/useRankingMotion';
+import { useStandingsEntrance } from '../hooks/useStandingsEntrance';
 
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   const colorClass = result === 'W' ? 'bg-green-500' : result === 'D' ? 'bg-neutral-400' : 'bg-red-500';
@@ -24,6 +26,7 @@ const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact
 
 const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   const { activeSeason, seasonData } = useSeason();
+  const standingsContainerRef = useRef<HTMLDivElement>(null);
   const [mobileExpanded, setMobileExpanded] = useState(() => {
     if (variant !== 'page') return false;
     try {
@@ -44,6 +47,9 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   }), [activeSeason.rules, activeSeason.status, league, leagueConfig, seasonData.matchEvents, seasonData.matches, seasonData.teams]);
   const isWidget = variant === 'widget';
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
+
+  useRankingMotion(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`, displayed);
+  useStandingsEntrance(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`);
   const relegationStart = leagueConfig && leagueConfig.relegationPlaces > 0 ? standings.length - leagueConfig.relegationPlaces + 1 : Number.POSITIVE_INFINITY;
   const isPromotionRank = (row: Standing): boolean =>
     row.tieStatus === 'NONE' && Boolean(leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces);
@@ -88,7 +94,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
 
   if (isWidget) {
     return (
-      <div className="w-full text-xs">
+      <div ref={standingsContainerRef} className="w-full text-xs">
         <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 border-b border-neutral-100 py-2 text-[10px] font-bold tracking-wider text-neutral-500">
           <span>#</span><span>球隊</span><span className="text-center">場次</span><span className="text-center">積分</span>
         </div>
@@ -96,7 +102,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
           const team = seasonData.teamMap[row.teamId];
           if (!team) return null;
           return (
-            <div key={row.teamId} className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-3">
+            <div key={row.teamId} data-motion-standings-row={`widget-${row.teamId}`} className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-3">
               <div className="relative flex items-center pl-1">
                 <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(row)}`} />
                 <span className="ml-2 font-medium tabular-nums text-brand-black">{row.rank}</span>
@@ -121,7 +127,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   }
 
   return (
-    <div className="w-full">
+    <div ref={standingsContainerRef} className="w-full">
       <div className="mb-2 flex justify-end md:hidden">
         <button
           type="button"
@@ -150,7 +156,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
               if (!team) return null;
               const statusText = rowStatusText(row);
               return (
-                <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
+                <tr key={row.teamId} data-motion-standings-row={`mobile-compact-${row.teamId}`} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
                   <td className="px-1 py-3">
                     <div className="relative flex items-center pl-1">
                       <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
@@ -193,7 +199,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
               if (!team) return null;
               const statusText = rowStatusText(row);
               return (
-                <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
+                <tr key={row.teamId} data-motion-standings-row={`mobile-expanded-${row.teamId}`} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
                   <td className="px-1 py-3">
                     <div className="relative flex items-center pl-1">
                       <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
@@ -241,7 +247,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
             if (!team) return null;
             const statusText = rowStatusText(row);
             return (
-              <tr key={row.teamId} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
+              <tr key={row.teamId} data-motion-standings-row={`desktop-${row.teamId}`} className={`border-b border-neutral-100 transition-colors ${pageRowClass(row)}`}>
                 <td className="px-1 py-3">
                   <div className="relative flex items-center pl-1">
                     <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />

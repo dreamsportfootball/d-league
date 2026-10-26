@@ -59,7 +59,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
     const context = `${activeSeason.id}:${league}:${variant}`;
     const ranks = new Map(displayed.map((row) => [row.teamId, row.rank]));
     const containerTop = container.getBoundingClientRect().top;
-    const elements = Array.from(container.querySelectorAll<HTMLElement>('[data-motion-standings-row]'));
+    const elements = Array.from(container.querySelectorAll('[data-motion-standings-row]')) as HTMLElement[];
     const positions = new Map(elements.map((element) => [
       element.dataset.motionStandingsRow ?? '',
       element.getBoundingClientRect().top - containerTop,

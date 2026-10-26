@@ -93,6 +93,24 @@ section[aria-label="店家餐點照片"] > .grid > div {
   }
 }
 
+/* Fixture filtering is user-triggered; no motion when reduced motion is requested. */
+@media (prefers-reduced-motion: no-preference) {
+  .dleague-schedule-enter {
+    animation: dleague-schedule-enter 220ms ease-out;
+  }
+
+  @keyframes dleague-schedule-enter {
+    from {
+      opacity: 0.65;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;

@@ -7,6 +7,7 @@ import type { Standing } from '../types';
 import type { LeagueId } from '../types/season';
 import AutoFitText from './AutoFitText';
 import { useRankingMotion } from '../hooks/useRankingMotion';
+import { useStandingsEntrance } from '../hooks/useStandingsEntrance';
 
 const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   const colorClass = result === 'W' ? 'bg-green-500' : result === 'D' ? 'bg-neutral-400' : 'bg-red-500';
@@ -48,6 +49,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
 
   useRankingMotion(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`, displayed);
+  useStandingsEntrance(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`);
   const relegationStart = leagueConfig && leagueConfig.relegationPlaces > 0 ? standings.length - leagueConfig.relegationPlaces + 1 : Number.POSITIVE_INFINITY;
   const isPromotionRank = (row: Standing): boolean =>
     row.tieStatus === 'NONE' && Boolean(leagueConfig && leagueConfig.promotionPlaces > 0 && row.rank <= leagueConfig.promotionPlaces);

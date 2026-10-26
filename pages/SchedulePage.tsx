@@ -597,12 +597,14 @@ const SchedulePage: React.FC = () => {
               primaryButton={{ label: '清除篩選', onClick: clearAppliedFilters }}
             />
           ) : (
-            <FullSchedule
-              matches={filteredMatches}
-              teamMap={seasonData.teamMap}
-              onMatchClick={selectMatch}
-              leagueFilter="ALL"
-            />
+            <div key={`${activeSeasonId}:${JSON.stringify(filters)}`} className="dleague-schedule-enter">
+              <FullSchedule
+                matches={filteredMatches}
+                teamMap={seasonData.teamMap}
+                onMatchClick={selectMatch}
+                leagueFilter="ALL"
+              />
+            </div>
           )}
         </div>
       </div>

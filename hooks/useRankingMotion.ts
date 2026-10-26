@@ -13,6 +13,7 @@ export function useRankingMotion(
   containerRef: RefObject<HTMLElement | null>,
   context: string,
   rows: readonly RankedItem[],
+  durationMs = 240,
 ): void {
   const previousLayoutRef = useRef<{
     context: string;
@@ -50,7 +51,7 @@ export function useRankingMotion(
             { transform: `translateY(${delta}px)` },
             { transform: 'translateY(0)' },
           ],
-          { duration: 240, easing: 'ease-out' },
+          { duration: durationMs, easing: 'ease-out' },
         );
       });
     }

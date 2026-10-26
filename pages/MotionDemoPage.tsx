@@ -3,6 +3,7 @@ import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AnimatedScore from '../components/AnimatedScore';
 import { useRankingMotion } from '../hooks/useRankingMotion';
+import { useStandingsEntrance } from '../hooks/useStandingsEntrance';
 
 const demoTeams = [
   { id: 'a', name: '示範球隊 A' },
@@ -11,10 +12,46 @@ const demoTeams = [
   { id: 'd', name: '示範球隊 D' },
 ] as const;
 
+const EntranceDemo: React.FC = () => {
+  const listRef = useRef<HTMLDivElement>(null);
+  useStandingsEntrance(listRef, 'visitor-entrance-demo');
+
+  return (
+    <div className="mt-6 grid gap-8 lg:grid-cols-2">
+      <div className="border-y border-neutral-200 bg-white px-5 py-7">
+        <p className="mb-5 text-xs font-bold text-neutral-500">已公布的比賽結果</p>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm font-bold">示範球隊 A</span>
+          <AnimatedScore identity="visitor-entry-match" value="2 : 1" className="font-display text-3xl font-black tabular-nums" />
+          <span className="text-sm font-bold">示範球隊 B</span>
+        </div>
+        <p className="mt-4 text-xs text-neutral-500">直接顯示真實比分，數字只淡入、不假裝從 0:0 更新</p>
+      </div>
+      <div ref={listRef} className="bg-white">
+        <div className="grid grid-cols-[44px_1fr_55px] border-b border-neutral-200 px-3 py-2 text-xs font-bold text-neutral-500">
+          <span>名次</span><span>球隊</span><span className="text-right">積分</span>
+        </div>
+        {demoTeams.map((team, index) => (
+          <div
+            key={team.id}
+            data-motion-standings-row={`visitor-${team.id}`}
+            className="grid min-h-[52px] grid-cols-[44px_1fr_55px] items-center border-b border-neutral-100 px-3"
+          >
+            <span className="font-display font-bold">{index + 1}</span>
+            <span className="text-sm font-semibold">{team.name}</span>
+            <span className="text-right font-display font-bold text-brand-blue">{12 - index * 3}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 /** Isolated illustration: never writes to season data or match results. */
 const MotionDemoPage: React.FC = () => {
   const [updated, setUpdated] = useState(false);
   const [slowMotion, setSlowMotion] = useState(true);
+  const [entranceKey, setEntranceKey] = useState(0);
   const standingsRef = useRef<HTMLDivElement>(null);
   const order = updated
     ? [demoTeams[1], demoTeams[0], demoTeams[2], demoTeams[3]]
@@ -44,7 +81,7 @@ const MotionDemoPage: React.FC = () => {
         動效實際展示
       </h1>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-neutral-600">
-        點擊下方按鈕，比分會更新，積分榜第一、二名會交換位置。動畫使用網站實際的比分元件與排名移動邏輯，測試數字不會寫入任何正式資料。
+        上半部模擬「同一頁面即時更新」，下半部可重播「一般訪客進入頁面」的真實呈現效果。全部使用示範資料，不會寫入正式賽果。
       </p>
 
       <div className="mt-8 flex flex-wrap items-center gap-3 border-b border-neutral-200 pb-8">
@@ -119,6 +156,22 @@ const MotionDemoPage: React.FC = () => {
             使用與正式積分榜相同的排名位移動畫；僅真正改變順位才觸發
           </p>
         </div>
+      </div>
+      <div className="mt-12 border-t border-neutral-200 pt-8">
+        <p className="text-[11px] font-black uppercase tracking-[0.2em] text-brand-blue">03 / NORMAL VISITOR</p>
+        <h2 className="mt-2 font-display text-2xl font-bold">一般訪客真正看得到的效果</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-neutral-600">
+          不必等即時資料更新。訪客打開已有結果的賽程或積分榜，比分與排名列在進入畫面時輕微淡入；數值與名次保持真實，不製造升降或進球假象。
+        </p>
+        <button
+          type="button"
+          onClick={() => setEntranceKey((current) => current + 1)}
+          className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-md border border-brand-blue px-4 py-2 text-sm font-bold text-brand-blue hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+        >
+          <RotateCcw size={16} aria-hidden="true" />
+          重播訪客進場效果
+        </button>
+        <EntranceDemo key={entranceKey} />
       </div>
       <div className="mt-12 flex flex-wrap gap-5 border-t border-neutral-200 pt-6 text-sm font-bold text-brand-blue">
         <Link to="/schedule" className="hover:underline">查看真實賽程效果</Link>

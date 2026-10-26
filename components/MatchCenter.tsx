@@ -7,6 +7,7 @@ import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import AutoFitText from './AutoFitText';
+import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
 import Tabs from './Tabs';
 
@@ -86,12 +87,14 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
                   />
                 </div>
               </div>
-              <div
-                className={`ml-2 shrink-0 font-display text-xl font-bold tabular-nums md:text-2xl ${
-                  isFinished ? 'text-brand-black' : 'text-neutral-300'
-                }`}
-              >
-                {isFinished ? score ?? '-' : '-'}
+              <div className="ml-2 shrink-0">
+                <AnimatedScore
+                  identity={`${match.id}:${team.id}`}
+                  value={isFinished ? score ?? '-' : '-'}
+                  className={`font-display text-xl font-bold tabular-nums md:text-2xl ${
+                    isFinished ? 'text-brand-black' : 'text-neutral-300'
+                  }`}
+                />
               </div>
             </div>
           ))}

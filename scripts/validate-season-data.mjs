@@ -149,6 +149,18 @@ for (const season of seasons) {
     }
   }
 
+  // Name-keyed images are unsafe when different people share the same name.
+  if (season === CURRENT_SEASON_ID) {
+    const nameCounts = new Map();
+    for (const player of players) {
+      nameCounts.set(player.name, (nameCounts.get(player.name) ?? 0) + 1);
+    }
+    for (const [name, count] of nameCounts) {
+      if (count > 1 && Object.hasOwn(images, name)) {
+        fail(season + ': ambiguous photo mapping for name "' + name + '" (' + count + ' players)');
+      }
+    }
+  }
   const playerNames = new Set(players.map((player) => player.name));
   for (const [name, path] of Object.entries(images)) {
     asset(path, `${season} player image ${name}`);

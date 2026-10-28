@@ -2,85 +2,103 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CURRENT_SEASON_ID } from '../config/siteManifest.js';
 
-const root = process.cwd();
-const seasonDir = join(root, 'data', 'seasons', CURRENT_SEASON_ID);
-const importsDir = join(seasonDir, 'registrationImports');
-const teamsPath = join(seasonDir, 'teams.json');
-const playersPath = join(seasonDir, 'players.json');
-
-const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
-const writeJson = (path, value) => writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
-const fail = (message) => { throw new Error(`registration imports: ${message}`); };
-
+const dir = join(process.cwd(), 'data/seasons', CURRENT_SEASON_ID);
+const importsDir = join(dir, 'registrationImports');
+const teamsPath = join(dir, 'teams.json');
+const playersPath = join(dir, 'players.json');
+const fail = (reason) => { throw new Error('registration imports: ' + reason); };
+const args = process.argv.slice(2);
+if (args.some((arg) => arg !== '--replace-existing')) fail('unsupported argument (only --replace-existing allowed)');
+const replace = args.includes('--replace-existing');
 if (!existsSync(importsDir)) {
   console.log('registration imports: no import directory');
   process.exit(0);
 }
 
-const importFiles = readdirSync(importsDir)
-  .filter((name) => name.endsWith('.json'))
-  .sort();
+const files = readdirSync(importsDir).filter((name) => name.endsWith('.json')).sort();
+const sourceTeams = readFileSync(teamsPath, 'utf8');
+const sourcePlayers = readFileSync(playersPath, 'utf8');
+let teams = JSON.parse(sourceTeams);
+let players = JSON.parse(sourcePlayers);
+let added = 0;
+let replaced = 0;
+let retained = 0;
+let unchanged = 0;
+const importedTeamIds = new Set();
 
-let teams = readJson(teamsPath);
-let players = readJson(playersPath);
-let importedTeamCount = 0;
-let importedPlayerCount = 0;
-
-for (const fileName of importFiles) {
-  const payload = readJson(join(importsDir, fileName));
+for (const fileName of files) {
+  const payload = JSON.parse(readFileSync(join(importsDir, fileName), 'utf8'));
   const team = payload?.team;
-  const importedPlayers = payload?.players;
+  if (!team || typeof team !== 'object' || Array.isArray(team)) fail(fileName + ': missing team');
+  if (!Array.isArray(payload.players)) fail(fileName + ': missing players');
+  if (team.seasonId !== CURRENT_SEASON_ID) fail(fileName + ': wrong season');
+  if (typeof team.id !== 'string' || !team.id.trim()) fail(fileName + ': invalid team id');
+  if (typeof team.identityId !== 'string' || !team.identityId.trim()) fail(fileName + ': invalid team identityId');
+  if (importedTeamIds.has(team.id)) fail(fileName + ': duplicate team import');
+  importedTeamIds.add(team.id);
 
-  if (!team || typeof team !== 'object' || Array.isArray(team)) {
-    fail(`${fileName}: missing team object`);
-  }
-  if (!Array.isArray(importedPlayers)) {
-    fail(`${fileName}: players must be an array`);
-  }
-  if (team.seasonId !== CURRENT_SEASON_ID) {
-    fail(`${fileName}: team seasonId must be ${CURRENT_SEASON_ID}`);
-  }
-  if (typeof team.id !== 'string' || !team.id.trim()) fail(`${fileName}: team id is required`);
-  if (typeof team.identityId !== 'string' || !team.identityId.trim()) fail(`${fileName}: team identityId is required`);
-
-  const seenPlayerIds = new Set();
-  const seenIdentityIds = new Set();
-  const seenPositiveNumbers = new Set();
-  const normalizedPlayers = importedPlayers.map((player, index) => {
-    const label = `${fileName} player ${index + 1}`;
-    if (!player || typeof player !== 'object' || Array.isArray(player)) fail(`${label}: invalid player object`);
-    if (player.teamId !== team.id) fail(`${label}: teamId must match ${team.id}`);
-    if (typeof player.id !== 'string' || !player.id.trim()) fail(`${label}: id is required`);
-    if (seenPlayerIds.has(player.id)) fail(`${label}: duplicate id ${player.id}`);
-    seenPlayerIds.add(player.id);
-    if (typeof player.identityId !== 'string' || !player.identityId.trim()) fail(`${label}: identityId is required`);
-    if (seenIdentityIds.has(player.identityId)) fail(`${label}: duplicate identityId ${player.identityId}`);
-    seenIdentityIds.add(player.identityId);
-    if (typeof player.name !== 'string' || !player.name.trim()) fail(`${label}: name is required`);
-
-    const shirtNumber = player.number;
-    if (shirtNumber !== null && (!Number.isInteger(shirtNumber) || shirtNumber < 1 || shirtNumber > 99)) {
-      fail(`${label}: shirt number must be 1-99 or null`);
+  const ids = new Set();
+  const identities = new Set();
+  const numbers = new Set();
+  const incoming = payload.players.map((p, index) => {
+    const label = fileName + ' player ' + (index + 1);
+    if (!p || typeof p !== 'object' || Array.isArray(p)) fail(label + ': invalid player');
+    if (p.teamId !== team.id) fail(label + ': teamId mismatch');
+    if (typeof p.id !== 'string' || !p.id.trim() || ids.has(p.id)) fail(label + ': invalid/duplicate player id');
+    ids.add(p.id);
+    if (typeof p.identityId !== 'string' || !p.identityId.trim() || identities.has(p.identityId)) fail(label + ': invalid/duplicate identityId');
+    identities.add(p.identityId);
+    if (typeof p.name !== 'string' || !p.name.trim()) fail(label + ': missing name');
+    if (p.number !== null && (!Number.isInteger(p.number) || p.number < 1 || p.number > 99)) fail(label + ': invalid shirt number');
+    if (p.number !== null) {
+      if (numbers.has(p.number)) fail(label + ': duplicate shirt number');
+      numbers.add(p.number);
     }
-    if (shirtNumber !== null) {
-      if (seenPositiveNumbers.has(shirtNumber)) fail(`${label}: duplicate shirt number ${shirtNumber}`);
-      seenPositiveNumbers.add(shirtNumber);
-    }
-
-    // Canonical season data uses 0 as the internal sentinel for an unconfirmed shirt number.
-    return { ...player, number: shirtNumber ?? 0 };
+    return { ...p, number: p.number ?? 0 };
   });
 
-  teams = teams.filter((existing) => existing.id !== team.id && existing.identityId !== team.identityId);
-  teams.push(team);
+  const current = teams.find((t) => t.id === team.id);
+  const identityMatch = teams.find((t) => t.identityId === team.identityId);
+  if ((current && current.identityId !== team.identityId) ||
+      (identityMatch && identityMatch.id !== team.id)) {
+    fail(fileName + ': conflicting team identity');
+  }
 
-  players = players.filter((existing) => existing.teamId !== team.id && !seenPlayerIds.has(existing.id));
-  players.push(...normalizedPlayers);
+  // Once a team's canonical record exists, it is authoritative. An older
+  // registration package cannot overwrite later shirt/name/staff edits.
+  if (current && !replace) {
+    const sortPlayers = (list) => [...list].sort((a, b) => a.id.localeCompare(b.id));
+    const same = JSON.stringify(current) === JSON.stringify(team) &&
+      JSON.stringify(sortPlayers(players.filter((p) => p.teamId === team.id))) === JSON.stringify(sortPlayers(incoming));
+    if (same) unchanged += 1;
+    else {
+      retained += 1;
+      console.warn('registration imports: ' + fileName + ': canonical roster retained; review diff before --replace-existing');
+    }
+    continue;
+  }
 
-  importedTeamCount += 1;
-  importedPlayerCount += normalizedPlayers.length;
+  const unaffected = players.filter((p) => p.teamId !== team.id);
+  const unaffectedIds = new Set(unaffected.map((p) => p.id));
+  const unaffectedIdentities = new Set(unaffected.map((p) => p.identityId).filter(Boolean));
+  for (const p of incoming) {
+    if (unaffectedIds.has(p.id) || unaffectedIdentities.has(p.identityId)) {
+      fail(fileName + ': player identity belongs to another team: ' + p.id);
+    }
+  }
+
+  teams = [...teams.filter((t) => t.id !== team.id), team];
+  players = [...unaffected, ...incoming];
+  if (current) replaced += 1;
+  else added += 1;
 }
 
-writeJson(teamsPath, teams);
-writeJson(playersPath, players);
-console.log(`registration imports: applied ${importedTeamCount} team(s), ${importedPlayerCount} player(s)`);
+// Validate all imported JSON files before writing either canonical file.
+if (added + replaced) {
+  const nextTeams = JSON.stringify(teams, null, 2) + '\n';
+  const nextPlayers = JSON.stringify(players, null, 2) + '\n';
+  if (nextTeams !== sourceTeams) writeFileSync(teamsPath, nextTeams);
+  if (nextPlayers !== sourcePlayers) writeFileSync(playersPath, nextPlayers);
+}
+console.log('registration imports: added ' + added + ', replaced ' + replaced +
+  ', retained ' + retained + ', unchanged ' + unchanged + ' team(s)');

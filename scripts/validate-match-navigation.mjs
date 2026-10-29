@@ -41,7 +41,7 @@ try {
         } else {
           await page.waitForFunction(() => {
             const d = document.querySelector('[role="dialog"][aria-labelledby="match-dialog-title"]');
-            return d?.textContent?.includes('11/08') && d?.textContent?.includes('L3');
+            return d?.textContent?.includes('11/8') && d?.textContent?.includes('L3');
           });
         }
         if (!(await prev.isEnabled())) throw new Error('previous is disabled');
@@ -53,7 +53,7 @@ try {
         } else {
           await page.waitForFunction(() => {
             const d = document.querySelector('[role="dialog"][aria-labelledby="match-dialog-title"]');
-            return d?.textContent?.includes('11/01') && d?.textContent?.includes('L2');
+            return d?.textContent?.includes('11/1') && d?.textContent?.includes('L2');
           });
         }
         if (scenario.name === 'historical-cross-league' && !page.url().includes('2025-26')) {

@@ -491,7 +491,7 @@
     ],
     "competitionStatus": "ACTIVE",
     "kits": {
-      "home": "#ffffff",
+      "home": "#111111",
       "away": "#ffffff"
     }
   },

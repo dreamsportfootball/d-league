@@ -154,6 +154,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const awayTeam = seasonData.teamMap[match.awayTeamId];
   if (!homeTeam || !awayTeam) return null;
 
+  const homeKitAsset = getTeamKitAssets(activeSeason.id, homeTeam.id)?.home;
+  const awayKitAsset = getTeamKitAssets(activeSeason.id, awayTeam.id)?.away;
+
   const lineup = seasonData.lineups[match.id];
   const homePlayers = lineup?.homePlayerIds
     .map((playerId) => seasonData.players.find((player) => player.id === playerId))
@@ -225,31 +228,14 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     }
   };
 
-  const renderTeamIdentity = (team: SeasonTeam, side: 'home' | 'away') => {
-    const kitAsset = getTeamKitAssets(activeSeason.id, team.id)?.[side];
-    const kitLabel = `${team.name}${side === 'home' ? '主場' : '客場'}球衣`;
+  const renderTeamIdentity = (team: SeasonTeam) => {
     const content = (
       <>
-        <span className="relative mb-3 inline-flex h-[68px] w-[68px] shrink-0 items-center justify-center sm:mb-4 sm:h-24 sm:w-24">
-          <img
-            src={team.logo}
-            alt={team.name}
-            className="h-full w-full object-contain"
-          />
-          {kitAsset && (
-            <img
-              key={kitAsset}
-              src={assetUrl(kitAsset)}
-              alt={kitLabel}
-              title={kitLabel}
-              loading="lazy"
-              decoding="async"
-              draggable={false}
-              onError={(event) => { event.currentTarget.hidden = true; }}
-              className="pointer-events-none absolute -bottom-1 -right-2 h-9 w-7 select-none object-contain drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)] sm:-right-3 sm:h-12 sm:w-9"
-            />
-          )}
-        </span>
+        <img
+          src={team.logo}
+          alt={team.name}
+          className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
+        />
         <div className="w-full min-w-0 text-center">
           <AutoFitText
             text={team.name}
@@ -308,16 +294,47 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">
-            {renderTeamIdentity(homeTeam, 'home')}
+            {renderTeamIdentity(homeTeam)}
 
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
                 id="match-dialog-title"
-                className="flex items-center justify-center gap-[0.16em] font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
+                className="relative flex items-center justify-center gap-[0.16em] font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
                 aria-label={isFinished
                   ? `${homeTeam.name} ${match.homeScore ?? '-'} 比 ${match.awayScore ?? '-'} ${awayTeam.name}`
                   : `${homeTeam.name} 對 ${awayTeam.name}`}
               >
+                {(homeKitAsset || awayKitAsset) && (
+                  <span
+                    className="pointer-events-none absolute bottom-full left-1/2 mb-0.5 flex -translate-x-1/2 items-end justify-center gap-1.5 sm:mb-1 sm:gap-2"
+                    aria-hidden="true"
+                  >
+                    {homeKitAsset && (
+                      <img
+                        src={assetUrl(homeKitAsset)}
+                        alt=""
+                        title={`${homeTeam.name} 主場球衣`}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        onError={(event) => { event.currentTarget.hidden = true; }}
+                        className="h-7 w-6 shrink-0 object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] sm:h-9 sm:w-8"
+                      />
+                    )}
+                    {awayKitAsset && (
+                      <img
+                        src={assetUrl(awayKitAsset)}
+                        alt=""
+                        title={`${awayTeam.name} 客場球衣`}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        onError={(event) => { event.currentTarget.hidden = true; }}
+                        className="h-7 w-6 shrink-0 object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] sm:h-9 sm:w-8"
+                      />
+                    )}
+                  </span>
+                )}
                 {isFinished ? (
                   <>
                     <AnimatedScore identity={`${match.id}:home`} value={match.homeScore ?? '-'} />
@@ -331,7 +348,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               </span>
             </div>
 
-            {renderTeamIdentity(awayTeam, 'away')}
+            {renderTeamIdentity(awayTeam)}
           </div>
 
           <div className="mx-auto mt-7 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:mt-8 sm:flex sm:w-auto sm:max-w-none sm:justify-center">

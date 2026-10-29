@@ -52,7 +52,7 @@ const TEAM_KIT_ASSETS: Partial<Record<SeasonId, Record<string, TeamKitAssetPair>
       away: 'assets/seasons/2026-27/kits/pingtung-wild-ape-fc-away.png',
     },
     t_kaohsiung_black_knights_2026: {
-      home: 'assets/seasons/2026-27/kits/kaohsiung-black-knights-away.png',
+      home: 'assets/seasons/2026-27/kits/kaohsiung-black-knights-home.png',
       away: 'assets/seasons/2026-27/kits/kaohsiung-black-knights-away.png',
     },
     t_kuromi_2026: {

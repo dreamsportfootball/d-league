@@ -94,6 +94,10 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
   Record<SeasonId, Record<string, Record<string, TeamKitVariant>>>
 > = {
   '2026-27': {
+    'm2627-003': {
+      // Matchday exception: away team wears its black home kit by organizer approval.
+      t_kaohsiung_black_knights_2026: 'home',
+    },
     'm2627-004': {
       t_kaohsiung_amateur_2026: 'home',
     },

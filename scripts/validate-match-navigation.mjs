@@ -6,9 +6,31 @@ const scenarios = [
   { name: 'schedule-cross-league', path: '/schedule?season=2026-27&match=m2627-003', start: 'm2627-003', next: 'm2627-004' },
   { name: 'schedule-cross-matchday', path: '/schedule?season=2026-27&match=m2627-006', start: 'm2627-006', next: 'm2627-007' },
   { name: 'standalone-cross-league', path: '/matches/m2627-003', start: 'm2627-003', next: 'm2627-004', direct: true },
+  { name: 'black-knights-default-away-kit', path: '/schedule?season=2026-27&match=m2627-021', start: 'm2627-021', next: 'm2627-022' },
   { name: 'historical-cross-league', path: '/schedule?season=2025-26&match=m2', start: 'm2', next: 'm3' },
   { name: 'home-cross-matchday', path: '/', start: 'm2627-006', next: 'm2627-007', home: true },
 ];
+const matchKitExpectations = {
+  'm2627-003': { title: '高雄黑騎士足球隊 主場球衣', filename: 'kaohsiung-black-knights-home' },
+  'm2627-004': { title: '高雄業餘足球俱樂部 主場球衣', filename: 'kaohsiung-amateur-fc-home' },
+  'm2627-021': { title: '高雄黑騎士足球隊 客場球衣', filename: 'kaohsiung-black-knights-away' },
+};
+
+const verifyMatchKit = async (dialog, matchId) => {
+  const expectation = matchKitExpectations[matchId];
+  if (!expectation) return;
+  const kit = dialog.locator('img[title="' + expectation.title + '"]');
+  await kit.waitFor({ state: 'visible' });
+  const src = await kit.getAttribute('src');
+  if (!src?.includes(expectation.filename)) {
+    throw new Error(matchId + ': expected ' + expectation.filename + ', got ' + src);
+  }
+  await kit.evaluate(async (img) => {
+    if (!img.complete) await new Promise((resolve) => img.addEventListener('load', resolve, { once: true }));
+    if (img.naturalWidth === 0) throw new Error('Kit image failed to load');
+  });
+};
+
 const browser = await chromium.launch({ headless: true });
 const failures = [];
 
@@ -30,6 +52,7 @@ try {
         }
         const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
         await dialog.waitFor({ state: 'visible' });
+        await verifyMatchKit(dialog, scenario.start);
         const next = dialog.getByRole('button', { name: '下一場' });
         const prev = dialog.getByRole('button', { name: '上一場' });
         if (!(await next.isEnabled())) throw new Error('next is disabled');
@@ -44,6 +67,7 @@ try {
             return d?.textContent?.includes('11/8') && d?.textContent?.includes('L3');
           });
         }
+        await verifyMatchKit(dialog, scenario.next);
         if (!(await prev.isEnabled())) throw new Error('previous is disabled');
         await prev.click();
         if (scenario.direct) {

@@ -213,7 +213,9 @@ const MediaPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <PhotoUsageNotice />
+                <div className="mt-6 md:mt-8">
+                  <PhotoUsageNotice />
+                </div>
               </div>
             )}
 

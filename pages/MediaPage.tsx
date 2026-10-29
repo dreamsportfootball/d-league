@@ -41,6 +41,17 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
   </a>
 );
 
+const PhotoUsageNotice: React.FC = () => (
+  <section aria-labelledby="photo-usage-notice-title">
+    <h2 id="photo-usage-notice-title" className="mb-0 text-xs font-bold leading-5 text-brand-black md:text-sm">
+      照片使用須知
+    </h2>
+    <p className="text-xs leading-5 text-neutral-500 md:text-sm md:leading-5">
+      參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
+    </p>
+  </section>
+);
+
 const MediaPage: React.FC = () => {
   const {
     activeSeasonId,
@@ -142,16 +153,21 @@ const MediaPage: React.FC = () => {
         />
 
         {!hasMedia ? (
-          <EmptyState
-            eyebrow="媒體更新"
-            title={`${activeSeason.shortName} 賽事媒體尚未發布`}
-            description="賽事相簿及全場影片會在比賽日後陸續更新。"
-            showRegistrationLink={false}
-            primaryAction={alternativeSeason ? {
-              label: `查看 ${alternativeSeason.shortName} 賽事媒體`,
-              to: `/media?season=${alternativeSeason.id}`,
-            } : undefined}
-          />
+          <>
+            <EmptyState
+              eyebrow="媒體更新"
+              title={`${activeSeason.shortName} 賽事媒體尚未發布`}
+              description="賽事相簿及全場影片會在比賽日後陸續更新。"
+              showRegistrationLink={false}
+              primaryAction={alternativeSeason ? {
+                label: `查看 ${alternativeSeason.shortName} 賽事媒體`,
+                to: `/media?season=${alternativeSeason.id}`,
+              } : undefined}
+            />
+            <div className="mt-6 md:mt-8">
+              <PhotoUsageNotice />
+            </div>
+          </>
         ) : (
           <>
             {reversedAlbums.length > 0 && (
@@ -197,14 +213,13 @@ const MediaPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <section aria-labelledby="photo-usage-notice-title" className="mt-0">
-                  <h2 id="photo-usage-notice-title" className="mb-0 text-xs font-bold leading-5 text-brand-black md:text-sm">
-                    照片使用須知
-                  </h2>
-                  <p className="text-xs leading-5 text-neutral-500 md:text-sm md:leading-5">
-                    參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
-                  </p>
-                </section>
+                <PhotoUsageNotice />
+              </div>
+            )}
+
+            {reversedAlbums.length === 0 && (
+              <div className="mb-8">
+                <PhotoUsageNotice />
               </div>
             )}
 

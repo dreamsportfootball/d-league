@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import type { Match } from '../types';
 import { MatchStatus } from '../types';
-import type { LeagueId } from '../types/season';
+import type { LeagueId, SeasonId } from '../types/season';
+import { getTeamKitAssets } from '../config/teamKitAssets';
+import { assetUrl } from '../services/seasonDataJson';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDate, formatTaipeiDateWithWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import AutoFitText from './AutoFitText';
@@ -11,6 +13,7 @@ type LeagueFilter = LeagueId | 'ALL';
 type FullScheduleVariant = 'default' | 'team';
 
 interface FullScheduleProps {
+  seasonId: SeasonId;
   matches: Match[];
   teamMap: Record<string, SeasonTeam>;
   onMatchClick: (matchId: string) => void;
@@ -51,7 +54,62 @@ const getMatchStatusLabel = (match: Match): string => {
   return match.status === MatchStatus.FINISHED ? '比賽結束' : '尚未開賽';
 };
 
+
+type MatchTeamVisualSize = 'mobile' | 'team-desktop' | 'desktop';
+
+interface MatchTeamVisualProps {
+  team: SeasonTeam;
+  seasonId: SeasonId;
+  side: 'home' | 'away';
+  size: MatchTeamVisualSize;
+}
+
+/**
+ * Keep the crest as the primary identifier. The real kit is a small, secondary
+ * visual; unsupported seasons and missing files retain the original crest.
+ */
+const MatchTeamVisual: React.FC<MatchTeamVisualProps> = ({ team, seasonId, side, size }) => {
+  const kitAsset = getTeamKitAssets(seasonId, team.id)?.[side];
+  const logoSize = size === 'mobile'
+    ? 'h-6 w-6'
+    : size === 'team-desktop'
+      ? 'h-8 w-8'
+      : 'h-8 w-8 md:h-10 md:w-10';
+  const kitSize = size === 'mobile'
+    ? 'h-[18px] w-[18px]'
+    : size === 'team-desktop'
+      ? 'h-5 w-5'
+      : 'h-5 w-5 md:h-6 md:w-6';
+
+  return (
+    <span
+      className={`flex shrink-0 flex-col items-center gap-0.5 ${side === 'home' ? 'md:flex-row-reverse' : 'md:flex-row'} md:gap-1.5`}
+    >
+      <img
+        src={team.logo}
+        alt={team.name}
+        loading="lazy"
+        decoding="async"
+        className={`${logoSize} shrink-0 object-contain`}
+      />
+      {kitAsset && (
+        <img
+          src={assetUrl(kitAsset)}
+          alt=""
+          aria-hidden="true"
+          title={`${team.name}${side === 'home' ? '主場' : '客場'}球衣`}
+          loading="lazy"
+          decoding="async"
+          onError={(event) => { event.currentTarget.hidden = true; }}
+          className={`${kitSize} shrink-0 object-contain`}
+        />
+      )}
+    </span>
+  );
+};
+
 const FullSchedule: React.FC<FullScheduleProps> = ({
+  seasonId,
   matches,
   teamMap,
   onMatchClick,
@@ -140,13 +198,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                           className="font-bold text-brand-black"
                         />
                       </div>
-                      <img
-                        src={homeTeam.logo}
-                        alt={homeTeam.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-6 w-6 shrink-0 object-contain"
-                      />
+                      <MatchTeamVisual team={homeTeam} seasonId={seasonId} side="home" size="mobile" />
                     </div>
 
                     <div className="flex min-w-[40px] items-center justify-center text-center">
@@ -160,13 +212,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
 
                     <div className="grid min-w-0 grid-cols-[24px_minmax(0,1fr)] items-center gap-1 overflow-hidden">
-                      <img
-                        src={awayTeam.logo}
-                        alt={awayTeam.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-6 w-6 shrink-0 object-contain"
-                      />
+                      <MatchTeamVisual team={awayTeam} seasonId={seasonId} side="away" size="mobile" />
                       <div className="min-w-0 overflow-hidden text-left">
                         <AutoFitText
                           text={awayTeam.name}
@@ -213,13 +259,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         className="font-semibold text-brand-black"
                       />
                     </div>
-                    <img
-                      src={homeTeam.logo}
-                      alt={homeTeam.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-8 w-8 shrink-0 object-contain"
-                    />
+                    <MatchTeamVisual team={homeTeam} seasonId={seasonId} side="home" size="team-desktop" />
                   </div>
 
                   <div className="flex min-w-[68px] justify-center">
@@ -227,13 +267,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   </div>
 
                   <div className="flex min-w-0 items-center justify-start gap-3 pl-3">
-                    <img
-                      src={awayTeam.logo}
-                      alt={awayTeam.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-8 w-8 shrink-0 object-contain"
-                    />
+                    <MatchTeamVisual team={awayTeam} seasonId={seasonId} side="away" size="team-desktop" />
                     <div className="min-w-0 flex-1 text-left">
                       <AutoFitText
                         text={awayTeam.name}
@@ -288,13 +322,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                           className="font-bold text-brand-black"
                         />
                       </div>
-                      <img
-                        src={homeTeam.logo}
-                        alt={homeTeam.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-6 w-6 shrink-0 object-contain"
-                      />
+                      <MatchTeamVisual team={homeTeam} seasonId={seasonId} side="home" size="mobile" />
                     </div>
 
                     <div className="flex min-w-[40px] items-center justify-center text-center">
@@ -308,13 +336,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
 
                     <div className="grid min-w-0 grid-cols-[24px_minmax(0,1fr)] items-center gap-1 overflow-hidden">
-                      <img
-                        src={awayTeam.logo}
-                        alt={awayTeam.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-6 w-6 shrink-0 object-contain"
-                      />
+                      <MatchTeamVisual team={awayTeam} seasonId={seasonId} side="away" size="mobile" />
                       <div className="min-w-0 overflow-hidden text-left">
                         <AutoFitText
                           text={awayTeam.name}
@@ -358,13 +380,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                             className="font-bold text-brand-black"
                           />
                         </div>
-                        <img
-                          src={homeTeam.logo}
-                          alt={homeTeam.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
-                        />
+                        <MatchTeamVisual team={homeTeam} seasonId={seasonId} side="home" size="desktop" />
                       </div>
 
                       <div className="flex min-w-[50px] justify-center md:min-w-[80px]">
@@ -372,13 +388,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       </div>
 
                       <div className="flex min-w-0 items-center justify-start space-x-2 md:space-x-4">
-                        <img
-                          src={awayTeam.logo}
-                          alt={awayTeam.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
-                        />
+                        <MatchTeamVisual team={awayTeam} seasonId={seasonId} side="away" size="desktop" />
                         <div className="min-w-0 flex-1 text-left">
                           <AutoFitText
                             text={awayTeam.name}

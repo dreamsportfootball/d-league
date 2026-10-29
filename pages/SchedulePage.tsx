@@ -599,6 +599,7 @@ const SchedulePage: React.FC = () => {
           ) : (
             <div key={`${activeSeasonId}:${JSON.stringify(filters)}`} className="dleague-schedule-enter">
               <FullSchedule
+                seasonId={activeSeasonId}
                 matches={filteredMatches}
                 teamMap={seasonData.teamMap}
                 onMatchClick={selectMatch}

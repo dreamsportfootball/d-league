@@ -91,6 +91,7 @@ const RoundPage: React.FC = () => {
             <span className="text-[11px] font-medium text-neutral-400">共 {matches.length} 場</span>
           </div>
           <FullSchedule
+            seasonId={seasonId}
             matches={matches}
             teamMap={data.teamMap}
             leagueFilter="ALL"

@@ -58,6 +58,19 @@ jobs:
           cat /tmp/d-league-preview.log
           exit 1
 
+      - name: Capture six real matchday kit screenshots
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/export-matchday-kit-screenshots.mjs
+
+      - name: Upload six matchday screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: line-matchday-kit-2026-11-01
+          path: line-matchday-kit-2026-11-01/*.png
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Diagnose KUROMI navigation stability
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

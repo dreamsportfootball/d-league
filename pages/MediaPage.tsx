@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Instagram, Youtube } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -63,7 +63,6 @@ const MediaPage: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
-  const dragRef = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false });
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -79,54 +78,13 @@ const MediaPage: React.FC = () => {
     [seasonData.albums],
   );
 
-  const stopGalleryDrag = () => {
-    dragRef.current.active = false;
-    if (galleryRef.current) galleryRef.current.style.scrollSnapType = '';
-  };
-
-  const onGalleryMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (event.button !== 0) return;
+  const scrollGallery = (direction: 'left' | 'right') => {
     const gallery = galleryRef.current;
     if (!gallery) return;
-    dragRef.current = {
-      active: true,
-      startX: event.clientX,
-      scrollLeft: gallery.scrollLeft,
-      moved: false,
-    };
-  };
-
-  const onGalleryMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const gallery = galleryRef.current;
-    const drag = dragRef.current;
-    if (!gallery || !drag.active) return;
-    if ((event.buttons & 1) === 0) {
-      stopGalleryDrag();
-      return;
-    }
-    const distance = event.clientX - drag.startX;
-    if (!drag.moved && Math.abs(distance) < 6) return;
-    if (!drag.moved) {
-      drag.moved = true;
-      gallery.style.scrollSnapType = 'none';
-    }
-    event.preventDefault();
-    gallery.scrollLeft = drag.scrollLeft - distance;
-  };
-
-  const onGalleryClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!dragRef.current.moved) return;
-    event.preventDefault();
-    event.stopPropagation();
-    dragRef.current.moved = false;
-  };
-
-  const onGalleryKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) return;
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    event.preventDefault();
-    galleryRef.current?.scrollBy({
-      left: (event.key === 'ArrowRight' ? 1 : -1) * 320,
+    const card = gallery.querySelector<HTMLElement>(':scope > div');
+    const cardWidth = card?.getBoundingClientRect().width ?? 400;
+    gallery.scrollBy({
+      left: (direction === 'left' ? -1 : 1) * (cardWidth + 24),
       behavior: 'smooth',
     });
   };
@@ -194,29 +152,43 @@ const MediaPage: React.FC = () => {
           <>
             {reversedAlbums.length > 0 && (
               <div className="mb-12 md:mb-16">
-                <div className="mb-6 flex items-center md:mb-8">
+                <div className="mb-6 flex items-center justify-between md:mb-8">
                   <div className="flex items-center">
                     <div className="mr-4 h-[2px] w-8 bg-brand-black" />
                     <h2 className="font-display text-xl font-bold uppercase tracking-widest text-brand-black">
                       賽事相簿
                     </h2>
                   </div>
-
+                  <div className="hidden items-center space-x-2 md:flex">
+                    <button
+                      type="button"
+                      onClick={() => scrollGallery('left')}
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                      aria-label="向左捲動"
+                    >
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollGallery('right')}
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                      aria-label="向右捲動"
+                    >
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
+                {reversedAlbums.length > 1 && (
+                  <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
+                    左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
+                  </div>
+                )}
 
                 <div
                   ref={galleryRef}
                   role="region"
-                  aria-label="賽事相簿，可左右滑動或使用方向鍵瀏覽"
-                  tabIndex={0}
-                  onMouseDown={onGalleryMouseDown}
-                  onMouseMove={onGalleryMouseMove}
-                  onMouseUp={stopGalleryDrag}
-                  onMouseLeave={stopGalleryDrag}
-                  onClickCapture={onGalleryClickCapture}
-                  onDragStart={(event) => event.preventDefault()}
-                  onKeyDown={onGalleryKeyDown}
-                  className="no-scrollbar flex cursor-grab snap-x space-x-6 overflow-x-auto pb-6 pt-1 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue active:cursor-grabbing"
+                  aria-label="賽事相簿，可左右滑動瀏覽"
+                  className="no-scrollbar flex snap-x snap-proximity space-x-6 overflow-x-auto pb-6 pt-1 scroll-smooth"
                 >
                   {reversedAlbums.map((album) => (
                     <div key={album.id} className="w-[80vw] shrink-0 snap-start sm:w-[400px]">

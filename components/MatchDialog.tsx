@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
+import { getTeamKitAssets } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
+import { assetUrl } from '../services/seasonDataJson';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -151,6 +153,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const homeTeam = seasonData.teamMap[match.homeTeamId];
   const awayTeam = seasonData.teamMap[match.awayTeamId];
   if (!homeTeam || !awayTeam) return null;
+
+  const homeKitAsset = getTeamKitAssets(activeSeason.id, homeTeam.id)?.home;
+  const awayKitAsset = getTeamKitAssets(activeSeason.id, awayTeam.id)?.away;
 
   const lineup = seasonData.lineups[match.id];
   const homePlayers = lineup?.homePlayerIds
@@ -294,11 +299,42 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
                 id="match-dialog-title"
-                className="flex items-center justify-center gap-[0.16em] font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
+                className="relative flex items-center justify-center gap-[0.16em] font-display text-[48px] font-black leading-none tabular-nums tracking-[-0.04em] text-brand-black sm:text-[76px]"
                 aria-label={isFinished
                   ? `${homeTeam.name} ${match.homeScore ?? '-'} 比 ${match.awayScore ?? '-'} ${awayTeam.name}`
                   : `${homeTeam.name} 對 ${awayTeam.name}`}
               >
+                {(homeKitAsset || awayKitAsset) && (
+                  <span
+                    className="pointer-events-none absolute bottom-full left-1/2 mb-0.5 flex -translate-x-1/2 items-end justify-center gap-1.5 sm:mb-1 sm:gap-2"
+                    aria-hidden="true"
+                  >
+                    {homeKitAsset && (
+                      <img
+                        src={assetUrl(homeKitAsset)}
+                        alt=""
+                        title={`${homeTeam.name} 主場球衣`}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        onError={(event) => { event.currentTarget.hidden = true; }}
+                        className="h-7 w-6 shrink-0 object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] sm:h-9 sm:w-8"
+                      />
+                    )}
+                    {awayKitAsset && (
+                      <img
+                        src={assetUrl(awayKitAsset)}
+                        alt=""
+                        title={`${awayTeam.name} 客場球衣`}
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        onError={(event) => { event.currentTarget.hidden = true; }}
+                        className="h-7 w-6 shrink-0 object-contain drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] sm:h-9 sm:w-8"
+                      />
+                    )}
+                  </span>
+                )}
                 {isFinished ? (
                   <>
                     <AnimatedScore identity={`${match.id}:home`} value={match.homeScore ?? '-'} />

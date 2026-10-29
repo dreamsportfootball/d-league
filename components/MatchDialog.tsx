@@ -17,7 +17,7 @@ import { getMatchTeamKitVariant, getTeamKitAssets } from '../config/teamKitAsset
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
 import { assetUrl } from '../services/seasonDataJson';
-import { MatchStatus, type Match } from '../types';
+import { MatchStatus } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
@@ -32,7 +32,6 @@ interface MatchDialogProps {
   matchId: string | null;
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
-  navigationMatchIds?: string[];
 }
 
 type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
@@ -57,7 +56,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   matchId,
   onClose,
   onSelectMatch,
-  navigationMatchIds,
 }) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -71,28 +69,21 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     [matchId, seasonData.matches],
   );
 
-  const relatedMatches = useMemo(() => {
-    if (!match) return [];
+  // Previous/next follows every match in the active season, independently of
+  // the page's league, matchday, or team filters.
+  const chronologicalMatches = useMemo(
+    () => [...seasonData.matches].sort((a, b) =>
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      || a.id.localeCompare(b.id)),
+    [seasonData.matches],
+  );
 
-    if (navigationMatchIds) {
-      const matchMap = new Map<string, Match>(
-        seasonData.matches.map((item): [string, Match] => [item.id, item]),
-      );
-      return navigationMatchIds
-        .map((id) => matchMap.get(id))
-        .filter((item): item is Match => item !== undefined);
-    }
-
-    return seasonData.matches
-      .filter((item) => item.league === match.league)
-      .slice()
-      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }, [match, navigationMatchIds, seasonData.matches]);
-
-  const currentIndex = match ? relatedMatches.findIndex((item) => item.id === match.id) : -1;
-  const previousMatch = currentIndex > 0 ? relatedMatches[currentIndex - 1] : null;
-  const nextMatch = currentIndex >= 0 && currentIndex < relatedMatches.length - 1
-    ? relatedMatches[currentIndex + 1]
+  const currentIndex = match
+    ? chronologicalMatches.findIndex((item) => item.id === match.id)
+    : -1;
+  const previousMatch = currentIndex > 0 ? chronologicalMatches[currentIndex - 1] : null;
+  const nextMatch = currentIndex >= 0 && currentIndex < chronologicalMatches.length - 1
+    ? chronologicalMatches[currentIndex + 1]
     : null;
 
   useEffect(() => {

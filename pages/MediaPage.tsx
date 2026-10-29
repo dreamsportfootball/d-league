@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -63,8 +63,6 @@ const MediaPage: React.FC = () => {
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -80,31 +78,13 @@ const MediaPage: React.FC = () => {
     [seasonData.albums],
   );
 
-  const updateGalleryControls = () => {
-    const container = galleryRef.current;
-    if (!container) {
-      setCanScrollLeft(false);
-      setCanScrollRight(false);
-      return;
-    }
-    setCanScrollLeft(container.scrollLeft > 4);
-    setCanScrollRight(container.scrollLeft + container.clientWidth < container.scrollWidth - 4);
-  };
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(updateGalleryControls);
-    window.addEventListener('resize', updateGalleryControls);
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('resize', updateGalleryControls);
-    };
-  }, [reversedAlbums]);
-
   const scrollGallery = (direction: 'left' | 'right') => {
-    const container = galleryRef.current;
-    if (!container) return;
-    container.scrollBy({
-      left: direction === 'left' ? -container.clientWidth * 0.8 : container.clientWidth * 0.8,
+    const gallery = galleryRef.current;
+    if (!gallery) return;
+    const card = gallery.querySelector<HTMLElement>(':scope > div');
+    const cardWidth = card?.getBoundingClientRect().width ?? 400;
+    gallery.scrollBy({
+      left: (direction === 'left' ? -1 : 1) * (cardWidth + 24),
       behavior: 'smooth',
     });
   };
@@ -179,33 +159,36 @@ const MediaPage: React.FC = () => {
                       賽事相簿
                     </h2>
                   </div>
-
-                  <div className="hidden space-x-2 md:flex">
+                  <div className="hidden items-center space-x-2 md:flex">
                     <button
                       type="button"
                       onClick={() => scrollGallery('left')}
-                      disabled={!canScrollLeft}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:border-brand-blue hover:bg-neutral-50 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-300 disabled:hover:bg-transparent disabled:hover:text-inherit"
-                      aria-label="上一組相簿"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                      aria-label="向左捲動"
                     >
-                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                      <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                     </button>
                     <button
                       type="button"
                       onClick={() => scrollGallery('right')}
-                      disabled={!canScrollRight}
-                      className="flex h-11 w-11 items-center justify-center rounded-lg border border-neutral-300 transition-colors hover:border-brand-blue hover:bg-neutral-50 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-neutral-300 disabled:hover:bg-transparent disabled:hover:text-inherit"
-                      aria-label="下一組相簿"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 transition-colors hover:border-brand-blue hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+                      aria-label="向右捲動"
                     >
-                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                      <ChevronRight className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
+                {reversedAlbums.length > 1 && (
+                  <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
+                    左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
+                  </div>
+                )}
 
                 <div
                   ref={galleryRef}
-                  onScroll={updateGalleryControls}
-                  className="no-scrollbar flex snap-x space-x-6 overflow-x-auto pb-6 pt-1"
+                  role="region"
+                  aria-label="賽事相簿，可左右滑動瀏覽"
+                  className="no-scrollbar flex snap-x snap-proximity space-x-6 overflow-x-auto pb-6 pt-1 scroll-smooth"
                 >
                   {reversedAlbums.map((album) => (
                     <div key={album.id} className="w-[80vw] shrink-0 snap-start sm:w-[400px]">

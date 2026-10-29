@@ -87,6 +87,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-navigation-visual-stability.mjs
 
+      - name: Validate chronological match navigation
+        if: always()
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-match-navigation.mjs
+
       - name: Validate match dialog scroll stability
         if: always()
         env:

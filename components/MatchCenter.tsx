@@ -314,7 +314,6 @@ const MatchCenter: React.FC = () => {
           matchId={selectedMatchId}
           onClose={() => setSelectedMatchId(null)}
           onSelectMatch={setSelectedMatchId}
-          navigationMatchIds={filteredMatches.map((match) => match.id)}
         />,
         document.body,
       )}

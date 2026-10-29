@@ -36,11 +36,6 @@ const MatchPage: React.FC = () => {
   }
 
   const { seasonId, season, data, match } = record;
-  const navigationMatchIds = data.matches
-    .filter((candidate) => candidate.league === match.league)
-    .slice()
-    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
-    .map((candidate) => candidate.id);
   const matchSeasonContext = {
     activeSeasonId: seasonId,
     activeSeason: season,
@@ -57,7 +52,6 @@ const MatchPage: React.FC = () => {
         matchId={match.id}
         onClose={() => navigate(scheduleRoute)}
         onSelectMatch={(nextMatchId) => navigate(getMatchRoute(nextMatchId), { replace: true })}
-        navigationMatchIds={navigationMatchIds}
       />
     </SeasonContext.Provider>
   );

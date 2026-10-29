@@ -86,3 +86,23 @@ export const getTeamKitAssets = (
   seasonId: SeasonId,
   teamId: string,
 ): TeamKitAssetPair | undefined => TEAM_KIT_ASSETS[seasonId]?.[teamId];
+
+type TeamKitVariant = keyof TeamKitAssetPair;
+
+// A match-specific kit choice does not change a club's registered home/away kits.
+const MATCH_TEAM_KIT_VARIANTS: Partial<
+  Record<SeasonId, Record<string, Record<string, TeamKitVariant>>>
+> = {
+  '2026-27': {
+    'm2627-004': {
+      t_kaohsiung_amateur_2026: 'home',
+    },
+  },
+};
+
+export const getMatchTeamKitVariant = (
+  seasonId: SeasonId,
+  matchId: string,
+  teamId: string,
+  defaultVariant: TeamKitVariant,
+): TeamKitVariant => MATCH_TEAM_KIT_VARIANTS[seasonId]?.[matchId]?.[teamId] ?? defaultVariant;

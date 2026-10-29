@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
-import { getTeamKitAssets } from '../config/teamKitAssets';
+import { getMatchTeamKitVariant, getTeamKitAssets } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
 import { assetUrl } from '../services/seasonDataJson';
@@ -154,8 +154,10 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const awayTeam = seasonData.teamMap[match.awayTeamId];
   if (!homeTeam || !awayTeam) return null;
 
-  const homeKitAsset = getTeamKitAssets(activeSeason.id, homeTeam.id)?.home;
-  const awayKitAsset = getTeamKitAssets(activeSeason.id, awayTeam.id)?.away;
+  const homeKitVariant = getMatchTeamKitVariant(activeSeason.id, match.id, homeTeam.id, 'home');
+  const awayKitVariant = getMatchTeamKitVariant(activeSeason.id, match.id, awayTeam.id, 'away');
+  const homeKitAsset = getTeamKitAssets(activeSeason.id, homeTeam.id)?.[homeKitVariant];
+  const awayKitAsset = getTeamKitAssets(activeSeason.id, awayTeam.id)?.[awayKitVariant];
 
   const lineup = seasonData.lineups[match.id];
   const homePlayers = lineup?.homePlayerIds
@@ -313,7 +315,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                       <img
                         src={assetUrl(homeKitAsset)}
                         alt=""
-                        title={`${homeTeam.name} 主場球衣`}
+                        title={`${homeTeam.name} ${homeKitVariant === 'home' ? '主場' : '客場'}球衣`}
                         loading="lazy"
                         decoding="async"
                         draggable={false}
@@ -325,7 +327,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                       <img
                         src={assetUrl(awayKitAsset)}
                         alt=""
-                        title={`${awayTeam.name} 客場球衣`}
+                        title={`${awayTeam.name} ${awayKitVariant === 'home' ? '主場' : '客場'}球衣`}
                         loading="lazy"
                         decoding="async"
                         draggable={false}

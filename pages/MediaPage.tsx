@@ -141,23 +141,13 @@ const MediaPage: React.FC = () => {
           ariaLabel="選擇賽事媒體賽季"
         />
 
-        <section
-          aria-labelledby="media-photo-usage-title"
-          className="mb-10 border-l-2 border-neutral-200 pl-4 md:mb-12 md:pl-5"
+        <p
+          aria-label="照片使用須知"
+          className="mb-6 text-xs leading-6 text-neutral-500 md:mb-8 md:text-sm"
         >
-          <h2
-            id="media-photo-usage-title"
-            className="mb-3 font-display text-sm font-bold tracking-wide text-brand-black"
-          >
-            照片下載與使用須知
-          </h2>
-          <div className="space-y-1 text-sm leading-7 text-neutral-600">
-            <p>賽事照片開放參賽球隊及球員免費下載，供個人或球隊非商業性分享使用</p>
-            <p>發布照片時，請標記攝影師，尊重攝影師的作品</p>
-            <p>如不確定照片由哪位攝影師拍攝，請先聯絡主辦單位確認</p>
-            <p>如有商業用途需求，請事先聯絡主辦單位確認授權</p>
-          </div>
-        </section>
+          <span className="font-bold text-brand-black">照片使用須知｜</span>
+          參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
+        </p>
 
         {!hasMedia ? (
           <EmptyState

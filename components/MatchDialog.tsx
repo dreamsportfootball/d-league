@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
+import { getTeamKitAssets } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
 import { getTeamIdentity } from '../services/entityData';
+import { assetUrl } from '../services/seasonDataJson';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -223,14 +225,31 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     }
   };
 
-  const renderTeamIdentity = (team: SeasonTeam) => {
+  const renderTeamIdentity = (team: SeasonTeam, side: 'home' | 'away') => {
+    const kitAsset = getTeamKitAssets(activeSeason.id, team.id)?.[side];
+    const kitLabel = `${team.name}${side === 'home' ? '主場' : '客場'}球衣`;
     const content = (
       <>
-        <img
-          src={team.logo}
-          alt={team.name}
-          className="mb-3 h-[68px] w-[68px] object-contain sm:mb-4 sm:h-24 sm:w-24"
-        />
+        <span className="relative mb-3 inline-flex h-[68px] w-[68px] shrink-0 items-center justify-center sm:mb-4 sm:h-24 sm:w-24">
+          <img
+            src={team.logo}
+            alt={team.name}
+            className="h-full w-full object-contain"
+          />
+          {kitAsset && (
+            <img
+              key={kitAsset}
+              src={assetUrl(kitAsset)}
+              alt={kitLabel}
+              title={kitLabel}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              onError={(event) => { event.currentTarget.hidden = true; }}
+              className="pointer-events-none absolute -bottom-1 -right-2 h-9 w-7 select-none object-contain drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)] sm:-right-3 sm:h-12 sm:w-9"
+            />
+          )}
+        </span>
         <div className="w-full min-w-0 text-center">
           <AutoFitText
             text={team.name}
@@ -289,7 +308,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
           </div>
 
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-10">
-            {renderTeamIdentity(homeTeam)}
+            {renderTeamIdentity(homeTeam, 'home')}
 
             <div className="flex min-w-[104px] flex-col items-center sm:min-w-[170px]">
               <div
@@ -312,7 +331,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               </span>
             </div>
 
-            {renderTeamIdentity(awayTeam)}
+            {renderTeamIdentity(awayTeam, 'away')}
           </div>
 
           <div className="mx-auto mt-7 grid w-full max-w-sm grid-cols-2 gap-2.5 sm:mt-8 sm:flex sm:w-auto sm:max-w-none sm:justify-center">

@@ -21,8 +21,10 @@ import { MatchStatus } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
+import { useActionFeedback } from '../hooks/useActionFeedback';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
+import ActionFeedbackLabel from './ActionFeedbackLabel';
 import AnimatedScore from './AnimatedScore';
 import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
@@ -33,8 +35,6 @@ interface MatchDialogProps {
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
 }
-
-type ActionStatus = 'IDLE' | 'COPIED' | 'FAILED';
 
 const copyText = async (value: string): Promise<void> => {
   if (navigator.clipboard?.writeText) {
@@ -48,8 +48,9 @@ const copyText = async (value: string): Promise<void> => {
   textarea.style.opacity = '0';
   document.body.appendChild(textarea);
   textarea.select();
-  document.execCommand('copy');
+  const success = document.execCommand('copy');
   textarea.remove();
+  if (!success) throw new Error('Clipboard operation failed');
 };
 
 const MatchDialog: React.FC<MatchDialogProps> = ({
@@ -61,8 +62,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  const [shareStatus, setShareStatus] = useState<ActionStatus>('IDLE');
-  const [copyStatus, setCopyStatus] = useState<ActionStatus>('IDLE');
+  const [shareStatus, setShareStatus] = useActionFeedback();
+  const [copyStatus, setCopyStatus] = useActionFeedback();
 
   const match = useMemo(
     () => seasonData.matches.find((item) => item.id === matchId) ?? null,
@@ -200,11 +201,11 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     try {
       if (navigator.share) {
         await navigator.share(shareData);
+        setShareStatus('SHARED');
         return;
       }
       await copyText(matchPermalink);
       setShareStatus('COPIED');
-      window.setTimeout(() => setShareStatus('IDLE'), 2200);
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') return;
       setShareStatus('FAILED');
@@ -215,7 +216,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     try {
       await copyText(matchInfoText);
       setCopyStatus('COPIED');
-      window.setTimeout(() => setCopyStatus('IDLE'), 2200);
     } catch {
       setCopyStatus('FAILED');
     }
@@ -352,8 +352,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               data-analytics-label={match.id}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 transition-colors hover:border-neutral-300 hover:bg-neutral-50 hover:text-brand-black active:bg-neutral-100 sm:min-h-9 sm:px-5 sm:text-xs"
             >
-              <Copy className="mr-2 h-3.5 w-3.5" />
-              {copyStatus === 'COPIED' ? '已複製' : copyStatus === 'FAILED' ? '複製失敗' : '複製比賽資訊'}
+              <ActionFeedbackLabel status={copyStatus} icon={<Copy className="h-3.5 w-3.5" />}
+                idleText="複製比賽資訊" copiedText="已複製" failedText="複製失敗" />
             </button>
             <button
               type="button"
@@ -362,8 +362,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               data-analytics-label={match.id}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-blue/20 bg-brand-blue/[0.06] px-4 text-[13px] font-bold text-brand-blue transition-colors hover:border-brand-blue/30 hover:bg-brand-blue/[0.1] active:bg-brand-blue/[0.14] sm:min-h-9 sm:px-5 sm:text-xs"
             >
-              <Share2 className="mr-2 h-3.5 w-3.5" />
-              {shareStatus === 'COPIED' ? '連結已複製' : shareStatus === 'FAILED' ? '無法分享' : '分享比賽'}
+              <ActionFeedbackLabel status={shareStatus} icon={<Share2 className="h-3.5 w-3.5" />}
+                idleText="分享比賽" copiedText="連結已複製" sharedText="已分享" failedText="無法分享" />
             </button>
           </div>
 

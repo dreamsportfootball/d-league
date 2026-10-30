@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T15:41:02.270Z",
+  "generatedAt": "2026-10-30T15:44:06.664Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -1859,7 +1859,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 0%",
-      "transform": "translateY(78%) scale(3)",
+      "transform": "translateY(111%) scale(4)",
       "thumbnail": "thumbs/0143.jpg"
     },
     {
@@ -3458,7 +3458,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 0%",
-      "transform": "translateY(7%) scale(1.12)",
+      "transform": "translateY(13%) scale(1.3)",
       "thumbnail": "thumbs/0266.jpg"
     },
     {

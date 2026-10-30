@@ -1,3 +1,4 @@
+// Five team portrait QA: focused original-photo review of sf26-01, sf26-20 and ka26-02; 2026-10-31.
 // SOUTHBOYS FC 2026/27 team-by-team visual recheck: compare 104px + 48px after focused face adjustments.
 // SOUTHBOYS FC: trigger 104px / 48px team-by-team source image QA refresh (2026-10-31).
 // Refresh after image mappings and targeted image framing corrections.

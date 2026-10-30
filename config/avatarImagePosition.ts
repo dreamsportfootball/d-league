@@ -16,12 +16,13 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
 
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
+  '/assets/seasons/2026-27/players/sf26-01.': { transform: 'translateY(27%) scale(1.4)' }, // SF 陳欣敏：半身照讓臉部比例清楚
   '/assets/seasons/2026-27/players/sf26-13.': { objectPosition: '50% 85%' },
   '/assets/seasons/2026-27/players/sf26-15.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'scale(2.1)' },
   '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 63%', transform: 'translate(42%, -18%) scale(1.7)' },
-  '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(43%) scale(2.2)' },
-  '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(32%) scale(2.3)' }, // 全站逐張二輪裁切驗收
+  '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
+  '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9)' }, // 高雄業餘 李昆鴻：原圖全身照頭臉過小 // 全站逐張二輪裁切驗收
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(55%) scale(1.8)' },
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },

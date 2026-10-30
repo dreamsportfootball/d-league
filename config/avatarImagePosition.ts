@@ -33,6 +33,13 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/players/酒號矯正署/顏廷邕.': { objectPosition: '50% 0%', transform: 'translateY(28%) scale(1.5)' },
   '/assets/players/酒號矯正署/吳啓明.': { objectPosition: '50% 0%', transform: 'translateY(40%) scale(1.8)' },
 
+  // Rechecked against 2026/27 original team Excel embedded images on 2026-10-30.
+  // Preserve the source images; reframe only the circular avatar presentation.
+  '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
+  '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
+  '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 31%) scale(1.85)' },
+  '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(21%) scale(1.8)' },
+
   // Source photos with large empty margins: individually focus on faces.
   '/assets/seasons/2026-27/staff/alian-chung-ming-han.': {
     transform: 'translate(-10%, 48%) scale(2)',

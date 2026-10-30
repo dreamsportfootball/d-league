@@ -46,9 +46,19 @@ for (const team of teams26) for (const staff of team.staff ?? []) {
   rows.push({ season: '2026/27', category: '隊職員', team: team.name, name: staff.name, id: staff.id,
     photo: staff.image ?? null, source: staff.image ? '當季' : '未提供' });
 }
+const imgByIdentity26 = new Map();
+for (const player of players26) {
+  const identity = aliases['2026-27']?.[player.id] ?? player.identityId ?? player.id;
+  const photo = images26[player.name] ?? (player.name === '魏嘉成' ? 'assets/seasons/2026-27/players/ns26-16.jpg' : null);
+  if (photo) imgByIdentity26.set(identity, photo);
+}
 for (const player of players25) {
+  const identity = aliases['2025-26']?.[player.id] ?? player.identityId ?? player.id;
+  const direct = images25[player.name];
+  const photo = direct ?? imgByIdentity26.get(identity) ?? null;
   rows.push({ season: '2025/26', category: '球員', team: labels25.get(player.teamId) ?? player.teamId,
-    name: player.name, id: player.id, photo: images25[player.name] ?? null, source: images25[player.name] ? '歷史' : '未提供' });
+    name: player.name, id: player.id, photo,
+    source: direct ? '歷史' : photo ? '同人當季備援' : '未提供' });
 }
 await fs.mkdir(thumbsDir, { recursive: true });
 const imageJobs = [];

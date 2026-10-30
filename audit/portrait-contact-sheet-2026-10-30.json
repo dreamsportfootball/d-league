@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T15:44:06.664Z",
+  "generatedAt": "2026-10-30T15:54:37.434Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -3600,7 +3600,7 @@
       "photo": "assets/seasons/2026-27/players/sb26-15.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0277.jpg"
     },
@@ -4380,7 +4380,7 @@
       "photo": "assets/seasons/2026-27/players/sb26-15.png",
       "source": "同隊球員照片",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0337.jpg"
     },
@@ -7190,6 +7190,6 @@
     "staffWithoutEffectivePhotos": 0,
     "availablePhotos": 552,
     "missingOrBrokenPhotos": 0,
-    "explicitFramingOverrides": 46
+    "explicitFramingOverrides": 48
   }
 }

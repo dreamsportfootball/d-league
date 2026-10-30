@@ -19,6 +19,7 @@ const supportedPreviewRoutes = [
   'news',
   'teams/',
   'players/',
+  'staff/',
   'matches/',
   'rounds/',
 ];

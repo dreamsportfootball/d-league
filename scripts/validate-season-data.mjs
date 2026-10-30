@@ -78,6 +78,7 @@ for (const season of seasons) {
   const newsIds = new Set(news.map((article) => article.id));
 
   const teamIdentityIds = new Set();
+  const staffOwners = new Map();
   for (const team of teams) {
     if (team.seasonId !== season) fail(`${season} team ${team.id}: invalid seasonId`);
     if (!team.name?.trim() || !team.shortName?.trim()) fail(`${season} team ${team.id}: missing name`);
@@ -108,6 +109,23 @@ for (const season of seasons) {
       for (const staff of team.staff) {
         if (!staff?.role?.trim() || !staff?.name?.trim()) fail(`${season} team ${team.id}: invalid staff entry`);
         if (staff.englishName !== undefined && !staff.englishName?.trim()) fail(`${season} team ${team.id}: invalid staff englishName`);
+        if (season === CURRENT_SEASON_ID && !staff.id) fail(`${season} team ${team.id}: missing staff id`);
+        if (staff.id !== undefined && !/^[a-zA-Z0-9_-]+$/.test(staff.id)) fail(`${season} team ${team.id}: invalid staff id`);
+        if (staff.identityId !== undefined && (!staff.identityId.trim() || staff.identityId.includes('/'))) fail(`${season} team ${team.id}: invalid staff identityId`);
+        const identity = staff.identityId ?? staff.id;
+        if (identity) {
+          const owner = `${team.id}:${staff.name}`;
+          if (staffOwners.has(identity) && staffOwners.get(identity) !== owner) fail(`${season}: duplicate staff identity ${identity}`);
+          staffOwners.set(identity, owner);
+        }
+        if (staff.image !== undefined) {
+          if (typeof staff.image !== 'string' || !staff.image.trim()) fail(`${season} team ${team.id}: empty staff image`);
+          asset(staff.image, `${season} staff ${staff.name}`);
+          if (!/^https?:\/\//.test(staff.image)) {
+            if (!staff.image.startsWith(`assets/seasons/${season}/staff/`)) fail(`${season} staff ${staff.name}: image must be in season staff assets`);
+            if (!existsSync(join(root, 'public', staff.image))) fail(`${season} staff ${staff.name}: image not found ${staff.image}`);
+          }
+        }
       }
     }
     if (team.pointsAdjustment !== undefined && !Number.isInteger(team.pointsAdjustment)) {

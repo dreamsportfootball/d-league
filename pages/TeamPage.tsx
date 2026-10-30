@@ -15,6 +15,7 @@ import AutoFitText from '../components/AutoFitText';
 import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import StaffAvatar from '../components/StaffAvatar';
 import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { isSeasonId } from '../config/seasons';
@@ -29,6 +30,7 @@ import {
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
+import { getTeamStaffProfiles } from '../services/staffData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam, TeamKitPattern, TeamSocialLinks } from '../types/team';
 
@@ -475,14 +477,17 @@ const TeamPage: React.FC = () => {
           <section>
             <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><UserRound className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">隊職員</h2></div>
             <div className="grid gap-x-10 sm:grid-cols-2 xl:grid-cols-3">
-              {team.staff.map((staff) => (
-                <div key={`${staff.role}-${staff.name}`} className="grid min-h-16 grid-cols-[4rem_minmax(0,1fr)] items-center border-b border-neutral-100 py-3">
-                  <span className="text-xs font-black tracking-wider text-brand-blue">{staff.role}</span>
+              {getTeamStaffProfiles(team).map((staff) => (
+                <Link key={staff.id} to={`/staff/${encodeURIComponent(staff.id)}?season=${seasonId}`}
+                  className="group grid min-h-16 grid-cols-[3rem_minmax(0,1fr)] items-center gap-3 border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-blue"
+                  aria-label={`查看 ${staff.name} 隊職員個人資料`}>
+                  <StaffAvatar src={staff.image} name={staff.name} />
                   <div className="min-w-0">
-                    <p className="break-words text-sm font-bold text-brand-black">{staff.name}</p>
+                    <p className="text-[10px] font-bold tracking-wider text-brand-blue">{staff.roles.join('／')}</p>
+                    <p className="mt-0.5 break-words text-sm font-bold text-brand-black group-hover:text-brand-blue">{staff.name}</p>
                     {staff.englishName && <p className="mt-0.5 break-words text-[10px] uppercase tracking-wider text-neutral-500">{staff.englishName}</p>}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>

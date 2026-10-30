@@ -83,7 +83,14 @@ const makeData = (
   mediaInput: Video[],
   albumsInput: MediaAlbum[],
 ): SeasonData => {
-  const teams = teamsInput.map((team) => ({ ...team, logo: assetUrl(team.logo) }));
+  const teams: SeasonTeam[] = teamsInput.map((team) => ({
+    ...team,
+    logo: assetUrl(team.logo),
+    staff: team.staff?.map((member) => ({
+      ...member,
+      ...(member.image ? { image: assetUrl(member.image) } : {}),
+    })),
+  }));
   const playerAliases = playerIdentityAliasMap[id] ?? {};
   const ageReferenceDate = getSeasonConfig(id).ageReferenceDate;
   const players = playersInput.map((player) => {

@@ -18,6 +18,7 @@ import {
   getTeamIdentity,
 } from '../services/entityData';
 import { getNewsArticle, getSeasonData } from '../services/seasonDataJson';
+import { getStaffHistory } from '../services/staffData';
 
 interface PageSeoEntry {
   label: string;
@@ -139,6 +140,19 @@ const Seo: React.FC = () => {
           image: absoluteAssetUrl(record.data.playerImages[record.player.name]),
           type: 'website',
           canonicalPath: `/players/${encodeURIComponent(record.player.identityId ?? record.player.id)}`,
+        };
+      }
+    }
+
+    if (pathname.startsWith('/staff/')) {
+      const record = selectSeasonRecord(getStaffHistory(routeId), requestedSeason);
+      if (record) {
+        return {
+          title: `${record.staff.name}｜D LEAGUE 官方隊職員資料｜${SITE_NAME}`,
+          description: `${record.staff.name} D LEAGUE 隊職員個人頁，${record.team.name}，職務：${record.staff.roles.join('、')}，歷年任職紀錄`,
+          image: absoluteAssetUrl(record.staff.image ?? record.team.logo),
+          type: 'website',
+          canonicalPath: `/staff/${encodeURIComponent(record.staff.id)}`,
         };
       }
     }

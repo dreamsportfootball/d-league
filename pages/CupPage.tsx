@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ArrowDown,
   CalendarDays,
@@ -88,7 +88,38 @@ const SectionHeader: React.FC<{
   </div>
 );
 
-const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match, featured = false }) => {
+interface CupRouteSelection {
+  highlightedTeamId: string | null;
+  onSelectTeam: (teamId: string) => void;
+}
+
+const CupTeamButton: React.FC<{
+  team: CupTeam;
+  className: string;
+  minFontSize: number;
+  lineHeight?: number;
+} & CupRouteSelection> = ({ team, className, minFontSize, lineHeight = 1.25, highlightedTeamId, onSelectTeam }) => (
+  <button
+    type="button"
+    onClick={() => onSelectTeam(team.id)}
+    aria-pressed={highlightedTeamId === team.id}
+    aria-label={`高亮 ${team.name} 的已確認賽事路線`}
+    className="flex min-h-11 w-full min-w-0 items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8f1d1d] focus-visible:ring-offset-2"
+  >
+    <AutoFitText
+      text={team.name}
+      minFontSize={minFontSize}
+      lineHeight={lineHeight}
+      className={`${className} ${highlightedTeamId === team.id ? 'underline decoration-[#8f1d1d] decoration-2 underline-offset-4' : ''}`}
+    />
+  </button>
+);
+
+const isHighlightedCupMatch = (match: CupMatch, teamId: string | null): boolean =>
+  Boolean(teamId && match.status === 'FINISHED' &&
+    (match.homeTeamId === teamId || match.awayTeamId === teamId));
+
+const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean } & CupRouteSelection> = ({ match, featured = false, highlightedTeamId, onSelectTeam }) => {
   const homeTeam = getTeam(match.homeTeamId);
   const awayTeam = getTeam(match.awayTeamId);
   const winnerId = getWinnerTeamId(match);
@@ -99,17 +130,13 @@ const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match,
   return (
     <div
       data-cup-match-id={match.id}
-      className={`grid grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center border-b px-0 py-5 last:border-b-0 md:grid-cols-[minmax(0,1fr)_112px_minmax(0,1fr)] md:py-6 ${
+      className={`grid grid-cols-[minmax(0,1fr)_72px_minmax(0,1fr)] items-center border-b px-0 py-5 transition-colors motion-reduce:transition-none last:border-b-0 md:grid-cols-[minmax(0,1fr)_112px_minmax(0,1fr)] md:py-6 ${isHighlightedCupMatch(match, highlightedTeamId) ? 'bg-[#c8a45a]/15 ring-1 ring-inset ring-[#c8a45a]' : ''} ${
         featured ? 'border-white/15 text-white' : 'border-neutral-200 text-brand-black'
       }`}
     >
       <div className="min-w-0 text-right">
-        <AutoFitText
-          text={homeTeam.name}
-          minFontSize={6}
-          lineHeight={1.25}
-          className={`text-right text-sm md:text-lg ${winnerId === homeTeam.id ? 'font-black' : 'font-bold opacity-55'}`}
-        />
+        <CupTeamButton team={homeTeam} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} minFontSize={6}
+          className={`text-right text-sm md:text-lg ${winnerId === homeTeam.id ? 'font-black' : 'font-bold opacity-55'}`} />
       </div>
       <div className="px-2 text-center">
         <p className={`font-display text-2xl font-black tabular-nums md:text-4xl ${featured ? 'text-white' : 'text-brand-black'}`}>
@@ -122,12 +149,8 @@ const ResultMatch: React.FC<{ match: CupMatch; featured?: boolean }> = ({ match,
         )}
       </div>
       <div className="min-w-0 text-left">
-        <AutoFitText
-          text={awayTeam.name}
-          minFontSize={6}
-          lineHeight={1.25}
-          className={`text-left text-sm md:text-lg ${winnerId === awayTeam.id ? 'font-black' : 'font-bold opacity-55'}`}
-        />
+        <CupTeamButton team={awayTeam} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} minFontSize={6}
+          className={`text-left text-sm md:text-lg ${winnerId === awayTeam.id ? 'font-black' : 'font-bold opacity-55'}`} />
       </div>
     </div>
   );
@@ -137,7 +160,7 @@ const KnockoutCompetition: React.FC<{
   label: string;
   matches: CupMatch[];
   tone: 'cup' | 'plate';
-}> = ({ label, matches, tone }) => {
+} & CupRouteSelection> = ({ label, matches, tone, highlightedTeamId, onSelectTeam }) => {
   const finalMatch = matches.find((match) => match.round.includes('決賽') && !match.round.includes('準決賽'));
   const otherMatches = matches.filter((match) => match.id !== finalMatch?.id);
 
@@ -159,7 +182,7 @@ const KnockoutCompetition: React.FC<{
               {formatTaipeiTime(finalMatch.timestamp)} · {finalMatch.venue} 場
             </p>
           </div>
-          <ResultMatch match={finalMatch} />
+          <ResultMatch match={finalMatch} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
         </div>
       )}
 
@@ -172,7 +195,7 @@ const KnockoutCompetition: React.FC<{
                 {formatTaipeiTime(match.timestamp)} · {match.venue} 場
               </p>
             </div>
-            <ResultMatch match={match} />
+            <ResultMatch match={match} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
           </div>
         ))}
       </div>
@@ -180,32 +203,24 @@ const KnockoutCompetition: React.FC<{
   );
 };
 
-const CompactGroupMatch: React.FC<{ match?: CupMatch }> = ({ match }) => {
+const CompactGroupMatch: React.FC<{ match?: CupMatch } & CupRouteSelection> = ({ match, highlightedTeamId, onSelectTeam }) => {
   if (!match) return <div className="min-h-[58px]" />;
   const homeTeam = getTeam(match.homeTeamId);
   const awayTeam = getTeam(match.awayTeamId);
   if (!homeTeam || !awayTeam) return null;
 
   return (
-    <div className="grid min-h-[58px] grid-cols-[minmax(0,1fr)_54px_minmax(0,1fr)] items-center gap-2 border-t border-neutral-200 py-3 first:border-t-0 md:border-l md:border-t-0 md:px-5">
+    <div className={`grid min-h-[58px] grid-cols-[minmax(0,1fr)_54px_minmax(0,1fr)] items-center gap-2 border-t border-neutral-200 py-3 transition-colors motion-reduce:transition-none first:border-t-0 md:border-l md:border-t-0 md:px-5 ${isHighlightedCupMatch(match, highlightedTeamId) ? 'bg-[#c8a45a]/15 ring-1 ring-inset ring-[#c8a45a]' : ''}`}>
       <div className="min-w-0 text-right">
-        <AutoFitText
-          text={homeTeam.name}
-          minFontSize={6}
-          lineHeight={1.25}
-          className="text-right text-xs font-bold text-brand-black md:text-sm"
-        />
+        <CupTeamButton team={homeTeam} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} minFontSize={6}
+          className="text-right text-xs font-bold text-brand-black md:text-sm" />
       </div>
       <span className="text-center font-display text-xl font-black tabular-nums text-brand-black">
         {getScoreLabel(match)}
       </span>
       <div className="min-w-0 text-left">
-        <AutoFitText
-          text={awayTeam.name}
-          minFontSize={6}
-          lineHeight={1.25}
-          className="text-left text-xs font-bold text-brand-black md:text-sm"
-        />
+        <CupTeamButton team={awayTeam} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} minFontSize={6}
+          className="text-left text-xs font-bold text-brand-black md:text-sm" />
       </div>
     </div>
   );
@@ -215,7 +230,7 @@ const TeamGroup: React.FC<{
   group: CupGroup;
   standings: CupGroupStanding[];
   placementLabels: Record<string, string>;
-}> = ({ group, standings, placementLabels }) => (
+} & CupRouteSelection> = ({ group, standings, placementLabels, highlightedTeamId, onSelectTeam }) => (
   <section data-cup-group={group} className="border-t-4 border-[#8f1d1d] bg-white">
     <div className="flex items-end justify-between border-b border-neutral-200 px-5 py-5 md:px-7">
       <div>
@@ -228,14 +243,11 @@ const TeamGroup: React.FC<{
       {standings.map((standing) => {
         const team = standing.team;
         return (
-          <li key={team.id} className="grid min-h-16 grid-cols-[36px_minmax(0,1fr)_auto] items-center border-b border-neutral-100 last:border-b-0">
+          <li key={team.id} className={`grid min-h-16 grid-cols-[36px_minmax(0,1fr)_auto] items-center border-b border-neutral-100 transition-colors motion-reduce:transition-none last:border-b-0 ${highlightedTeamId === team.id ? 'bg-[#c8a45a]/15' : ''}`}>
             <span className="font-display text-sm font-black text-[#8f1d1d]">{String(standing.rank).padStart(2, '0')}</span>
             <div className="min-w-0 pr-4">
-              <AutoFitText
-                text={team.name}
-                minFontSize={6}
-                className="text-sm font-black text-brand-black md:text-base"
-              />
+              <CupTeamButton team={team} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} minFontSize={6}
+                className="text-sm font-black text-brand-black md:text-base" />
             </div>
             <div className="text-right">
               <span className="block text-[10px] font-black tabular-nums text-neutral-500">
@@ -257,6 +269,15 @@ const TeamGroup: React.FC<{
 );
 
 const CupPage: React.FC = () => {
+  const [highlightedTeamId, setHighlightedTeamId] = useState<string | null>(null);
+  const onSelectTeam = (teamId: string) => setHighlightedTeamId((current) => current === teamId ? null : teamId);
+  const highlightedTeam = highlightedTeamId ? getTeam(highlightedTeamId) : undefined;
+  const highlightedMatches = useMemo(() =>
+    highlightedTeamId
+      ? CUP_MATCHES.filter((match) => isHighlightedCupMatch(match, highlightedTeamId))
+      : [],
+    [highlightedTeamId],
+  );
   const cupFinal = getMatch(CUP_EVENT.cupFinalMatchId);
   const cupThirdPlace = getMatch(CUP_EVENT.cupThirdPlaceMatchId);
   const plateFinal = getMatch(CUP_EVENT.plateFinalMatchId);
@@ -484,9 +505,20 @@ const CupPage: React.FC = () => {
               title="排名賽賽果"
               description="由準決賽至決賽，完整呈現盃賽與盤賽的最終結果"
             />
+            <div className="mb-6 flex min-h-11 flex-wrap items-center justify-between gap-x-5 gap-y-2 text-xs font-semibold text-neutral-600" role="status" aria-live="polite">
+              <p>{highlightedTeam
+                ? `已高亮 ${highlightedTeam.name} 的 ${highlightedMatches.length} 場已確認比賽（包含小組賽及排名賽）`
+                : '點選球隊名稱，可查看該隊已確認的比賽路線'}</p>
+              {highlightedTeam && (
+                <button type="button" onClick={() => setHighlightedTeamId(null)}
+                  className="min-h-11 font-bold text-[#8f1d1d] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-[#8f1d1d]">
+                  清除高亮
+                </button>
+              )}
+            </div>
             <div className="grid gap-8 lg:grid-cols-2">
-              <KnockoutCompetition label="盃賽" matches={cupKnockoutMatches} tone="cup" />
-              <KnockoutCompetition label="盤賽" matches={plateKnockoutMatches} tone="plate" />
+              <KnockoutCompetition label="盃賽" matches={cupKnockoutMatches} tone="cup" highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
+              <KnockoutCompetition label="盤賽" matches={plateKnockoutMatches} tone="plate" highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
             </div>
           </div>
         </section>
@@ -516,8 +548,8 @@ const CupPage: React.FC = () => {
                       <span className="font-display text-xl font-black tabular-nums text-[#8f1d1d]">{formatTaipeiTime(timestamp)}</span>
                       <span className="text-[10px] font-black uppercase tracking-[0.12em] text-neutral-400 md:hidden">兩場同步</span>
                     </div>
-                    <div className="px-4 md:px-0"><span className="mb-1 mt-3 block text-[9px] font-black tracking-[0.14em] text-neutral-400 md:hidden">A 場</span><CompactGroupMatch match={venueAMatch} /></div>
-                    <div className="px-4 pb-3 md:px-0 md:pb-0"><span className="mb-1 mt-3 block text-[9px] font-black tracking-[0.14em] text-neutral-400 md:hidden">B 場</span><CompactGroupMatch match={venueBMatch} /></div>
+                    <div className="px-4 md:px-0"><span className="mb-1 mt-3 block text-[9px] font-black tracking-[0.14em] text-neutral-400 md:hidden">A 場</span><CompactGroupMatch match={venueAMatch} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} /></div>
+                    <div className="px-4 pb-3 md:px-0 md:pb-0"><span className="mb-1 mt-3 block text-[9px] font-black tracking-[0.14em] text-neutral-400 md:hidden">B 場</span><CompactGroupMatch match={venueBMatch} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} /></div>
                   </div>
                 );
               })}
@@ -533,8 +565,8 @@ const CupPage: React.FC = () => {
               description={CUP_GROUP_RANKING_RULE_LABEL}
             />
             <div className="grid gap-8 md:grid-cols-2">
-              <TeamGroup group="A" standings={CUP_GROUP_STANDINGS.A} placementLabels={placementLabels} />
-              <TeamGroup group="B" standings={CUP_GROUP_STANDINGS.B} placementLabels={placementLabels} />
+              <TeamGroup group="A" standings={CUP_GROUP_STANDINGS.A} placementLabels={placementLabels} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
+              <TeamGroup group="B" standings={CUP_GROUP_STANDINGS.B} placementLabels={placementLabels} highlightedTeamId={highlightedTeamId} onSelectTeam={onSelectTeam} />
             </div>
             <p className="mt-6 border-l-2 border-[#8f1d1d] pl-4 text-xs font-bold leading-6 text-neutral-500">
               小組前兩名進入盃賽：A1 對 B2、B1 對 A2；小組後兩名進入盤賽：A3 對 B4、B3 對 A4

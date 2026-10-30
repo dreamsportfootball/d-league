@@ -274,7 +274,6 @@ const MiniTeamKits: React.FC<{ team: SeasonTeam; seasonId: SeasonTeam['seasonId'
         pattern={team.kits?.homePattern}
         image={kitAssets?.home}
         normalizeSilhouette={normalizeSilhouette}
-        visualScale={normalizeSilhouette ? 1.2 : 1}
       />
       <MiniKitIcon
         label={`${team.name} 客場球衣`}

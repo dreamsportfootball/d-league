@@ -27,7 +27,16 @@ const original=async photo=>{
 };
 const getImage=async (locator,expectedId,tag)=>{
   await locator.waitFor({state:'visible',timeout:18000});
-  await locator.scrollIntoViewIfNeeded();
+  // Native 'ifNeeded' scrolling sometimes places a roster avatar behind the sticky
+  // header. Center the actual avatar so 48px screenshots contain only its photo.
+  await locator.evaluate(image=>image.parentElement.scrollIntoView({block:'center',inline:'center',behavior:'instant'}));
+  await locator.page().waitForTimeout(100);
+  const unobstructed=await locator.evaluate(image=>{
+    const box=image.parentElement.getBoundingClientRect();
+    const hit=document.elementFromPoint(box.left+box.width/2,box.top+box.height/2);
+    return Boolean(hit && image.parentElement.contains(hit));
+  });
+  if(!unobstructed)throw Error(tag+': circular portrait obscured by header/overlay');
   const diag=await locator.evaluate(async image=>{
     await image.decode().catch(()=>{});
     const style=getComputedStyle(image),container=getComputedStyle(image.parentElement);

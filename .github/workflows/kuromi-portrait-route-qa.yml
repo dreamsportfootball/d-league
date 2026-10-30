@@ -56,7 +56,7 @@ jobs:
           name: kuromi-actual-portrait-qa
           path: |
             audit/kuromi-actual-*.jpg
-            audit/kuromi-roster-*.png
+            audit/kuromi-roster-*.jpg
             audit/kuromi-actual-route-review.json
           if-no-files-found: warn
           retention-days: 14
@@ -65,7 +65,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add audit/kuromi-actual-*.jpg audit/kuromi-roster-*.png audit/kuromi-actual-route-review.json
+          git add audit/kuromi-actual-*.jpg audit/kuromi-roster-*.jpg audit/kuromi-actual-route-review.json
           if ! git diff --cached --quiet; then
             git commit -m "test(qa): publish KUROMI real-route portrait evidence [skip ci]"
             git fetch origin season/2026-27

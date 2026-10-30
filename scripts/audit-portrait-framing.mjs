@@ -136,6 +136,10 @@ try {
   await page.goto(pathToFileURL(indexFile).href, { waitUntil: 'load', timeout: 120000 });
   const broken = await page.evaluate(() => [...document.images].filter(i => !i.complete || i.naturalWidth === 0).map(i => i.src));
   if (broken.length) throw new Error('Failed to render ' + broken.length + ' images: ' + broken.slice(0, 5).join(', '));
+  for (let index = 0; index < pages.length; index += 1) {
+    const photoSheet = path.join(reportDir, 'portrait-sheet-' + String(index + 1).padStart(2, '0') + '.jpg');
+    await page.locator('.sheet').nth(index).screenshot({ path: photoSheet, type: 'jpeg', quality: 74 });
+  }
   await page.pdf({ path: reportPdf, width: '1100px', height: '1550px',
     margin: { top: '0px', bottom: '0px', left: '0px', right: '0px' }, printBackground: true, preferCSSPageSize: true });
   console.log(JSON.stringify({ pdf: reportPdf, json: reportJson, pages: pages.length, ...report.summary }, null, 2));

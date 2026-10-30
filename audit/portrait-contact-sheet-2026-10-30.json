@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T12:07:36.046Z",
+  "generatedAt": "2026-10-30T12:11:25.082Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -247,7 +247,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 63%",
-      "transform": "translateX(42%) scale(1.7)",
+      "transform": "translate(42%, -18%) scale(1.7)",
       "thumbnail": "thumbs/0019.jpg"
     },
     {
@@ -2002,7 +2002,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 0%",
-      "transform": "scale(1.8)",
+      "transform": "scale(2.3)",
       "thumbnail": "thumbs/0154.jpg"
     },
     {
@@ -2782,7 +2782,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 0%",
-      "transform": "none",
+      "transform": "translateY(92%) scale(3)",
       "thumbnail": "thumbs/0214.jpg"
     },
     {
@@ -3652,7 +3652,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-04.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0281.jpg"
     },
@@ -3717,7 +3717,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-09.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0286.jpg"
     },
@@ -4550,7 +4550,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(42%) scale(2)",
+      "transform": "translateY(90%) scale(3)",
       "thumbnail": "thumbs/0350.jpg"
     },
     {
@@ -4988,12 +4988,12 @@
       "team": "陳公舘",
       "name": "倪柏瑄",
       "id": "ch-04",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ch26-03.png",
+      "source": "同人當季備援",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0384.jpg"
     },
     {
       "season": "2025/26",
@@ -7185,8 +7185,8 @@
     "currentPlayers": 314,
     "previousPlayers": 191,
     "staffProfiles": 47,
-    "availablePhotos": 516,
-    "missingOrBrokenPhotos": 36,
-    "explicitFramingOverrides": 20
+    "availablePhotos": 517,
+    "missingOrBrokenPhotos": 35,
+    "explicitFramingOverrides": 22
   }
 }

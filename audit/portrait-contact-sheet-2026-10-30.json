@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T15:10:38.542Z",
+  "generatedAt": "2026-10-30T15:41:02.270Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -64,7 +64,7 @@
       "photo": "assets/seasons/2026-27/players/sf26-05.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0005.jpg"
     },
@@ -155,7 +155,7 @@
       "photo": "assets/seasons/2026-27/players/sf26-12.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0012.jpg"
     },
@@ -1858,8 +1858,8 @@
       "photo": "assets/seasons/2026-27/players/ch26-04.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(78%) scale(3)",
       "thumbnail": "thumbs/0143.jpg"
     },
     {
@@ -1911,7 +1911,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(25%) scale(1.65)",
       "thumbnail": "thumbs/0147.jpg"
     },
     {
@@ -1923,7 +1923,7 @@
       "photo": "assets/seasons/2026-27/players/ch26-09.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0148.jpg"
     },
@@ -2040,7 +2040,7 @@
       "photo": "assets/seasons/2026-27/players/ch26-18.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0157.jpg"
     },
@@ -2131,7 +2131,7 @@
       "photo": "assets/seasons/2026-27/players/lz26-05.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0164.jpg"
     },
@@ -2287,7 +2287,7 @@
       "photo": "assets/seasons/2026-27/players/lz26-17.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0176.jpg"
     },
@@ -2352,7 +2352,7 @@
       "photo": "assets/seasons/2026-27/players/wa26-04.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0181.jpg"
     },
@@ -2690,7 +2690,7 @@
       "photo": "assets/seasons/2026-27/players/c23526-14.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0207.jpg"
     },
@@ -3457,8 +3457,8 @@
       "photo": "assets/seasons/2026-27/players/sb26-04.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(7%) scale(1.12)",
       "thumbnail": "thumbs/0266.jpg"
     },
     {
@@ -3496,7 +3496,7 @@
       "photo": "assets/seasons/2026-27/players/sb26-07.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0269.jpg"
     },
@@ -3549,7 +3549,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(80%) scale(2.7)",
       "thumbnail": "thumbs/0273.jpg"
     },
     {
@@ -3626,7 +3626,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-02.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0279.jpg"
     },
@@ -3782,7 +3782,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-14.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0291.jpg"
     },
@@ -3795,7 +3795,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-15.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0292.jpg"
     },
@@ -4289,7 +4289,7 @@
       "photo": "assets/seasons/2026-27/players/ch26-09.png",
       "source": "同隊球員照片",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0330.jpg"
     },
@@ -4653,7 +4653,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-14.png",
       "source": "同隊球員照片",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0358.jpg"
     },
@@ -7190,6 +7190,6 @@
     "staffWithoutEffectivePhotos": 0,
     "availablePhotos": 552,
     "missingOrBrokenPhotos": 0,
-    "explicitFramingOverrides": 28
+    "explicitFramingOverrides": 46
   }
 }

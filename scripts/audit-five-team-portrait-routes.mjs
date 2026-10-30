@@ -82,7 +82,7 @@ try{
     for(const p of players){
       const link=rosterSection.locator('a[aria-label="查看 '+p.name+' 球員個人資料"]');
       if(await link.count()!==1)throw Error('Team list missing '+p.name);
-      const photo=images[p.name];if(!photo)throw Error('Missing source photo for '+p.name);
+      const photo=images[p.name] ?? (p.name==='魏嘉成' ? 'assets/seasons/2026-27/players/ns26-16.jpg' : null);if(!photo)throw Error('Missing source photo for '+p.name);
       rosterMap.set(p.id,{...await getImage(link.locator('img'),p.id,'roster '+p.name),href:await link.getAttribute('href'),photo});
     }
     const staffSection=page.locator('section').filter({has:page.locator('h2',{hasText:'隊職員'})}).last();

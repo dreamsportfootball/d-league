@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UserRound } from 'lucide-react';
+import { getAvatarImagePosition } from '../config/avatarImagePosition';
 
 interface StaffAvatarProps {
   src?: string;
@@ -22,6 +23,7 @@ const StaffAvatar: React.FC<StaffAvatarProps> = ({ src, name, large = false }) =
           loading={large ? 'eager' : 'lazy'}
           decoding="async"
           className="h-full w-full object-cover"
+          style={{ objectPosition: getAvatarImagePosition(src) }}
           onError={() => setFailedSrc(src ?? null)}
         />
       ) : (

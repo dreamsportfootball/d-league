@@ -176,6 +176,7 @@ interface MiniKitIconProps {
   pattern?: TeamKitPattern;
   image?: string;
   normalizeSilhouette?: boolean;
+  visualScale?: number;
 }
 
 const MiniKitIcon: React.FC<MiniKitIconProps> = ({
@@ -185,6 +186,7 @@ const MiniKitIcon: React.FC<MiniKitIconProps> = ({
   pattern,
   image,
   normalizeSilhouette = false,
+  visualScale = 1,
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
   const [normalizedUrl, setNormalizedUrl] = useState<string | null>(null);
@@ -236,7 +238,7 @@ const MiniKitIcon: React.FC<MiniKitIconProps> = ({
           aria-hidden="true"
           draggable={false}
           className="pointer-events-none block h-full w-full select-none bg-contain bg-center bg-no-repeat drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] [-webkit-user-drag:none]"
-          style={{ backgroundImage: `url(${normalizedUrl ?? imageUrl})` }}
+          style={{ backgroundImage: `url(${normalizedUrl ?? imageUrl})`, transform: `scale(${visualScale})`, transformOrigin: 'center center' }}
         />
       ) : (
         <span
@@ -272,6 +274,7 @@ const MiniTeamKits: React.FC<{ team: SeasonTeam; seasonId: SeasonTeam['seasonId'
         pattern={team.kits?.homePattern}
         image={kitAssets?.home}
         normalizeSilhouette={normalizeSilhouette}
+        visualScale={normalizeSilhouette ? 1.2 : 1}
       />
       <MiniKitIcon
         label={`${team.name} 客場球衣`}

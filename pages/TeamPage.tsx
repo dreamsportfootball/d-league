@@ -101,12 +101,81 @@ const getKitSwatchStyle = (
   return { backgroundColor: primaryColor };
 };
 
+
+// The two Pingtung Wolves images can have different transparent margins.
+// Normalize only this team's rendered silhouettes; preserve the original assets
+// and the sizing of all other teams.
+const normalizeKitSilhouette = (image: HTMLImageElement): string | null => {
+  const { naturalWidth: width, naturalHeight: height } = image;
+  if (width <= 0 || height <= 0) return null;
+
+  const sampleScale = Math.min(1, 512 / Math.max(width, height));
+  const sample = document.createElement('canvas');
+  sample.width = Math.max(1, Math.round(width * sampleScale));
+  sample.height = Math.max(1, Math.round(height * sampleScale));
+  const sampleContext = sample.getContext('2d', { willReadFrequently: true });
+  if (!sampleContext) return null;
+
+  sampleContext.drawImage(image, 0, 0, sample.width, sample.height);
+  const pixels = sampleContext.getImageData(0, 0, sample.width, sample.height).data;
+  let minX = sample.width;
+  let minY = sample.height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < sample.height; y += 1) {
+    for (let x = 0; x < sample.width; x += 1) {
+      if (pixels[(y * sample.width + x) * 4 + 3] <= 24) continue;
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    }
+  }
+
+  if (maxX < minX || maxY < minY) return null;
+
+  const sourceX = minX / sampleScale;
+  const sourceY = minY / sampleScale;
+  const sourceWidth = Math.min(width - sourceX, (maxX - minX + 1) / sampleScale);
+  const sourceHeight = Math.min(height - sourceY, (maxY - minY + 1) / sampleScale);
+  if (sourceWidth <= 0 || sourceHeight <= 0) return null;
+
+  // A common transparent canvas makes home and away kits occupy the same
+  // visual frame, without stretching their proportions or cropping sleeves.
+  const normalized = document.createElement('canvas');
+  normalized.width = 320;
+  normalized.height = 416;
+  const context = normalized.getContext('2d');
+  if (!context) return null;
+
+  const scale = Math.min(
+    (normalized.width * 0.88) / sourceWidth,
+    (normalized.height * 0.91) / sourceHeight,
+  );
+  const renderedWidth = sourceWidth * scale;
+  const renderedHeight = sourceHeight * scale;
+  context.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    (normalized.width - renderedWidth) / 2,
+    (normalized.height - renderedHeight) / 2,
+    renderedWidth,
+    renderedHeight,
+  );
+  return normalized.toDataURL('image/png');
+};
+
 interface MiniKitIconProps {
   label: string;
   primaryColor: string;
   secondaryColor?: string;
   pattern?: TeamKitPattern;
   image?: string;
+  normalizeSilhouette?: boolean;
 }
 
 const MiniKitIcon: React.FC<MiniKitIconProps> = ({
@@ -115,29 +184,44 @@ const MiniKitIcon: React.FC<MiniKitIconProps> = ({
   secondaryColor,
   pattern,
   image,
+  normalizeSilhouette = false,
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
+  const [normalizedUrl, setNormalizedUrl] = useState<string | null>(null);
+  const [imageReady, setImageReady] = useState(false);
   const imageUrl = image ? `${import.meta.env.BASE_URL}${image}` : null;
 
   useEffect(() => {
-    if (!imageUrl) {
-      setImageFailed(false);
-      return undefined;
-    }
-
     setImageFailed(false);
+    setNormalizedUrl(null);
+    setImageReady(false);
+    if (!imageUrl) return undefined;
+
     const preload = new Image();
-    preload.onload = () => setImageFailed(false);
-    preload.onerror = () => setImageFailed(true);
+    preload.onload = () => {
+      if (normalizeSilhouette) {
+        try {
+          setNormalizedUrl(normalizeKitSilhouette(preload));
+        } catch {
+          // Fall back to the unchanged kit image if pixel access is unavailable.
+          setNormalizedUrl(null);
+        }
+      }
+      setImageReady(true);
+    };
+    preload.onerror = () => {
+      setImageFailed(true);
+      setImageReady(true);
+    };
     preload.src = imageUrl;
 
     return () => {
       preload.onload = null;
       preload.onerror = null;
     };
-  }, [imageUrl]);
+  }, [imageUrl, normalizeSilhouette]);
 
-  const showRealKit = Boolean(imageUrl && !imageFailed);
+  const showRealKit = Boolean(imageUrl && !imageFailed && imageReady);
 
   return (
     <span
@@ -152,7 +236,7 @@ const MiniKitIcon: React.FC<MiniKitIconProps> = ({
           aria-hidden="true"
           draggable={false}
           className="pointer-events-none block h-full w-full select-none bg-contain bg-center bg-no-repeat drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)] [-webkit-user-drag:none]"
-          style={{ backgroundImage: `url(${imageUrl})` }}
+          style={{ backgroundImage: `url(${normalizedUrl ?? imageUrl})` }}
         />
       ) : (
         <span
@@ -173,6 +257,7 @@ const MiniTeamKits: React.FC<{ team: SeasonTeam; seasonId: SeasonTeam['seasonId'
   const homeColor = team.kits?.home ?? team.primaryColor;
   const awayColor = team.kits?.away ?? team.secondaryColor ?? '#ffffff';
   const kitAssets = getTeamKitAssets(seasonId, team.id);
+  const normalizeSilhouette = seasonId === '2026-27' && team.id === 't_pingtung_wolves_2026';
 
   return (
     <span
@@ -186,6 +271,7 @@ const MiniTeamKits: React.FC<{ team: SeasonTeam; seasonId: SeasonTeam['seasonId'
         secondaryColor={team.kits?.homeSecondary}
         pattern={team.kits?.homePattern}
         image={kitAssets?.home}
+        normalizeSilhouette={normalizeSilhouette}
       />
       <MiniKitIcon
         label={`${team.name} 客場球衣`}
@@ -193,6 +279,7 @@ const MiniTeamKits: React.FC<{ team: SeasonTeam; seasonId: SeasonTeam['seasonId'
         secondaryColor={team.kits?.awaySecondary}
         pattern={team.kits?.awayPattern}
         image={kitAssets?.away}
+        normalizeSilhouette={normalizeSilhouette}
       />
     </span>
   );

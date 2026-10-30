@@ -6,6 +6,7 @@ import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
+import PortraitPhoto from '../components/PortraitPhoto';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
@@ -463,7 +464,7 @@ const StatsPage: React.FC = () => {
                   <div className="flex min-w-0 flex-1 items-center">
                     {activeTab === 'SCORERS' && (
                       <div className={`relative shrink-0 overflow-hidden rounded-full border border-neutral-100 bg-neutral-100 ${isTopScorer ? 'h-20 w-20 shadow-xl md:h-24 md:w-24' : 'h-10 w-10 md:h-11 md:w-11'}`}>
-                        {playerImage ? <img src={playerImage} alt={player.name} className="h-full w-full object-cover object-top" /> : <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />}
+                        {playerImage ? <PortraitPhoto src={playerImage} alt={player.name} loading="lazy" className="h-full w-full object-cover" /> : <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />}
                       </div>
                     )}
 

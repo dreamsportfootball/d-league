@@ -5,6 +5,7 @@ import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
 import PlayerHonours from '../components/PlayerHonours';
+import PortraitPhoto from '../components/PortraitPhoto';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
@@ -272,7 +273,7 @@ const PlayerPage: React.FC = () => {
             <div className="grid min-w-0 grid-cols-[104px_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[128px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[160px_minmax(0,1fr)] lg:gap-8">
               <div className="flex h-[104px] w-[104px] items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 sm:h-32 sm:w-32 lg:h-40 lg:w-40">
                 {image ? (
-                  <img src={image} alt={player.name} className="h-full w-full object-cover" />
+                  <PortraitPhoto src={image} alt={player.name} className="h-full w-full object-cover" />
                 ) : (
                   <UserRound className="h-12 w-12 text-neutral-300 sm:h-14 sm:w-14 lg:h-16 lg:w-16" />
                 )}

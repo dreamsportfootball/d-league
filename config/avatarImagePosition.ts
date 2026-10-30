@@ -14,12 +14,13 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/al26-01.': { objectPosition: '50% 0%', transform: 'translateY(92%) scale(3)' },
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
+  '/assets/seasons/2026-27/players/pw26-11.': { transform: 'translateY(18%) scale(1.18)' }, // 屏東野狼 林瑶璇：微放大半身照，髮頂留白
 
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
   '/assets/seasons/2026-27/players/sf26-01.': { transform: 'translateY(27%) scale(1.4)' }, // SF 陳欣敏：半身照讓臉部比例清楚
   '/assets/seasons/2026-27/players/sf26-13.': { objectPosition: '50% 85%' },
   '/assets/seasons/2026-27/players/sf26-15.': { objectPosition: '50% 0%' },
-  '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'scale(2.1)' },
+  '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'translateY(-8%) scale(2.7)' }, // SF 鄭詠翰：放大球場遠景中的臉部
   '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 63%', transform: 'translate(42%, -18%) scale(1.7)' },
   '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9)' }, // 高雄業餘 李昆鴻：原圖全身照頭臉過小 // 全站逐張二輪裁切驗收
@@ -39,7 +40,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
   '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
   '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 31%) scale(1.85)' },
-  '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(21%) scale(1.8)' },
+  '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(44%) scale(2.5)' }, // 高雄業餘 潘晨維：保持頭頂、裁走多餘的背景
 
   // Second-pass 104px / 48px face and hairline review (2026-10-30).
   '/assets/seasons/2026-27/players/sf26-05.': { objectPosition: '50% 0%' }, // 廖新凱：避免裁掉髮頂

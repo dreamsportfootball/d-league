@@ -8,6 +8,7 @@ import {
   X,
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
+import DataContentTransition from '../components/DataContentTransition';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
@@ -575,7 +576,7 @@ const SchedulePage: React.FC = () => {
           </button>
         </div>
 
-        <div className="mb-20">
+        <DataContentTransition contentKey={activeSeasonId} className="mb-20">
           {seasonData.matches.length === 0 ? (
             <EmptyState
               eyebrow="賽程狀態"
@@ -606,7 +607,7 @@ const SchedulePage: React.FC = () => {
               />
             </div>
           )}
-        </div>
+        </DataContentTransition>
       </div>
 
       {desktopFiltersOpen && (

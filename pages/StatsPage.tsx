@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
+import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
@@ -330,6 +331,7 @@ const StatsPage: React.FC = () => {
           />
         </div>
 
+        <DataContentTransition contentKey={`${activeSeasonId}:${activeLeague}:${activeTab}`}>
         {!hasData ? (
           <EmptyState
             eyebrow={activeTab === 'SUSPENSIONS' ? '紀律狀態' : '數據更新'}
@@ -506,6 +508,7 @@ const StatsPage: React.FC = () => {
             })}
           </div>
         )}
+        </DataContentTransition>
       </div>
 
       {selectedMatchId && (

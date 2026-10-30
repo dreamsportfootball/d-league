@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
+import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import PreSeasonStandings from '../components/PreSeasonStandings';
@@ -161,6 +162,7 @@ const StandingsPage: React.FC = () => {
           ariaLabel="篩選積分榜"
         />
 
+        <DataContentTransition contentKey={`${activeSeasonId}:${activeLeague}`}>
         {shouldShowEmptyState ? (
           <EmptyState
             eyebrow="積分榜狀態"
@@ -247,6 +249,7 @@ const StandingsPage: React.FC = () => {
             </div>
           </div>
         )}
+        </DataContentTransition>
       </div>
 
       <ResponsiveFilterDrawer

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T12:18:03.746Z",
+  "generatedAt": "2026-10-30T15:10:38.542Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -611,7 +611,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(21%) scale(1.8)",
       "thumbnail": "thumbs/0047.jpg"
     },
     {
@@ -975,7 +975,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translate(4%, -3%) scale(1.9)",
       "thumbnail": "thumbs/0075.jpg"
     },
     {
@@ -1040,7 +1040,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translate(-11%, 24%) scale(2)",
       "thumbnail": "thumbs/0080.jpg"
     },
     {
@@ -3185,7 +3185,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translate(19%, 31%) scale(1.85)",
       "thumbnail": "thumbs/0245.jpg"
     },
     {
@@ -4092,7 +4092,7 @@
       "name": "吳孟容",
       "id": "staff-sf-football-club-01",
       "photo": "assets/seasons/2026-27/staff/sf-wu-meng-rong.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4104,12 +4104,12 @@
       "team": "SF足球俱樂部",
       "name": "許凱昱",
       "id": "staff-sf-football-club-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/sf26-17.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0316.jpg"
     },
     {
       "season": "2026/27",
@@ -4117,12 +4117,12 @@
       "team": "SF足球俱樂部",
       "name": "鄭詠翰",
       "id": "staff-sf-football-club-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
-      "objectPosition": "50% 50%",
-      "transform": "none",
-      "thumbnail": null
+      "photo": "assets/seasons/2026-27/players/sf26-18.png",
+      "source": "同隊球員照片",
+      "exists": true,
+      "objectPosition": "50% 20%",
+      "transform": "scale(2.1)",
+      "thumbnail": "thumbs/0317.jpg"
     },
     {
       "season": "2026/27",
@@ -4130,12 +4130,12 @@
       "team": "高雄業餘足球俱樂部",
       "name": "劉力瑋",
       "id": "staff-kaohsiung-amateur-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ka26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0318.jpg"
     },
     {
       "season": "2026/27",
@@ -4143,12 +4143,12 @@
       "team": "高雄業餘足球俱樂部",
       "name": "劉力瑋",
       "id": "staff-kaohsiung-amateur-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ka26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0319.jpg"
     },
     {
       "season": "2026/27",
@@ -4156,12 +4156,12 @@
       "team": "高雄業餘足球俱樂部",
       "name": "劉力瑋",
       "id": "staff-kaohsiung-amateur-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ka26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0320.jpg"
     },
     {
       "season": "2026/27",
@@ -4169,12 +4169,12 @@
       "team": "銅雀",
       "name": "陳揚",
       "id": "staff-t_tongque-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/tq26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0321.jpg"
     },
     {
       "season": "2026/27",
@@ -4182,12 +4182,12 @@
       "team": "銅雀",
       "name": "李相慶",
       "id": "staff-t_tongque-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/tq26-07.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0322.jpg"
     },
     {
       "season": "2026/27",
@@ -4195,12 +4195,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "周宗德",
       "id": "staff-pingtung-wolves-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0323.jpg"
     },
     {
       "season": "2026/27",
@@ -4208,12 +4208,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "林大雄",
       "id": "staff-pingtung-wolves-fc-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-02.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0324.jpg"
     },
     {
       "season": "2026/27",
@@ -4221,12 +4221,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "謝晉元",
       "id": "staff-pingtung-wolves-fc-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-03.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0325.jpg"
     },
     {
       "season": "2026/27",
@@ -4234,12 +4234,12 @@
       "team": "高雄香港人足球俱樂部",
       "name": "謝俊杰",
       "id": "staff-kaohsiung-hong-kong-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/khk26-02.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0326.jpg"
     },
     {
       "season": "2026/27",
@@ -4247,12 +4247,12 @@
       "team": "屏東野猿足球俱樂部",
       "name": "簡法亦",
       "id": "staff-t_pingtung-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pwa26-09.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0327.jpg"
     },
     {
       "season": "2026/27",
@@ -4260,12 +4260,12 @@
       "team": "屏東野猿足球俱樂部",
       "name": "林彥文",
       "id": "staff-t_pingtung-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pwa26-05.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0328.jpg"
     },
     {
       "season": "2026/27",
@@ -4273,12 +4273,12 @@
       "team": "屏東野猿足球俱樂部",
       "name": "黃震浩",
       "id": "staff-t_pingtung-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pwa26-19.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0329.jpg"
     },
     {
       "season": "2026/27",
@@ -4286,12 +4286,12 @@
       "team": "陳公舘",
       "name": "倪天銘",
       "id": "staff-t_chen-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ch26-09.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0330.jpg"
     },
     {
       "season": "2026/27",
@@ -4299,12 +4299,12 @@
       "team": "陳公舘",
       "name": "孫裕程",
       "id": "staff-t_chen-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ch26-05.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0331.jpg"
     },
     {
       "season": "2026/27",
@@ -4312,12 +4312,12 @@
       "team": "陳公舘",
       "name": "洪品宇",
       "id": "staff-t_chen-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ch26-12.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0332.jpg"
     },
     {
       "season": "2026/27",
@@ -4326,7 +4326,7 @@
       "name": "龔炳芳",
       "id": "staff-tainan-evergreen-fc-01",
       "photo": "assets/seasons/2026-27/staff/evergreen-kung-ping-fang.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4339,7 +4339,7 @@
       "name": "莊金生",
       "id": "staff-tainan-evergreen-fc-02",
       "photo": "assets/seasons/2026-27/staff/evergreen-zhuang-jin-sheng.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4351,12 +4351,12 @@
       "team": "台南長青足球俱樂部",
       "name": "曹冠祥",
       "id": "staff-tainan-evergreen-fc-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/te26-04.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0335.jpg"
     },
     {
       "season": "2026/27",
@@ -4364,12 +4364,12 @@
       "team": "黑狼FC",
       "name": "王浩誠",
       "id": "staff-black-wolf-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/bw26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0336.jpg"
     },
     {
       "season": "2026/27",
@@ -4377,12 +4377,12 @@
       "team": "SOUTHBOYS FC",
       "name": "劉駿輝",
       "id": "staff-southboys-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/sb26-15.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0337.jpg"
     },
     {
       "season": "2026/27",
@@ -4391,7 +4391,7 @@
       "name": "陳美玲",
       "id": "staff-southboys-fc-02",
       "photo": "assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.jpeg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 0%",
       "transform": "none",
@@ -4403,12 +4403,12 @@
       "team": "鹿逐俱樂部",
       "name": "陳麒竣",
       "id": "staff-t_luzhu-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/lz26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0339.jpg"
     },
     {
       "season": "2026/27",
@@ -4416,12 +4416,12 @@
       "team": "鹿逐俱樂部",
       "name": "陳泰盛",
       "id": "staff-t_luzhu-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/lz26-09.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0340.jpg"
     },
     {
       "season": "2026/27",
@@ -4429,12 +4429,12 @@
       "team": "鹿逐俱樂部",
       "name": "宋映德",
       "id": "staff-t_luzhu-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/lz26-02.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0341.jpg"
     },
     {
       "season": "2026/27",
@@ -4442,12 +4442,12 @@
       "team": "WANDERERS",
       "name": "毛邦澤",
       "id": "staff-wanderers-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/wa26-08.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0342.jpg"
     },
     {
       "season": "2026/27",
@@ -4455,12 +4455,12 @@
       "team": "WANDERERS",
       "name": "沈家弘",
       "id": "staff-wanderers-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/wa26-09.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0343.jpg"
     },
     {
       "season": "2026/27",
@@ -4468,12 +4468,12 @@
       "team": "WANDERERS",
       "name": "毛邦丞",
       "id": "staff-wanderers-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/wa26-10.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0344.jpg"
     },
     {
       "season": "2026/27",
@@ -4482,7 +4482,7 @@
       "name": "蔡孟勲",
       "id": "staff-chiayi-235-fc-01",
       "photo": "assets/seasons/2026-27/staff/chiayi235-tsai-meng-hsun.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4495,7 +4495,7 @@
       "name": "蔡明瀚",
       "id": "staff-chiayi-235-fc-02",
       "photo": "assets/seasons/2026-27/staff/chiayi235-tsai-ming-han.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4508,7 +4508,7 @@
       "name": "郭政達",
       "id": "staff-chiayi-235-fc-03",
       "photo": "assets/seasons/2026-27/staff/chiayi235-guo-zheng-da.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4521,7 +4521,7 @@
       "name": "鍾明翰",
       "id": "staff-alian-fc-01",
       "photo": "assets/seasons/2026-27/staff/alian-chung-ming-han.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "translate(-10%, 48%) scale(2)",
@@ -4534,7 +4534,7 @@
       "name": "劉庭瑜",
       "id": "staff-alian-fc-02",
       "photo": "assets/seasons/2026-27/staff/alian-liu-ting-yu.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4547,7 +4547,7 @@
       "name": "林育廷",
       "id": "staff-alian-fc-03",
       "photo": "assets/seasons/2026-27/staff/alian-lin-yu-ting.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "translateY(90%) scale(3)",
@@ -4559,12 +4559,12 @@
       "team": "高雄黑騎士足球隊",
       "name": "Joel Vega",
       "id": "staff-kaohsiung-black-knights-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
-      "objectPosition": "50% 50%",
-      "transform": "none",
-      "thumbnail": null
+      "photo": "assets/seasons/2026-27/players/kbk26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
+      "objectPosition": "50% 0%",
+      "transform": "translate(-31%, 36%) scale(1.6)",
+      "thumbnail": "thumbs/0351.jpg"
     },
     {
       "season": "2026/27",
@@ -4572,12 +4572,12 @@
       "team": "高雄黑騎士足球隊",
       "name": "王家偉",
       "id": "staff-kaohsiung-black-knights-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/kbk26-02.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0352.jpg"
     },
     {
       "season": "2026/27",
@@ -4585,12 +4585,12 @@
       "team": "高雄黑騎士足球隊",
       "name": "MICHAEL LENIHAN",
       "id": "staff-kaohsiung-black-knights-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/kbk26-03.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0353.jpg"
     },
     {
       "season": "2026/27",
@@ -4599,7 +4599,7 @@
       "name": "詹景森",
       "id": "staff-holy-knights-fc-01",
       "photo": "assets/seasons/2026-27/staff/holy-chan-jing-sen.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -4612,7 +4612,7 @@
       "name": "曾以安",
       "id": "staff-holy-knights-fc-02",
       "photo": "assets/seasons/2026-27/staff/holy-tseng-yi-an.jpg",
-      "source": "當季",
+      "source": "隊職員專用照片",
       "exists": true,
       "objectPosition": "50% 50%",
       "transform": "translateY(35%) scale(1.7)",
@@ -4624,12 +4624,12 @@
       "team": "KUROMI",
       "name": "劉佳興",
       "id": "staff-kuromi-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ku26-19.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0356.jpg"
     },
     {
       "season": "2026/27",
@@ -4637,12 +4637,12 @@
       "team": "KUROMI",
       "name": "劉紀良",
       "id": "staff-kuromi-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ku26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0357.jpg"
     },
     {
       "season": "2026/27",
@@ -4650,12 +4650,12 @@
       "team": "KUROMI",
       "name": "翁吉韡",
       "id": "staff-kuromi-03",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ku26-14.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0358.jpg"
     },
     {
       "season": "2026/27",
@@ -4663,12 +4663,12 @@
       "team": "台南鳥仕足球俱樂部",
       "name": "王志誠",
       "id": "staff-tainan-niaoshi-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ns26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0359.jpg"
     },
     {
       "season": "2026/27",
@@ -4676,12 +4676,12 @@
       "team": "台南鳥仕足球俱樂部",
       "name": "許御力",
       "id": "staff-tainan-niaoshi-fc-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ns26-02.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0360.jpg"
     },
     {
       "season": "2026/27",
@@ -4689,12 +4689,12 @@
       "team": "台南鳥仕足球俱樂部",
       "name": "王志誠",
       "id": "staff-tainan-niaoshi-fc-01",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ns26-01.png",
+      "source": "同隊球員照片",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0361.jpg"
     },
     {
       "season": "2025/26",
@@ -7185,8 +7185,11 @@
     "currentPlayers": 314,
     "previousPlayers": 191,
     "staffProfiles": 47,
-    "availablePhotos": 517,
-    "missingOrBrokenPhotos": 35,
-    "explicitFramingOverrides": 22
+    "staffWithDedicatedPhotos": 12,
+    "staffUsingPlayerPhotos": 35,
+    "staffWithoutEffectivePhotos": 0,
+    "availablePhotos": 552,
+    "missingOrBrokenPhotos": 0,
+    "explicitFramingOverrides": 28
   }
 }

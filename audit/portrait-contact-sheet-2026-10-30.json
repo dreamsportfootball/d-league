@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T16:38:03.019Z",
+  "generatedAt": "2026-10-30T19:21:51.771Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -2821,7 +2821,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(36%) scale(3.2)",
+      "transform": "none",
       "thumbnail": "thumbs/0217.jpg"
     },
     {
@@ -2834,7 +2834,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(43%) scale(3.2)",
+      "transform": "none",
       "thumbnail": "thumbs/0218.jpg"
     },
     {
@@ -3432,7 +3432,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(19%) scale(1.7)",
       "thumbnail": "thumbs/0264.jpg"
     },
     {
@@ -3445,7 +3445,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(20%) scale(1.55)",
+      "transform": "translateY(47%) scale(2.1)",
       "thumbnail": "thumbs/0265.jpg"
     },
     {
@@ -3483,7 +3483,7 @@
       "photo": "assets/seasons/2026-27/players/sb26-06.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0268.jpg"
     },
@@ -3509,8 +3509,8 @@
       "photo": "assets/seasons/2026-27/players/sb26-08.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "translateY(14%) scale(1.55)",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(52%) scale(2.1)",
       "thumbnail": "thumbs/0270.jpg"
     },
     {
@@ -3522,7 +3522,7 @@
       "photo": "assets/seasons/2026-27/players/sb26-09.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 15%",
       "transform": "none",
       "thumbnail": "thumbs/0271.jpg"
     },
@@ -6902,7 +6902,7 @@
       "photo": "assets/players/PPI TAINAN FC/蘇凡迪.png",
       "source": "歷史",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0531.jpg"
     },
@@ -7190,6 +7190,6 @@
     "staffWithoutEffectivePhotos": 0,
     "availablePhotos": 552,
     "missingOrBrokenPhotos": 0,
-    "explicitFramingOverrides": 107
+    "explicitFramingOverrides": 109
   }
 }

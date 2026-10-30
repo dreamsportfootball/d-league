@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T19:25:52.320Z",
+  "generatedAt": "2026-10-30T19:40:39.446Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -3691,7 +3691,7 @@
       "photo": "assets/seasons/2026-27/players/ku26-07.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0284.jpg"
     },
@@ -7190,6 +7190,6 @@
     "staffWithoutEffectivePhotos": 0,
     "availablePhotos": 552,
     "missingOrBrokenPhotos": 0,
-    "explicitFramingOverrides": 109
+    "explicitFramingOverrides": 110
   }
 }

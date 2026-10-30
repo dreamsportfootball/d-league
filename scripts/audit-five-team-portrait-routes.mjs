@@ -1,4 +1,4 @@
-// Five teams: compare source photos, actual 48px roster and profile route portraits.
+// Real-route portrait QA for next five teams; TEAM_ID selects one team per independent CI job.
 // Capture the real TeamPage roster and every PlayerPage / StaffPage at mobile and desktop widths.
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -6,22 +6,22 @@ import sharp from 'sharp';
 import { chromium } from 'playwright';
 
 const root=process.cwd(), out=path.join(root,'audit');
-const teamId=process.env.TEAM_ID;
-const expected={t_niaoshi_2026:[17,3],t_sf_2026:[20,3],t_kaohsiung_amateur_2026:[17,3],t_tongque_2026:[17,2],t_pingtung_wolves_2026:[15,3]};
-if(!expected[teamId])throw Error('Unknown selected team '+teamId);
-const prefix='five-team-'+teamId.replace(/^t_/,'').replace(/_2026$/,'');
 const base=(process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/,'');
+const teamId=process.env.TEAM_ID;
 const players=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/players.json'),'utf8'))
   .filter(p=>p.teamId===teamId);
 const teams=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/teams.json'),'utf8'));
 const team=teams.find(t=>t.id===teamId);
-if(!team||players.length!==expected[teamId][0]||team.staff.length!==expected[teamId][1])throw Error('Roster count mismatch '+teamId);
-const staff=team.staff;
+if(!team || !players.length || !['t_niaoshi_2026','t_sf_2026','t_kaohsiung_amateur_2026','t_tongque_2026','t_pingtung_wolves_2026'].includes(teamId)) throw Error('Unexpected TEAM_ID '+teamId);
+const staff=[...new Map(team.staff.map(s=>[s.identityId??s.id??s.name,s])).values()];
+const images=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/playerImages.json'),'utf8'));
+const photoForStaff=s=>s.image??images[s.name];
+const short=team.id.replace(/^t_/,'').replace(/_2026$/,'').replaceAll('_','-');
 const viewports=[{name:'mobile-390',width:390,height:844},{name:'desktop-1280',width:1280,height:900}];
-const run={generatedAt:new Date().toISOString(),team:team.name,teamId,season:'2026-27',viewports:[],failures:[]};
+const run={generatedAt:new Date().toISOString(),team:team.name,teamId,season:'2026-27',playerCount:players.length,staffRecords:team.staff.length,distinctStaff:staff.length,viewports:[],failures:[]};
 const browser=await chromium.launch({headless:true});
-const original=async p=>{
-  const f=path.join(root,'public',p.image ?? ('assets/seasons/2026-27/players/'+p.id+'.png'));
+const original=async photo=>{
+  const f=path.join(root,'public',photo.replace(/^\/+/,''));
   const buf=await fs.readFile(f);
   return (await sharp(buf).rotate().resize(120,138,{fit:'contain',background:'white',withoutEnlargement:false}).png().toBuffer()).toString('base64');
 };
@@ -61,7 +61,7 @@ const renderSheet=async (entries,view)=>{
       '｜'+Math.round(e.profile.diagnostics.width)+'px 個人頭像</small></div>').join('')+'</div></body></html>';
   const sheet=await browser.newPage({viewport:{width:1220,height:1620},deviceScaleFactor:1});
   await sheet.setContent(html,{waitUntil:'load'});
-  await sheet.screenshot({path:path.join(out,prefix+'-actual-'+view.name+'.jpg'),type:'jpeg',quality:82,fullPage:true});
+  await sheet.screenshot({path:path.join(out,short+'-actual-'+view.name+'.jpg'),type:'jpeg',quality:82,fullPage:true});
   await sheet.close();
 };
 try{
@@ -69,7 +69,7 @@ try{
     const ctx=await browser.newContext({viewport:{width:view.width,height:view.height},deviceScaleFactor:1,locale:'zh-TW'});
     const page=await ctx.newPage();
     const errors=[]; page.on('pageerror',e=>errors.push(String(e)));
-    const url=base+'/#/teams/'+encodeURIComponent(teamId)+'?season=2026-27';
+    const url=base+'/#/teams/'+encodeURIComponent(team.identityId??team.id)+'?season=2026-27';
     await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
     const rosterSection=page.locator('section').filter({has:page.locator('h2', {hasText:'球員名單'})}).last();
     await rosterSection.waitFor({state:'visible',timeout:20000});
@@ -81,23 +81,17 @@ try{
     for(const p of players){
       const link=rosterSection.locator('a[aria-label="查看 '+p.name+' 球員個人資料"]');
       if(await link.count()!==1)throw Error('Team list missing '+p.name);
-      rosterMap.set(p.id,{...await getImage(link.locator('img'),p.id,'roster '+p.name),href:await link.getAttribute('href')});
+      const photo=images[p.name];if(!photo)throw Error('Missing source photo for '+p.name);
+      rosterMap.set(p.id,{...await getImage(link.locator('img'),p.id,'roster '+p.name),href:await link.getAttribute('href'),photo});
     }
     const staffSection=page.locator('section').filter({has:page.locator('h2',{hasText:'隊職員'})}).last();
-    const staffLinks=[];
-    const visitedStaff=new Map();
-    for(const st of staff){
-      const index=visitedStaff.get(st.name)??0;
-      visitedStaff.set(st.name,index+1);
-      const links=staffSection.locator('a[aria-label="查看 '+st.name+' 隊職員個人資料"]');
-      if(await links.count()<=index)throw Error('Staff link missing '+st.name+' #'+index);
-      const link=links.nth(index);
-      const person=players.find(p=>p.name===st.name);
-      const image=st.image ?? (person ? 'assets/seasons/2026-27/players/'+person.id+'.png':null);
-      if(!image)throw Error('Staff photo missing '+st.name);
-      const key=path.basename(image).replace(/\.[^.]+$/,'');
-      staffLinks.push({...await getImage(link.locator('img'),key,'staff '+st.name),
-        href:await link.getAttribute('href'),image});
+    const staffLinks=new Map();
+    for(const s of staff){
+      const link=staffSection.locator('a[aria-label="查看 '+s.name+' 隊職員個人資料"]');
+      if(await link.count()!==1)throw Error('Staff link missing '+s.name);
+      const photo=photoForStaff(s);if(!photo)throw Error('Missing staff photo '+s.name);
+      const basename=path.posix.basename(photo).replace(/\.[^.]+$/,'');
+      staffLinks.set(s.id,{...await getImage(link.locator('img'),basename,'staff '+s.name),href:await link.getAttribute('href'),photo});
     }
     // All lazy roster and staff portraits have now been decoded and element-checked.
     // Capture the full real page from the top; crop the actual roster's page-coordinate box.
@@ -108,7 +102,7 @@ try{
     const metadata=await sharp(fullPage).metadata();
     if(rosterRegion.height<=0||rosterRegion.top<0||rosterRegion.top>=metadata.height)throw Error(view.name+': invalid roster region');
     await sharp(fullPage).extract({left:0,top:rosterRegion.top,width:Math.min(view.width,metadata.width),height:Math.min(rosterRegion.height,metadata.height-rosterRegion.top)})
-      .jpeg({quality:82}).toFile(path.join(out,prefix+'-roster-'+view.name+'.jpg'));
+      .jpeg({quality:82}).toFile(path.join(out,short+'-roster-'+view.name+'.jpg'));
     const entries=[];
     for(const p of players){
       const l=rosterMap.get(p.id);
@@ -118,26 +112,23 @@ try{
       if(!await page.locator('h1').filter({hasText:p.name}).count())throw Error('Wrong profile title '+p.name);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
       if(overflow)run.failures.push({view:view.name,route:'player '+p.id,problem:'horizontal overflow'});
-      entries.push({name:p.name,id:p.id,type:'球員',raw:await original(p),roster:l,profile});
+      entries.push({name:p.name,id:p.id,type:'球員',raw:await original(l.photo),roster:l,profile});
       run.viewports.push({view:view.name,route:'player',id:p.id,name:p.name,roster:l.diagnostics,profile:profile.diagnostics,overflow});
     }
     for(const s of staff){
-      const l=staffLinks[staff.indexOf(s)];
+      const l=staffLinks.get(s.id);
       await page.goto(new URL(l.href,url).href,{waitUntil:'domcontentloaded',timeout:25000});
       const img=page.locator('img[alt="'+s.name+' 大頭貼"]').first();
-      const key=path.basename(l.image).replace(/\.[^.]+$/,'');
-      const profile=await getImage(img,key,'staff page '+s.name);
-      if(!await page.locator('h1').filter({hasText:s.name}).count())throw Error('Wrong staff title '+s.name);
-      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
-      if(overflow)run.failures.push({view:view.name,route:'staff '+s.id,problem:'horizontal overflow'});
-      entries.push({name:s.name,id:s.id,type:'隊職員',raw:await original({image:l.image}),roster:l,profile});
-      run.viewports.push({view:view.name,route:'staff',id:s.id,name:s.name,roster:l.diagnostics,profile:profile.diagnostics,overflow});
+      const basename=path.posix.basename(l.photo).replace(/\.[^.]+$/,'');
+      const profile=await getImage(img,basename,'staff page '+s.name);
+      entries.push({name:s.name,id:s.id,type:'隊職員',raw:await original(l.photo),roster:l,profile});
+      run.viewports.push({view:view.name,route:'staff',id:s.id,name:s.name,roster:l.diagnostics,profile:profile.diagnostics});
     }
     if(errors.length)run.failures.push({view:view.name,route:'browser',problem:errors.slice(0,10)});
     await renderSheet(entries,view);
     await ctx.close();
   }
 }finally{await browser.close()}
-await fs.writeFile(path.join(out,prefix+'-actual-route-review.json'),JSON.stringify(run,null,2)+'\n');
-console.log(JSON.stringify({routes:run.viewports.length,failures:run.failures,images:[prefix+'-actual-mobile-390.jpg',prefix+'-actual-desktop-1280.jpg']},null,2));
+await fs.writeFile(path.join(out,short+'-actual-route-review.json'),JSON.stringify(run,null,2)+'\n');
+console.log(JSON.stringify({routes:run.viewports.length,failures:run.failures,images:[short+'-actual-mobile-390.jpg',short+'-actual-desktop-1280.jpg']},null,2));
 if(run.failures.length)process.exitCode=1;

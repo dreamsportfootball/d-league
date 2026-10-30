@@ -48,12 +48,13 @@ jobs:
           path: |
             audit/portrait-contact-sheet-2026-10-30.pdf
             audit/portrait-contact-sheet-2026-10-30.json
+            audit/portrait-sheet-*.jpg
           retention-days: 14
       - name: Publish review materials on audit branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add audit/portrait-contact-sheet-2026-10-30.pdf audit/portrait-contact-sheet-2026-10-30.json
+          git add audit/portrait-contact-sheet-2026-10-30.pdf audit/portrait-contact-sheet-2026-10-30.json audit/portrait-sheet-*.jpg
           if ! git diff --cached --quiet; then
             git commit -m "test(qa): publish portrait framing review sheets [skip ci]"
             git push origin HEAD:season/2026-27

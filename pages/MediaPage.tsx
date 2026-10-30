@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
+import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -132,6 +133,7 @@ const MediaPage: React.FC = () => {
           ariaLabel="選擇賽事媒體賽季"
         />
 
+        <DataContentTransition contentKey={activeSeasonId}>
         {!hasMedia ? (
           <>
             <EmptyState
@@ -238,6 +240,7 @@ const MediaPage: React.FC = () => {
             )}
           </>
         )}
+        </DataContentTransition>
 
         <div className="mt-16">
           <div className="flex w-full justify-center">

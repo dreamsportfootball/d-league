@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, X, Youtube, ZoomIn } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -89,7 +90,7 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => {
         <ZoomIn className="h-4 w-4" aria-hidden="true" />
         預覽封面
       </button>
-      {previewOpen && (
+      {previewOpen && createPortal(
         <div
           className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 px-4 py-6"
           onMouseDown={(event) => {
@@ -134,7 +135,8 @@ const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => {
               </a>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

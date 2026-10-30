@@ -2,7 +2,7 @@ import { getSeasonConfig } from '../config/seasons';
 import { SEASON_IDS } from '../config/siteManifest.js';
 import type { SeasonConfig, SeasonId } from '../types/season';
 import type { SeasonTeam, TeamStaffMember } from '../types/team';
-import { getSeasonData } from './seasonDataJson';
+import { getSeasonData, type SeasonData } from './seasonDataJson';
 
 export interface TeamStaffProfile {
   id: string;
@@ -23,22 +23,36 @@ export interface StaffSeasonRecord {
 export const getStaffIdentity = (team: SeasonTeam, staff: TeamStaffMember): string =>
   staff.identityId ?? staff.id ?? 'staff-' + (team.identityId ?? team.id) + '-' + staff.name;
 
+/** Reuse an existing player portrait only for a unique name match on the same team and season. */
+const getRegisteredPlayerPortrait = (
+  team: SeasonTeam,
+  member: TeamStaffMember,
+  data?: SeasonData,
+): string | undefined => {
+  if (!data) return undefined;
+  const matchedPlayers = data.players.filter(
+    (player) => player.teamId === team.id && player.name === member.name,
+  );
+  return matchedPlayers.length === 1 ? data.playerImages[matchedPlayers[0].name] : undefined;
+};
+
 /** One profile per person even when they hold multiple roles in a team. */
-export const getTeamStaffProfiles = (team: SeasonTeam): TeamStaffProfile[] => {
+export const getTeamStaffProfiles = (team: SeasonTeam, data?: SeasonData): TeamStaffProfile[] => {
   const profiles = new Map<string, TeamStaffProfile>();
   for (const member of team.staff ?? []) {
     const id = getStaffIdentity(team, member);
+    const image = member.image ?? getRegisteredPlayerPortrait(team, member, data);
     const existing = profiles.get(id);
     if (existing) {
       if (!existing.roles.includes(member.role)) existing.roles.push(member.role);
-      if (!existing.image && member.image) existing.image = member.image;
+      if (!existing.image && image) existing.image = image;
       continue;
     }
     profiles.set(id, {
       id,
       name: member.name,
       englishName: member.englishName,
-      image: member.image,
+      image,
       roles: [member.role],
     });
   }
@@ -50,7 +64,7 @@ export const getStaffHistory = (identity: string): StaffSeasonRecord[] =>
     .flatMap((seasonId) => {
       const data = getSeasonData(seasonId);
       return data.teams.flatMap((team) =>
-        getTeamStaffProfiles(team)
+        getTeamStaffProfiles(team, data)
           .filter((staff) => staff.id === identity)
           .map((staff) => ({
             seasonId,

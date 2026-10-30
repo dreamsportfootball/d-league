@@ -284,6 +284,13 @@ for (const [identity, recordsInput] of teamGroups) {
   addSitemapEntry(canonicalRoute);
 }
 
+const getStaffPortrait = ({ seasonId, team, staff }) => {
+  if (staff.image) return staff.image;
+  const payload = seasonPayloads[seasonId];
+  const matches = payload.players.filter((player) => player.teamId === team.id && player.name === staff.name);
+  return matches.length === 1 ? payload.playerImages[matches[0].name] : undefined;
+};
+
 const staffGroups = new Map();
 for (const seasonId of SEASON_IDS) {
   const payload = seasonPayloads[seasonId];
@@ -304,7 +311,7 @@ for (const [identity, rows] of staffGroups) {
   const canonicalRoute = '/staff/' + encodeURIComponent(identity);
   const title = latest.staff.name + '｜D LEAGUE 官方隊職員資料｜' + SITE_NAME;
   const description = latest.staff.name + ' D LEAGUE 隊職員個人頁，' + latest.team.name + '，職務：' + roles.join('、') + '，歷年任職紀錄';
-  const headshot = records.find((row) => row.staff.image)?.staff.image;
+  const headshot = records.map(getStaffPortrait).find(Boolean);
   const image = absoluteAssetUrl(headshot ?? latest.team.logo);
   const schema = {
     '@context': 'https://schema.org',

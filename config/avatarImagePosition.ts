@@ -45,12 +45,12 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sf26-12.': { objectPosition: '50% 0%' }, // 洪家庭：維持照片完整頂部
   '/assets/seasons/2026-27/players/lz26-17.': { objectPosition: '50% 0%' }, // 林宜蓁：維持照片完整頂部
   '/assets/seasons/2026-27/players/wa26-04.': { objectPosition: '50% 0%' }, // 蔡羿丞：避免裁掉髮頂
-  '/assets/seasons/2026-27/players/ch26-04.': { objectPosition: '50% 0%', transform: 'translateY(78%) scale(3)' }, // 張健治：比賽全身照聚焦頭肩
+  '/assets/seasons/2026-27/players/ch26-04.': { objectPosition: '50% 0%', transform: 'translateY(111%) scale(4)' }, // 張健治：比賽全身照聚焦頭肩
   '/assets/seasons/2026-27/players/ch26-08.': { transform: 'translateY(25%) scale(1.65)' }, // 潘志豪：比賽照放大臉部
   '/assets/seasons/2026-27/players/ch26-09.': { objectPosition: '50% 0%' }, // 倪天銘：減少髮頂二次裁切
   '/assets/seasons/2026-27/players/ch26-18.': { objectPosition: '50% 0%' }, // 鍾皓弦：減少髮頂二次裁切
   '/assets/seasons/2026-27/players/lz26-05.': { objectPosition: '50% 0%' }, // 李修沛：避開原始照片下方其他畫面
-  '/assets/seasons/2026-27/players/sb26-04.': { objectPosition: '50% 0%', transform: 'translateY(7%) scale(1.12)' }, // 李福祥：保留完整頭髮並突出五官
+  '/assets/seasons/2026-27/players/sb26-04.': { objectPosition: '50% 0%', transform: 'translateY(13%) scale(1.3)' }, // 李福祥：保留完整頭髮並突出五官
   '/assets/seasons/2026-27/players/sb26-07.': { objectPosition: '50% 0%' }, // 伊而凡：避免裁掉頭髮
   '/assets/seasons/2026-27/players/sb26-11.': { transform: 'translateY(80%) scale(2.7)' }, // 迪馬斯：全身照聚焦頭肩
   '/assets/seasons/2026-27/players/ku26-02.': { objectPosition: '50% 0%' }, // 林柏佑：避免裁掉頭髮

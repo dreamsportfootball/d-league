@@ -1,5 +1,6 @@
 // Refresh after image mappings and targeted image framing corrections.
 // Re-verify Excel-sourced portrait framing for khk26-06, khk26-11, kbk26-12, ka26-38.
+// Second-pass audit: 16 source-verified facial framing adjustments (2026-10-30).
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';

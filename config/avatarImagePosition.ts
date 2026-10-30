@@ -27,6 +27,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },
   '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(32%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/ku26-07.': { objectPosition: '50% 0%' }, // KUROMI 盧冠宇：側面照髮頂優先保留
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },
   '/assets/players/陳公舘/吳明威.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },

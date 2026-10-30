@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserRound } from 'lucide-react';
-import { getAvatarImagePosition } from '../config/avatarImagePosition';
+import PortraitPhoto from './PortraitPhoto';
 
 interface StaffAvatarProps {
   src?: string;
@@ -17,13 +17,12 @@ const StaffAvatar: React.FC<StaffAvatarProps> = ({ src, name, large = false }) =
       : 'flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100 ring-1 ring-neutral-200'
     }>
       {showImage ? (
-        <img
-          src={src}
+        <PortraitPhoto
+          src={src ?? ''}
           alt={name + ' 大頭貼'}
           loading={large ? 'eager' : 'lazy'}
           decoding="async"
           className="h-full w-full object-cover"
-          style={{ objectPosition: getAvatarImagePosition(src) }}
           onError={() => setFailedSrc(src ?? null)}
         />
       ) : (

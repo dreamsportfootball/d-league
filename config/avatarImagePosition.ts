@@ -78,8 +78,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/lz26-13.': { transform: 'translate(14%, -1%) scale(2.4)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/wa26-06.': { transform: 'translateY(19%) scale(1.6)' }, // 手持球衣
   '/assets/seasons/2026-27/players/al26-02.': { transform: 'translateY(32%) scale(1.9)' }, // 站立隊服照
-  '/assets/seasons/2026-27/players/al26-04.': { transform: 'translateY(36%) scale(3.2)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/al26-05.': { transform: 'translateY(43%) scale(3.2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/al26-13.': { transform: 'translateY(30%) scale(1.7)' }, // 站立半身照
   '/assets/seasons/2026-27/players/al26-14.': { transform: 'translateY(-10%) scale(1.9)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/al26-19.': { transform: 'translateY(71%) scale(2.2)' }, // 第二輪實圖回歸校正

@@ -1,3 +1,4 @@
+// SOUTHBOYS FC: trigger 104px / 48px team-by-team source image QA refresh (2026-10-31).
 // Refresh after image mappings and targeted image framing corrections.
 // Re-verify Excel-sourced portrait framing for khk26-06, khk26-11, kbk26-12, ka26-38.
 // Second-pass audit: 16 source-verified facial framing adjustments (2026-10-30).

@@ -84,7 +84,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(31%, 31%) scale(2)' }, // 雙人照內聚焦左側球員
   '/assets/seasons/2026-27/players/kbk26-11.': { transform: 'translateY(48%) scale(1.55)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/holy26-07.': { objectPosition: '50% 0%', transform: 'translateY(-24%) scale(1.85)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(20%) scale(1.55)' }, // 球衣半身照
+  '/assets/seasons/2026-27/players/sb26-02.': { transform: 'translateY(19%) scale(1.7)' }, // SOUTHBOYS 拉非：去除過多背景、放大臉部
+  '/assets/seasons/2026-27/players/sb26-09.': { objectPosition: '50% 15%' }, // SOUTHBOYS 艾力夫：保留頭髮頂部
+  '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(47%) scale(2.1)' }, // SOUTHBOYS 孺立：原圖人頭位置偏上，放大至清楚可辨
   '/assets/seasons/2026-27/players/sb26-08.': { objectPosition: '50% 0%', transform: 'translateY(52%) scale(2.1)' }, // 朴禮薩：臉部置中、保留頭頂
   '/assets/seasons/2026-27/players/sb26-06.': { objectPosition: '50% 0%' }, // 蘇凡迪：保留 2026/27 原照頭頂
   '/assets/players/PPI TAINAN FC/蘇凡迪.': { objectPosition: '50% 0%' }, // 蘇凡迪：2025/26 歷史原照也保留頭頂

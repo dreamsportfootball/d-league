@@ -101,6 +101,11 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
     'm2627-004': {
       t_kaohsiung_amateur_2026: 'home',
     },
+    'm2627-006': {
+      // One-match exception: SOUTHBOYS wears white away; Pingtung wears purple home.
+      t_southboys_2026: 'away',
+      t_pingtung_wild_ape_2026: 'home',
+    },
   },
 };
 

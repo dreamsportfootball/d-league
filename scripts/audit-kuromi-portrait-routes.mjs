@@ -71,7 +71,6 @@ try{
     await rosterSection.waitFor({state:'visible',timeout:20000});
     const rawLinks=await rosterSection.locator('a[aria-label^="查看"]').evaluateAll(els=>els.map(el=>({label:el.getAttribute('aria-label'),href:el.getAttribute('href')})));
     if(rawLinks.length!==20)throw Error(view.name+': roster expected 20 links, got '+rawLinks.length);
-    await rosterSection.screenshot({path:path.join(out,'kuromi-roster-'+view.name+'.png'),animations:'disabled'});
     const teamOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
     if(teamOverflow)run.failures.push({view:view.name,route:'team',problem:'horizontal overflow'});
     const rosterMap=new Map();
@@ -88,6 +87,16 @@ try{
       const person=players.find(p=>p.name===s.name);
       staffLinks.set(s.id,{...await getImage(link.locator('img'),person.id,'staff '+s.name),href:await link.getAttribute('href'),person});
     }
+    // All lazy roster and staff portraits have now been decoded and element-checked.
+    // Capture the full real page from the top; crop the actual roster's page-coordinate box.
+    await page.evaluate(() => window.scrollTo({top:0,behavior:'instant'}));
+    await page.waitForTimeout(180);
+    const rosterRegion=await rosterSection.evaluate(el=>({top:Math.round(el.getBoundingClientRect().top+window.scrollY),height:Math.round(el.getBoundingClientRect().height)}));
+    const fullPage=await page.screenshot({type:'jpeg',quality:77,fullPage:true,animations:'disabled'});
+    const metadata=await sharp(fullPage).metadata();
+    if(rosterRegion.height<=0||rosterRegion.top<0||rosterRegion.top>=metadata.height)throw Error(view.name+': invalid roster region');
+    await sharp(fullPage).extract({left:0,top:rosterRegion.top,width:Math.min(view.width,metadata.width),height:Math.min(rosterRegion.height,metadata.height-rosterRegion.top)})
+      .jpeg({quality:82}).toFile(path.join(out,'kuromi-roster-'+view.name+'.jpg'));
     const entries=[];
     for(const p of players){
       const l=rosterMap.get(p.id);

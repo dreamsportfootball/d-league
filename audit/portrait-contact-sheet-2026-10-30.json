@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T11:59:19.588Z",
+  "generatedAt": "2026-10-30T12:07:36.046Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -168,7 +168,7 @@
       "photo": "assets/seasons/2026-27/players/sf26-13.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 85%",
       "transform": "none",
       "thumbnail": "thumbs/0013.jpg"
     },
@@ -194,7 +194,7 @@
       "photo": "assets/seasons/2026-27/players/sf26-15.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
+      "objectPosition": "50% 0%",
       "transform": "none",
       "thumbnail": "thumbs/0015.jpg"
     },
@@ -233,8 +233,8 @@
       "photo": "assets/seasons/2026-27/players/sf26-18.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 20%",
+      "transform": "scale(2.1)",
       "thumbnail": "thumbs/0018.jpg"
     },
     {
@@ -246,8 +246,8 @@
       "photo": "assets/seasons/2026-27/players/sf26-19.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 63%",
+      "transform": "translateX(42%) scale(1.7)",
       "thumbnail": "thumbs/0019.jpg"
     },
     {
@@ -260,7 +260,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(43%) scale(2.2)",
       "thumbnail": "thumbs/0020.jpg"
     },
     {
@@ -282,12 +282,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "林大雄",
       "id": "pw26-02",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-02.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0022.jpg"
     },
     {
       "season": "2026/27",
@@ -308,12 +308,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "黃翊軒",
       "id": "pw26-04",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-04.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0024.jpg"
     },
     {
       "season": "2026/27",
@@ -334,12 +334,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "柯士傑",
       "id": "pw26-06",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-06.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0026.jpg"
     },
     {
       "season": "2026/27",
@@ -347,12 +347,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "蔡世俊",
       "id": "pw26-07",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-07.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0027.jpg"
     },
     {
       "season": "2026/27",
@@ -360,12 +360,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "鄧進成",
       "id": "pw26-08",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
-      "objectPosition": "50% 50%",
+      "photo": "assets/seasons/2026-27/players/pw26-08.png",
+      "source": "當季",
+      "exists": true,
+      "objectPosition": "50% 85%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0028.jpg"
     },
     {
       "season": "2026/27",
@@ -373,12 +373,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "蘇冠升",
       "id": "pw26-09",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-09.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0029.jpg"
     },
     {
       "season": "2026/27",
@@ -399,12 +399,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "林瑶璇",
       "id": "pw26-11",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-11.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0031.jpg"
     },
     {
       "season": "2026/27",
@@ -412,12 +412,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "林哲維",
       "id": "pw26-12",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-12.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0032.jpg"
     },
     {
       "season": "2026/27",
@@ -438,12 +438,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "吳宇唐",
       "id": "pw26-14",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-14.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0034.jpg"
     },
     {
       "season": "2026/27",
@@ -451,12 +451,12 @@
       "team": "屏東野狼足球俱樂部",
       "name": "張承堯",
       "id": "pw26-15",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/pw26-15.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0035.jpg"
     },
     {
       "season": "2026/27",
@@ -480,8 +480,8 @@
       "photo": "assets/seasons/2026-27/players/ka26-02.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(16%) scale(1.6)",
       "thumbnail": "thumbs/0037.jpg"
     },
     {
@@ -753,8 +753,8 @@
       "photo": "assets/seasons/2026-27/players/tq26-06.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(55%) scale(1.8)",
       "thumbnail": "thumbs/0058.jpg"
     },
     {
@@ -1101,7 +1101,7 @@
       "team": "屏東野猿足球俱樂部",
       "name": "邱文良",
       "id": "pwa26-01",
-      "photo": "assets/seasons/2026-27/players/pwa26-01.png",
+      "photo": "assets/players/屏東野猿足球俱樂部/邱文良.png",
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
@@ -2001,8 +2001,8 @@
       "photo": "assets/seasons/2026-27/players/ch26-15.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "scale(1.8)",
       "thumbnail": "thumbs/0154.jpg"
     },
     {
@@ -2066,8 +2066,8 @@
       "photo": "assets/seasons/2026-27/players/ch26-20.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(30%) scale(1.5)",
       "thumbnail": "thumbs/0159.jpg"
     },
     {
@@ -2808,7 +2808,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "none",
+      "transform": "translateY(32%) scale(2)",
       "thumbnail": "thumbs/0216.jpg"
     },
     {
@@ -3028,8 +3028,8 @@
       "photo": "assets/seasons/2026-27/players/kbk26-01.png",
       "source": "當季",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translate(-31%, 36%) scale(1.6)",
       "thumbnail": "thumbs/0233.jpg"
     },
     {
@@ -4078,12 +4078,12 @@
       "team": "台南鳥仕足球俱樂部",
       "name": "談宏智",
       "id": "ns26-17",
-      "photo": null,
-      "source": "未提供",
-      "exists": false,
+      "photo": "assets/seasons/2026-27/players/ns26-17.png",
+      "source": "當季",
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0314.jpg"
     },
     {
       "season": "2026/27",
@@ -4988,8 +4988,8 @@
       "team": "陳公舘",
       "name": "倪柏瑄",
       "id": "ch-04",
-      "photo": "assets/players/陳公舘/倪柏瑄.png",
-      "source": "歷史",
+      "photo": null,
+      "source": "未提供",
       "exists": false,
       "objectPosition": "50% 50%",
       "transform": "none",
@@ -5147,8 +5147,8 @@
       "photo": "assets/players/陳公舘/吳明威.png",
       "source": "歷史",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(30%) scale(1.5)",
       "thumbnail": "thumbs/0396.jpg"
     },
     {
@@ -5456,12 +5456,12 @@
       "team": "銅雀足球俱樂部",
       "name": "余彥絨",
       "id": "tq-91",
-      "photo": "assets/players/銅雀足球俱樂部/余彥絨.png",
+      "photo": "assets/players/銅雀足球俱樂部/余彥絨.jpg",
       "source": "歷史",
-      "exists": false,
+      "exists": true,
       "objectPosition": "50% 50%",
       "transform": "none",
-      "thumbnail": null
+      "thumbnail": "thumbs/0420.jpg"
     },
     {
       "season": "2025/26",
@@ -5537,8 +5537,8 @@
       "photo": "assets/players/酒號矯正署/顏廷邕.png",
       "source": "歷史",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(28%) scale(1.5)",
       "thumbnail": "thumbs/0426.jpg"
     },
     {
@@ -5680,8 +5680,8 @@
       "photo": "assets/players/酒號矯正署/吳啓明.png",
       "source": "歷史",
       "exists": true,
-      "objectPosition": "50% 50%",
-      "transform": "none",
+      "objectPosition": "50% 0%",
+      "transform": "translateY(40%) scale(1.8)",
       "thumbnail": "thumbs/0437.jpg"
     },
     {
@@ -7185,8 +7185,8 @@
     "currentPlayers": 314,
     "previousPlayers": 191,
     "staffProfiles": 47,
-    "availablePhotos": 504,
-    "missingOrBrokenPhotos": 48,
-    "explicitFramingOverrides": 5
+    "availablePhotos": 516,
+    "missingOrBrokenPhotos": 36,
+    "explicitFramingOverrides": 20
   }
 }

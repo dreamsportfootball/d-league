@@ -52,6 +52,7 @@ for (const [route, entry] of Object.entries(PAGE_SEO)) {
 
 const teamCanonicalIds = new Set();
 const playerCanonicalIds = new Set();
+const staffCanonicalIds = new Set();
 const matchIds = new Set();
 const latestTeamNameByCanonicalId = new Map();
 const latestPlayerNameByCanonicalId = new Map();
@@ -93,6 +94,15 @@ for (const seasonId of SEASON_IDS) {
       canonicalRoute: `/teams/${canonicalId}`,
       schemaType: 'SportsTeam',
     });
+  }
+
+  for (const team of teams) {
+    for (const staff of team.staff ?? []) {
+      const canonicalId = staff.identityId ?? staff.id ?? 'staff-' + (team.identityId ?? team.id) + '-' + staff.name;
+      staffCanonicalIds.add(canonicalId);
+      const route = '/staff/' + encodeURIComponent(canonicalId);
+      await checkHtml(route, staff.name, { schemaType: 'Person' });
+    }
   }
 
   for (const player of players) {
@@ -141,6 +151,12 @@ for (const route of Object.keys(PAGE_SEO)) {
 for (const id of teamCanonicalIds) {
   if (!sitemap.includes(`<loc>${SITE_URL}/teams/${id}</loc>`)) {
     fail(`sitemap.xml: team ${id} missing`);
+  }
+}
+for (const id of staffCanonicalIds) {
+  const route = '/staff/' + encodeURIComponent(id);
+  if (!sitemap.includes('<loc>' + SITE_URL + route + '</loc>')) {
+    fail('sitemap.xml: staff ' + id + ' missing');
   }
 }
 for (const id of playerCanonicalIds) {

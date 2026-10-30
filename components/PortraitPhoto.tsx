@@ -1,39 +1,20 @@
-import React, { useState } from 'react';
-import { getAvatarImagePosition } from '../config/avatarImagePosition';
+import React from 'react';
+import { getAvatarPhotoStyle } from '../config/avatarImagePosition';
 
 interface PortraitPhotoProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
   src: string;
 }
 
-interface ImageDimensions {
-  src: string;
-  width: number;
-  height: number;
-}
-
-/** One consistent image crop across player / staff / stats avatars. */
-const PortraitPhoto: React.FC<PortraitPhotoProps> = ({ src, onLoad, style, ...props }) => {
-  const [dimensions, setDimensions] = useState<ImageDimensions | null>(null);
-  const imageSize = dimensions?.src === src ? dimensions : null;
-
-  return (
-    <img
-      {...props}
-      src={src}
-      style={{
-        ...style,
-        objectPosition: getAvatarImagePosition(src, imageSize?.width, imageSize?.height),
-      }}
-      onLoad={(event) => {
-        setDimensions({
-          src,
-          width: event.currentTarget.naturalWidth,
-          height: event.currentTarget.naturalHeight,
-        });
-        onLoad?.(event);
-      }}
-    />
-  );
-};
+/**
+ * Keep good existing portraits unchanged; allow only verified image-specific
+ * framing corrections, without any runtime aspect-ratio auto-shift.
+ */
+const PortraitPhoto: React.FC<PortraitPhotoProps> = ({ src, style, ...props }) => (
+  <img
+    {...props}
+    src={src}
+    style={{ ...style, ...getAvatarPhotoStyle(src) }}
+  />
+);
 
 export default PortraitPhoto;

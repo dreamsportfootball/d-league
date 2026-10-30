@@ -21,7 +21,8 @@
         "role": "領隊",
         "name": "吳孟容",
         "englishName": "WU MENG RONG",
-        "id": "staff-sf-football-club-01"
+        "id": "staff-sf-football-club-01",
+        "image": "assets/seasons/2026-27/staff/sf-wu-meng-rong.jpg"
       },
       {
         "role": "管理",
@@ -267,13 +268,15 @@
         "role": "領隊",
         "name": "龔炳芳",
         "englishName": "KUNG,PING-FANG",
-        "id": "staff-tainan-evergreen-fc-01"
+        "id": "staff-tainan-evergreen-fc-01",
+        "image": "assets/seasons/2026-27/staff/evergreen-kung-ping-fang.jpg"
       },
       {
         "role": "管理",
         "name": "莊金生",
         "englishName": "ZHUANG,JIN-SHENG",
-        "id": "staff-tainan-evergreen-fc-02"
+        "id": "staff-tainan-evergreen-fc-02",
+        "image": "assets/seasons/2026-27/staff/evergreen-zhuang-jin-sheng.jpg"
       },
       {
         "role": "教練",
@@ -443,19 +446,22 @@
         "role": "領隊",
         "name": "蔡孟勲",
         "englishName": "TSAI MENG HSUN",
-        "id": "staff-chiayi-235-fc-01"
+        "id": "staff-chiayi-235-fc-01",
+        "image": "assets/seasons/2026-27/staff/chiayi235-tsai-meng-hsun.jpg"
       },
       {
         "role": "管理",
         "name": "蔡明瀚",
         "englishName": "TSAI MING HAN",
-        "id": "staff-chiayi-235-fc-02"
+        "id": "staff-chiayi-235-fc-02",
+        "image": "assets/seasons/2026-27/staff/chiayi235-tsai-ming-han.jpg"
       },
       {
         "role": "教練",
         "name": "郭政達",
         "englishName": "GUO ZHENG DA",
-        "id": "staff-chiayi-235-fc-03"
+        "id": "staff-chiayi-235-fc-03",
+        "image": "assets/seasons/2026-27/staff/chiayi235-guo-zheng-da.jpg"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -479,19 +485,22 @@
         "role": "領隊",
         "name": "鍾明翰",
         "englishName": "CHUNG, MING-HAN",
-        "id": "staff-alian-fc-01"
+        "id": "staff-alian-fc-01",
+        "image": "assets/seasons/2026-27/staff/alian-chung-ming-han.jpg"
       },
       {
         "role": "管理",
         "name": "劉庭瑜",
         "englishName": "LIU, TING-YU",
-        "id": "staff-alian-fc-02"
+        "id": "staff-alian-fc-02",
+        "image": "assets/seasons/2026-27/staff/alian-liu-ting-yu.jpg"
       },
       {
         "role": "教練",
         "name": "林育廷",
         "englishName": "LIN, YU-TING",
-        "id": "staff-alian-fc-03"
+        "id": "staff-alian-fc-03",
+        "image": "assets/seasons/2026-27/staff/alian-lin-yu-ting.jpg"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -553,13 +562,15 @@
         "role": "領隊",
         "name": "詹景森",
         "englishName": "CHAN JING SEN",
-        "id": "staff-holy-knights-fc-01"
+        "id": "staff-holy-knights-fc-01",
+        "image": "assets/seasons/2026-27/staff/holy-chan-jing-sen.jpg"
       },
       {
         "role": "管理",
         "name": "曾以安",
         "englishName": "Tseng Yian",
-        "id": "staff-holy-knights-fc-02"
+        "id": "staff-holy-knights-fc-02",
+        "image": "assets/seasons/2026-27/staff/holy-tseng-yi-an.jpg"
       }
     ],
     "competitionStatus": "ACTIVE",

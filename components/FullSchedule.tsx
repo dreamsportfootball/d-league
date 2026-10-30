@@ -117,8 +117,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
+                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}，查看比賽詳情`}
+                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue motion-reduce:transition-none md:hidden ${teamRowBackground}`}
                 >
                   <div className="mb-2 flex min-w-0 items-center gap-2 leading-none">
                     <span className="whitespace-nowrap font-display text-[10px] font-semibold tracking-[0.02em] text-neutral-500">
@@ -127,6 +127,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     <span className="whitespace-nowrap text-[11px] font-medium tracking-wide text-neutral-600">
                       {timeStr} · {match.league} 第{match.round}輪
                     </span>
+                    <span className="ml-auto shrink-0 text-[10px] font-bold text-brand-blue" aria-hidden="true">詳情 →</span>
                   </div>
 
                   <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] items-center gap-1">
@@ -190,8 +191,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-3.5 text-left transition-colors md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
+                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}，查看比賽詳情`}
+                  className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue motion-reduce:transition-none md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
 
@@ -263,8 +264,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className="w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
+                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}，查看比賽詳情`}
+                  className="w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue motion-reduce:transition-none md:hidden"
                 >
                   <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
                     <div className="flex shrink-0 items-center gap-2.5">
@@ -275,6 +276,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         {match.league} 第{match.round}輪
                       </span>
                     </div>
+                    <span className="shrink-0 text-[10px] font-bold text-brand-blue" aria-hidden="true">詳情 →</span>
                   </div>
 
                   <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] items-center gap-1">
@@ -333,8 +335,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
+                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}，查看比賽詳情`}
+                  className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue motion-reduce:transition-none md:flex md:flex-row md:hover:bg-neutral-50"
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 

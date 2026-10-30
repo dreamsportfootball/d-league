@@ -52,7 +52,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/lz26-05.': { objectPosition: '50% 0%' }, // 李修沛：避開原始照片下方其他畫面
   '/assets/seasons/2026-27/players/sb26-04.': { objectPosition: '50% 0%', transform: 'translateY(13%) scale(1.3)' }, // 李福祥：保留完整頭髮並突出五官
   '/assets/seasons/2026-27/players/sb26-07.': { objectPosition: '50% 0%' }, // 伊而凡：避免裁掉頭髮
-  '/assets/seasons/2026-27/players/sb26-11.': { transform: 'translateY(80%) scale(2.7)' }, // 迪馬斯：全身照聚焦頭肩
+  '/assets/seasons/2026-27/players/sb26-11.': { transform: 'translateY(95%) scale(3.1)' }, // 迪馬斯：全身照聚焦頭肩
   '/assets/seasons/2026-27/players/sb26-15.': { objectPosition: '50% 0%' }, // 劉駿輝：保留完整髮頂，同步套用球員及領隊頭像
   '/assets/seasons/2026-27/players/ku26-02.': { objectPosition: '50% 0%' }, // 林柏佑：避免裁掉頭髮
   '/assets/seasons/2026-27/players/ku26-14.': { objectPosition: '50% 0%' }, // 翁吉韡：避免裁掉頭髮
@@ -87,12 +87,12 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sb26-02.': { transform: 'translateY(19%) scale(1.7)' }, // SOUTHBOYS 拉非：去除過多背景、放大臉部
   '/assets/seasons/2026-27/players/sb26-09.': { objectPosition: '50% 15%' }, // SOUTHBOYS 艾力夫：保留頭髮頂部
   '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(47%) scale(2.1)' }, // SOUTHBOYS 孺立：原圖人頭位置偏上，放大至清楚可辨
-  '/assets/seasons/2026-27/players/sb26-08.': { objectPosition: '50% 0%', transform: 'translateY(52%) scale(2.1)' }, // 朴禮薩：臉部置中、保留頭頂
+  '/assets/seasons/2026-27/players/sb26-08.': { objectPosition: '50% 0%', transform: 'translateY(61%) scale(2.3)' }, // 朴禮薩：臉部置中、保留頭頂
   '/assets/seasons/2026-27/players/sb26-06.': { objectPosition: '50% 0%' }, // 蘇凡迪：保留 2026/27 原照頭頂
   '/assets/players/PPI TAINAN FC/蘇凡迪.': { objectPosition: '50% 0%' }, // 蘇凡迪：2025/26 歷史原照也保留頭頂
   '/assets/seasons/2026-27/players/sb26-12.': { transform: 'translateY(33%) scale(1.9)' }, // 室內半身照
-  '/assets/seasons/2026-27/players/sb26-13.': { transform: 'translateY(20%) scale(1.7)' }, // 人像半身照
-  '/assets/seasons/2026-27/players/sb26-14.': { transform: 'translateY(53%) scale(2.35)' }, // 室內全身照
+  '/assets/seasons/2026-27/players/sb26-13.': { transform: 'translateY(30%) scale(2)' }, // 人像半身照
+  '/assets/seasons/2026-27/players/sb26-14.': { transform: 'translateY(66%) scale(2.7)' }, // 室內全身照
   '/assets/seasons/2026-27/players/ku26-20.': { transform: 'translateY(14%) scale(1.55)' }, // 戶外半身照
   '/assets/seasons/2026-27/players/ns26-02.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-03.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照

@@ -1,3 +1,4 @@
+// SOUTHBOYS FC 2026/27 team-by-team visual recheck: compare 104px + 48px after focused face adjustments.
 // SOUTHBOYS FC: trigger 104px / 48px team-by-team source image QA refresh (2026-10-31).
 // Refresh after image mappings and targeted image framing corrections.
 // Re-verify Excel-sourced portrait framing for khk26-06, khk26-11, kbk26-12, ka26-38.

@@ -284,6 +284,68 @@ for (const [identity, recordsInput] of teamGroups) {
   addSitemapEntry(canonicalRoute);
 }
 
+const getStaffPortrait = ({ seasonId, team, staff }) => {
+  if (staff.image) return staff.image;
+  const payload = seasonPayloads[seasonId];
+  const matches = payload.players.filter((player) => player.teamId === team.id && player.name === staff.name);
+  return matches.length === 1 ? payload.playerImages[matches[0].name] : undefined;
+};
+
+const staffGroups = new Map();
+for (const seasonId of SEASON_IDS) {
+  const payload = seasonPayloads[seasonId];
+  for (const team of payload.teams) {
+    for (const staff of team.staff ?? []) {
+      const identity = safeEntityId(staff.identityId ?? staff.id ?? 'staff-' + (team.identityId ?? team.id) + '-' + staff.name, 'staff');
+      const group = staffGroups.get(identity) ?? [];
+      group.push({ seasonId, team, staff });
+      staffGroups.set(identity, group);
+    }
+  }
+}
+
+for (const [identity, rows] of staffGroups) {
+  const records = rows.slice().sort((a, b) => b.seasonId.localeCompare(a.seasonId));
+  const latest = records[0];
+  const roles = [...new Set(records.filter((row) => row.seasonId === latest.seasonId && row.team.id === latest.team.id).map((row) => row.staff.role))];
+  const canonicalRoute = '/staff/' + encodeURIComponent(identity);
+  const title = latest.staff.name + '｜D LEAGUE 官方隊職員資料｜' + SITE_NAME;
+  const description = latest.staff.name + ' D LEAGUE 隊職員個人頁，' + latest.team.name + '，職務：' + roles.join('、') + '，歷年任職紀錄';
+  const headshot = records.map(getStaffPortrait).find(Boolean);
+  const image = absoluteAssetUrl(headshot ?? latest.team.logo);
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: latest.staff.name,
+    alternateName: latest.staff.englishName || undefined,
+    image: headshot ? image : undefined,
+    jobTitle: roles.join('、'),
+    affiliation: { '@type': 'SportsTeam', name: latest.team.name, url: routeUrl('/teams/' + encodeURIComponent(latest.team.identityId ?? latest.team.id)) },
+  };
+  const history = new Map();
+  for (const record of records) {
+    const key = record.seasonId + ':' + record.team.id;
+    const entry = history.get(key) ?? { seasonId: record.seasonId, team: record.team, roles: [] };
+    if (!entry.roles.includes(record.staff.role)) entry.roles.push(record.staff.role);
+    history.set(key, entry);
+  }
+  const body = '<h2>歷年任職</h2><ul>' + [...history.values()].map(({ seasonId, team, roles }) =>
+    '<li>' + escapeHtml(getSeasonDisplayName(seasonId)) + '：<a href="' +
+    escapeHtml(routeUrl('/teams/' + encodeURIComponent(team.identityId ?? team.id))) + '">' +
+    escapeHtml(team.name) + '</a>（' + escapeHtml(roles.join('、')) + '）</li>'
+  ).join('') + '</ul>';
+  await writeRoute(canonicalRoute, renderHtml({
+    route: canonicalRoute,
+    title,
+    description,
+    image,
+    type: 'profile',
+    schemas: [schema],
+    staticContent: staticShell(latest.staff.name, description, body),
+  }));
+  addSitemapEntry(canonicalRoute);
+}
+
 const playerGroups = new Map();
 for (const seasonId of SEASON_IDS) {
   const payload = seasonPayloads[seasonId];

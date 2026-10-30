@@ -20,17 +20,20 @@
       {
         "role": "領隊",
         "name": "吳孟容",
-        "englishName": "WU MENG RONG"
+        "englishName": "WU MENG RONG",
+        "id": "staff-sf-football-club-01"
       },
       {
         "role": "管理",
         "name": "許凱昱",
-        "englishName": "KAI YU HSU"
+        "englishName": "KAI YU HSU",
+        "id": "staff-sf-football-club-02"
       },
       {
         "role": "教練",
         "name": "鄭詠翰",
-        "englishName": "CHENG, YUNG-HAN"
+        "englishName": "CHENG, YUNG-HAN",
+        "id": "staff-sf-football-club-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -53,17 +56,20 @@
       {
         "role": "領隊",
         "name": "劉力瑋",
-        "englishName": "LIU-LI-WEI"
+        "englishName": "LIU-LI-WEI",
+        "id": "staff-kaohsiung-amateur-fc-01"
       },
       {
         "role": "管理",
         "name": "劉力瑋",
-        "englishName": "LIU-LI-WEI"
+        "englishName": "LIU-LI-WEI",
+        "id": "staff-kaohsiung-amateur-fc-01"
       },
       {
         "role": "教練",
         "name": "劉力瑋",
-        "englishName": "LIU-LI-WEI"
+        "englishName": "LIU-LI-WEI",
+        "id": "staff-kaohsiung-amateur-fc-01"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -91,12 +97,14 @@
       {
         "role": "領隊",
         "name": "陳揚",
-        "englishName": "CHEN YANG"
+        "englishName": "CHEN YANG",
+        "id": "staff-t_tongque-01"
       },
       {
         "role": "管理",
         "name": "李相慶",
-        "englishName": "LI HSIANG CHING"
+        "englishName": "LI HSIANG CHING",
+        "id": "staff-t_tongque-02"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -119,17 +127,20 @@
       {
         "role": "領隊",
         "name": "周宗德",
-        "englishName": "CHOU TSUNG TE"
+        "englishName": "CHOU TSUNG TE",
+        "id": "staff-pingtung-wolves-fc-01"
       },
       {
         "role": "管理",
         "name": "林大雄",
-        "englishName": "Lin Tahsiung"
+        "englishName": "Lin Tahsiung",
+        "id": "staff-pingtung-wolves-fc-02"
       },
       {
         "role": "教練",
         "name": "謝晉元",
-        "englishName": "XIE JIN-YUAN"
+        "englishName": "XIE JIN-YUAN",
+        "id": "staff-pingtung-wolves-fc-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -159,7 +170,8 @@
       {
         "role": "領隊",
         "name": "謝俊杰",
-        "englishName": "Tse Chun Kit"
+        "englishName": "Tse Chun Kit",
+        "id": "staff-kaohsiung-hong-kong-fc-01"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -178,17 +190,20 @@
       {
         "role": "領隊",
         "name": "簡法亦",
-        "englishName": "CHIEN FA I"
+        "englishName": "CHIEN FA I",
+        "id": "staff-t_pingtung-01"
       },
       {
         "role": "管理",
         "name": "林彥文",
-        "englishName": "LIN YEN WEN"
+        "englishName": "LIN YEN WEN",
+        "id": "staff-t_pingtung-02"
       },
       {
         "role": "教練",
         "name": "黃震浩",
-        "englishName": "HUANG JHEN HAO"
+        "englishName": "HUANG JHEN HAO",
+        "id": "staff-t_pingtung-03"
       }
     ],
     "competitionStatus": "ACTIVE",
@@ -211,17 +226,20 @@
       {
         "role": "領隊",
         "name": "倪天銘",
-        "englishName": "NI,Tian-Ming"
+        "englishName": "NI,Tian-Ming",
+        "id": "staff-t_chen-01"
       },
       {
         "role": "管理",
         "name": "孫裕程",
-        "englishName": "Sun,Yu-Cheng"
+        "englishName": "Sun,Yu-Cheng",
+        "id": "staff-t_chen-02"
       },
       {
         "role": "教練",
         "name": "洪品宇",
-        "englishName": "Hong,Pin-Yu"
+        "englishName": "Hong,Pin-Yu",
+        "id": "staff-t_chen-03"
       }
     ],
     "competitionStatus": "ACTIVE",
@@ -248,17 +266,20 @@
       {
         "role": "領隊",
         "name": "龔炳芳",
-        "englishName": "KUNG,PING-FANG"
+        "englishName": "KUNG,PING-FANG",
+        "id": "staff-tainan-evergreen-fc-01"
       },
       {
         "role": "管理",
         "name": "莊金生",
-        "englishName": "ZHUANG,JIN-SHENG"
+        "englishName": "ZHUANG,JIN-SHENG",
+        "id": "staff-tainan-evergreen-fc-02"
       },
       {
         "role": "教練",
         "name": "曹冠祥",
-        "englishName": "TSAO,KUAN-HSIANG"
+        "englishName": "TSAO,KUAN-HSIANG",
+        "id": "staff-tainan-evergreen-fc-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -283,7 +304,8 @@
       {
         "role": "領隊",
         "name": "王浩誠",
-        "englishName": "WANG,HAO-CHENG"
+        "englishName": "WANG,HAO-CHENG",
+        "id": "staff-black-wolf-fc-01"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -302,12 +324,15 @@
       {
         "role": "領隊",
         "name": "劉駿輝",
-        "englishName": "YEREMIA IMMANUEL SUSILO"
+        "englishName": "YEREMIA IMMANUEL SUSILO",
+        "id": "staff-southboys-fc-01"
       },
       {
         "role": "管理",
         "name": "陳美玲",
-        "englishName": "RUTH DARLEEN CHANDRA"
+        "englishName": "RUTH DARLEEN CHANDRA",
+        "id": "staff-southboys-fc-02",
+        "image": "assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.jpeg"
       }
     ],
     "competitionStatus": "ACTIVE",
@@ -337,17 +362,20 @@
       {
         "role": "領隊",
         "name": "陳麒竣",
-        "englishName": "CHEN CHI-CHUN"
+        "englishName": "CHEN CHI-CHUN",
+        "id": "staff-t_luzhu-01"
       },
       {
         "role": "管理",
         "name": "陳泰盛",
-        "englishName": "CHEN TAI-SHENG"
+        "englishName": "CHEN TAI-SHENG",
+        "id": "staff-t_luzhu-02"
       },
       {
         "role": "教練",
         "name": "宋映德",
-        "englishName": "SUNG YIN-TE"
+        "englishName": "SUNG YIN-TE",
+        "id": "staff-t_luzhu-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -375,17 +403,20 @@
       {
         "role": "領隊",
         "name": "毛邦澤",
-        "englishName": "PANG TSE MAO"
+        "englishName": "PANG TSE MAO",
+        "id": "staff-wanderers-01"
       },
       {
         "role": "管理",
         "name": "沈家弘",
-        "englishName": "SHEN,JIA-HONG"
+        "englishName": "SHEN,JIA-HONG",
+        "id": "staff-wanderers-02"
       },
       {
         "role": "教練",
         "name": "毛邦丞",
-        "englishName": "PANG CHENG MAO"
+        "englishName": "PANG CHENG MAO",
+        "id": "staff-wanderers-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -411,17 +442,20 @@
       {
         "role": "領隊",
         "name": "蔡孟勲",
-        "englishName": "TSAI MENG HSUN"
+        "englishName": "TSAI MENG HSUN",
+        "id": "staff-chiayi-235-fc-01"
       },
       {
         "role": "管理",
         "name": "蔡明瀚",
-        "englishName": "TSAI MING HAN"
+        "englishName": "TSAI MING HAN",
+        "id": "staff-chiayi-235-fc-02"
       },
       {
         "role": "教練",
         "name": "郭政達",
-        "englishName": "GUO ZHENG DA"
+        "englishName": "GUO ZHENG DA",
+        "id": "staff-chiayi-235-fc-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -444,17 +478,20 @@
       {
         "role": "領隊",
         "name": "鍾明翰",
-        "englishName": "CHUNG, MING-HAN"
+        "englishName": "CHUNG, MING-HAN",
+        "id": "staff-alian-fc-01"
       },
       {
         "role": "管理",
         "name": "劉庭瑜",
-        "englishName": "LIU, TING-YU"
+        "englishName": "LIU, TING-YU",
+        "id": "staff-alian-fc-02"
       },
       {
         "role": "教練",
         "name": "林育廷",
-        "englishName": "LIN, YU-TING"
+        "englishName": "LIN, YU-TING",
+        "id": "staff-alian-fc-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -476,17 +513,20 @@
       {
         "role": "領隊",
         "name": "Joel Vega",
-        "englishName": "L. JOEL VEGA V"
+        "englishName": "L. JOEL VEGA V",
+        "id": "staff-kaohsiung-black-knights-01"
       },
       {
         "role": "管理",
         "name": "王家偉",
-        "englishName": "WANG JIA WEI"
+        "englishName": "WANG JIA WEI",
+        "id": "staff-kaohsiung-black-knights-02"
       },
       {
         "role": "教練",
         "name": "MICHAEL LENIHAN",
-        "englishName": "MICHAEL STEIN LENIHAN"
+        "englishName": "MICHAEL STEIN LENIHAN",
+        "id": "staff-kaohsiung-black-knights-03"
       }
     ],
     "competitionStatus": "ACTIVE",
@@ -512,12 +552,14 @@
       {
         "role": "領隊",
         "name": "詹景森",
-        "englishName": "CHAN JING SEN"
+        "englishName": "CHAN JING SEN",
+        "id": "staff-holy-knights-fc-01"
       },
       {
         "role": "管理",
         "name": "曾以安",
-        "englishName": "Tseng Yian"
+        "englishName": "Tseng Yian",
+        "id": "staff-holy-knights-fc-02"
       }
     ],
     "competitionStatus": "ACTIVE",
@@ -544,17 +586,20 @@
       {
         "role": "領隊",
         "name": "劉佳興",
-        "englishName": "LIU CHIA HSING"
+        "englishName": "LIU CHIA HSING",
+        "id": "staff-kuromi-01"
       },
       {
         "role": "管理",
         "name": "劉紀良",
-        "englishName": "LIU JI LIANG"
+        "englishName": "LIU JI LIANG",
+        "id": "staff-kuromi-02"
       },
       {
         "role": "教練",
         "name": "翁吉韡",
-        "englishName": "WENG Ji Wi"
+        "englishName": "WENG Ji Wi",
+        "id": "staff-kuromi-03"
       }
     ],
     "competitionStatus": "ACTIVE"
@@ -580,17 +625,20 @@
       {
         "role": "領隊",
         "name": "王志誠",
-        "englishName": "Wong Chi Shing"
+        "englishName": "Wong Chi Shing",
+        "id": "staff-tainan-niaoshi-fc-01"
       },
       {
         "role": "管理",
         "name": "許御力",
-        "englishName": "Yu Li Shu"
+        "englishName": "Yu Li Shu",
+        "id": "staff-tainan-niaoshi-fc-02"
       },
       {
         "role": "教練",
         "name": "王志誠",
-        "englishName": "Wong Chi Shing"
+        "englishName": "Wong Chi Shing",
+        "id": "staff-tainan-niaoshi-fc-01"
       }
     ],
     "competitionStatus": "ACTIVE"

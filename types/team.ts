@@ -14,6 +14,10 @@ export interface TeamBrandingAsset {
 }
 
 export interface TeamStaffMember {
+  id?: string;
+  identityId?: string;
+  /** Image path within the season assets folder. */
+  image?: string;
   role: string;
   name: string;
   englishName?: string;

@@ -18,6 +18,7 @@ const StatsPage = lazy(() => import('./pages/StatsPage'));
 const ArticleDetailPage = lazy(() => import('./pages/ArticleDetailPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const PlayerPage = lazy(() => import('./pages/PlayerPage'));
+const StaffPage = lazy(() => import('./pages/StaffPage'));
 const MatchPage = lazy(() => import('./pages/MatchPage'));
 const RoundPage = lazy(() => import('./pages/RoundPage'));
 const MediaPage = lazy(() => import('./pages/MediaPage'));
@@ -474,6 +475,7 @@ const App: React.FC = () => (
               <Route path="/news/:id" element={<ArticleDetailPage />} />
               <Route path="/teams/:id" element={<TeamPage />} />
               <Route path="/players/:id" element={<PlayerProfileRoute />} />
+              <Route path="/staff/:id" element={<StaffPage />} />
               <Route path="/matches/:id" element={<MatchPage />} />
               <Route path="/rounds/:seasonId/:league/:round" element={<RoundPage />} />
               <Route path="/media" element={<MediaPage />} />

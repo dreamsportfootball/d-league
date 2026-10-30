@@ -8,7 +8,7 @@ import type { CSSProperties } from 'react';
  * Paths omit their extensions so GitHub Pages generated WebP assets get
  * exactly the same positioning as original PNG/JPEG assets.
  */
-type AvatarStyle = Pick<CSSProperties, 'objectPosition' | 'transform'>;
+type AvatarStyle = Partial<Pick<CSSProperties, 'objectPosition' | 'transform'>>;
 
 const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },

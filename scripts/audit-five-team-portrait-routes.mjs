@@ -61,6 +61,7 @@ const renderSheet=async (entries,view)=>{
       '｜'+Math.round(e.profile.diagnostics.width)+'px 個人頭像</small></div>').join('')+'</div></body></html>';
   const sheet=await browser.newPage({viewport:{width:1220,height:1620},deviceScaleFactor:1});
   await sheet.setContent(html,{waitUntil:'load'});
+  await sheet.evaluate(async () => { await Promise.all([...document.images].map(img => img.decode().catch(() => {}))); });
   await sheet.screenshot({path:path.join(out,short+'-actual-'+view.name+'.jpg'),type:'jpeg',quality:82,fullPage:true});
   await sheet.close();
 };

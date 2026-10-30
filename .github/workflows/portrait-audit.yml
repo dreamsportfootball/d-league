@@ -1,0 +1,60 @@
+name: Portrait framing review sheet
+
+on:
+  push:
+    branches:
+      - season/2026-27
+    paths:
+      - scripts/audit-portrait-framing.mjs
+      - .github/workflows/portrait-audit.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portrait-framing-sheet
+  cancel-in-progress: true
+
+jobs:
+  render-portraits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout 2026-27 branch
+        uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          persist-credentials: true
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: |
+          npm ci --silent
+          npm install --no-save playwright sharp
+      - name: Install Chromium and Chinese fonts
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk >/dev/null
+      - name: Render all persons' circular portraits into PDF
+        run: node scripts/audit-portrait-framing.mjs
+      - name: Upload review materials
+        uses: actions/upload-artifact@v4
+        with:
+          name: portrait-framing-review
+          path: |
+            audit/portrait-contact-sheet-2026-10-30.pdf
+            audit/portrait-contact-sheet-2026-10-30.json
+          retention-days: 14
+      - name: Publish review materials on audit branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add audit/portrait-contact-sheet-2026-10-30.pdf audit/portrait-contact-sheet-2026-10-30.json
+          if ! git diff --cached --quiet; then
+            git commit -m "test(qa): publish portrait framing review sheets [skip ci]"
+            git push origin HEAD:season/2026-27
+          fi

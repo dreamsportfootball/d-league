@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, X, Youtube, ZoomIn } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
@@ -13,134 +12,34 @@ import type { SeasonId } from '../types/season';
 const formatMediaDate = (value: string): string =>
   value.replaceAll('.', '/').replaceAll('-', '/');
 
-const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const albumLinkRef = useRef<HTMLAnchorElement>(null);
-  const titleId = React.useId();
+const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
+  <a
+    href={album.link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+  >
+    <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
+      <img
+        src={album.cover}
+        alt={album.title}
+        loading="lazy"
+        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+      />
+    </div>
 
-  useEffect(() => {
-    if (!previewOpen) return undefined;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        setPreviewOpen(false);
-      }
-      if (event.key === 'Tab') {
-        const first = closeRef.current;
-        const last = albumLinkRef.current;
-        if (!first || !last) return;
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    closeRef.current?.focus();
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      triggerRef.current?.focus();
-    };
-  }, [previewOpen]);
-
-  return (
-    <>
-      <a
-        href={album.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-      >
-        <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
-          <img
-            src={album.cover}
-            alt={album.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 ease-out motion-reduce:transition-none md:group-hover:scale-105"
-          />
-        </div>
-        <div className="flex flex-col items-start">
-          <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
-            {formatMediaDate(album.date)}
-          </span>
-          <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
-            <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">查看相簿</span>
-            <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-          </span>
-          <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
-        </div>
-      </a>
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setPreviewOpen(true)}
-        className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-neutral-600 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
-        aria-label={`放大預覽 ${album.title} 封面`}
-      >
-        <ZoomIn className="h-4 w-4" aria-hidden="true" />
-        預覽封面
-      </button>
-      {previewOpen && createPortal(
-        <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/90 px-4 py-6"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setPreviewOpen(false);
-          }}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden bg-white"
-          >
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-neutral-200 px-4 py-2 sm:px-6">
-              <h2 id={titleId} className="min-w-0 truncate text-sm font-bold text-brand-black">{album.title}｜相簿封面</h2>
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={() => setPreviewOpen(false)}
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center text-neutral-700 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
-                aria-label="關閉封面預覽"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="flex min-h-0 flex-1 items-center justify-center bg-neutral-950">
-              <img
-                src={album.cover}
-                alt={`${album.title} 相簿封面`}
-                className="max-h-[65vh] w-full object-contain"
-              />
-            </div>
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6">
-              <span className="text-xs text-neutral-500">此處僅預覽封面，完整照片請至外部相簿</span>
-              <a
-                ref={albumLinkRef}
-                href={album.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center gap-1 text-xs font-bold text-brand-blue hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
-              >
-                查看完整相簿 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-              </a>
-            </div>
-          </div>
-        </div>,
-        document.body,
-      )}
-    </>
-  );
-};
+    <div className="flex flex-col items-start">
+      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
+        {formatMediaDate(album.date)}
+      </span>
+      <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
+        <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">查看相簿</span>
+        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+      </span>
+      <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
+    </div>
+  </a>
+);
 
 const PhotoUsageNotice: React.FC = () => (
   <section aria-labelledby="photo-usage-notice-title">

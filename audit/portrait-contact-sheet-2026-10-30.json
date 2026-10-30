@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T19:21:51.771Z",
+  "generatedAt": "2026-10-30T19:25:52.320Z",
   "branch": "season/2026-27",
   "expectedCount": 552,
   "rows": [
@@ -3510,7 +3510,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 0%",
-      "transform": "translateY(52%) scale(2.1)",
+      "transform": "translateY(61%) scale(2.3)",
       "thumbnail": "thumbs/0270.jpg"
     },
     {
@@ -3549,7 +3549,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(80%) scale(2.7)",
+      "transform": "translateY(95%) scale(3.1)",
       "thumbnail": "thumbs/0273.jpg"
     },
     {
@@ -3575,7 +3575,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(20%) scale(1.7)",
+      "transform": "translateY(30%) scale(2)",
       "thumbnail": "thumbs/0275.jpg"
     },
     {
@@ -3588,7 +3588,7 @@
       "source": "當季",
       "exists": true,
       "objectPosition": "50% 50%",
-      "transform": "translateY(53%) scale(2.35)",
+      "transform": "translateY(66%) scale(2.7)",
       "thumbnail": "thumbs/0276.jpg"
     },
     {

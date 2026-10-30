@@ -42,9 +42,22 @@ for (const player of players26) {
   rows.push({ season: '2026/27', category: '球員', team: labels26.get(player.teamId) ?? player.teamId, name: player.name,
     id: player.id, photo: photo ?? null, source: direct ? '當季' : photo ? '歷史補圖' : '未提供' });
 }
+// Match the site's getTeamStaffProfiles(): only reuse a player photo when the
+// same season and team have exactly one player with this person's name.
+// A missing staff.image is NOT a missing headshot when this fallback succeeds.
 for (const team of teams26) for (const staff of team.staff ?? []) {
-  rows.push({ season: '2026/27', category: '隊職員', team: team.name, name: staff.name, id: staff.id,
-    photo: staff.image ?? null, source: staff.image ? '當季' : '未提供' });
+  const matchingPlayers = players26.filter(player =>
+    player.teamId === team.id && player.name === staff.name
+  );
+  const player = matchingPlayers.length === 1 ? matchingPlayers[0] : null;
+  const registeredPlayerImage = player
+    ? images26[player.name] ?? (player.name === '魏嘉成' ? 'assets/seasons/2026-27/players/ns26-16.jpg' : null)
+    : null;
+  const photo = staff.image ?? registeredPlayerImage;
+  rows.push({
+    season: '2026/27', category: '隊職員', team: team.name, name: staff.name, id: staff.id,
+    photo: photo ?? null, source: staff.image ? '隊職員專用照片' : registeredPlayerImage ? '同隊球員照片' : '未提供',
+  });
 }
 const imgByIdentity26 = new Map();
 for (const player of players26) {
@@ -90,6 +103,9 @@ report.summary = {
   currentPlayers: players26.length,
   previousPlayers: players25.length,
   staffProfiles: teams26.flatMap(t => t.staff ?? []).length,
+  staffWithDedicatedPhotos: report.rows.filter(r => r.category === '隊職員' && r.source === '隊職員專用照片' && r.exists).length,
+  staffUsingPlayerPhotos: report.rows.filter(r => r.category === '隊職員' && r.source === '同隊球員照片' && r.exists).length,
+  staffWithoutEffectivePhotos: report.rows.filter(r => r.category === '隊職員' && !r.exists).length,
   availablePhotos: report.rows.filter(r => r.exists).length,
   missingOrBrokenPhotos: report.rows.filter(r => !r.exists).length,
   explicitFramingOverrides: report.rows.filter(r => r.objectPosition !== '50% 50%' || r.transform !== 'none').length,

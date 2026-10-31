@@ -60,10 +60,10 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': Black Wolf #1 image position override did not apply: '+diag.objectPosition);
   if(expectedId==='bw26-02' && diag.objectPosition!=='50% 0%')
     throw Error(tag+': Black Wolf #2 image position override did not apply: '+diag.objectPosition);
-  if(expectedId==='bw26-07' && diag.objectPosition!=='50% 18%')
-    throw Error(tag+': Black Wolf #7 framing failed: '+diag.objectPosition);
-  if(expectedId==='bw26-10' && diag.objectPosition!=='50% 12%')
-    throw Error(tag+': Black Wolf #20 framing failed: '+diag.objectPosition);
+  if(expectedId==='bw26-07' && (diag.objectPosition!=='50% 18%' || diag.naturalWidth<400))
+    throw Error(tag+': Black Wolf #7 Excel original/WebP not applied: '+JSON.stringify(diag));
+  if(expectedId==='bw26-10' && (diag.objectPosition!=='50% 12%' || diag.naturalWidth<600))
+    throw Error(tag+': Black Wolf #20 Excel original/WebP not applied: '+JSON.stringify(diag));
   // Original Excel images must actually be used. The previous .png files shared
   // the same .webp output name and could silently win over higher-res JPEGs.
   if(expectedId==='bw26-07' && diag.naturalWidth < 400)

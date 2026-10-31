@@ -34,9 +34,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/al26-06.': { objectPosition: '50% 28%' }, // 阿蓮 #4 戴于翔：上移原圖取景、保留頭髮
   '/assets/seasons/2026-27/players/al26-07.': { objectPosition: '50% 0%' }, // 阿蓮 #38 傅泳欽：保留髮頂
   '/assets/seasons/2026-27/players/al26-08.': { objectPosition: '50% 42%' }, // 阿蓮 #15 陳楊青澔：保留髮頂
-  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translateY(36%) scale(1.7)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
+  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translate(15%, 34%) scale(1.7)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
   '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '50% 10%', transform: 'translateY(24%) scale(1.6)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物
-  '/assets/seasons/2026-27/players/al26-12.': { objectPosition: '60% 30%', transform: 'translate(-13%, 20%) scale(1.3)' }, // 阿蓮 楊仁傑：側身照校正人物水平位置
+  '/assets/seasons/2026-27/players/al26-12.': { objectPosition: '60% 0%', transform: 'translateY(12%) scale(1.25)' }, // 阿蓮 楊仁傑：側身照校正人物水平位置
   '/assets/seasons/2026-27/players/al26-18.': { objectPosition: '50% 15%' }, // 阿蓮 陳楊祐誠：上移取景保留髮頂
   '/assets/seasons/2026-27/players/al26-17.': { objectPosition: '65% 55%', transform: 'translate(-10%, 10%) scale(1.85)' }, // 阿蓮 林淮中：夜市遠景聚焦人物臉部，略為放大
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
@@ -112,7 +112,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/al26-02.': { objectPosition: '50% 0%', transform: 'translateY(28%) scale(1.65)' }, // 站立隊服照
   '/assets/seasons/2026-27/players/al26-13.': { objectPosition: '50% 0%', transform: 'translateY(5%) scale(1.1)' }, // 站立半身照
   '/assets/seasons/2026-27/players/al26-14.': { transform: 'translateY(-10%) scale(1.9)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/al26-19.': { objectPosition: '50% 0%', transform: 'translateY(40%) scale(1.8)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/al26-19.': { objectPosition: '50% 0%', transform: 'translate(20%, 40%) scale(1.8)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(31%, 31%) scale(2)' }, // 雙人照內聚焦左側球員
   '/assets/seasons/2026-27/players/kbk26-11.': { transform: 'translateY(48%) scale(1.55)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/holy26-07.': { objectPosition: '50% 0%', transform: 'translateY(-24%) scale(1.85)' }, // 第二輪實圖回歸校正

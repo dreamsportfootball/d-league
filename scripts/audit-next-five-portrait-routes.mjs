@@ -52,6 +52,14 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': wrong/broken photo '+JSON.stringify(diag));
   if(diag.objectFit!=='cover'||diag.width<46)
     throw Error(tag+': wrong face container '+JSON.stringify(diag));
+  // Earlier QA only checked successful decoding. Verify that image-specific
+  // framing is actually applied (including optimized .webp assets).
+  if(expectedId==='khk26-02' && diag.transform==='none')
+    throw Error(tag+': KA HK face framing override did not apply');
+  if(expectedId==='bw26-01' && diag.objectPosition!=='50% 22%')
+    throw Error(tag+': Black Wolf #1 image position override did not apply: '+diag.objectPosition);
+  if(expectedId==='bw26-02' && diag.objectPosition!=='50% 0%')
+    throw Error(tag+': Black Wolf #2 image position override did not apply: '+diag.objectPosition);
   const png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
   return {diagnostics:diag,png:png.toString('base64')};
 };

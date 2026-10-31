@@ -22,6 +22,7 @@ const photoForPlayer=p=>images[p.name]??(p.id==='pwa26-01'?historicImages['邱�
 const photoForStaff=s=>s.image??images[s.name]??(s.name==='邱文良'?historicImages[s.name]:undefined);
 const short='alian';
 const viewports=[{name:'mobile-390',width:390,height:844},{name:'desktop-1280',width:1280,height:900}];
+let activeView='unknown';
 const run={generatedAt:new Date().toISOString(),team:team.name,teamId,season:'2026-27',playerCount:players.length,staffRecords:team.staff.length,distinctStaff:staff.length,viewports:[],failures:[]};
 const browser=await chromium.launch({headless:true});
 const original=async photo=>{
@@ -57,7 +58,7 @@ const getImage=async (locator,expectedId,tag)=>{
     borderRadius:diag.shape,objectFit:diag.objectFit});
   diag.coverage=geometry;
   if(!geometry.passed)
-    throw Error(tag+': image escapes or exposes the circular frame '+JSON.stringify({diag,geometry}));
+    run.failures.push({view:activeView,route:tag,problem:'circular image coverage',uncoveredRatio:geometry.uncoveredRatio,diagnostics:diag});
   // Earlier QA only checked successful decoding. Verify that image-specific
   // framing is actually applied (including optimized .webp assets).
   if(expectedId==='khk26-02' && diag.transform==='none')
@@ -107,6 +108,7 @@ const renderSheet=async (entries,view)=>{
 };
 try{
   for(const view of viewports){
+    activeView=view.name;
     const ctx=await browser.newContext({viewport:{width:view.width,height:view.height},deviceScaleFactor:1,locale:'zh-TW'});
     const page=await ctx.newPage();
     const errors=[]; page.on('pageerror',e=>errors.push(String(e)));

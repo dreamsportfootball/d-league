@@ -12,7 +12,7 @@ type AvatarStyle = Partial<Pick<CSSProperties, 'objectPosition' | 'transform'>>;
 
 const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
-  '/assets/seasons/2026-27/players/al26-01.': { objectPosition: '50% 0%', transform: 'translateY(62.5%) scale(2.25)' },
+  '/assets/seasons/2026-27/players/al26-01.': { objectPosition: '50% 0%', transform: 'translateY(110%) scale(3.35)' },
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
   '/assets/seasons/2026-27/players/pw26-11.': { transform: 'scale(1.18)' }, // 屏東野狼 林瑶璇：取消向下位移，令臉部重新置中
 
@@ -27,18 +27,18 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
-  '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(22%) scale(1.7)' },
-  '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '50% 0%', transform: 'translate(-4%, 4%) scale(1.1)' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
+  '/assets/seasons/2026-27/players/al26-03.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.15)' },
+  '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '48% 80%' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
   '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
-  '/assets/seasons/2026-27/players/al26-16.': { objectPosition: '50% 35%' }, // 阿蓮 #79 黃子翰：完整髮頂、雙眼置中
+  '/assets/seasons/2026-27/players/al26-16.': { objectPosition: '50% 0%' }, // 阿蓮 #79 黃子翰：完整髮頂、雙眼置中
   '/assets/seasons/2026-27/players/al26-06.': { objectPosition: '50% 28%' }, // 阿蓮 #4 戴于翔：上移原圖取景、保留頭髮
   '/assets/seasons/2026-27/players/al26-07.': { objectPosition: '50% 0%' }, // 阿蓮 #38 傅泳欽：保留髮頂
   '/assets/seasons/2026-27/players/al26-08.': { objectPosition: '50% 42%' }, // 阿蓮 #15 陳楊青澔：保留髮頂
-  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translate(15%, 34%) scale(1.7)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
-  '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '50% 10%', transform: 'translateY(24%) scale(1.6)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物
+  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translate(15%, 38%) scale(1.8)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
+  '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '35% 0%', transform: 'translate(12%, 32%) scale(2.3)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物
   '/assets/seasons/2026-27/players/al26-12.': { objectPosition: '60% 0%', transform: 'translateY(12%) scale(1.25)' }, // 阿蓮 楊仁傑：側身照校正人物水平位置
   '/assets/seasons/2026-27/players/al26-18.': { objectPosition: '50% 15%' }, // 阿蓮 陳楊祐誠：上移取景保留髮頂
-  '/assets/seasons/2026-27/players/al26-17.': { objectPosition: '65% 55%', transform: 'translate(-10%, 10%) scale(1.85)' }, // 阿蓮 林淮中：夜市遠景聚焦人物臉部，略為放大
+  '/assets/seasons/2026-27/players/al26-17.': { objectPosition: '70% 60%', transform: 'translate(-24%, 12%) scale(2.65)' }, // 阿蓮 林淮中：夜市遠景聚焦人物臉部，略為放大
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },

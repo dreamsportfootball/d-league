@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T13:07:17.004Z",
+  "generatedAt": "2026-10-31T13:43:29.195Z",
   "team": "阿蓮FC",
   "teamId": "t_alian_2026",
   "season": "2026-27",
@@ -15,10 +15,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(3.35, 0, 0, 3.35, 0, 52.8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -31,15 +31,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 87.12
+        "centerPixelStddev": 87.44
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(3.35, 0, 0, 3.35, 0, 114.4)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -52,7 +52,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 88.14
+        "centerPixelStddev": 88.13
       },
       "overflow": false
     },
@@ -64,10 +64,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
         "naturalWidth": 640,
-        "naturalHeight": 854,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.65, 0, 0, 1.65, 0, 13.44)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -80,15 +80,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 59.76
+        "centerPixelStddev": 63.63
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
         "naturalWidth": 640,
-        "naturalHeight": 854,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.65, 0, 0, 1.65, 0, 29.12)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -101,7 +101,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 60.63
+        "centerPixelStddev": 63.96
       },
       "overflow": false
     },
@@ -113,10 +113,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
         "naturalWidth": 640,
-        "naturalHeight": 637,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(2.6, 0, 0, 2.6, 0, 14.4)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -129,15 +129,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.31
+        "centerPixelStddev": 86.15
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
         "naturalWidth": 640,
-        "naturalHeight": 637,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(2.6, 0, 0, 2.6, 0, 31.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -150,7 +150,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.57
+        "centerPixelStddev": 86.31
       },
       "overflow": false
     },
@@ -161,10 +161,10 @@
       "name": "曾健康",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 309,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "48% 80%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -178,14 +178,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 71.6
+        "centerPixelStddev": 92.57
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 309,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "48% 80%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -199,7 +199,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 72.54
+        "centerPixelStddev": 93.14
       },
       "overflow": false
     },
@@ -210,10 +210,10 @@
       "name": "林冠亨",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 353,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -227,14 +227,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 75.45
+        "centerPixelStddev": 83.32
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 353,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -248,7 +248,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 76.38
+        "centerPixelStddev": 83.7
       },
       "overflow": false
     },
@@ -259,10 +259,10 @@
       "name": "戴于翔",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
-        "naturalWidth": 567,
-        "naturalHeight": 1039,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 28%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -276,14 +276,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 76.27
+        "centerPixelStddev": 77.51
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
-        "naturalWidth": 567,
-        "naturalHeight": 1039,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 28%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -297,7 +297,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 77.08
+        "centerPixelStddev": 77.98
       },
       "overflow": false
     },
@@ -309,9 +309,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
         "naturalWidth": 640,
-        "naturalHeight": 892,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -325,14 +325,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 69.27
+        "centerPixelStddev": 69.19
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
         "naturalWidth": 640,
-        "naturalHeight": 892,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -346,7 +346,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 69.58
+        "centerPixelStddev": 69.57
       },
       "overflow": false
     },
@@ -358,9 +358,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1137,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 42%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -374,14 +374,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 76.92
+        "centerPixelStddev": 78.83
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1137,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 42%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -395,7 +395,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 77.26
+        "centerPixelStddev": 79.1
       },
       "overflow": false
     },
@@ -406,8 +406,8 @@
       "name": "施聖章",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
-        "naturalWidth": 552,
-        "naturalHeight": 736,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -423,12 +423,12 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 57.8
+        "centerPixelStddev": 57.89
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
-        "naturalWidth": 552,
-        "naturalHeight": 736,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -456,10 +456,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 7.2, 18.24)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -472,15 +472,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 71.69
+        "centerPixelStddev": 73.84
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 15.6, 39.52)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -493,7 +493,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 72.34
+        "centerPixelStddev": 74.27
       },
       "overflow": false
     },
@@ -505,10 +505,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
         "naturalWidth": 640,
-        "naturalHeight": 962,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "35% 0%",
-        "transform": "matrix(2.3, 0, 0, 2.3, 9.6, 5.76)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -521,15 +521,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 74.42
+        "centerPixelStddev": 67.16
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
         "naturalWidth": 640,
-        "naturalHeight": 962,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "35% 0%",
-        "transform": "matrix(2.3, 0, 0, 2.3, 20.8, 12.48)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -542,7 +542,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 74.7
+        "centerPixelStddev": 67.24
       },
       "overflow": false
     },
@@ -554,10 +554,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "60% 0%",
-        "transform": "matrix(1.25, 0, 0, 1.25, 0, 5.76)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -570,15 +570,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.41
+        "centerPixelStddev": 79.75
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "60% 0%",
-        "transform": "matrix(1.25, 0, 0, 1.25, 0, 12.48)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -591,7 +591,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.42
+        "centerPixelStddev": 80.78
       },
       "overflow": false
     },
@@ -603,10 +603,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 2.4)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -619,15 +619,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.31
+        "centerPixelStddev": 74.25
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 5.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -640,7 +640,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.58
+        "centerPixelStddev": 74.89
       },
       "overflow": false
     },
@@ -652,10 +652,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.9, 0, 0, 1.9, 0, -4.8)",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -668,15 +668,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 70.77
+        "centerPixelStddev": 67.71
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.9, 0, 0, 1.9, 0, -10.4)",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -689,7 +689,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 71.9
+        "centerPixelStddev": 68.23
       },
       "overflow": false
     },
@@ -701,7 +701,7 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1142,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -717,12 +717,12 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 78.93
+        "centerPixelStddev": 77.55
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1142,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -738,7 +738,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.58
+        "centerPixelStddev": 78.85
       },
       "overflow": false
     },
@@ -750,9 +750,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -766,14 +766,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 65.56
+        "centerPixelStddev": 66.01
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -787,7 +787,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 65.96
+        "centerPixelStddev": 66.46
       },
       "overflow": false
     },
@@ -799,10 +799,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1388,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "65% 55%",
-        "transform": "matrix(2.4, 0, 0, 2.4, -7.2, 15.84)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -815,15 +815,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.99
+        "centerPixelStddev": 79.1
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1388,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "65% 55%",
-        "transform": "matrix(2.4, 0, 0, 2.4, -15.6, 34.32)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -836,7 +836,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.48
+        "centerPixelStddev": 79.64
       },
       "overflow": false
     },
@@ -848,9 +848,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 15%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -864,14 +864,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 68.46
+        "centerPixelStddev": 66.65
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 15%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -885,7 +885,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 69.7
+        "centerPixelStddev": 67.46
       },
       "overflow": false
     },
@@ -897,10 +897,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 9.6, 19.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -913,15 +913,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 92.24
+        "centerPixelStddev": 90.85
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 20.8, 41.6)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -934,7 +934,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 92.71
+        "centerPixelStddev": 91.42
       },
       "overflow": false
     },
@@ -1090,10 +1090,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(3.35, 0, 0, 3.35, 0, 52.8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1106,15 +1106,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 87.12
+        "centerPixelStddev": 87.43
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(3.35, 0, 0, 3.35, 0, 176)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1127,7 +1127,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 88.78
+        "centerPixelStddev": 88.98
       },
       "overflow": false
     },
@@ -1139,10 +1139,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
         "naturalWidth": 640,
-        "naturalHeight": 854,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.65, 0, 0, 1.65, 0, 13.44)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1155,15 +1155,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 59.76
+        "centerPixelStddev": 63.58
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
         "naturalWidth": 640,
-        "naturalHeight": 854,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.65, 0, 0, 1.65, 0, 44.8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1176,7 +1176,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 60.97
+        "centerPixelStddev": 64.52
       },
       "overflow": false
     },
@@ -1188,10 +1188,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
         "naturalWidth": 640,
-        "naturalHeight": 637,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(2.6, 0, 0, 2.6, 0, 14.4)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1204,15 +1204,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.31
+        "centerPixelStddev": 86.16
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
         "naturalWidth": 640,
-        "naturalHeight": 637,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(2.6, 0, 0, 2.6, 0, 48)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1225,7 +1225,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 84.17
+        "centerPixelStddev": 86.73
       },
       "overflow": false
     },
@@ -1236,10 +1236,10 @@
       "name": "曾健康",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 309,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "48% 80%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1253,14 +1253,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 71.6
+        "centerPixelStddev": 92.57
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 309,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "48% 80%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1274,7 +1274,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 73.62
+        "centerPixelStddev": 93.8
       },
       "overflow": false
     },
@@ -1285,10 +1285,10 @@
       "name": "林冠亨",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 353,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1302,14 +1302,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 75.45
+        "centerPixelStddev": 83.32
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
-        "naturalWidth": 257,
-        "naturalHeight": 353,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1323,7 +1323,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 77.07
+        "centerPixelStddev": 84.36
       },
       "overflow": false
     },
@@ -1334,10 +1334,10 @@
       "name": "戴于翔",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
-        "naturalWidth": 567,
-        "naturalHeight": 1039,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 28%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1351,14 +1351,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 76.27
+        "centerPixelStddev": 77.5
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
-        "naturalWidth": 567,
-        "naturalHeight": 1039,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 28%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1372,7 +1372,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 78.02
+        "centerPixelStddev": 78.75
       },
       "overflow": false
     },
@@ -1384,9 +1384,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
         "naturalWidth": 640,
-        "naturalHeight": 892,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1400,14 +1400,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 69.27
+        "centerPixelStddev": 69.18
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
         "naturalWidth": 640,
-        "naturalHeight": 892,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1421,7 +1421,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 69.72
+        "centerPixelStddev": 69.73
       },
       "overflow": false
     },
@@ -1433,9 +1433,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1137,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 42%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1449,14 +1449,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 76.92
+        "centerPixelStddev": 78.78
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1137,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 42%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1470,7 +1470,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 78
+        "centerPixelStddev": 79.86
       },
       "overflow": false
     },
@@ -1481,8 +1481,8 @@
       "name": "施聖章",
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
-        "naturalWidth": 552,
-        "naturalHeight": 736,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1498,12 +1498,12 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 57.8
+        "centerPixelStddev": 57.87
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
-        "naturalWidth": 552,
-        "naturalHeight": 736,
+        "naturalWidth": 640,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1519,7 +1519,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 58.37
+        "centerPixelStddev": 58.42
       },
       "overflow": false
     },
@@ -1531,10 +1531,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 7.2, 18.24)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1547,15 +1547,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 71.69
+        "centerPixelStddev": 73.85
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 24, 60.8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1568,7 +1568,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 72.8
+        "centerPixelStddev": 75.14
       },
       "overflow": false
     },
@@ -1580,10 +1580,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
         "naturalWidth": 640,
-        "naturalHeight": 962,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "35% 0%",
-        "transform": "matrix(2.3, 0, 0, 2.3, 9.6, 5.76)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1596,15 +1596,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 74.42
+        "centerPixelStddev": 67.14
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
         "naturalWidth": 640,
-        "naturalHeight": 962,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "35% 0%",
-        "transform": "matrix(2.3, 0, 0, 2.3, 32, 19.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1617,7 +1617,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 75.28
+        "centerPixelStddev": 67.52
       },
       "overflow": false
     },
@@ -1629,10 +1629,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "60% 0%",
-        "transform": "matrix(1.25, 0, 0, 1.25, 0, 5.76)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1645,15 +1645,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.38
+        "centerPixelStddev": 79.73
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "60% 0%",
-        "transform": "matrix(1.25, 0, 0, 1.25, 0, 19.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1666,7 +1666,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 81.89
+        "centerPixelStddev": 82.03
       },
       "overflow": false
     },
@@ -1678,10 +1678,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 2.4)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1694,15 +1694,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.31
+        "centerPixelStddev": 74.25
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1715,7 +1715,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 81.2
+        "centerPixelStddev": 75.4
       },
       "overflow": false
     },
@@ -1727,10 +1727,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.9, 0, 0, 1.9, 0, -4.8)",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1743,15 +1743,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 70.77
+        "centerPixelStddev": 67.71
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.9, 0, 0, 1.9, 0, -16)",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1764,7 +1764,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 72.16
+        "centerPixelStddev": 68.78
       },
       "overflow": false
     },
@@ -1776,7 +1776,7 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1142,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1792,12 +1792,12 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 78.92
+        "centerPixelStddev": 77.55
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1142,
+        "naturalHeight": 640,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1813,7 +1813,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 81.57
+        "centerPixelStddev": 79.95
       },
       "overflow": false
     },
@@ -1825,9 +1825,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1841,14 +1841,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 65.55
+        "centerPixelStddev": 66.01
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1862,7 +1862,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 66.76
+        "centerPixelStddev": 67.23
       },
       "overflow": false
     },
@@ -1874,10 +1874,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1388,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "65% 55%",
-        "transform": "matrix(2.4, 0, 0, 2.4, -7.2, 15.84)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1890,15 +1890,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.99
+        "centerPixelStddev": 79.1
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
         "naturalWidth": 640,
-        "naturalHeight": 1388,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "65% 55%",
-        "transform": "matrix(2.4, 0, 0, 2.4, -24, 52.8)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1911,7 +1911,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 81.85
+        "centerPixelStddev": 80.65
       },
       "overflow": false
     },
@@ -1923,9 +1923,9 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 15%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1939,14 +1939,14 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 68.47
+        "centerPixelStddev": 66.66
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 15%",
+        "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
@@ -1960,7 +1960,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 70.41
+        "centerPixelStddev": 68.15
       },
       "overflow": false
     },
@@ -1972,10 +1972,10 @@
       "roster": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 9.6, 19.2)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1988,15 +1988,15 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 92.22
+        "centerPixelStddev": 90.83
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
         "naturalWidth": 640,
-        "naturalHeight": 853,
+        "naturalHeight": 640,
         "objectFit": "cover",
-        "objectPosition": "50% 0%",
-        "transform": "matrix(1.8, 0, 0, 1.8, 32, 64)",
+        "objectPosition": "50% 50%",
+        "transform": "none",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -2009,7 +2009,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 93.64
+        "centerPixelStddev": 92.3
       },
       "overflow": false
     },

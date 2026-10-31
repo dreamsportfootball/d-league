@@ -92,7 +92,17 @@ jobs:
           git add audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-actual-*.jpg audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-roster-*.jpg audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-actual-route-review.json
           if ! git diff --cached --quiet; then
             git commit -m "test(qa): publish five-team actual portrait route evidence [skip ci]"
-            git fetch origin season/2026-27
-            git rebase origin/season/2026-27
-            git push origin HEAD:season/2026-27
+            # A parallel QA job may update this branch after our fetch.
+            # Retry non-fast-forward pushes with a fresh rebase.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin season/2026-27
+              git rebase origin/season/2026-27
+              if git push origin HEAD:season/2026-27; then
+                echo "Portrait evidence published on attempt ${attempt}"
+                exit 0
+              fi
+              sleep $((attempt * 2))
+            done
+            echo "Failed to publish current portrait evidence after 5 attempts"
+            exit 1
           fi

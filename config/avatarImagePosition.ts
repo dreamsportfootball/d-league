@@ -32,7 +32,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
   '/assets/seasons/2026-27/players/al26-07.': { objectPosition: '50% 0%' }, // 阿蓮 #38 傅泳欽：保留髮頂
   '/assets/seasons/2026-27/players/al26-08.': { objectPosition: '50% 50%' }, // 阿蓮 #15 陳楊青澔：保留髮頂
-  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translateY(4%) scale(1.1)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
+  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 0%', transform: 'translateY(28%) scale(1.7)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
   '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '50% 10%', transform: 'translateY(24%) scale(1.6)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物
   '/assets/seasons/2026-27/players/al26-12.': { objectPosition: '60% 30%' }, // 阿蓮 楊仁傑：側身照校正人物水平位置
   '/assets/seasons/2026-27/players/al26-18.': { objectPosition: '50% 15%' }, // 阿蓮 陳楊祐誠：上移取景保留髮頂

@@ -5,6 +5,8 @@ on:
     paths:
       - scripts/audit-kuromi-portrait-routes.mjs
       - .github/workflows/kuromi-portrait-route-qa.yml
+      - scripts/portrait-circle-coverage.mjs
+      - config/avatarImagePosition.ts
   workflow_dispatch:
 permissions:
   contents: write
@@ -45,6 +47,8 @@ jobs:
           done
           cat /tmp/kuromi-preview.log
           exit 1
+      - name: Validate shared circular crop geometry
+        run: node --test scripts/portrait-circle-coverage.test.mjs
       - name: Validate real team, 20 player and 3 staff pages at 390px and 1280px
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

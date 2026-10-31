@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T13:43:29.195Z",
+  "generatedAt": "2026-10-31T14:07:29.054Z",
   "team": "阿蓮FC",
   "teamId": "t_alian_2026",
   "season": "2026-27",
@@ -13,7 +13,7 @@
       "id": "al26-01",
       "name": "歐家成",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -34,7 +34,7 @@
         "centerPixelStddev": 87.44
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -62,7 +62,7 @@
       "id": "al26-02",
       "name": "何柏緯",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -83,7 +83,7 @@
         "centerPixelStddev": 63.63
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -111,7 +111,7 @@
       "id": "al26-03",
       "name": "李宗翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -129,10 +129,10 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 86.15
+        "centerPixelStddev": 82.4
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -150,7 +150,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 86.31
+        "centerPixelStddev": 82.57
       },
       "overflow": false
     },
@@ -160,7 +160,7 @@
       "id": "al26-04",
       "name": "曾健康",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -181,7 +181,7 @@
         "centerPixelStddev": 92.57
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -209,7 +209,7 @@
       "id": "al26-05",
       "name": "林冠亨",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -227,10 +227,10 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.32
+        "centerPixelStddev": 80.55
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -248,7 +248,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.7
+        "centerPixelStddev": 81.04
       },
       "overflow": false
     },
@@ -258,7 +258,7 @@
       "id": "al26-06",
       "name": "戴于翔",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -279,7 +279,7 @@
         "centerPixelStddev": 77.51
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -307,7 +307,7 @@
       "id": "al26-07",
       "name": "傅泳欽",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -328,7 +328,7 @@
         "centerPixelStddev": 69.19
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -356,7 +356,7 @@
       "id": "al26-08",
       "name": "陳楊青澔",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -377,7 +377,7 @@
         "centerPixelStddev": 78.83
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -405,7 +405,7 @@
       "id": "al26-09",
       "name": "施聖章",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -426,7 +426,7 @@
         "centerPixelStddev": 57.89
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -454,7 +454,7 @@
       "id": "al26-10",
       "name": "林冠甫",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -475,7 +475,7 @@
         "centerPixelStddev": 73.84
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -503,7 +503,7 @@
       "id": "al26-11",
       "name": "王柏叡",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -524,7 +524,7 @@
         "centerPixelStddev": 67.16
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -552,7 +552,7 @@
       "id": "al26-12",
       "name": "楊仁傑",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -573,7 +573,7 @@
         "centerPixelStddev": 79.75
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -601,7 +601,7 @@
       "id": "al26-13",
       "name": "李坤城",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -622,7 +622,7 @@
         "centerPixelStddev": 74.25
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -650,7 +650,7 @@
       "id": "al26-14",
       "name": "陳韋嘉",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -671,7 +671,7 @@
         "centerPixelStddev": 67.71
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -699,7 +699,7 @@
       "id": "al26-15",
       "name": "陳家駿",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -720,7 +720,7 @@
         "centerPixelStddev": 77.55
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -748,7 +748,7 @@
       "id": "al26-16",
       "name": "黃子翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -769,7 +769,7 @@
         "centerPixelStddev": 66.01
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -797,7 +797,7 @@
       "id": "al26-17",
       "name": "林淮中",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -818,7 +818,7 @@
         "centerPixelStddev": 79.1
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -846,7 +846,7 @@
       "id": "al26-18",
       "name": "陳楊祐誠",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -867,7 +867,7 @@
         "centerPixelStddev": 66.65
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -895,7 +895,7 @@
       "id": "al26-19",
       "name": "許恩豪",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -916,7 +916,7 @@
         "centerPixelStddev": 90.85
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1088,7 +1088,7 @@
       "id": "al26-01",
       "name": "歐家成",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1109,7 +1109,7 @@
         "centerPixelStddev": 87.43
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1137,7 +1137,7 @@
       "id": "al26-02",
       "name": "何柏緯",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1158,7 +1158,7 @@
         "centerPixelStddev": 63.58
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1186,7 +1186,7 @@
       "id": "al26-03",
       "name": "李宗翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1204,10 +1204,10 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 86.16
+        "centerPixelStddev": 82.4
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1225,7 +1225,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 86.73
+        "centerPixelStddev": 82.98
       },
       "overflow": false
     },
@@ -1235,7 +1235,7 @@
       "id": "al26-04",
       "name": "曾健康",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1256,7 +1256,7 @@
         "centerPixelStddev": 92.57
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-04-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1284,7 +1284,7 @@
       "id": "al26-05",
       "name": "林冠亨",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1302,10 +1302,10 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 83.32
+        "centerPixelStddev": 80.56
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1323,7 +1323,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 84.36
+        "centerPixelStddev": 81.84
       },
       "overflow": false
     },
@@ -1333,7 +1333,7 @@
       "id": "al26-06",
       "name": "戴于翔",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1354,7 +1354,7 @@
         "centerPixelStddev": 77.5
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1382,7 +1382,7 @@
       "id": "al26-07",
       "name": "傅泳欽",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1403,7 +1403,7 @@
         "centerPixelStddev": 69.18
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-07-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1431,7 +1431,7 @@
       "id": "al26-08",
       "name": "陳楊青澔",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1452,7 +1452,7 @@
         "centerPixelStddev": 78.78
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1480,7 +1480,7 @@
       "id": "al26-09",
       "name": "施聖章",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1501,7 +1501,7 @@
         "centerPixelStddev": 57.87
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1529,7 +1529,7 @@
       "id": "al26-10",
       "name": "林冠甫",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1550,7 +1550,7 @@
         "centerPixelStddev": 73.85
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1578,7 +1578,7 @@
       "id": "al26-11",
       "name": "王柏叡",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1599,7 +1599,7 @@
         "centerPixelStddev": 67.14
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-11-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1627,7 +1627,7 @@
       "id": "al26-12",
       "name": "楊仁傑",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1648,7 +1648,7 @@
         "centerPixelStddev": 79.73
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1676,7 +1676,7 @@
       "id": "al26-13",
       "name": "李坤城",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1697,7 +1697,7 @@
         "centerPixelStddev": 74.25
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1725,7 +1725,7 @@
       "id": "al26-14",
       "name": "陳韋嘉",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1746,7 +1746,7 @@
         "centerPixelStddev": 67.71
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1774,7 +1774,7 @@
       "id": "al26-15",
       "name": "陳家駿",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1795,7 +1795,7 @@
         "centerPixelStddev": 77.55
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-15-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1823,7 +1823,7 @@
       "id": "al26-16",
       "name": "黃子翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1844,7 +1844,7 @@
         "centerPixelStddev": 66.01
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-16-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1872,7 +1872,7 @@
       "id": "al26-17",
       "name": "林淮中",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1893,7 +1893,7 @@
         "centerPixelStddev": 79.1
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1921,7 +1921,7 @@
       "id": "al26-18",
       "name": "陳楊祐誠",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1942,7 +1942,7 @@
         "centerPixelStddev": 66.66
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1970,7 +1970,7 @@
       "id": "al26-19",
       "name": "許恩豪",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1991,7 +1991,7 @@
         "centerPixelStddev": 90.83
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",

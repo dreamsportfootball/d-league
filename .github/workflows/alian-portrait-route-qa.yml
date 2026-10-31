@@ -6,6 +6,8 @@ on:
       - scripts/audit-alian-portrait-routes.mjs
       - .github/workflows/alian-portrait-route-qa.yml
       - config/avatarImagePosition.ts
+      - data/seasons/2026-27/playerImages.json
+      - 'public/assets/seasons/2026-27/players/al26-*.png'
   workflow_dispatch:
 permissions:
   contents: write

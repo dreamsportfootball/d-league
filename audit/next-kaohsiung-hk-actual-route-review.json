@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T05:37:42.942Z",
+  "generatedAt": "2026-10-31T05:52:51.009Z",
   "team": "高雄香港人足球俱樂部",
   "teamId": "t_kaohsiung_hk_2026",
   "season": "2026-27",
@@ -20,9 +20,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "葛大瑋 大頭貼"
+        "alt": "葛大瑋 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-01.webp",
@@ -32,9 +40,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "葛大瑋"
+        "alt": "葛大瑋",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -49,11 +65,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -19.2, 13.92)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -16.8, 13.92)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-02.webp",
@@ -61,11 +85,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -41.6, 30.16)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -36.4, 30.16)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "謝俊杰"
+        "alt": "謝俊杰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -82,9 +114,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "鄭力 大頭貼"
+        "alt": "鄭力 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-03.webp",
@@ -94,9 +134,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "鄭力"
+        "alt": "鄭力",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -113,9 +161,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "蒲家威 大頭貼"
+        "alt": "蒲家威 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-04.webp",
@@ -125,9 +181,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "蒲家威"
+        "alt": "蒲家威",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -144,9 +208,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "阮文南 大頭貼"
+        "alt": "阮文南 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-05.webp",
@@ -156,9 +228,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "阮文南"
+        "alt": "阮文南",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -175,9 +255,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.9, 0, 0, 1.9, 1.92, -1.44)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "游淙瑋 大頭貼"
+        "alt": "游淙瑋 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-06.webp",
@@ -187,9 +275,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.9, 0, 0, 1.9, 4.16, -3.12)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "游淙瑋"
+        "alt": "游淙瑋",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -206,9 +302,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2.1, 0, 0, 2.1, 0, 16.8)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "高義莉 大頭貼"
+        "alt": "高義莉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-07.webp",
@@ -218,9 +322,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2.1, 0, 0, 2.1, 0, 36.4)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "高義莉"
+        "alt": "高義莉",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -237,9 +349,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "陳遠泰 大頭貼"
+        "alt": "陳遠泰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-08.webp",
@@ -249,9 +369,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "陳遠泰"
+        "alt": "陳遠泰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -268,9 +396,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, 0, 16.8)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "李世琦 大頭貼"
+        "alt": "李世琦 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-09.webp",
@@ -280,9 +416,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, 0, 36.4)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "李世琦"
+        "alt": "李世琦",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -299,9 +443,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "後藤鐵平 大頭貼"
+        "alt": "後藤鐵平 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-10.webp",
@@ -311,9 +463,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "後藤鐵平"
+        "alt": "後藤鐵平",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -330,9 +490,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, -5.28, 11.52)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "陳宇翔 大頭貼"
+        "alt": "陳宇翔 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-11.webp",
@@ -342,9 +510,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, -11.44, 24.96)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "陳宇翔"
+        "alt": "陳宇翔",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -361,9 +537,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "鍾文熙 大頭貼"
+        "alt": "鍾文熙 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-12.webp",
@@ -373,9 +557,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "鍾文熙"
+        "alt": "鍾文熙",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -392,9 +584,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "關松峰 大頭貼"
+        "alt": "關松峰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-13.webp",
@@ -404,9 +604,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "關松峰"
+        "alt": "關松峰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -423,9 +631,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.5, 0, 0, 1.5, 0, 8.16)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "劉康任 大頭貼"
+        "alt": "劉康任 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-14.webp",
@@ -435,9 +651,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.5, 0, 0, 1.5, 0, 17.68)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "劉康任"
+        "alt": "劉康任",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -454,9 +678,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "龐恩浩 大頭貼"
+        "alt": "龐恩浩 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-15.webp",
@@ -466,9 +698,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "龐恩浩"
+        "alt": "龐恩浩",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -483,11 +723,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -19.2, 13.92)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -16.8, 13.92)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-02.webp",
@@ -495,11 +743,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -41.6, 30.16)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -36.4, 30.16)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 104,
         "height": 104,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       }
     },
     {
@@ -515,9 +771,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "葛大瑋 大頭貼"
+        "alt": "葛大瑋 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-01.webp",
@@ -527,9 +791,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "葛大瑋"
+        "alt": "葛大瑋",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -544,11 +816,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -19.2, 13.92)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -16.8, 13.92)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-02.webp",
@@ -556,11 +836,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -64, 46.4)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -56, 46.4)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "謝俊杰"
+        "alt": "謝俊杰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -577,9 +865,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "鄭力 大頭貼"
+        "alt": "鄭力 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-03.webp",
@@ -589,9 +885,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "鄭力"
+        "alt": "鄭力",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -608,9 +912,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "蒲家威 大頭貼"
+        "alt": "蒲家威 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-04.webp",
@@ -620,9 +932,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "蒲家威"
+        "alt": "蒲家威",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -639,9 +959,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "阮文南 大頭貼"
+        "alt": "阮文南 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-05.webp",
@@ -651,9 +979,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "阮文南"
+        "alt": "阮文南",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -670,9 +1006,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.9, 0, 0, 1.9, 1.92, -1.44)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "游淙瑋 大頭貼"
+        "alt": "游淙瑋 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-06.webp",
@@ -682,9 +1026,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.9, 0, 0, 1.9, 6.4, -4.8)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "游淙瑋"
+        "alt": "游淙瑋",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -701,9 +1053,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2.1, 0, 0, 2.1, 0, 16.8)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "高義莉 大頭貼"
+        "alt": "高義莉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-07.webp",
@@ -713,9 +1073,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2.1, 0, 0, 2.1, 0, 56)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "高義莉"
+        "alt": "高義莉",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -732,9 +1100,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "陳遠泰 大頭貼"
+        "alt": "陳遠泰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-08.webp",
@@ -744,9 +1120,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "陳遠泰"
+        "alt": "陳遠泰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -763,9 +1147,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, 0, 16.8)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "李世琦 大頭貼"
+        "alt": "李世琦 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-09.webp",
@@ -775,9 +1167,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, 0, 56)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "李世琦"
+        "alt": "李世琦",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -794,9 +1194,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "後藤鐵平 大頭貼"
+        "alt": "後藤鐵平 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-10.webp",
@@ -806,9 +1214,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "後藤鐵平"
+        "alt": "後藤鐵平",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -825,9 +1241,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, -5.28, 11.52)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "陳宇翔 大頭貼"
+        "alt": "陳宇翔 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-11.webp",
@@ -837,9 +1261,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(2, 0, 0, 2, -17.6, 38.4)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "陳宇翔"
+        "alt": "陳宇翔",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -856,9 +1288,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "鍾文熙 大頭貼"
+        "alt": "鍾文熙 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-12.webp",
@@ -868,9 +1308,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "鍾文熙"
+        "alt": "鍾文熙",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -887,9 +1335,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "關松峰 大頭貼"
+        "alt": "關松峰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-13.webp",
@@ -899,9 +1355,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "關松峰"
+        "alt": "關松峰",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -918,9 +1382,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.5, 0, 0, 1.5, 0, 8.16)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "劉康任 大頭貼"
+        "alt": "劉康任 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-14.webp",
@@ -930,9 +1402,17 @@
         "objectPosition": "50% 50%",
         "transform": "matrix(1.5, 0, 0, 1.5, 0, 27.2)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "劉康任"
+        "alt": "劉康任",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -949,9 +1429,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "龐恩浩 大頭貼"
+        "alt": "龐恩浩 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-15.webp",
@@ -961,9 +1449,17 @@
         "objectPosition": "50% 50%",
         "transform": "none",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "龐恩浩"
+        "alt": "龐恩浩",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "overflow": false
     },
@@ -978,11 +1474,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -19.2, 13.92)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -16.8, 13.92)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 48,
         "height": 48,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/khk26-02.webp",
@@ -990,11 +1494,19 @@
         "naturalHeight": 380,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
-        "transform": "matrix(1.75, 0, 0, 1.75, -64, 46.4)",
+        "transform": "matrix(1.75, 0, 0, 1.75, -56, 46.4)",
         "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
         "width": 160,
         "height": 160,
-        "alt": "謝俊杰 大頭貼"
+        "alt": "謝俊杰 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
       }
     }
   ],

@@ -63,9 +63,14 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/c23526-14.': { objectPosition: '50% 0%' }, // 黃楷堯：避免裁掉髮頂
 
   // Full-site second-pass crop review: source-level, one portrait at a time.
-  '/assets/seasons/2026-27/players/tq26-08.': { transform: 'translateY(19%) scale(1.7)' }, // 半身照
+  '/assets/seasons/2026-27/players/tq26-08.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.4)' }, // #23 鄭孟育：保留頭頂及臉部大小
+  '/assets/seasons/2026-27/players/khk26-04.': { objectPosition: '50% 0%' }, // 高雄香港人 #18 蒲家威：證件照完整髮頂
+  '/assets/seasons/2026-27/players/tq26-03.': { objectPosition: '50% 0%' }, // 銅雀 #12 郭博彥：完整髮頂
+  '/assets/seasons/2026-27/players/tq26-11.': { objectPosition: '50% 15%', transform: 'scale(1.25)' }, // 銅雀 #19 王奕中：保留髮頂並適度放大
+  '/assets/seasons/2026-27/players/tq26-12.': { objectPosition: '50% 0%', transform: 'scale(1.05)' }, // 銅雀 #31 吳雄杰：上緣完整、小幅放大
+  '/assets/seasons/2026-27/players/tq26-14.': { objectPosition: '50% 0%', transform: 'scale(1.08)' }, // 銅雀 #13 孫進楠：完整髮頂、小幅放大
   '/assets/seasons/2026-27/players/tq26-09.': { transform: 'translateY(31%) scale(1.8)' }, // 全身照
-  '/assets/seasons/2026-27/players/khk26-07.': { transform: 'translateY(35%) scale(2.1)' }, // 公園坐姿照
+  '/assets/seasons/2026-27/players/khk26-07.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.55)' }, // #17 高義莉：減少過度放大、讓臉部居中
   '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(35%) scale(2)' }, // 站立半身照
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   '/assets/seasons/2026-27/players/pwa26-04.': { transform: 'translateY(18%) scale(1.45)' }, // 比賽照

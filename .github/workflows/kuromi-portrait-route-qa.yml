@@ -7,6 +7,8 @@ on:
       - .github/workflows/kuromi-portrait-route-qa.yml
       - scripts/portrait-circle-coverage.mjs
       - config/avatarImagePosition.ts
+      - data/seasons/2026-27/playerImages.json
+      - 'public/assets/seasons/2026-27/players/ku26-*.jpg'
   workflow_dispatch:
 permissions:
   contents: write

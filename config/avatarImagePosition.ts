@@ -46,7 +46,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },
   '/assets/players/陳公舘/吳明威.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },
   '/assets/players/酒號矯正署/顏廷邕.': { objectPosition: '50% 0%', transform: 'translateY(28%) scale(1.5)' },
@@ -70,7 +69,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sb26-07.': { objectPosition: '50% 0%' }, // 伊而凡：避免裁掉頭髮
   '/assets/seasons/2026-27/players/sb26-11.': { transform: 'translateY(95%) scale(3.1)' }, // 迪馬斯：全身照聚焦頭肩
   '/assets/seasons/2026-27/players/sb26-15.': { objectPosition: '50% 0%' }, // 劉駿輝：保留完整髮頂，同步套用球員及領隊頭像
-  '/assets/seasons/2026-27/players/ku26-02.': { objectPosition: '50% 0%' }, // 林柏佑：避免裁掉頭髮
   '/assets/seasons/2026-27/players/ku26-14.': { objectPosition: '50% 0%' }, // 翁吉韡：避免裁掉頭髮
   '/assets/seasons/2026-27/players/ku26-15.': { objectPosition: '50% 0%' }, // 陳光禪：避免裁掉髮頂
   '/assets/seasons/2026-27/players/c23526-14.': { objectPosition: '50% 0%' }, // 黃楷堯：避免裁掉髮頂
@@ -120,7 +118,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sb26-12.': { transform: 'translateY(33%) scale(1.9)' }, // 室內半身照
   '/assets/seasons/2026-27/players/sb26-13.': { transform: 'translateY(30%) scale(2)' }, // 人像半身照
   '/assets/seasons/2026-27/players/sb26-14.': { transform: 'translateY(66%) scale(2.7)' }, // 室內全身照
-  '/assets/seasons/2026-27/players/ku26-20.': { transform: 'translateY(14%) scale(1.55)' }, // 戶外半身照
   '/assets/seasons/2026-27/players/ns26-02.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-03.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-04.': { transform: 'translateY(34%) scale(1.85)' }, // 球衣定裝照

@@ -66,6 +66,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/tq26-08.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.4)' }, // #23 鄭孟育：保留頭頂及臉部大小
   '/assets/seasons/2026-27/players/khk26-04.': { objectPosition: '50% 0%' }, // 高雄香港人 #18 蒲家威：證件照完整髮頂
   '/assets/seasons/2026-27/players/tq26-03.': { objectPosition: '50% 0%' }, // 銅雀 #12 郭博彥：完整髮頂
+  '/assets/seasons/2026-27/players/tq26-01.': { objectPosition: '50% 0%' }, // 銅雀 #33 陳揚：頂部取景，避免置中裁去頭髮
+  '/assets/seasons/2026-27/players/tq26-10.': { objectPosition: '50% 0%', transform: 'scale(1.08)' }, // 銅雀 #99 葉俊謙：保留髮頂並適度放大
   '/assets/seasons/2026-27/players/tq26-11.': { objectPosition: '50% 15%', transform: 'scale(1.25)' }, // 銅雀 #19 王奕中：保留髮頂並適度放大
   '/assets/seasons/2026-27/players/tq26-12.': { objectPosition: '50% 0%', transform: 'scale(1.05)' }, // 銅雀 #31 吳雄杰：上緣完整、小幅放大
   '/assets/seasons/2026-27/players/tq26-14.': { objectPosition: '50% 0%', transform: 'scale(1.08)' }, // 銅雀 #13 孫進楠：完整髮頂、小幅放大

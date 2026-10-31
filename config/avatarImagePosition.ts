@@ -30,6 +30,10 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(32%) scale(2)' },
   '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '50% 0%' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
   '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
+  '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 20%', transform: 'translateY(12%) scale(1.3)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
+  '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '50% 10%', transform: 'translateY(24%) scale(1.6)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物
+  '/assets/seasons/2026-27/players/al26-12.': { objectPosition: '60% 30%' }, // 阿蓮 楊仁傑：側身照校正人物水平位置
+  '/assets/seasons/2026-27/players/al26-18.': { objectPosition: '50% 15%' }, // 阿蓮 陳楊祐誠：上移取景保留髮頂
   '/assets/seasons/2026-27/players/al26-17.': { objectPosition: '50% 40%', transform: 'translateY(16%) scale(1.6)' }, // 阿蓮 林淮中：夜市遠景聚焦人物臉部，略為放大
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },

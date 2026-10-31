@@ -71,7 +71,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/tq26-11.': { objectPosition: '50% 15%', transform: 'scale(1.25)' }, // 銅雀 #19 王奕中：保留髮頂並適度放大
   '/assets/seasons/2026-27/players/tq26-12.': { objectPosition: '50% 0%', transform: 'scale(1.05)' }, // 銅雀 #31 吳雄杰：上緣完整、小幅放大
   '/assets/seasons/2026-27/players/tq26-14.': { objectPosition: '50% 0%', transform: 'scale(1.08)' }, // 銅雀 #13 孫進楠：完整髮頂、小幅放大
-  '/assets/seasons/2026-27/players/tq26-09.': { transform: 'translate(-23%, 31%) scale(1.8)' }, // 全身照
+  '/assets/seasons/2026-27/players/tq26-09.': { transform: 'translate(-27%, 37%) scale(2.1)' }, // 銅雀 #9 陳宗漢：臉部更清楚、保留原本橫向中心
+  '/assets/seasons/2026-27/players/tq26-04.': { transform: 'translateY(9%) scale(1.25)' }, // 銅雀 #93 施博允：放大臉部、位置維持中央
+  '/assets/seasons/2026-27/players/tq26-15.': { transform: 'translateY(6%) scale(1.15)' }, // 銅雀 #46 林宴丞：小幅放大、置中臉部
   '/assets/seasons/2026-27/players/khk26-07.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.55)' }, // #17 高義莉：減少過度放大、讓臉部居中
   '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(35%) scale(2)' }, // 站立半身照
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照

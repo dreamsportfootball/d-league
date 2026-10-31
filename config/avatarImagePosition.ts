@@ -69,6 +69,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(35%) scale(2)' }, // 站立半身照
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   '/assets/seasons/2026-27/players/pwa26-04.': { transform: 'translateY(18%) scale(1.45)' }, // 比賽照
+  '/assets/seasons/2026-27/players/pwa26-18.': { objectPosition: '50% 0%' }, // 屏東野猿 蔡振偉：上移裁切以保留頭頂與髮型
   '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
   '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
   '/assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴

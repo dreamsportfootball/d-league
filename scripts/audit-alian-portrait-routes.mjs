@@ -81,17 +81,24 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': #4 must use original Excel portrait and full-hair framing: '+JSON.stringify(diag));
   if(expectedId==='bw26-12' && (diag.naturalWidth < 380 || diag.objectPosition!=='50% 0%' || diag.transform==='none'))
     throw Error(tag+': #28 must use original Excel portrait and full-hair framing: '+JSON.stringify(diag));
-  const png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
-  // Decoding and geometric coverage alone cannot detect a blank-looking roster
-  // avatar (a 48px image may technically fill the circle while rendering flat).
-  // Check the central portion of the actual screenshot, not the source image.
+  // A decoded <img> can briefly appear blank in a clipped 48px snapshot
+  // while Chrome is updating its compositor after roster scrolling. Repeat the
+  // actual screenshot before deciding that the visible portrait is missing.
   const side=Math.floor(Math.min(diag.width,diag.height)*0.45);
   const left=Math.floor((diag.width-side)/2);
   const top=Math.floor((diag.height-side)/2);
-  const sampled=await sharp(png).extract({left,top,width:side,height:side}).stats();
-  const contrast=sampled.channels.slice(0,3).reduce((sum,channel)=>sum+channel.stdev,0)/3;
+  let png;
+  let contrast=0;
+  for(let attempt=0;attempt<3;attempt++){
+    png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
+    const sampled=await sharp(png).extract({left,top,width:side,height:side}).stats();
+    contrast=sampled.channels.slice(0,3).reduce((sum,channel)=>sum+channel.stdev,0)/3;
+    if(contrast>=12)break;
+    await locator.page().waitForTimeout(250);
+    await locator.evaluate(image=>image.decode().catch(()=>{}));
+  }
   diag.centerPixelStddev=Math.round(contrast*100)/100;
-  if(contrast<4)run.failures.push({view:activeView,route:tag,problem:'apparently blank portrait center',centerPixelStddev:diag.centerPixelStddev,diagnostics:diag});
+  if(contrast<12)run.failures.push({view:activeView,route:tag,problem:'apparently blank portrait center after screenshot retries',centerPixelStddev:diag.centerPixelStddev,diagnostics:diag});
   return {diagnostics:diag,png:png.toString('base64')};
 };
 const htmlEscape=x=>String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');

@@ -100,9 +100,9 @@ const processWithConcurrency = async (items, concurrency, worker) => {
 
 const getWebpSourcePriority = (sourcePath) => {
   const extension = path.extname(sourcePath).toLowerCase();
-  // Black Wolf #7 / #20 have verified higher-resolution originals from the
+  // Black Wolf #4 / #7 / #20 / #28 have verified higher-resolution originals from the
   // 2026/27 registration Excel. Do not let their older PNGs win the WebP name.
-  if (/^bw26-(?:07|10)\.(?:png|jpe?g)$/i.test(path.basename(sourcePath))) {
+  if (/^bw26-(?:07|08|10|12)\.(?:png|jpe?g)$/i.test(path.basename(sourcePath))) {
     return extension === '.png' ? 3 : 0;
   }
   if (extension === '.png') return 0;

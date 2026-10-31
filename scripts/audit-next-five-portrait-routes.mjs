@@ -70,6 +70,10 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': #7 old low-resolution avatar was loaded: '+diag.naturalWidth);
   if(expectedId==='bw26-10' && diag.naturalWidth < 600)
     throw Error(tag+': #20 old low-resolution avatar was loaded: '+diag.naturalWidth);
+  if(expectedId==='bw26-08' && (diag.naturalWidth < 320 || diag.objectPosition!=='50% 0%' || diag.transform==='none'))
+    throw Error(tag+': #4 must use original Excel portrait and full-hair framing: '+JSON.stringify(diag));
+  if(expectedId==='bw26-12' && (diag.naturalWidth < 380 || diag.objectPosition!=='50% 0%' || diag.transform==='none'))
+    throw Error(tag+': #28 must use original Excel portrait and full-hair framing: '+JSON.stringify(diag));
   const png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
   return {diagnostics:diag,png:png.toString('base64')};
 };

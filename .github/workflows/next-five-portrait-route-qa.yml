@@ -19,7 +19,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        team: [t_kaohsiung_hk_2026, t_pingtung_wild_ape_2026, t_chen_2026, t_tainan_evergreen_2026, t_black_wolf_2026]
+        include:
+          - { team: t_kaohsiung_hk_2026, prefix: next-kaohsiung-hk }
+          - { team: t_pingtung_wild_ape_2026, prefix: next-pingtung-wild-ape }
+          - { team: t_chen_2026, prefix: next-chen }
+          - { team: t_tainan_evergreen_2026, prefix: next-tainan-evergreen }
+          - { team: t_black_wolf_2026, prefix: next-black-wolf }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -59,10 +64,10 @@ jobs:
         with:
           name: next-five-${{ matrix.team }}
           path: |
-            audit/*-actual-*.jpg
-            audit/*-roster-*.jpg
-            audit/*-actual-route-review.json
-          if-no-files-found: warn
+            audit/${{ matrix.prefix }}-actual-*.jpg
+            audit/${{ matrix.prefix }}-roster-*.jpg
+            audit/${{ matrix.prefix }}-actual-route-review.json
+          if-no-files-found: error
           retention-days: 14
   publish:
     needs: [team]
@@ -81,7 +86,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add audit/*-actual-*.jpg audit/*-roster-*.jpg audit/*-actual-route-review.json
+          git add audit/next-*-actual-*.jpg audit/next-*-roster-*.jpg audit/next-*-actual-route-review.json
           if ! git diff --cached --quiet; then
             git commit -m "test(qa): publish five-team actual portrait route evidence [skip ci]"
             git fetch origin season/2026-27

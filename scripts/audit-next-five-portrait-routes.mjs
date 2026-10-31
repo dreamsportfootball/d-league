@@ -60,6 +60,10 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': Black Wolf #1 image position override did not apply: '+diag.objectPosition);
   if(expectedId==='bw26-02' && diag.objectPosition!=='50% 0%')
     throw Error(tag+': Black Wolf #2 image position override did not apply: '+diag.objectPosition);
+  if(expectedId==='bw26-07' && diag.objectPosition!=='50% 18%')
+    throw Error(tag+': Black Wolf #7 framing failed: '+diag.objectPosition);
+  if(expectedId==='bw26-10' && diag.objectPosition!=='50% 12%')
+    throw Error(tag+': Black Wolf #20 framing failed: '+diag.objectPosition);
   const png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
   return {diagnostics:diag,png:png.toString('base64')};
 };

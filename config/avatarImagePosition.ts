@@ -27,7 +27,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
-  '/assets/seasons/2026-27/players/al26-03.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.15)' },
+  '/assets/seasons/2026-27/players/al26-03.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(2.6)' },
   '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '48% 80%' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
   '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
   '/assets/seasons/2026-27/players/al26-16.': { objectPosition: '50% 0%' }, // 阿蓮 #79 黃子翰：完整髮頂、雙眼置中

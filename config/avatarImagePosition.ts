@@ -28,6 +28,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
   '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(32%) scale(2)' },
+  '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '50% 0%' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
+  '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
+  '/assets/seasons/2026-27/players/al26-17.': { objectPosition: '50% 40%', transform: 'translateY(16%) scale(1.6)' }, // 阿蓮 林淮中：夜市遠景聚焦人物臉部，略為放大
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },

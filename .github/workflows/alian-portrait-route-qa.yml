@@ -73,7 +73,19 @@ jobs:
           git add audit/alian-actual-*.jpg audit/alian-roster-*.jpg audit/alian-actual-route-review.json
           if ! git diff --cached --quiet; then
             git commit -m "test(qa): publish Alian FC actual portrait evidence [skip ci]"
-            git fetch origin season/2026-27
-            git rebase origin/season/2026-27
-            git push origin HEAD:season/2026-27
+            # Other image QA workflows also publish evidence on this branch.
+            # Their concurrent fast-forward pushes must not invalidate a
+            # successful portrait audit; rebase and retry the evidence commit.
+            for attempt in {1..10}; do
+              git fetch origin season/2026-27
+              git rebase origin/season/2026-27
+              if git push origin HEAD:season/2026-27; then
+                echo "Alian evidence published on attempt ${attempt}"
+                exit 0
+              fi
+              echo "Concurrent branch push; retrying evidence publication (${attempt}/10)"
+              sleep 3
+            done
+            echo "Alian QA evidence publication failed after 10 attempts" >&2
+            exit 1
           fi

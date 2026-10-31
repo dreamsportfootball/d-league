@@ -28,7 +28,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
   '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(32%) scale(2)' },
-  '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '50% 0%', transform: 'scale(0.92)' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
+  '/assets/seasons/2026-27/players/al26-04.': { objectPosition: '50% 0%' }, // 阿蓮 曾健康：原圖髮頂接近上緣，避免正中裁斷
   '/assets/seasons/2026-27/players/al26-05.': { objectPosition: '50% 0%' }, // 阿蓮 林冠亨：保留畢業照髮型頂部
   '/assets/seasons/2026-27/players/al26-10.': { objectPosition: '50% 20%', transform: 'translateY(12%) scale(1.3)' }, // 阿蓮 林冠甫：鏡自拍聚焦臉部
   '/assets/seasons/2026-27/players/al26-11.': { objectPosition: '50% 10%', transform: 'translateY(24%) scale(1.6)' }, // 阿蓮 王柏叡：人與寵物合照，聚焦人物

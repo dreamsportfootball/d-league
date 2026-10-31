@@ -6,6 +6,7 @@ on:
       - scripts/audit-five-team-portrait-routes.mjs
       - .github/workflows/five-team-portrait-route-qa.yml
       - config/avatarImagePosition.ts
+      - scripts/portrait-circle-coverage.mjs
   workflow_dispatch:
 permissions:
   contents: write
@@ -49,6 +50,8 @@ jobs:
           done
           cat /tmp/five-team-preview.log
           exit 1
+      - name: Validate shared circular crop geometry
+        run: node --test scripts/portrait-circle-coverage.test.mjs
       - name: Check real team, player and staff profile pages, image decoding and screenshots
         env:
           TEAM_ID: ${{ matrix.team }}

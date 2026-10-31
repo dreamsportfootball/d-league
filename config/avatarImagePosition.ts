@@ -76,8 +76,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   'assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
   'assets/seasons/2026-27/players/bw26-07.': { objectPosition: '50% 18%' }, // 黑狼 #7 張智勇：取景上移、髮頂與下巴完整
   'assets/seasons/2026-27/players/bw26-10.': { objectPosition: '50% 12%' }, // 黑狼 #20 朱天灝：由置中改為略偏上取景、保留完整髮頂
-  '/assets/seasons/2026-27/players/bw26-08.': { transform: 'translateY(63%) scale(2.1)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/bw26-12.': { transform: 'translateY(22%) scale(1.6)' }, // 戶外半身照
+  '/assets/seasons/2026-27/players/bw26-08.': { objectPosition: '50% 0%', transform: 'translateY(55%) scale(2.2)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/bw26-12.': { objectPosition: '50% 0%', transform: 'translateY(15%) scale(1.35)' }, // 戶外半身照
   '/assets/seasons/2026-27/players/bw26-13.': { transform: 'translateY(19%) scale(1.6)' }, // 隊服全身照
   '/assets/seasons/2026-27/players/ch26-06.': { transform: 'translateY(26%) scale(2.5)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ch26-12.': { transform: 'translateY(26%) scale(1.6)' }, // 室內遠景

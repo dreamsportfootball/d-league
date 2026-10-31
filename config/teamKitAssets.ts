@@ -106,6 +106,14 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
       t_southboys_2026: 'away',
       t_pingtung_wild_ape_2026: 'home',
     },
+    'm2627-056': {
+      // Organizer-approved: Chen wears pink away; Chiayi 235 keeps its default away kit.
+      t_chen_2026: 'away',
+    },
+    'm2627-087': {
+      // Organizer-approved: Kaohsiung Amateur wears red home against Pingtung Wild Ape.
+      t_kaohsiung_amateur_2026: 'home',
+    },
   },
 };
 

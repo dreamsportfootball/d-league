@@ -1,0 +1,108 @@
+name: Five-team actual portrait route QA
+on:
+  push:
+    branches: [season/2026-27]
+    paths:
+      - scripts/audit-five-team-portrait-routes.mjs
+      - .github/workflows/five-team-portrait-route-qa.yml
+      - config/avatarImagePosition.ts
+      - scripts/portrait-circle-coverage.mjs
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: five-team-actual-portrait-qa
+  cancel-in-progress: true
+jobs:
+  team:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { team: t_niaoshi_2026, prefix: niaoshi }
+          - { team: t_sf_2026, prefix: sf }
+          - { team: t_kaohsiung_amateur_2026, prefix: kaohsiung-amateur }
+          - { team: t_tongque_2026, prefix: tongque }
+          - { team: t_pingtung_wolves_2026, prefix: pingtung-wolves }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build and install browser
+        env:
+          VITE_ROUTER_MODE: hash
+          VITE_USE_OPTIMIZED_IMAGES: "true"
+        run: |
+          npm ci --silent
+          npm install --no-save playwright sharp
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk >/dev/null
+          npm run optimize:images
+          npx vite build
+      - name: Preview local production site
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/five-team-preview.log 2>&1 &
+          for attempt in {1..40}; do
+            if curl --silent --fail http://127.0.0.1:4173/d-league/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/five-team-preview.log
+          exit 1
+      - name: Validate shared circular crop geometry
+        run: node --test scripts/portrait-circle-coverage.test.mjs
+      - name: Check real team, player and staff profile pages, image decoding and screenshots
+        env:
+          TEAM_ID: ${{ matrix.team }}
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/audit-five-team-portrait-routes.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: five-team-${{ matrix.team }}
+          path: |
+            audit/${{ matrix.prefix }}-actual-*.jpg
+            audit/${{ matrix.prefix }}-roster-*.jpg
+            audit/${{ matrix.prefix }}-actual-route-review.json
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    needs: [team]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: five-team-*
+          path: audit
+          merge-multiple: true
+      - name: Publish review evidence to season branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-actual-*.jpg audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-roster-*.jpg audit/{niaoshi,sf,kaohsiung-amateur,tongque,pingtung-wolves}-actual-route-review.json
+          if ! git diff --cached --quiet; then
+            git commit -m "test(qa): publish five-team actual portrait route evidence [skip ci]"
+            # A parallel QA job may update this branch after our fetch.
+            # Retry non-fast-forward pushes with a fresh rebase.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin season/2026-27
+              git rebase origin/season/2026-27
+              if git push origin HEAD:season/2026-27; then
+                echo "Portrait evidence published on attempt ${attempt}"
+                exit 0
+              fi
+              sleep $((attempt * 2))
+            done
+            echo "Failed to publish current portrait evidence after 5 attempts"
+            exit 1
+          fi

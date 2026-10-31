@@ -11,6 +11,28 @@ import type { CSSProperties } from 'react';
 type AvatarStyle = Partial<Pick<CSSProperties, 'objectPosition' | 'transform'>>;
 
 const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
+  // 陳公舘 2026/27: per-person Excel source face-framing, checked at 48 / 104 / 160px.
+  // #13 李秉錦 uses a separately padded portrait to preserve hairline and chin.
+  '/assets/seasons/2026-27/players/ch26-02.': { objectPosition: '50% 50%', transform: 'translate(0.2%, 14.2%) scale(1.10)' }, // 陳公舘 林家銘: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-03.': { objectPosition: '50% 50%', transform: 'translate(-1.45%, -4.65%) scale(1.04)' }, // 陳公舘 倪柏瑄: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-04.': { objectPosition: '50% 50%', transform: 'translate(-19.12%, 131.86%) scale(3.23)' }, // 陳公舘 張健治: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-05.': { objectPosition: '50% 50%', transform: 'translate(-2.5%, 17.73%) scale(1.30)' }, // 陳公舘 孫裕程: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-06.': { objectPosition: '50% 50%', transform: 'translate(-10%, 71.76%) scale(3.86)' }, // 陳公舘 洪品丞: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-07.': { objectPosition: '50% 50%', transform: 'translate(-4.84%, 12.66%) scale(1.10)' }, // 陳公舘 陳立鑫: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-08.': { objectPosition: '50% 50%', transform: 'translate(11.75%, 25.9%) scale(2.09)' }, // 陳公舘 潘志豪: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-09.': { objectPosition: '50% 50%', transform: 'translate(-5.66%, 23.46%) scale(1.11)' }, // 陳公舘 倪天銘: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-10.': { objectPosition: '50% 50%', transform: 'translate(-7.59%, 11.03%) scale(1.19)' }, // 陳公舘 楊俊雄: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-11.': { objectPosition: '50% 50%', transform: 'translate(1.84%, 7.96%) scale(1.06)' }, // 陳公舘 曾龍盛: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-12.': { objectPosition: '50% 50%', transform: 'translate(-0.69%, 34.48%) scale(2.84)' }, // 陳公舘 洪品宇: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-13.': { objectPosition: '50% 50%', transform: 'translate(0%, 14.7%) scale(1)' }, // 陳公舘 林紀廷: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-14.': { objectPosition: '50% 50%', transform: 'translate(0%, 3.67%) scale(1)' }, // 陳公舘 張誌文: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 50%', transform: 'translate(25.25%, 51.98%) scale(3.26)' }, // 陳公舘 吳明威: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-16.': { objectPosition: '50% 50%', transform: 'translate(-1.10%, 31.14%) scale(1.32)' }, // 陳公舘 李家勳: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-17.': { objectPosition: '50% 50%', transform: 'translate(-0.15%, 14.67%) scale(1.04)' }, // 陳公舘 陳俊介: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-18.': { objectPosition: '50% 50%', transform: 'translate(-1.86%, 25.46%) scale(1.05)' }, // 陳公舘 鍾皓弦: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-19.': { objectPosition: '50% 50%', transform: 'translate(-0.16%, 10.78%) scale(1.03)' }, // 陳公舘 黃杰: Excel 原圖，臉／髮頂／下巴置中
+  '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 50%', transform: 'translate(-0.37%, 38.89%) scale(1.13)' }, // 陳公舘 林祐丞: Excel 原圖，臉／髮頂／下巴置中
+
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
   '/assets/seasons/2026-27/players/pw26-11.': { transform: 'scale(1.18)' }, // 屏東野狼 林瑶璇：取消向下位移，令臉部重新置中
@@ -24,8 +46,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
-  '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
-  '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },
@@ -46,10 +66,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sf26-12.': { objectPosition: '50% 0%' }, // 洪家庭：維持照片完整頂部
   '/assets/seasons/2026-27/players/lz26-17.': { objectPosition: '50% 0%' }, // 林宜蓁：維持照片完整頂部
   '/assets/seasons/2026-27/players/wa26-04.': { objectPosition: '50% 0%' }, // 蔡羿丞：避免裁掉髮頂
-  '/assets/seasons/2026-27/players/ch26-04.': { objectPosition: '50% 0%', transform: 'translateY(111%) scale(4)' }, // 張健治：比賽全身照聚焦頭肩
-  '/assets/seasons/2026-27/players/ch26-08.': { transform: 'translateY(25%) scale(1.65)' }, // 潘志豪：比賽照放大臉部
-  '/assets/seasons/2026-27/players/ch26-09.': { objectPosition: '50% 0%' }, // 倪天銘：減少髮頂二次裁切
-  '/assets/seasons/2026-27/players/ch26-18.': { objectPosition: '50% 0%' }, // 鍾皓弦：減少髮頂二次裁切
   '/assets/seasons/2026-27/players/lz26-05.': { objectPosition: '50% 0%' }, // 李修沛：避開原始照片下方其他畫面
   '/assets/seasons/2026-27/players/sb26-04.': { objectPosition: '50% 0%', transform: 'translateY(13%) scale(1.3)' }, // 李福祥：保留完整頭髮並突出五官
   '/assets/seasons/2026-27/players/sb26-07.': { objectPosition: '50% 0%' }, // 伊而凡：避免裁掉頭髮
@@ -90,9 +106,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/bw26-08.': { objectPosition: '50% 0%', transform: 'translateY(55%) scale(2.2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/bw26-12.': { objectPosition: '50% 0%', transform: 'translateY(15%) scale(1.35)' }, // 戶外半身照
   '/assets/seasons/2026-27/players/bw26-13.': { transform: 'translateY(19%) scale(1.6)' }, // 隊服全身照
-  '/assets/seasons/2026-27/players/ch26-06.': { transform: 'translateY(26%) scale(2.5)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/ch26-12.': { transform: 'translateY(26%) scale(1.6)' }, // 室內遠景
-  '/assets/seasons/2026-27/players/ch26-16.': { transform: 'translateY(20%) scale(1.6)' }, // 球衣全身照
   '/assets/seasons/2026-27/players/lz26-06.': { objectPosition: '50% 0%' }, // 避免頭頂二次裁切
   '/assets/seasons/2026-27/players/lz26-13.': { transform: 'translate(14%, -1%) scale(2.4)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/wa26-06.': { transform: 'translateY(19%) scale(1.6)' }, // 手持球衣

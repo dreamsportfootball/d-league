@@ -108,7 +108,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/al26-02.': { transform: 'translateY(32%) scale(1.9)' }, // 站立隊服照
   '/assets/seasons/2026-27/players/al26-13.': { transform: 'translateY(30%) scale(1.7)' }, // 站立半身照
   '/assets/seasons/2026-27/players/al26-14.': { transform: 'translateY(-10%) scale(1.9)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/al26-19.': { transform: 'translateY(45%) scale(2.2)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/al26-19.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(2.2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(31%, 31%) scale(2)' }, // 雙人照內聚焦左側球員
   '/assets/seasons/2026-27/players/kbk26-11.': { transform: 'translateY(48%) scale(1.55)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/holy26-07.': { objectPosition: '50% 0%', transform: 'translateY(-24%) scale(1.85)' }, // 第二輪實圖回歸校正

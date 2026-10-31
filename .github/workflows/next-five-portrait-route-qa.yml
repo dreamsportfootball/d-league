@@ -54,6 +54,8 @@ jobs:
           done
           cat /tmp/next-five-preview.log
           exit 1
+      - name: Verify shared circular cropping geometry gate
+        run: node --test scripts/portrait-circle-coverage.test.mjs
       - name: Check real team, player and staff profile pages, image decoding and screenshots
         env:
           TEAM_ID: ${{ matrix.team }}

@@ -26,7 +26,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(55%) scale(1.8)' },
   '/assets/seasons/2026-27/players/ch26-15.': { objectPosition: '50% 0%', transform: 'scale(2.3)' },
-  '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },
+  '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translateY(20%) scale(1.5)' },
   '/assets/seasons/2026-27/players/al26-03.': { transform: 'translateY(32%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/ku26-09.': { objectPosition: '50% 0%' },
@@ -37,7 +37,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
 
   // Rechecked against 2026/27 original team Excel embedded images on 2026-10-30.
   // Preserve the source images; reframe only the circular avatar presentation.
-  'assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-40%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
+  'assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-35%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
   '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
   '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
   '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 31%) scale(1.85)' },

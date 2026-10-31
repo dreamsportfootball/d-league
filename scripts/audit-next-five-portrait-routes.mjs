@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { chromium } from 'playwright';
+import { inspectPortraitCircle } from './portrait-circle-coverage.mjs';
 
 const root=process.cwd(), out=path.join(root,'audit');
 const base=(process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/,'');
@@ -46,12 +47,17 @@ const getImage=async (locator,expectedId,tag)=>{
     const bounds=image.parentElement.getBoundingClientRect();
     return {src:image.currentSrc,naturalWidth:image.naturalWidth,naturalHeight:image.naturalHeight,
       objectFit:style.objectFit,objectPosition:style.objectPosition,transform:style.transform,
-      shape:container.borderRadius,width:bounds.width,height:bounds.height,alt:image.alt};
+      shape:container.borderRadius,overflowX:container.overflowX,overflowY:container.overflowY,
+      width:bounds.width,height:bounds.height,alt:image.alt};
   });
   if(!decodeURIComponent(diag.src).includes(expectedId)||!diag.naturalWidth||!diag.naturalHeight)
     throw Error(tag+': wrong/broken photo '+JSON.stringify(diag));
-  if(diag.objectFit!=='cover'||diag.width<46)
-    throw Error(tag+': wrong face container '+JSON.stringify(diag));
+  const geometry=inspectPortraitCircle({width:diag.width,height:diag.height,
+    transform:diag.transform,overflowX:diag.overflowX,overflowY:diag.overflowY,
+    borderRadius:diag.shape,objectFit:diag.objectFit});
+  diag.coverage=geometry;
+  if(!geometry.passed)
+    throw Error(tag+': image escapes or exposes the circular frame '+JSON.stringify({diag,geometry}));
   // Earlier QA only checked successful decoding. Verify that image-specific
   // framing is actually applied (including optimized .webp assets).
   if(expectedId==='khk26-02' && diag.transform==='none')

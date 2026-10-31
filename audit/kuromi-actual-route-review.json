@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T16:13:51.272Z",
+  "generatedAt": "2026-10-31T22:41:24.779Z",
   "team": "KUROMI",
   "season": "2026-27",
   "viewports": [
@@ -714,7 +714,7 @@
       "id": "ku26-16",
       "name": "顏廷翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-no-white-border-20261101.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-full-face-v2-20261101.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -734,7 +734,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-no-white-border-20261101.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-full-face-v2-20261101.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1792,7 +1792,7 @@
       "id": "ku26-16",
       "name": "顏廷翰",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-no-white-border-20261101.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-full-face-v2-20261101.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",
@@ -1812,7 +1812,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-no-white-border-20261101.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ku26-16-full-face-v2-20261101.webp",
         "naturalWidth": 640,
         "naturalHeight": 640,
         "objectFit": "cover",

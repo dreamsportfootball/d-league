@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T11:11:43.062Z",
+  "generatedAt": "2026-10-31T11:15:51.656Z",
   "team": "阿蓮FC",
   "teamId": "t_alian_2026",
   "season": "2026-27",
@@ -459,7 +459,7 @@
         "naturalHeight": 853,
         "objectFit": "cover",
         "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 1.92)",
+        "transform": "matrix(1.7, 0, 0, 1.7, 0, 13.44)",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -472,7 +472,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 70.98
+        "centerPixelStddev": 71.89
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
@@ -480,7 +480,7 @@
         "naturalHeight": 853,
         "objectFit": "cover",
         "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 4.16)",
+        "transform": "matrix(1.7, 0, 0, 1.7, 0, 29.12)",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -493,7 +493,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 72.18
+        "centerPixelStddev": 72.76
       },
       "overflow": false
     },
@@ -1534,7 +1534,7 @@
         "naturalHeight": 853,
         "objectFit": "cover",
         "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 1.92)",
+        "transform": "matrix(1.7, 0, 0, 1.7, 0, 13.44)",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1547,7 +1547,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 70.98
+        "centerPixelStddev": 71.89
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10.webp",
@@ -1555,7 +1555,7 @@
         "naturalHeight": 853,
         "objectFit": "cover",
         "objectPosition": "50% 0%",
-        "transform": "matrix(1.1, 0, 0, 1.1, 0, 6.4)",
+        "transform": "matrix(1.7, 0, 0, 1.7, 0, 44.8)",
         "shape": "3.35544e+07px",
         "overflowX": "hidden",
         "overflowY": "hidden",
@@ -1568,7 +1568,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 73.48
+        "centerPixelStddev": 73.3
       },
       "overflow": false
     },

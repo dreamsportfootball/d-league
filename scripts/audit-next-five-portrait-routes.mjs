@@ -64,6 +64,12 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': Black Wolf #7 framing failed: '+diag.objectPosition);
   if(expectedId==='bw26-10' && diag.objectPosition!=='50% 12%')
     throw Error(tag+': Black Wolf #20 framing failed: '+diag.objectPosition);
+  // Original Excel images must actually be used. The previous .png files shared
+  // the same .webp output name and could silently win over higher-res JPEGs.
+  if(expectedId==='bw26-07' && diag.naturalWidth < 400)
+    throw Error(tag+': #7 old low-resolution avatar was loaded: '+diag.naturalWidth);
+  if(expectedId==='bw26-10' && diag.naturalWidth < 600)
+    throw Error(tag+': #20 old low-resolution avatar was loaded: '+diag.naturalWidth);
   const png=await locator.locator('xpath=..').screenshot({type:'png',animations:'disabled',timeout:15000});
   return {diagnostics:diag,png:png.toString('base64')};
 };

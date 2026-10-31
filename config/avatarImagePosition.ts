@@ -37,7 +37,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
 
   // Rechecked against 2026/27 original team Excel embedded images on 2026-10-30.
   // Preserve the source images; reframe only the circular avatar presentation.
-  '/assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-40%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
+  'assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-40%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
   '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
   '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
   '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 31%) scale(1.85)' },
@@ -72,8 +72,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/pwa26-18.': { objectPosition: '50% 0%' }, // 屏東野猿 蔡振偉：上移裁切以保留頭頂與髮型
   '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
   '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
-  '/assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴
-  '/assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
+  'assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴
+  'assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
   '/assets/seasons/2026-27/players/bw26-08.': { transform: 'translateY(63%) scale(2.1)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/bw26-12.': { transform: 'translateY(22%) scale(1.6)' }, // 戶外半身照
   '/assets/seasons/2026-27/players/bw26-13.': { transform: 'translateY(19%) scale(1.6)' }, // 隊服全身照

@@ -164,5 +164,23 @@
       "type": "GOAL",
       "team": "AWAY"
     }
+  ],
+  "m2627-004": [
+    {
+      "id": "m2627-004-1",
+      "minute": 18,
+      "player": "林郁任",
+      "playerId": "ka26-41",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-004-2",
+      "minute": 22,
+      "player": "劉力瑋",
+      "playerId": "ka26-01",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
   ]
 }

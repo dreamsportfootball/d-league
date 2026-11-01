@@ -117,6 +117,14 @@
   ],
   "m2627-002": [
     {
+      "id": "m2627-002-6",
+      "minute": 5,
+      "player": "陳家駿",
+      "playerId": "al26-15",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
       "id": "m2627-002-1",
       "minute": 18,
       "player": "林耀強",

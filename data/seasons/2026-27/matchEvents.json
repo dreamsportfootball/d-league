@@ -182,5 +182,39 @@
       "type": "GOAL",
       "team": "AWAY"
     }
+  ],
+  "m2627-005": [
+    {
+      "id": "m2627-005-1",
+      "minute": 5,
+      "player": "蘇靖棠",
+      "playerId": "bw26-09",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-005-2",
+      "minute": 11,
+      "player": "阮文南",
+      "playerId": "khk26-05",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-005-3",
+      "minute": 18,
+      "player": "後藤鐵平",
+      "playerId": "khk26-10",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-005-4",
+      "minute": 37,
+      "player": "鄭力",
+      "playerId": "khk26-03",
+      "type": "GOAL",
+      "team": "HOME"
+    }
   ]
 }

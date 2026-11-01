@@ -16,11 +16,9 @@ const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
 interface StandingsProps { league: LeagueId; variant?: 'widget' | 'page'; }
 
 const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact = false }) => {
-  if (row.tieStatus === 'NONE') return null;
-  const label = row.tieStatus === 'DRAW_REQUIRED'
-    ? compact ? '待抽籤' : '待公開抽籤'
-    : '並列';
-  return <span className={`ml-1 whitespace-nowrap font-bold ${row.tieStatus === 'DRAW_REQUIRED' ? 'text-amber-700' : 'text-neutral-500'} ${compact ? 'text-[8px]' : 'text-[9px]'}`}>{label}</span>;
+  if (row.tieStatus !== 'DRAW_REQUIRED') return null;
+  const label = compact ? '待抽籤' : '待公開抽籤';
+  return <span className={`ml-1 whitespace-nowrap font-bold text-amber-700 ${compact ? 'text-[8px]' : 'text-[9px]'}`}>{label}</span>;
 };
 
 const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {

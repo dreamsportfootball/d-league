@@ -277,7 +277,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
             <X className="h-5 w-5" />
           </button>
 
-          <div className="mb-6 pr-10 text-center sm:mb-8 sm:pr-0">
+          <div className="mb-6 text-center sm:mb-8">
             <p className="text-[13px] font-black tracking-[0.08em] text-brand-blue sm:text-sm">
               {match.league}・第 {match.round} 輪
             </p>

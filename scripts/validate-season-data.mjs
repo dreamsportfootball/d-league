@@ -265,6 +265,16 @@ for (const season of seasons) {
       const subjectType = event.subjectType ?? 'PLAYER';
       const subjectId = event.subjectId ?? event.playerId;
       const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+      if (season === CURRENT_SEASON_ID) {
+        if (event.isOwnGoal === true) {
+          const opposingSide = event.team === 'HOME' ? 'AWAY' : 'HOME';
+          if (event.type !== 'GOAL' || event.scoringTeam !== opposingSide) {
+            fail(`${season} ${matchId} event ${event.id}: own goal must credit the opposing team`);
+          }
+        } else if (event.scoringTeam !== undefined) {
+          fail(`${season} ${matchId} event ${event.id}: scoringTeam is only for own goals`);
+        }
+      }
       if (season === CURRENT_SEASON_ID && subjectType === 'PLAYER' && !subjectId) {
         fail(`${season} ${matchId} event ${event.id}: playerId is required`);
       }
@@ -296,8 +306,8 @@ for (const season of seasons) {
       }
 
       if (match.status === 'FINISHED' && (match.resultType ?? 'PLAYED') === 'PLAYED') {
-        const homeGoals = list.filter((event) => event.type === 'GOAL' && event.team === 'HOME').length;
-        const awayGoals = list.filter((event) => event.type === 'GOAL' && event.team === 'AWAY').length;
+        const homeGoals = list.filter((event) => event.type === 'GOAL' && (event.scoringTeam ?? event.team) === 'HOME').length;
+        const awayGoals = list.filter((event) => event.type === 'GOAL' && (event.scoringTeam ?? event.team) === 'AWAY').length;
         // Unattributed goals count toward the score, but not a named player's statistics.
         const unattributedHome = match.unattributedGoals?.HOME ?? 0;
         const unattributedAway = match.unattributedGoals?.AWAY ?? 0;

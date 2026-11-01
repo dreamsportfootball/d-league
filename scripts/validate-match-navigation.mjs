@@ -62,10 +62,13 @@ try {
         page.setDefaultTimeout(20000);
         await page.goto(baseUrl + '/#' + scenario.path, { waitUntil: 'domcontentloaded', timeout: 30000 });
         if (scenario.home) {
-          // On matchday, completed results may be selected by default.
-          // Switch explicitly to upcoming fixtures before checking cross-matchday navigation.
-          await page.getByRole('tab', { name: /今日賽程|即將開賽/ }).click();
+          // This match moves from upcoming fixtures to results once its score is entered.
+          // Locate it in the appropriate tab without assuming the result's publication state.
           const card = page.locator('[data-analytics-event="match_open"][data-analytics-label="' + scenario.start + '"]');
+          await page.getByRole('tab', { name: '最新賽果' }).click();
+          if (!(await card.isVisible())) {
+            await page.getByRole('tab', { name: /今日賽程|即將開賽/ }).click();
+          }
           await card.waitFor({ state: 'visible' });
           await card.click();
         }

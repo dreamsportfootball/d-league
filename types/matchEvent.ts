@@ -13,4 +13,6 @@ export interface MatchEvent {
   team: 'HOME' | 'AWAY';
   isPK?: boolean;
   isOwnGoal?: boolean;
+  /** Scoring side for an own goal; team remains the player's registered side. */
+  scoringTeam?: 'HOME' | 'AWAY';
 }

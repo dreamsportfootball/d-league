@@ -216,5 +216,41 @@
       "type": "GOAL",
       "team": "HOME"
     }
+  ],
+  "m2627-006": [
+    {
+      "id": "m2627-006-1",
+      "minute": 2,
+      "player": "王亦瑋",
+      "playerId": "pwa26-13",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-006-2",
+      "minute": 6,
+      "player": "孫瑞文",
+      "playerId": "sb26-10",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-006-3",
+      "minute": 8,
+      "player": "吳明興",
+      "playerId": "pwa26-08",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-006-4",
+      "minute": 14,
+      "player": "陳奕盛",
+      "playerId": "pwa26-11",
+      "type": "GOAL",
+      "team": "AWAY",
+      "isOwnGoal": true,
+      "scoringTeam": "HOME"
+    }
   ]
 }

@@ -37,7 +37,7 @@ interface TimelineRowProps {
 }
 
 const TimelineRow: React.FC<TimelineRowProps> = ({ event, playerHref }) => {
-  const isHome = event.team === 'HOME';
+  const isHome = (event.scoringTeam ?? event.team) === 'HOME';
   const isLongName = event.player.length > 12;
   const textSizeClass = isLongName ? 'text-[11px] leading-tight' : 'text-[13px] sm:text-sm';
   const extraText = event.isPK ? '（十二碼）' : event.isOwnGoal ? '（烏龍球）' : '';

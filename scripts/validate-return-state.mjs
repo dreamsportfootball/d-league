@@ -114,7 +114,10 @@ try {
         fail('home standings: L2 did not become active');
       }
 
-      const teamLink = standingsSection.locator(`a[data-scroll-anchor-id^="home-standings-${currentSeason}-L2-"]:visible`).first();
+      const teamLink = standingsSection.locator([
+        `a[data-scroll-anchor-id^="home-standings-${currentSeason}-L2-"]:visible`,
+        `a[data-scroll-anchor-id^="standings-team-widget-${currentSeason}-L2-"]:visible`,
+      ].join(', ')).first();
       await teamLink.waitFor({ state: 'visible' });
       await teamLink.click();
       await page.waitForURL(/#\/teams\//);

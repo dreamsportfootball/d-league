@@ -150,11 +150,15 @@ try {
       await page.evaluate(() => sessionStorage.setItem('standingsActiveLeague', 'L1'));
       await page.reload({ waitUntil: 'domcontentloaded' });
 
-      const teamLink = page.locator(`a[data-scroll-anchor-id^="preseason-standings-team-${currentSeason}-L1-"]:visible`).first();
+      const teamLink = page.locator([
+        `a[data-scroll-anchor-id^="preseason-standings-team-${currentSeason}-L1-"]:visible`,
+        `a[data-scroll-anchor-id^="standings-team-mobile-compact-${currentSeason}-L1-"]:visible`,
+        `a[data-scroll-anchor-id^="standings-team-mobile-expanded-${currentSeason}-L1-"]:visible`,
+      ].join(', ')).first();
       await teamLink.waitFor({ state: 'visible' });
       await positionAnchor(page, teamLink, 190);
       const anchorId = await teamLink.getAttribute('data-scroll-anchor-id');
-      if (!anchorId) fail('current preseason standings: team link has no scroll anchor id');
+      if (!anchorId) fail('current standings: team link has no scroll anchor id');
       const beforeTop = await teamLink.evaluate((element) => element.getBoundingClientRect().top);
 
       await teamLink.click();
@@ -163,7 +167,7 @@ try {
       await backButton.waitFor({ state: 'visible' });
       await backButton.click();
       await page.waitForURL((url) => url.hash.startsWith(`#/standings?season=${currentSeason}`));
-      await waitForAnchorRestore(page, anchorId, beforeTop, 'current preseason standings team return');
+      await waitForAnchorRestore(page, anchorId, beforeTop, 'current standings team return');
     } finally {
       await page.close();
       await context.close();

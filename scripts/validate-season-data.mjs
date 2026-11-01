@@ -347,8 +347,20 @@ for (const leagueId of ['L1', 'L2', 'L3']) {
   if (leagueMatchCount !== 30) fail(`${CURRENT_SEASON_ID} ${leagueId}: expected 30 official league matches`);
 }
 
+// The active season now has confirmed results; validate official match events
+// against the played fixtures rather than requiring the entire file to be empty.
+const currentMatchEvents = read(CURRENT_SEASON_ID, 'matchEvents.json');
+for (const match of currentMatches) {
+  const events = currentMatchEvents[match.id];
+  if (match.status !== 'FINISHED' && events !== undefined) {
+    fail(`${CURRENT_SEASON_ID} match ${match.id}: unplayed match must not have events`);
+  }
+  if (match.status === 'FINISHED' && (match.resultType ?? 'PLAYED') === 'PLAYED' && !Array.isArray(events)) {
+    fail(`${CURRENT_SEASON_ID} match ${match.id}: finished match requires confirmed events`);
+  }
+}
+
 for (const file of [
-  'matchEvents.json',
   'disciplineDecisions.json',
   'lineups.json',
   'media.json',

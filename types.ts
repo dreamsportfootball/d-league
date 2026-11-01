@@ -41,6 +41,8 @@ export interface Match {
   countsForPlayerStats?: boolean;
   countsForSuspensionService?: boolean;
   administrativeNote?: string;
+  /** Goals in the final score whose scorer/timestamp is still unconfirmed; excludes individual stats. */
+  unattributedGoals?: Partial<Record<'HOME' | 'AWAY', number>>;
   videoUrls?: MatchVideoUrls;
   videoUrl?: string;
   albumId?: string;

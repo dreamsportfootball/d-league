@@ -210,6 +210,18 @@ for (const season of seasons) {
         fail(`${season} match ${match.id}: finished match requires integer scores`);
       }
     }
+    if (match.unattributedGoals !== undefined) {
+      const missing = match.unattributedGoals;
+      if (match.status !== 'FINISHED' || (match.resultType && match.resultType !== 'PLAYED') ||
+        !missing || typeof missing !== 'object' || Array.isArray(missing) ||
+        !Object.keys(missing).length || Object.keys(missing).some((key) => !['HOME', 'AWAY'].includes(key)) ||
+        Object.values(missing).some((value) => !Number.isInteger(value) || value < 1) ||
+        (missing.HOME ?? 0) > match.homeScore || (missing.AWAY ?? 0) > match.awayScore ||
+        !match.administrativeNote?.trim()) {
+        fail(`${season} match ${match.id}: invalid unattributed goals or missing public note`);
+      }
+    }
+
     if (match.resultType === 'DOUBLE_FORFEIT' && (match.homeScore !== null || match.awayScore !== null)) {
       fail(`${season} match ${match.id}: double forfeit must use null scores`);
     }
@@ -286,8 +298,11 @@ for (const season of seasons) {
       if (match.status === 'FINISHED' && (match.resultType ?? 'PLAYED') === 'PLAYED') {
         const homeGoals = list.filter((event) => event.type === 'GOAL' && event.team === 'HOME').length;
         const awayGoals = list.filter((event) => event.type === 'GOAL' && event.team === 'AWAY').length;
-        if (homeGoals !== match.homeScore || awayGoals !== match.awayScore) {
-          fail(`${season} match ${matchId}: score does not match goal events`);
+        // Unattributed goals count toward the score, but not a named player's statistics.
+        const unattributedHome = match.unattributedGoals?.HOME ?? 0;
+        const unattributedAway = match.unattributedGoals?.AWAY ?? 0;
+        if (homeGoals + unattributedHome !== match.homeScore || awayGoals + unattributedAway !== match.awayScore) {
+          fail(`${season} match ${matchId}: score does not match goal events and unattributed goals`);
         }
       }
     }

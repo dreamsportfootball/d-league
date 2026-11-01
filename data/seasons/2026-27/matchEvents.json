@@ -114,5 +114,47 @@
       "type": "GOAL",
       "team": "AWAY"
     }
+  ],
+  "m2627-002": [
+    {
+      "id": "m2627-002-1",
+      "minute": 18,
+      "player": "林耀強",
+      "playerId": "ku26-17",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-002-2",
+      "minute": 25,
+      "player": "陳韋嘉",
+      "playerId": "al26-14",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-002-3",
+      "minute": 30,
+      "player": "趙學克",
+      "playerId": "ku26-09",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-002-4",
+      "minute": 32,
+      "player": "曾健康",
+      "playerId": "al26-04",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-002-5",
+      "minute": 38,
+      "player": "曾健康",
+      "playerId": "al26-04",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
   ]
 }

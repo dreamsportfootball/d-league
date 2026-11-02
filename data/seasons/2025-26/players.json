@@ -1937,6 +1937,7 @@
     "gender": "未提供",
     "nationality": "未提供",
     "age": null,
-    "participationPeriod": "FIRST_HALF_ONLY"
+    "participationPeriod": "FIRST_HALF_ONLY",
+    "hideFromTeamRoster": true
   }
 ]

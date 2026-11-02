@@ -59,6 +59,7 @@ const getRepresentedTeamIds = (record: PlayerSeasonRecord): Set<string> => {
   };
 
   addTeam(record.player.teamId);
+  record.player.previousTeamIds?.forEach(addTeam);
   record.player.registrations?.forEach((registration) => addTeam(registration.teamId));
 
   Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {

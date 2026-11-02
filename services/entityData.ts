@@ -63,6 +63,15 @@ export const getPlayerIdentity = (player: PlayerProfile): string => player.ident
 
 const seasonSort = (a: SeasonId, b: SeasonId): number => b.localeCompare(a);
 
+/**
+ * Own-goal events credit the beneficiary team, not the player's team.
+ * Resolve team membership using the opposite side for own goals.
+ */
+export const getMatchEventPlayerTeamId = (match: Match, event: MatchEvent): string => {
+  const playerIsHome = event.isOwnGoal ? event.team === 'AWAY' : event.team === 'HOME';
+  return playerIsHome ? match.homeTeamId : match.awayTeamId;
+};
+
 export const resolveMatchEventPlayer = (
   data: SeasonData,
   match: Match,
@@ -71,7 +80,7 @@ export const resolveMatchEventPlayer = (
   const explicitId = event.playerId ?? event.subjectId;
   if (explicitId) return data.players.find((player) => player.id === explicitId);
 
-  const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+  const eventTeamId = getMatchEventPlayerTeamId(match, event);
   const candidates = data.players.filter((player) => player.name === event.player);
   return candidates.find((player) => player.teamId === eventTeamId) ??
     (candidates.length === 1 ? candidates[0] : undefined);
@@ -203,7 +212,7 @@ export const getPlayerSeasonStats = (
       const resolvedPlayer = resolveMatchEventPlayer(record.data, match, event);
       if (resolvedPlayer?.id !== record.player.id) return;
 
-      const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+      const eventTeamId = getMatchEventPlayerTeamId(match, event);
       if (teamId && eventTeamId !== teamId) return;
 
       matchIds.add(matchId);

@@ -80,7 +80,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/c23526-07.': { objectPosition: '50% 12%' }, // #9 唐毓翔：以頭臉為中心，減少下緣佔比
   '/assets/seasons/2026-27/players/c23526-08.': { objectPosition: '50% 34%' }, // #11 何茂彬：眼睛與臉部回正，維持完整髮頂；原圖證件反光不可修復
   '/assets/seasons/2026-27/players/c23526-10.': { objectPosition: '50% 0%' }, // #14 李宇文：證件照上移，保留髮頂
-  '/assets/seasons/2026-27/players/c23526-09.': { objectPosition: '50% 20%', transform: 'scale(1.18)' }, // #12 鄭州偉：放大至圓框完全避開四周照片黑邊，臉部回中，保留髮頂
+  '/assets/seasons/2026-27/players/c23526-09.': { objectPosition: '50% 24%', transform: 'scale(1.18)' }, // #12 鄭州偉：垂直取景微調至 24%，維持 1.18 倍避開照片黑邊，臉部更居中
   '/assets/seasons/2026-27/players/c23526-11.': { objectPosition: '50% 37%' }, // #17 王建翔：往臉部中心取景並減少證件下緣
   '/assets/seasons/2026-27/players/c23526-12.': { objectPosition: '50% 20%' }, // #18 李裕玄：臉部向圓形中線靠攏，髮頂仍完整
   '/assets/seasons/2026-27/players/c23526-13.': { objectPosition: '50% 0%' }, // #19 陳敬玄：保留頭頂及臉部視覺中心

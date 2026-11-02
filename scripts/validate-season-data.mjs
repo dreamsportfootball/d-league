@@ -147,7 +147,23 @@ for (const season of seasons) {
     }
     if (typeof player.gender !== 'string' || !player.gender.trim()) fail(`${season} player ${player.id}: missing gender`);
     if (typeof player.nationality !== 'string' || !player.nationality.trim()) fail(`${season} player ${player.id}: missing nationality`);
-    if (!Number.isInteger(player.age) || player.age < 0 || player.age > 100) fail(`${season} player ${player.id}: invalid age`);
+    // Historical data may lack a verified age. Do not substitute a fake age.
+    if (!(player.age === null && season !== CURRENT_SEASON_ID) &&
+        (!Number.isInteger(player.age) || player.age < 0 || player.age > 100)) {
+      fail(`${season} player ${player.id}: invalid age`);
+    }
+    if (player.previousTeamIds !== undefined) {
+      if (!Array.isArray(player.previousTeamIds) || season === CURRENT_SEASON_ID) {
+        fail(`${season} player ${player.id}: previousTeamIds is reserved for confirmed legacy transfers`);
+      }
+      const formerTeams = new Set();
+      for (const teamId of player.previousTeamIds) {
+        if (!teamIds.has(teamId) || teamId === player.teamId || formerTeams.has(teamId)) {
+          fail(`${season} player ${player.id}: invalid former team ${teamId}`);
+        }
+        formerTeams.add(teamId);
+      }
+    }
     if (player.englishName !== undefined && !player.englishName?.trim()) fail(`${season} player ${player.id}: invalid englishName`);
     if (player.identityId) {
       if (playerIdentityIds.has(player.identityId)) fail(`${season} player ${player.id}: duplicate identityId ${player.identityId}`);

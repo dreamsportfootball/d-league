@@ -18,7 +18,7 @@ import {
   resolveMatchEventPlayer,
   type PlayerSeasonRecord,
 } from '../services/entityData';
-import { getSeasonData } from '../services/seasonDataJson';
+import { getLatestPlayerImageUrl, getSeasonData } from '../services/seasonDataJson';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 
@@ -205,7 +205,7 @@ const PlayerPage: React.FC = () => {
       ? history.find((record) => record.seasonId === requestedSeason)
       : undefined) ?? history[0];
   const player = preferredRecord.player;
-  const image = preferredRecord.data.playerImages[player.name];
+  const image = getLatestPlayerImageUrl(player);
   const preferredSeasonStats = getPlayerSeasonStats(preferredRecord);
   const preferredSeasonRedCards =
     preferredSeasonStats.directRedCards + preferredSeasonStats.secondYellowDismissals;

@@ -33,6 +33,26 @@ try{
      if(player.id==='ns-51' && (await section.innerText()).includes('上半季')) {
       throw new Error('half-season label must not be displayed');
      }
+     if (player.id === 'ns-51') {
+      // The former first-half player remains in the historical database and
+      // retains his goal, but the owner explicitly excludes him from the
+      // published 2025/26 team roster.
+      await page.goto(`${base}/#/teams/tainan-niaoshi-fc?season=2025-26`, {
+        waitUntil: 'domcontentloaded', timeout: 30000,
+      });
+      const roster=page.locator('section').filter({
+        has:page.getByRole('heading',{name:'球員名單',exact:true}),
+      });
+      await roster.waitFor({state:'visible',timeout:20000});
+      if(await roster.getByRole('link',{name:'查看 蔡軒誠 球員個人資料'}).count())
+        throw new Error('first-half-only Tsai must not appear on Niaoshi roster');
+      if(await roster.getByRole('link',{name:'查看 戴威閎 球員個人資料'}).count()!==1)
+        throw new Error('unrelated roster entries must remain intact');
+      await page.goto(`${base}/#/players/ns-51?season=2025-26`,{
+        waitUntil:'domcontentloaded',timeout:30000,
+      });
+      await page.getByRole('heading',{name:'蔡軒誠',exact:true}).first().waitFor({state:'visible',timeout:20000});
+     }
      const stat=page.locator('dt').filter({hasText:/^進球$/}).first().locator('xpath=following-sibling::dd').first();
      const score=Number((await stat.innerText()).trim());
      if(score!==player.goals)throw new Error(`personal goals ${score} instead of ${player.goals}`);

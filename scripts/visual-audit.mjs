@@ -269,12 +269,16 @@ const auditViewport = async (viewport) => {
           firstDayLinks.length === 5 && new Set(firstDayLinks).size === 5 &&
           firstDayLinks.includes('https://drive.google.com/drive/folders/15oMWkaZsVP9aRIYrlIOnApZhm3syBjzl'),
           'Expected five correct distinct match album links on 2026/04/26');
+        await page.waitForFunction(() => {
+          const images = [...document.querySelectorAll('dialog[open] a img')];
+          return images.length === 5 && images.every(image => image.complete);
+        }, null, { timeout: 12000 });
         const coverStats = await albumDialog.locator('a img').evaluateAll(images =>
           images.map(image => ({ source: image.getAttribute('src'), naturalWidth: image.naturalWidth })));
         assert('historical-day-10-five-distinct-photo-covers',
           coverStats.length === 5 && new Set(coverStats.map(x => x.source)).size === 5 &&
-          coverStats.every(x => x.source?.includes('drive.google.com/thumbnail?id=')),
-          'Each 2025/26 match must use an image from its own photo folder: ' + JSON.stringify(coverStats));
+          coverStats.every(x => x.source?.includes('drive.google.com/thumbnail?id=') && x.naturalWidth > 0),
+          'Each 2025/26 match cover must load from its own photo folder: ' + JSON.stringify(coverStats));
         await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
         await albumDialog.waitFor({ state: 'hidden' });
         const oldestDay = galleryCards.last();

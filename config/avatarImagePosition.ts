@@ -75,18 +75,18 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // 以直式證件照髮頂及完整五官為優先；僅修改 Owner 指出的 17 位，不影響其他三位。
   '/assets/seasons/2026-27/players/c23526-01.': { objectPosition: '50% 7%' }, // #1 陳日揚：證件照略上移，保留完整髮頂
   '/assets/seasons/2026-27/players/c23526-02.': { objectPosition: '50% 5%' }, // #2 陳官澤：避免圓形裁切吃掉髮頂
-  '/assets/seasons/2026-27/players/c23526-03.': { objectPosition: '50% 0%' }, // #3 陳柏翰：原圖髮頂靠近上緣
+  '/assets/seasons/2026-27/players/c23526-03.': { objectPosition: '50% 12%' }, // #3 陳柏翰：Excel 原圖 104/160px 對照後下移取景，使眼鼻與下巴更置中
   '/assets/seasons/2026-27/players/c23526-05.': { objectPosition: '50% 12%' }, // #7 黃偉倫：向上取景，避免髮頂貼邊
   '/assets/seasons/2026-27/players/c23526-07.': { objectPosition: '50% 12%' }, // #9 唐毓翔：以頭臉為中心，減少下緣佔比
-  '/assets/seasons/2026-27/players/c23526-08.': { objectPosition: '50% 0%' }, // #11 何茂彬：小尺寸證件照上移，保留髮型
+  '/assets/seasons/2026-27/players/c23526-08.': { objectPosition: '50% 8%' }, // #11 何茂彬：照片清晰度有限，僅調整臉部位置，保留髮頂
   '/assets/seasons/2026-27/players/c23526-10.': { objectPosition: '50% 0%' }, // #14 李宇文：證件照上移，保留髮頂
-  '/assets/seasons/2026-27/players/c23526-11.': { objectPosition: '50% 0%' }, // #17 王建翔：避免裁掉髮頂
-  '/assets/seasons/2026-27/players/c23526-12.': { objectPosition: '50% 0%' }, // #18 李裕玄：避免裁掉髮型
+  '/assets/seasons/2026-27/players/c23526-11.': { objectPosition: '50% 25%' }, // #17 王建翔：減少臉部偏低，仍保留證件照頂部
+  '/assets/seasons/2026-27/players/c23526-12.': { objectPosition: '50% 20%' }, // #18 李裕玄：臉部向圓形中線靠攏，髮頂仍完整
   '/assets/seasons/2026-27/players/c23526-13.': { objectPosition: '50% 0%' }, // #19 陳敬玄：保留頭頂及臉部視覺中心
   '/assets/seasons/2026-27/players/c23526-14.': { objectPosition: '50% 0%', transform: 'translateY(2%) scale(1.08)' }, // #26 黃楷堯：原有上移仍顯小，輕微放大但維持圓形覆蓋
   '/assets/seasons/2026-27/players/c23526-15.': { objectPosition: '50% 0%' }, // #30 傅韋達：避免直式證件照切髮頂
-  '/assets/seasons/2026-27/players/c23526-16.': { objectPosition: '50% 0%' }, // #31 何啟聖：髮頂完整，上移取景
-  '/assets/seasons/2026-27/players/c23526-17.': { objectPosition: '50% 0%' }, // #32 温立丞：保留長髮頂部及臉部
+  '/assets/seasons/2026-27/players/c23526-16.': { objectPosition: '50% 17%' }, // #31 何啟聖：眼鼻中心上移，髮頂不裁切
+  '/assets/seasons/2026-27/players/c23526-17.': { objectPosition: '50% 22%' }, // #32 温立丞：長髮與下巴保持完整，臉部視覺置中
   '/assets/seasons/2026-27/players/c23526-18.': { objectPosition: '50% 0%' }, // #69 朱少立：避免證件照切髮頂
   '/assets/seasons/2026-27/players/c23526-19.': { objectPosition: '50% 0%' }, // #71 李俊逵：避免證件照切髮頂
   '/assets/seasons/2026-27/players/c23526-20.': { objectPosition: '50% 0%' }, // #77 黃峻德：上移取景，保留髮頂

@@ -97,7 +97,7 @@ try {
       });
       assert(firstCardLayout.headerWidthDelta <= 2.5 && firstCardLayout.bodyWidthDelta <= 2.5,
         viewport.name + ': match header/body do not occupy full card width: ' + JSON.stringify(firstCardLayout));
-      assert(firstCardLayout.headerBackground === 'rgb(250, 250, 250)',
+      assert(['rgb(250, 250, 250)', 'oklch(0.985 0 0)'].includes(firstCardLayout.headerBackground),
         viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);
       assert(firstCardLayout.scoreRightDelta <= 1,
         viewport.name + ': home/away score columns have different right edges: ' + firstCardLayout.scoreRightDelta);

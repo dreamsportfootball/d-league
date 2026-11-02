@@ -24,7 +24,7 @@ interface StaffPartnerTeamPopupConfig {
 export { CURRENT_SEASON_ID };
 export const SHOW_REGISTRATION_NAV = false;
 export const D_LEAGUE_INSTAGRAM_URL = 'https://www.instagram.com/d.league_tw/';
-export const D_LEAGUE_YOUTUBE_URL = 'https://www.youtube.com/channel/UCY_YR635gk38jDBJ2RRxZlw';
+export const D_LEAGUE_YOUTUBE_URL = 'https://www.youtube.com/@dleague.tainan';
 export const D_LEAGUE_FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61576222172219';
 export const D_LEAGUE_EMAIL = 'dleague.tw@gmail.com';
 export const D_LEAGUE_EMAIL_URL = `mailto:${D_LEAGUE_EMAIL}`;

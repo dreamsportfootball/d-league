@@ -7,6 +7,7 @@ import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/Re
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import { getSeasonData } from '../services/seasonDataJson';
+import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
@@ -303,7 +304,7 @@ const MediaPage: React.FC = () => {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-neutral-400">追蹤我們</p>
             <div className="flex space-x-6">
               <a
-                href="https://www.youtube.com/@DreamSportFootball"
+                href={D_LEAGUE_YOUTUBE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex min-h-11 items-center rounded-sm text-xs font-bold uppercase tracking-widest text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"

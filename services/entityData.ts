@@ -7,6 +7,9 @@ import type { PlayerProfile } from '../types/player';
 import type { SeasonConfig, SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 import { getSeasonData, type SeasonData } from './seasonDataJson';
+import { getMatchEventPlayerTeamId } from '../utils/matchEventTeam';
+
+export { getMatchEventPlayerTeamId } from '../utils/matchEventTeam';
 
 export interface TeamSeasonRecord {
   seasonId: SeasonId;
@@ -62,19 +65,6 @@ export const getTeamIdentity = (team: SeasonTeam): string => team.identityId ?? 
 export const getPlayerIdentity = (player: PlayerProfile): string => player.identityId ?? player.id;
 
 const seasonSort = (a: SeasonId, b: SeasonId): number => b.localeCompare(a);
-
-/**
- * Two approved data encodings coexist across seasons:
- * - Legacy own goals (no scoringTeam): event.team is the benefiting side.
- * - Current own goals (scoringTeam present): event.team is the scorer's side.
- * Always derive player membership from the scorer, not the beneficiary.
- * Never infer a transfer from the side credited with an own goal.
- */
-export const getMatchEventPlayerTeamId = (match: Match, event: MatchEvent): string => {
-  const legacyOwnGoal = event.isOwnGoal === true && event.scoringTeam === undefined;
-  const playerIsHome = legacyOwnGoal ? event.team === 'AWAY' : event.team === 'HOME';
-  return playerIsHome ? match.homeTeamId : match.awayTeamId;
-};
 
 export const resolveMatchEventPlayer = (
   data: SeasonData,

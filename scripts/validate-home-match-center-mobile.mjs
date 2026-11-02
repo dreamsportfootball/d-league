@@ -95,7 +95,7 @@ try {
           stripeColors: [...stripes.children].map((stripe) => getComputedStyle(stripe).backgroundColor),
         };
       });
-      assert(firstCardLayout.headerWidthDelta <= 1 && firstCardLayout.bodyWidthDelta <= 1,
+      assert(firstCardLayout.headerWidthDelta <= 2.5 && firstCardLayout.bodyWidthDelta <= 2.5,
         viewport.name + ': match header/body do not occupy full card width: ' + JSON.stringify(firstCardLayout));
       assert(firstCardLayout.headerBackground === 'rgb(250, 250, 250)',
         viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);

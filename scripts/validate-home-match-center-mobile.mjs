@@ -78,6 +78,36 @@ try {
         }));
       });
       console.log('[mobile-match-center] ' + viewport.name + ' first-card logos ' + JSON.stringify(firstCardGeometry));
+      const firstCardLayout = await cards.first().evaluate((card) => {
+        const header = card.firstElementChild;
+        const body = card.children[1];
+        const stripes = card.lastElementChild;
+        const rows = [...body.querySelectorAll('.grid')].filter((row) => row.querySelector('img'));
+        const cardRect = card.getBoundingClientRect();
+        const headerRect = header.getBoundingClientRect();
+        const bodyRect = body.getBoundingClientRect();
+        const scoreEdges = rows.map((row) => row.lastElementChild?.getBoundingClientRect().right);
+        return {
+          headerWidthDelta: Math.abs(headerRect.width - cardRect.width),
+          bodyWidthDelta: Math.abs(bodyRect.width - cardRect.width),
+          headerBackground: getComputedStyle(header).backgroundColor,
+          scoreRightDelta: Math.abs(scoreEdges[0] - scoreEdges[1]),
+          stripeColors: [...stripes.children].map((stripe) => getComputedStyle(stripe).backgroundColor),
+        };
+      });
+      assert(firstCardLayout.headerWidthDelta <= 1 && firstCardLayout.bodyWidthDelta <= 1,
+        viewport.name + ': match header/body do not occupy full card width: ' + JSON.stringify(firstCardLayout));
+      assert(firstCardLayout.headerBackground === 'rgb(250, 250, 250)',
+        viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);
+      assert(firstCardLayout.scoreRightDelta <= 1,
+        viewport.name + ': home/away score columns have different right edges: ' + firstCardLayout.scoreRightDelta);
+      assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(44, 58, 103)', 'rgb(224, 192, 80)']),
+        viewport.name + ': m2627-001 kit colors should be Chen navy and Evergreen yellow: ' + firstCardLayout.stripeColors.join(' | '));
+      const lastCardStripeColors = await cards.last().evaluate((card) =>
+        [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
+      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(255, 255, 255)', 'rgb(86, 62, 146)']),
+        viewport.name + ': m2627-006 must use SOUTHBOYS white away and Pingtung purple home: ' + lastCardStripeColors.join(' | '));
+
       assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
       for (const row of firstCardGeometry) {
         assert(row.loaded, viewport.name + ': logo did not load: ' + row.alt);

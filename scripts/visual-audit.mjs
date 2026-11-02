@@ -152,12 +152,12 @@ const auditViewport = async (viewport) => {
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
       const siteViewCountPlacement = await page.evaluate(() => {
         const bar = document.querySelector('[data-site-view-count-bar]');
-        const footer = document.querySelector('footer');
+        const footer = bar?.nextElementSibling;
         return {
           count: document.querySelectorAll('[data-site-view-count]').length,
           insideBar: bar?.querySelectorAll('[data-site-view-count]').length ?? 0,
           insideFooter: footer?.querySelectorAll('[data-site-view-count]').length ?? 0,
-          directlyBeforeFooter: bar?.nextElementSibling === footer,
+          directlyBeforeFooter: footer?.tagName.toLowerCase() === 'footer',
         };
       });
       assert('site-views-before-footer',

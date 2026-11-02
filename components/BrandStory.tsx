@@ -1,5 +1,4 @@
 import React from 'react';
-import SiteViewCount from './SiteViewCount';
 
 const BrandStory: React.FC = () => (
   <section className="relative overflow-hidden bg-white py-8 md:py-16">
@@ -27,9 +26,6 @@ const BrandStory: React.FC = () => (
       <div className="mt-16 flex items-center justify-center space-x-3">
         <span className="font-display text-4xl font-black text-brand-black md:text-5xl">DREAM IT.</span>
         <span className="stroke-black font-display text-4xl font-black text-brand-accent md:text-5xl">PLAY IT.</span>
-      </div>
-      <div className="pt-5 md:pt-9">
-        <SiteViewCount />
       </div>
     </div>
   </section>

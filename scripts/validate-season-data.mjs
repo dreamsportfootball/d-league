@@ -158,9 +158,9 @@ for (const season of seasons) {
       }
       // The 2025/26 L2 regular season had 10 rounds (two halves of five).
       // A confirmed first-half-only player must not be assigned a later event.
-      for (const [matchId, events] of Object.entries(matchEvents)) {
+      for (const [matchId, matchEventList] of Object.entries(events)) {
         const match = matches.find(item => item.id === matchId);
-        if (match?.round > 5 && events.some(event =>
+        if (match?.round > 5 && matchEventList.some(event =>
           event.playerId === player.id || event.subjectId === player.id ||
           event.player === player.name
         )) fail(`${season} player ${player.id}: second-half event contradicts first-half-only record`);

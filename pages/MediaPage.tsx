@@ -233,9 +233,6 @@ const MediaPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="mb-4 text-[11px] leading-5 text-neutral-600 md:mb-5 md:text-xs">
-                  相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效，想找的照片就找不到了。
-                </p>
                 {galleryGroups.length > 1 && (
                   <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
                     左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
@@ -254,7 +251,10 @@ const MediaPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div className="mt-6 md:mt-8">
+                <div className="mt-2 space-y-3 md:mt-3 md:space-y-4">
+                  <p className="text-[11px] leading-5 text-neutral-600 md:text-xs">
+                    相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效，想找的照片就找不到了。
+                  </p>
                   <PhotoUsageNotice />
                 </div>
               </div>

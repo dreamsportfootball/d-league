@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { ArrowUpRight, ExternalLink, Instagram, MonitorPlay, Signal } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
 import type { MediaAlbum } from '../types/media';
 
@@ -114,7 +115,7 @@ const VideoHub: React.FC = () => {
                   </div>
 
                   <a
-                    href="https://www.youtube.com/@DreamSportFootball"
+                    href={D_LEAGUE_YOUTUBE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group/yt mt-2 flex items-center text-xs font-bold text-white/50 transition-colors hover:text-white"

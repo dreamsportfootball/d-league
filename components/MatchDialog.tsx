@@ -161,9 +161,14 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     .filter(Boolean)
     .sort((a, b) => (a?.number ?? 0) - (b?.number ?? 0));
   const matchDateKey = formatTaipeiDateKey(match.timestamp);
-  const album = (match.albumId
+  // Current-season photo folders belong to individual matches; never substitute
+  // the first album from another match on the same day. Historical seasons may
+  // continue to use one shared album for the entire match day.
+  const album = match.albumId
     ? seasonData.albums.find((item) => item.id === match.albumId)
-    : undefined) ?? seasonData.albums.find((item) => item.date.replaceAll('/', '-') === matchDateKey);
+    : activeSeason.id === CURRENT_SEASON_ID
+      ? undefined
+      : seasonData.albums.find((item) => item.date.replaceAll('/', '-') === matchDateKey);
   const report = match.reportArticleId
     ? seasonData.news.find((item) => item.id === match.reportArticleId)
     : undefined;

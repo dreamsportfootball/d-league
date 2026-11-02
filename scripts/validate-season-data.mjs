@@ -441,6 +441,28 @@ for (const album of read(CURRENT_SEASON_ID, 'albums.json')) {
   }
 }
 
+// Every published current-season album must belong to exactly one match.
+// This prevents same-day fixtures from silently inheriting the first match's photos.
+const currentAlbumById = new Map(read(CURRENT_SEASON_ID, 'albums.json').map((album) => [album.id, album]));
+const assignedAlbumIds = new Set();
+for (const match of currentMatches) {
+  if (!match.albumId) continue;
+  const album = currentAlbumById.get(match.albumId);
+  if (!album) fail(`${CURRENT_SEASON_ID} match ${match.id}: unknown album ${match.albumId}`);
+  if (album.date.replaceAll('/', '-') !== match.timestamp.slice(0, 10)) {
+    fail(`${CURRENT_SEASON_ID} match ${match.id}: album date mismatch ${album.id}`);
+  }
+  if (assignedAlbumIds.has(album.id)) {
+    fail(`${CURRENT_SEASON_ID}: album ${album.id} assigned to multiple matches`);
+  }
+  assignedAlbumIds.add(album.id);
+}
+for (const album of currentAlbumById.values()) {
+  if (!assignedAlbumIds.has(album.id)) {
+    fail(`${CURRENT_SEASON_ID}: published album ${album.id} has no linked match`);
+  }
+}
+
 const currentParticipants = read(CURRENT_SEASON_ID, 'participants.json');
 const currentTeams = read(CURRENT_SEASON_ID, 'teams.json');
 const currentPlayers = read(CURRENT_SEASON_ID, 'players.json');

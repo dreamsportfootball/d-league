@@ -70,6 +70,8 @@ jobs:
           publish_branch: gh-pages
           publish_dir: ./dist
           destination_dir: preview/season-2026-27
-          keep_files: true
+          # Replace only this preview directory to prevent stale hashed JS/CSS accumulation.
+          # The production site and other preview directories remain untouched.
+          keep_files: false
           force_orphan: false
           commit_message: "preview: deploy 2026-27 season site"

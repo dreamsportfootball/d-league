@@ -21,8 +21,8 @@ interface GalleryGroup {
   albums: MediaAlbum[];
 }
 
-// A gallery card represents a match day. Historical days with one folder
-// keep their existing direct-link behavior; multiple match folders open a chooser.
+// The same match-day card and gallery chooser serve every season.
+// Older seasons may have one shared folder per day rather than per-match folders.
 const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
   const albumsByDate = new Map<string, MediaAlbum[]>();
   albums.forEach((album) => {
@@ -72,17 +72,13 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
     </>
   );
 
-  const className = 'group block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4';
-  if (group.albums.length === 1) {
-    return (
-      <a href={group.albums[0].link} target="_blank" rel="noopener noreferrer" className={className}>
-        {content}
-      </a>
-    );
-  }
-
   return (
-    <button type="button" onClick={onOpen} className={className} aria-haspopup="dialog">
+    <button
+      type="button"
+      onClick={onOpen}
+      className="group block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+      aria-haspopup="dialog"
+    >
       {content}
     </button>
   );
@@ -349,7 +345,7 @@ const MediaPage: React.FC = () => {
         onClick={(event) => {
           if (event.target === event.currentTarget) setSelectedGroupId(null);
         }}
-        className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden border-0 bg-white p-0 text-brand-black shadow-2xl backdrop:bg-black/65"
+        className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden rounded-[20px] border-0 bg-white p-0 text-brand-black shadow-2xl backdrop:bg-black/65 sm:rounded-[24px]"
       >
         {selectedGroup && (
           <>
@@ -359,7 +355,11 @@ const MediaPage: React.FC = () => {
                 <h2 id="match-day-albums-title" className="mt-1 font-display text-2xl font-bold leading-tight">
                   {selectedGroup.title}
                 </h2>
-                <p className="mt-2 text-sm text-neutral-500">選擇比賽，查看 Google Drive 照片</p>
+                <p className="mt-2 text-sm text-neutral-500">
+                  {selectedGroup.albums.length > 1
+                    ? '選擇比賽，查看 Google Drive 照片'
+                    : '查看此比賽日的 Google Drive 相簿'}
+                </p>
               </div>
               <button
                 type="button"
@@ -381,7 +381,9 @@ const MediaPage: React.FC = () => {
                 >
                   <img src={album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
                   <div className="min-w-0 flex-1">
-                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-neutral-500">第 {index + 1} 場</span>
+                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                      {selectedGroup.albums.length > 1 ? `第 ${index + 1} 場` : '全日照片'}
+                    </span>
                     <span className="block text-sm font-bold leading-relaxed sm:text-base">{album.title}</span>
                   </div>
                   <ArrowUpRight className="h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />

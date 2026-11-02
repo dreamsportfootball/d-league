@@ -10,6 +10,7 @@ import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
 import {
+  getMatchEventPlayerTeamId,
   getPlayerHistory,
   getPlayerMatchRecords,
   getPlayerSeasonStats,
@@ -82,7 +83,7 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
     const timestamp = new Date(match.timestamp).getTime();
     events.forEach((event) => {
       if (resolveMatchEventPlayer(record.data, match, event)?.id !== record.player.id) return;
-      addTeam(event.team === 'HOME' ? match.homeTeamId : match.awayTeamId, timestamp);
+      addTeam(getMatchEventPlayerTeamId(match, event), timestamp);
     });
   });
 

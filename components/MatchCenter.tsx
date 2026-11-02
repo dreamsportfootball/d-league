@@ -276,7 +276,7 @@ const MatchCenter: React.FC = () => {
           <div className="group relative">
             <div
               ref={scrollContainerRef}
-              className={`no-scrollbar -mx-4 flex snap-x snap-proximity items-stretch overflow-x-auto px-4 pt-1 scroll-smooth md:mx-0 md:px-0 md:pb-6 ${
+              className={`no-scrollbar -mx-4 flex snap-x snap-proximity items-stretch overflow-x-auto px-[7.5vw] pt-1 scroll-smooth md:mx-0 md:px-0 md:pb-6 ${
                 filteredMatches.length > 0 ? 'pb-6' : 'pb-0'
               }`}
             >

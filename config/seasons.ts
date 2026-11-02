@@ -156,6 +156,8 @@ export const SEASONS: Record<SeasonId, SeasonConfig> = {
     heroImageDesktop: 'assets/seasons/2026-27/registration-poster-desktop.png',
     heroImageMobile: 'assets/seasons/2026-27/registration-poster-mobile.png',
     heroFallbackImage: 'banner.png',
+    youtubePlaylistEmbedUrl: 'https://www.youtube.com/embed/videoseries?list=PLK6y6Tsu2iDk',
+    youtubePlaylistLabel: '2026/27 賽季完整賽事',
     enabledLeagues: ['L1', 'L2', 'L3'],
     registrationMessage: 'D LEAGUE 2026/27 正式參賽隊伍及分級已公布',
     registrationContent: {

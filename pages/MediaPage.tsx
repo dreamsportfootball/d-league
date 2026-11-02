@@ -234,7 +234,7 @@ const MediaPage: React.FC = () => {
                   </div>
                 </div>
                 <p className="mb-4 text-xs leading-5 text-neutral-600 md:mb-5 md:text-sm">
-                  喜歡的比賽照片，歡迎點進相簿下載原圖保存，盡量不要直接截圖，才能保留清晰畫質。
+                  相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效，想找的照片就找不到了。
                 </p>
                 {galleryGroups.length > 1 && (
                   <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">

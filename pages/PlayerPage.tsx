@@ -391,6 +391,9 @@ const PlayerPage: React.FC = () => {
                     ) : (
                       '-'
                     )}
+                    {record.player.participationPeriod === 'FIRST_HALF_ONLY' && (
+                      <span className="block text-[10px] font-medium text-neutral-500">上半季</span>
+                    )}
                   </div>
                   <span role="cell" className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{goals}</span>
                   <span role="cell" className="text-center text-[12px] font-semibold tabular-nums text-brand-black">{yellowCards}</span>
@@ -427,6 +430,9 @@ const PlayerPage: React.FC = () => {
                         </Link>
                       ) : (
                         '-'
+                      )}
+                      {record.player.participationPeriod === 'FIRST_HALF_ONLY' && (
+                        <span className="ml-2 text-xs text-neutral-500">（上半季）</span>
                       )}
                     </td>
                     <td className="py-4 text-center text-sm font-semibold tabular-nums text-brand-black">{goals}</td>

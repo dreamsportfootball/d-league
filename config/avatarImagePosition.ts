@@ -71,7 +71,25 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sb26-15.': { objectPosition: '50% 0%' }, // 劉駿輝：保留完整髮頂，同步套用球員及領隊頭像
   '/assets/seasons/2026-27/players/ku26-14.': { objectPosition: '50% 0%' }, // 翁吉韡：避免裁掉頭髮
   '/assets/seasons/2026-27/players/ku26-15.': { objectPosition: '50% 0%' }, // 陳光禪：避免裁掉髮頂
-  '/assets/seasons/2026-27/players/c23526-14.': { objectPosition: '50% 0%' }, // 黃楷堯：避免裁掉髮頂
+  // 嘉義 235 FC 2026/27 — 2026-11-02：逐人檢查原圖與既有 104px / 48px 圓形 QA 圖。
+  // 以直式證件照髮頂及完整五官為優先；僅修改 Owner 指出的 17 位，不影響其他三位。
+  '/assets/seasons/2026-27/players/c23526-01.': { objectPosition: '50% 7%' }, // #1 陳日揚：證件照略上移，保留完整髮頂
+  '/assets/seasons/2026-27/players/c23526-02.': { objectPosition: '50% 5%' }, // #2 陳官澤：避免圓形裁切吃掉髮頂
+  '/assets/seasons/2026-27/players/c23526-03.': { objectPosition: '50% 0%' }, // #3 陳柏翰：原圖髮頂靠近上緣
+  '/assets/seasons/2026-27/players/c23526-05.': { objectPosition: '50% 12%' }, // #7 黃偉倫：向上取景，避免髮頂貼邊
+  '/assets/seasons/2026-27/players/c23526-07.': { objectPosition: '50% 12%' }, // #9 唐毓翔：以頭臉為中心，減少下緣佔比
+  '/assets/seasons/2026-27/players/c23526-08.': { objectPosition: '50% 0%' }, // #11 何茂彬：小尺寸證件照上移，保留髮型
+  '/assets/seasons/2026-27/players/c23526-10.': { objectPosition: '50% 0%' }, // #14 李宇文：證件照上移，保留髮頂
+  '/assets/seasons/2026-27/players/c23526-11.': { objectPosition: '50% 0%' }, // #17 王建翔：避免裁掉髮頂
+  '/assets/seasons/2026-27/players/c23526-12.': { objectPosition: '50% 0%' }, // #18 李裕玄：避免裁掉髮型
+  '/assets/seasons/2026-27/players/c23526-13.': { objectPosition: '50% 0%' }, // #19 陳敬玄：保留頭頂及臉部視覺中心
+  '/assets/seasons/2026-27/players/c23526-14.': { objectPosition: '50% 0%', transform: 'translateY(2%) scale(1.08)' }, // #26 黃楷堯：原有上移仍顯小，輕微放大但維持圓形覆蓋
+  '/assets/seasons/2026-27/players/c23526-15.': { objectPosition: '50% 0%' }, // #30 傅韋達：避免直式證件照切髮頂
+  '/assets/seasons/2026-27/players/c23526-16.': { objectPosition: '50% 0%' }, // #31 何啟聖：髮頂完整，上移取景
+  '/assets/seasons/2026-27/players/c23526-17.': { objectPosition: '50% 0%' }, // #32 温立丞：保留長髮頂部及臉部
+  '/assets/seasons/2026-27/players/c23526-18.': { objectPosition: '50% 0%' }, // #69 朱少立：避免證件照切髮頂
+  '/assets/seasons/2026-27/players/c23526-19.': { objectPosition: '50% 0%' }, // #71 李俊逵：避免證件照切髮頂
+  '/assets/seasons/2026-27/players/c23526-20.': { objectPosition: '50% 0%' }, // #77 黃峻德：上移取景，保留髮頂
 
   // Full-site second-pass crop review: source-level, one portrait at a time.
   '/assets/seasons/2026-27/players/tq26-08.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.4)' }, // #23 鄭孟育：保留頭頂及臉部大小

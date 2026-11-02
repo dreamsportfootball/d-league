@@ -47,9 +47,10 @@ interface MatchCardProps {
   match: Match;
   teamMap: Record<string, SeasonTeam>;
   onOpenMatch: (matchId: string) => void;
+  prioritizeLogos: boolean;
 }
 
-const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) => {
+const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch, prioritizeLogos }) => {
   const homeTeam = teamMap[match.homeTeamId];
   const awayTeam = teamMap[match.awayTeamId];
   if (!homeTeam || !awayTeam) return null;
@@ -84,21 +85,25 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
             { team: homeTeam, score: match.homeScore },
             { team: awayTeam, score: match.awayScore },
           ].map(({ team, score }) => (
-            <div key={team.id} className="flex items-center justify-between">
-              <div className="flex min-w-0 flex-1 items-center space-x-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center">
-                  <img src={team.logo} alt={team.name} className="h-8 w-8 object-contain drop-shadow-sm" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <AutoFitText
-                    text={team.name}
-                    maxFontSize={18}
-                    minFontSize={8}
-                    className="font-bold tracking-tight text-brand-black"
-                  />
-                </div>
+            <div key={team.id} className="grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_2rem] items-center gap-x-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-50">
+                <img
+                  src={team.logo}
+                  alt={team.name}
+                  data-image-priority={prioritizeLogos ? 'true' : undefined}
+                  className="h-8 w-8 object-contain drop-shadow-sm"
+                />
               </div>
-              <div className="ml-2 shrink-0">
+              <div className="min-w-0 overflow-hidden">
+                <AutoFitText
+                  text={team.name}
+                  maxFontSize={18}
+                  minFontSize={10}
+                  fitPadding={8}
+                  className="font-bold tracking-tight text-brand-black"
+                />
+              </div>
+              <div className="min-w-0 text-right">
                 <AnimatedScore
                   identity={`${match.id}:${team.id}`}
                   value={isFinished ? score ?? '-' : '-'}
@@ -287,6 +292,7 @@ const MatchCenter: React.FC = () => {
                     match={match}
                     teamMap={seasonData.teamMap}
                     onOpenMatch={setSelectedMatchId}
+                    prioritizeLogos={match.id === filteredMatches[0]?.id}
                   />
                 ))
               ) : (

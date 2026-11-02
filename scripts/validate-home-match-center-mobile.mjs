@@ -39,6 +39,54 @@ try {
       await cards.first().waitFor({ state: 'visible', timeout: 20000 });
       assert(await cards.count() === 6, viewport.name + ': expected 6 latest result cards');
 
+      const firstCardGeometry = await cards.first().evaluate(async (card) => {
+        const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
+        return await Promise.all(rows.map(async (row) => {
+          const image = row.querySelector('img');
+          const name = row.querySelector('.min-w-0.overflow-hidden span');
+          const score = row.lastElementChild;
+          await image.decode().catch(() => undefined);
+          const imageRect = image.getBoundingClientRect();
+          const nameRect = name?.getBoundingClientRect();
+          const scoreRect = score?.getBoundingClientRect();
+          const canvas = document.createElement('canvas');
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 64, 64);
+          if (image.naturalWidth && image.naturalHeight) {
+            const scale = Math.min(64 / image.naturalWidth, 64 / image.naturalHeight);
+            const width = image.naturalWidth * scale;
+            const height = image.naturalHeight * scale;
+            ctx.drawImage(image, (64 - width) / 2, (64 - height) / 2, width, height);
+          }
+          const pixels = ctx.getImageData(0, 0, 64, 64).data;
+          let nonWhitePixels = 0;
+          for (let k = 0; k < pixels.length; k += 4) {
+            if (255 - Math.min(pixels[k], pixels[k + 1], pixels[k + 2]) >= 35) nonWhitePixels += 1;
+          }
+          return {
+            alt: image.alt,
+            src: image.currentSrc,
+            loaded: image.complete && image.naturalWidth > 0,
+            naturalWidth: image.naturalWidth,
+            nonWhiteRatio: Number((nonWhitePixels / 4096).toFixed(4)),
+            gap: nameRect && scoreRect ? Number((scoreRect.left - nameRect.right).toFixed(2)) : null,
+            imageInsideCard: imageRect.left >= card.getBoundingClientRect().left,
+          };
+        }));
+      });
+      console.log('[mobile-match-center] ' + viewport.name + ' first-card logos ' + JSON.stringify(firstCardGeometry));
+      assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
+      for (const row of firstCardGeometry) {
+        assert(row.loaded, viewport.name + ': logo did not load: ' + row.alt);
+        assert(row.nonWhiteRatio >= 0.01,
+          viewport.name + ': ' + row.alt + ' logo is visually blank at 64px (' + row.nonWhiteRatio + ')');
+        assert(row.gap !== null && row.gap >= 8,
+          viewport.name + ': ' + row.alt + ' team name lacks score separation (' + row.gap + 'px)');
+      }
+
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });
       const upcoming = matchCenter.getByRole('tab', { name: '即將開賽' });
       assert(await results.getAttribute('aria-selected') === 'true',

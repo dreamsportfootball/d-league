@@ -54,7 +54,7 @@ try {
       const representedBySeason = new Map();
       for (const record of history) {
         result.playerSeasonRecordsChecked++;
-        const teams = new Set([record.player.teamId]);
+        const teams = new Set([record.player.teamId, ...(record.player.previousTeamIds ?? [])]);
         for (const r of record.player.registrations??[]) teams.add(r.teamId);
         for (const [matchId, lineup] of Object.entries(record.data.lineups)) {
           const match = record.data.matches.find(m=>m.id===matchId);
@@ -101,6 +101,6 @@ try {
 mkdirSync('audit', { recursive: true });
 writeFileSync(join('audit','player-honours-runtime-audit.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));
-if (report.anomalies?.length || report.fatal || report.seasonPlayerRecords !== 505) {
+if (report.anomalies?.length || report.fatal || report.seasonPlayerRecords !== 507) {
   process.exitCode = 1;
 }

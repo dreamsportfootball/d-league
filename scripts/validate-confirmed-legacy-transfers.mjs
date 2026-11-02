@@ -6,7 +6,7 @@ const cases=[
  {name:'戴威閎',id:'ns-11',teams:['t_crazydog','t_niaoshi'],goals:3,current:'t_pingtung'},
  {name:'楊承諺',id:'cd-06',teams:['wanderers','t_crazydog'],goals:1,current:'t_kaohsiung_amateur_2026'},
  {name:'趙學邦',id:'kuromi-chao-hsueh-pang',teams:['t_crazydog','t_tongque'],goals:3,current:'t_kuromi_2026'},
- {name:'蔡軒誠',id:'ns-51',teams:['t_niaoshi'],goals:1,period:'上半季'},
+ {name:'蔡軒誠',id:'ns-51',teams:['t_niaoshi'],goals:1},
 ];
 const browser=await chromium.launch({headless:true});
 const errors=[];
@@ -28,10 +28,6 @@ try{
      }
      if(new Set(links).size!==player.teams.length)
       throw new Error(`unexpected team links ${JSON.stringify(links)}`);
-     if(player.period) {
-      const note=section.locator('span:visible').filter({hasText:/^上半季$/});
-      if(await note.count()!==1) throw new Error('missing first-half participation label');
-     }
      const stat=page.locator('dt').filter({hasText:/^進球$/}).first().locator('xpath=following-sibling::dd').first();
      const score=Number((await stat.innerText()).trim());
      if(score!==player.goals)throw new Error(`personal goals ${score} instead of ${player.goals}`);

@@ -152,6 +152,20 @@ for (const season of seasons) {
         (!Number.isInteger(player.age) || player.age < 0 || player.age > 100)) {
       fail(`${season} player ${player.id}: invalid age`);
     }
+    if (player.participationPeriod !== undefined) {
+      if (season === CURRENT_SEASON_ID || player.participationPeriod !== 'FIRST_HALF_ONLY') {
+        fail(`${season} player ${player.id}: unsupported historical participation period`);
+      }
+      // The 2025/26 L2 regular season had 10 rounds (two halves of five).
+      // A confirmed first-half-only player must not be assigned a later event.
+      for (const [matchId, events] of Object.entries(matchEvents)) {
+        const match = matches.find(item => item.id === matchId);
+        if (match?.round > 5 && events.some(event =>
+          event.playerId === player.id || event.subjectId === player.id ||
+          event.player === player.name
+        )) fail(`${season} player ${player.id}: second-half event contradicts first-half-only record`);
+      }
+    }
     if (player.previousTeamIds !== undefined) {
       if (!Array.isArray(player.previousTeamIds) || season === CURRENT_SEASON_ID) {
         fail(`${season} player ${player.id}: previousTeamIds is reserved for confirmed legacy transfers`);

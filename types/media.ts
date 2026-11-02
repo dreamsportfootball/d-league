@@ -7,5 +7,6 @@ export interface MediaAlbum {
   date: string;
   matchDay?: number;
   cover: string;
+  thumbnail?: string;
   link: string;
 }

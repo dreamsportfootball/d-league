@@ -257,6 +257,13 @@ const auditViewport = async (viewport) => {
         const galleryCards = page.locator('main button[aria-haspopup="dialog"]');
         assert('historical-album-days', await galleryCards.count() === 9,
           'Expected 9 verified 2025/26 photo days, without inventing 2026/04/12');
+        const dayCoverSources = await galleryCards.locator('img').evaluateAll(images =>
+          images.map(image => new URL(image.src).pathname));
+        assert('historical-day-covers-preserve-original-photos',
+          dayCoverSources.length === 9 &&
+          new Set(dayCoverSources).size === 9 &&
+          dayCoverSources.every(src => /\/assets\/media\/(?:1019|1102|1116|1207|111|0208|0308|0322|0426)\.(?:webp|jpg)$/.test(src)),
+          'All nine match-day cards must preserve the original local cover images: ' + JSON.stringify(dayCoverSources));
         const latestDay = galleryCards.first();
         assert('historical-latest-photo-day-10', (await latestDay.textContent() ?? '').includes('比賽日 10 (Match Day 10)'),
           '2026/04/26 must remain day 10, not day 9');

@@ -122,7 +122,11 @@ const makeData = (
       imageUrl: article.imageUrl ? assetUrl(article.imageUrl) : '',
     })),
     media: mediaInput.map((item) => ({ ...item, thumbnail: assetUrl(item.thumbnail) })),
-    albums: albumsInput.map((album) => ({ ...album, cover: assetUrl(album.cover) })),
+    albums: albumsInput.map((album) => ({
+      ...album,
+      cover: assetUrl(album.cover),
+      ...(album.thumbnail ? { thumbnail: assetUrl(album.thumbnail) } : {}),
+    })),
   };
 };
 

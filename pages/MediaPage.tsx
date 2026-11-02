@@ -418,7 +418,7 @@ const MediaPage: React.FC = () => {
                   rel="noopener noreferrer"
                   className="group flex min-h-24 items-center gap-4 border-b border-neutral-100 py-3 text-left last:border-b-0 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue sm:gap-5"
                 >
-                  <img src={album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
+                  <img src={album.thumbnail ?? album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
                   <div className="min-w-0 flex-1">
                     <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-neutral-500">
                       {selectedGroup.albums.length > 1 ? `第 ${index + 1} 場` : '全日照片'}

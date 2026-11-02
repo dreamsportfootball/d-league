@@ -90,7 +90,7 @@ const PhotoUsageNotice: React.FC = () => (
     <h2 id="photo-usage-notice-title" className="mb-0 text-xs font-bold leading-5 text-brand-black md:text-sm">
       照片使用須知
     </h2>
-    <p className="text-xs leading-5 text-neutral-500 md:text-sm md:leading-5">
+    <p className="text-[11px] leading-5 text-neutral-500 md:text-xs">
       參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
     </p>
   </section>
@@ -233,7 +233,7 @@ const MediaPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <p className="mb-4 text-xs leading-5 text-neutral-600 md:mb-5 md:text-sm">
+                <p className="mb-4 text-[11px] leading-5 text-neutral-600 md:mb-5 md:text-xs">
                   相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效，想找的照片就找不到了。
                 </p>
                 {galleryGroups.length > 1 && (

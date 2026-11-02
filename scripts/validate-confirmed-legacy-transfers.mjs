@@ -53,9 +53,21 @@ try{
       });
       await page.getByRole('heading',{name:'蔡軒誠',exact:true}).first().waitFor({state:'visible',timeout:20000});
      }
-     const stat=page.locator('dt').filter({hasText:/^進球$/}).first().locator('xpath=following-sibling::dd').first();
-     const score=Number((await stat.innerText()).trim());
-     if(score!==player.goals)throw new Error(`personal goals ${score} instead of ${player.goals}`);
+     // The header can represent the latest 2026/27 profile for returning
+     // players. Assert the actual 2025/26 career rows, not the latest header.
+     const visibleRows = width < 768
+      ? section.locator('[role="table"]:visible [role="rowgroup"] [role="row"]')
+      : section.locator('table:visible tbody tr');
+     const oldRows = await visibleRows.evaluateAll(els => els.map(el => {
+       const cells = [...el.querySelectorAll('[role="cell"], td')];
+       return {
+         season:cells[0]?.textContent?.trim()??'',
+         goals:Number(cells[3]?.textContent?.trim()??'NaN'),
+       };
+     }).filter(item=>item.season.includes('2025/26')));
+     const score=oldRows.reduce((total,row)=>total+row.goals,0);
+     if(!oldRows.length||score!==player.goals)
+      throw new Error(`2025/26 career goals ${score} instead of ${player.goals}, rows=${JSON.stringify(oldRows)}`);
      if(player.current){
       await page.goto(`${base}/#/players/${player.id}?season=2026-27`,{waitUntil:'domcontentloaded'});
       await page.getByRole('heading',{name:player.name,exact:true}).first().waitFor({state:'visible',timeout:20000});

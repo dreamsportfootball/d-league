@@ -56,17 +56,8 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
     });
   }
 
-  const playerImage = record.data.playerImages[record.player.name];
-  if (playerImage) {
-    const pathParts = playerImage.split('/').filter(Boolean);
-    const imageTeamName = pathParts[pathParts.length - 2];
-    const imageTeam = imageTeamName
-      ? record.data.teams.find(
-          (team) => team.name === imageTeamName || team.shortName === imageTeamName,
-        )
-      : undefined;
-    if (imageTeam) addTeam(imageTeam.id, Number.NEGATIVE_INFINITY);
-  }
+  // An image folder is not proof of a player registration or transfer.
+  // Only season records, effective registrations, lineups and match events can add teams.
 
   Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {
     const match = record.data.matches.find((candidate) => candidate.id === matchId);

@@ -1,77 +1,63 @@
-import React from 'react';
-import { ExternalLink, Instagram, MonitorPlay, Signal, Youtube } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { ArrowUpRight, ExternalLink, Instagram, MonitorPlay, Signal } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
+import type { MediaAlbum } from '../types/media';
 
-interface SideVideoCardProps {
-  title: string;
-  meta: string;
-  image: string;
-  type: 'YOUTUBE' | 'INSTAGRAM';
-  link: string;
-  badge?: string;
+interface SideAlbumRowProps {
+  album: MediaAlbum;
 }
 
-const SideVideoCard: React.FC<SideVideoCardProps> = ({
-  title,
-  meta,
-  image,
-  type,
-  link,
-  badge,
-}) => (
-  <a
-    href={link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group relative flex gap-4 overflow-hidden rounded-xl border border-transparent p-3 transition-all duration-300 hover:border-white/10 hover:bg-white/5"
-  >
-    <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+const SideAlbumRow: React.FC<SideAlbumRowProps> = ({ album }) => {
+  const separatorIndex = album.title.indexOf('｜');
+  const competition = separatorIndex >= 0 ? album.title.slice(0, separatorIndex).trim() : '';
+  const title = separatorIndex >= 0 ? album.title.slice(separatorIndex + 1).trim() : album.title;
 
-    <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-lg bg-neutral-800 ring-1 ring-white/10 transition-all group-hover:ring-white/30 md:h-24 md:w-40">
-      <img
-        src={image}
-        alt={title}
-        loading="lazy"
-        className="h-full w-full object-cover opacity-80 transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-100"
-      />
-
-      <div className="absolute right-1 top-1 z-10">
-        {type === 'INSTAGRAM' ? (
-          <div className="rounded-md bg-black/50 p-1 backdrop-blur-md">
-            <Instagram className="h-3 w-3 text-white" />
-          </div>
-        ) : (
-          <div className="rounded-md bg-red-600 p-1 shadow-sm">
-            <Youtube className="h-3 w-3 text-white" />
-          </div>
-        )}
+  return (
+    <a
+      href={album.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={'查看 ' + album.title + ' 比賽照片'}
+      className="group flex min-h-28 items-center gap-3 border-b border-neutral-800 py-3 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
+    >
+      <div className="aspect-[3/2] w-28 shrink-0 overflow-hidden bg-neutral-800 sm:w-32 lg:w-28 xl:w-32">
+        <img
+          src={album.cover}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none"
+        />
       </div>
 
-      {badge && (
-        <div className="absolute bottom-1 right-1 rounded bg-black/80 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-white backdrop-blur-sm">
-          {badge}
-        </div>
-      )}
-    </div>
-
-    <div className="flex min-w-0 flex-col justify-center">
-      <h4 className="mb-2 line-clamp-2 text-sm font-bold leading-snug text-neutral-300 decoration-brand-accent/50 underline-offset-4 transition-colors group-hover:text-white group-hover:underline">
-        {title}
-      </h4>
-      <div className="flex items-center space-x-2 text-xs font-medium text-neutral-500">
-        <span className="text-brand-accent">{type === 'INSTAGRAM' ? 'Reels' : 'Video'}</span>
-        <span className="h-1 w-1 rounded-full bg-neutral-600" />
-        <span className="text-neutral-400">{meta}</span>
+      <div className="min-w-0 flex-1">
+        <p className="mb-1 flex flex-wrap gap-x-2 text-[11px] font-medium text-neutral-400">
+          {competition && <span>{competition}</span>}
+          <span>{album.date.replaceAll('/', '.')}</span>
+        </p>
+        <h4 className="line-clamp-2 text-sm font-bold leading-snug text-white">
+          {title}
+        </h4>
+        <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-400 transition-colors group-hover:text-brand-accent">
+          查看相簿
+          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+        </span>
       </div>
-    </div>
-  </a>
-);
+    </a>
+  );
+};
 
 const VideoHub: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
-  const latestMedia = seasonData.media.slice(0, 3);
+  const latestAlbums = useMemo(
+    () => [...seasonData.albums]
+      .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id))
+      .slice(0, 3),
+    [seasonData.albums],
+  );
 
-  if (!activeSeason.youtubePlaylistEmbedUrl && latestMedia.length === 0) {
+  if (!activeSeason.youtubePlaylistEmbedUrl && latestAlbums.length === 0) {
     return null;
   }
 
@@ -145,37 +131,34 @@ const VideoHub: React.FC = () => {
             )}
           </div>
 
-          <div className="flex h-full flex-col">
-            <div className="mb-6 flex items-center justify-between border-b border-neutral-800 pb-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white">最新發布</h3>
-              {latestMedia.length > 0 && <span className="animate-pulse text-[10px] text-brand-accent">● New</span>}
-            </div>
-
-            {latestMedia.length > 0 ? (
-              <div className="flex flex-col space-y-3">
-                {latestMedia.map((item) => (
-                  <SideVideoCard
-                    key={item.id}
-                    type="INSTAGRAM"
-                    title={item.title}
-                    meta={item.date}
-                    image={item.thumbnail}
-                    link={item.link ?? 'https://www.instagram.com/d.league_tw/'}
-                    badge={item.duration || 'REELS'}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-neutral-800 px-6 py-12 text-center">
-                <p className="text-sm font-medium text-neutral-500">本賽季最新媒體內容尚未發布</p>
-              </div>
-            )}
-
-            <div className="mt-6 flex w-full items-center justify-center md:mt-8">
-              <span className="text-xs font-medium uppercase tracking-widest text-neutral-500">
-                更多精彩內容請前往社群平台
+          <div className="flex h-full min-w-0 flex-col">
+            <div className="mb-3 flex items-center justify-between border-b border-neutral-800 pb-4">
+              <h3 className="text-sm font-bold tracking-wider text-white">最新相簿</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">
+                Match Photos
               </span>
             </div>
+
+            {latestAlbums.length > 0 ? (
+              <>
+                <div className="flex flex-col">
+                  {latestAlbums.map((album) => (
+                    <SideAlbumRow key={album.id} album={album} />
+                  ))}
+                </div>
+                <Link
+                  to={'/media?season=' + activeSeason.id}
+                  className="mt-3 inline-flex min-h-11 items-center justify-between gap-3 text-sm font-bold text-white transition-colors hover:text-brand-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950"
+                >
+                  查看所有賽事相簿
+                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </>
+            ) : (
+              <div className="flex flex-1 items-center justify-center border-b border-neutral-800 px-4 py-10 text-center">
+                <p className="text-sm text-neutral-400">本賽季相簿尚未發布，比賽日後陸續更新</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ const cases=[
  {name:'戴威閎',id:'ns-11',teams:['t_crazydog','t_niaoshi'],goals:3,current:'t_pingtung'},
  {name:'楊承諺',id:'cd-06',teams:['wanderers','t_crazydog'],goals:1,current:'t_kaohsiung_amateur_2026'},
  {name:'趙學邦',id:'kuromi-chao-hsueh-pang',teams:['t_crazydog','t_tongque'],goals:3,current:'t_kuromi_2026'},
- {name:'蔡軒誠',id:'ns-51',teams:['t_niaoshi'],goals:1},
+ {name:'蔡軒誠',id:'ns-51',teams:['t_niaoshi'],goals:1,period:'上半季'},
 ];
 const browser=await chromium.launch({headless:true});
 const errors=[];

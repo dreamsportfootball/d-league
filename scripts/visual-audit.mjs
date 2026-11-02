@@ -40,6 +40,9 @@ const interactiveCases = [
   { name: 'standings-mobile-filter', path: '/standings?season=2026-27', viewport: 'mobile-390', action: 'filter' },
   { name: 'stats-mobile-filter', path: '/stats?season=2026-27', viewport: 'mobile-390', action: 'filter' },
   { name: 'media-mobile-filter', path: '/media', viewport: 'mobile-390', action: 'filter' },
+  { name: 'media-album-lock-375', path: '/media?season=2026-27', viewport: 'mobile-375', action: 'media-album' },
+  { name: 'media-album-lock-390', path: '/media?season=2026-27', viewport: 'mobile-390', action: 'media-album' },
+  { name: 'media-album-lock-1280', path: '/media?season=2026-27', viewport: 'desktop-1280', action: 'media-album' },
   { name: 'news-mobile-load-more', path: '/news', viewport: 'mobile-390', action: 'load-more' },
   { name: 'team-mobile-match-dialog', path: '/teams/t_chiayi?season=2025-26', viewport: 'mobile-390', action: 'match-dialog' },
   { name: 'player-mobile-match-dialog', path: '/players/lz-10?season=2025-26', viewport: 'mobile-390', action: 'match-dialog', eventSeason: '2025-26' },
@@ -250,6 +253,50 @@ const auditViewport = async (viewport) => {
         assert('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
       }
 
+      if (route.name === 'media-2025') {
+        const galleryCards = page.locator('main button[aria-haspopup="dialog"]');
+        assert('historical-album-days', await galleryCards.count() === 9,
+          'Expected 9 verified 2025/26 photo days, without inventing 2026/04/12');
+        const dayCoverSources = await galleryCards.locator('img').evaluateAll(images =>
+          images.map(image => new URL(image.src).pathname));
+        assert('historical-day-covers-preserve-original-photos',
+          dayCoverSources.length === 9 &&
+          new Set(dayCoverSources).size === 9 &&
+          dayCoverSources.every(src => /\/assets\/media\/(?:1019|1102|1116|1207|111|0208|0308|0322|0426)\.(?:webp|jpg)$/.test(src)),
+          'All nine match-day cards must preserve the original local cover images: ' + JSON.stringify(dayCoverSources));
+        const latestDay = galleryCards.first();
+        assert('historical-latest-photo-day-10', (await latestDay.textContent() ?? '').includes('比賽日 10 (Match Day 10)'),
+          '2026/04/26 must remain day 10, not day 9');
+        await latestDay.click();
+        const albumDialog = page.locator('dialog[aria-labelledby="match-day-albums-title"]');
+        await albumDialog.waitFor({ state: 'visible' });
+        const firstDayLinks = await albumDialog.locator('a[href*="drive.google.com/drive/folders/"]').evaluateAll(links =>
+          links.map(link => link.getAttribute('href')));
+        assert('historical-day-10-five-distinct-match-folders',
+          firstDayLinks.length === 5 && new Set(firstDayLinks).size === 5 &&
+          firstDayLinks.includes('https://drive.google.com/drive/folders/15oMWkaZsVP9aRIYrlIOnApZhm3syBjzl'),
+          'Expected five correct distinct match album links on 2026/04/26');
+        await page.waitForFunction(() => {
+          const images = [...document.querySelectorAll('dialog[open] a img')];
+          return images.length === 5 && images.every(image => image.complete);
+        }, null, { timeout: 12000 });
+        const coverStats = await albumDialog.locator('a img').evaluateAll(images =>
+          images.map(image => ({ source: image.getAttribute('src'), naturalWidth: image.naturalWidth })));
+        assert('historical-day-10-five-distinct-photo-covers',
+          coverStats.length === 5 && new Set(coverStats.map(x => x.source)).size === 5 &&
+          coverStats.every(x => x.source?.includes('drive.google.com/thumbnail?id=') && x.naturalWidth > 0),
+          'Each 2025/26 match cover must load from its own photo folder: ' + JSON.stringify(coverStats));
+        await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
+        await albumDialog.waitFor({ state: 'hidden' });
+        const oldestDay = galleryCards.last();
+        await oldestDay.click();
+        await albumDialog.waitFor({ state: 'visible' });
+        assert('historical-day-1-five-match-folders',
+          await albumDialog.locator('a[href*="drive.google.com/drive/folders/"]').count() === 5,
+          'Expected five match folders on 2025/10/19');
+        await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
+      }
+
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
       await page.screenshot({
         path: screenshotPath,
@@ -292,6 +339,8 @@ const auditInteractiveCase = async (testCase) => {
 
     let beforeCount = null;
     let afterCount = null;
+    let albumScrollLockPassed = false;
+    let albumScrollLockDetails = null;
 
     if (testCase.action === 'mobile-menu') {
       const popupCloseButton = page.getByRole('button', { name: '關閉工作人員合作隊招募' }).last();
@@ -315,6 +364,62 @@ const auditInteractiveCase = async (testCase) => {
     } else if (testCase.action === 'playlist') {
       await page.waitForSelector('iframe[title*="比賽影片"]', { state: 'attached' });
       await page.waitForTimeout(350);
+    } else if (testCase.action === 'media-album') {
+      const trigger = page.locator('button[aria-haspopup="dialog"]').first();
+      await trigger.scrollIntoViewIfNeeded();
+      const beforeScroll = await page.evaluate(() => window.scrollY);
+      await trigger.click();
+      const albumDialog = page.locator('dialog[aria-labelledby="match-day-albums-title"]');
+      await albumDialog.waitFor({ state: 'visible' });
+      const lock = await page.evaluate(() => {
+        const dialog = document.querySelector('dialog[aria-labelledby="match-day-albums-title"]');
+        return {
+          modalOpen: Boolean(dialog?.open),
+          bodyPosition: document.body.style.position,
+          bodyTop: Number.parseFloat(document.body.style.top),
+          bodyOverflow: document.body.style.overflow,
+          htmlOverflow: document.documentElement.style.overflow,
+        };
+      });
+      await page.mouse.wheel(0, 400);
+      await page.waitForTimeout(100);
+      const duringScroll = await page.evaluate(() => window.scrollY);
+      await page.screenshot({
+        path: path.join(outputDir, 'screenshots', `${testCase.viewport}__${testCase.name}__open.png`),
+        animations: 'disabled',
+      });
+      await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
+      await albumDialog.waitFor({ state: 'hidden' });
+      const afterClose = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        bodyPosition: document.body.style.position,
+        bodyOverflow: document.body.style.overflow,
+        htmlOverflow: document.documentElement.style.overflow,
+      }));
+      await trigger.click();
+      await albumDialog.waitFor({ state: 'visible' });
+      await page.keyboard.press('Escape');
+      await albumDialog.waitFor({ state: 'hidden' });
+      const afterEscape = await page.evaluate(() => ({
+        scrollY: window.scrollY,
+        bodyPosition: document.body.style.position,
+        htmlOverflow: document.documentElement.style.overflow,
+      }));
+      albumScrollLockPassed =
+        lock.modalOpen &&
+        lock.bodyPosition === 'fixed' &&
+        Math.abs(lock.bodyTop + beforeScroll) <= 2 &&
+        lock.bodyOverflow === 'hidden' &&
+        lock.htmlOverflow === 'hidden' &&
+        Math.abs(duringScroll) <= 2 &&
+        Math.abs(afterClose.scrollY - beforeScroll) <= 2 &&
+        Math.abs(afterEscape.scrollY - beforeScroll) <= 2 &&
+        afterClose.bodyPosition !== 'fixed' &&
+        afterClose.bodyOverflow !== 'hidden' &&
+        afterClose.htmlOverflow !== 'hidden' &&
+        afterEscape.bodyPosition !== 'fixed' &&
+        afterEscape.htmlOverflow !== 'hidden';
+      albumScrollLockDetails = { beforeScroll, lock, duringScroll, afterClose, afterEscape };
     } else {
       await page.getByRole('button', { name: /篩選|更改賽季|開啟.*篩選|選擇.*賽季|過往賽季/i }).first().click();
     }
@@ -345,15 +450,17 @@ const auditInteractiveCase = async (testCase) => {
           ? dialogVisible
           : testCase.action === 'playlist'
             ? playlistVisible
-            : dialogVisible;
+            : testCase.action === 'media-album'
+              ? albumScrollLockPassed
+              : dialogVisible;
 
     if (!passed) {
-      addFailure(testCase.viewport, testCase.name, 'interactive-state', JSON.stringify({ dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount }));
+      addFailure(testCase.viewport, testCase.name, 'interactive-state', JSON.stringify({ dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount, albumScrollLockDetails }));
     }
 
     const screenshotPath = path.join(outputDir, 'screenshots', `${testCase.viewport}__${testCase.name}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false, animations: 'disabled' });
-    report.interactive.push({ ...testCase, screenshot: screenshotPath, dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount, passed });
+    report.interactive.push({ ...testCase, screenshot: screenshotPath, dialogVisible, playlistVisible, menuVisible, beforeCount, afterCount, albumScrollLockDetails, passed });
   } catch (error) {
     addFailure(testCase.viewport, testCase.name, 'interactive-audit', error.message);
     report.interactive.push({ ...testCase, error: error.message, passed: false });

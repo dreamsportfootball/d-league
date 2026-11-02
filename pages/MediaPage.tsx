@@ -38,7 +38,7 @@ const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
       id: `day-${date}`,
       date,
       title: dailyAlbums.length > 1
-        ? `比賽日 ${index + 1} (Match Day ${index + 1})`
+        ? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1} (Match Day ${dailyAlbums[0].matchDay ?? index + 1})`
         : dailyAlbums[0].title,
       cover: dailyAlbums[0].cover,
       albums: dailyAlbums,
@@ -90,7 +90,7 @@ const PhotoUsageNotice: React.FC = () => (
     <h2 id="photo-usage-notice-title" className="mb-0 text-xs font-bold leading-5 text-brand-black md:text-sm">
       照片使用須知
     </h2>
-    <p className="text-xs leading-5 text-neutral-500 md:text-sm md:leading-5">
+    <p className="text-[11px] leading-5 text-neutral-500 md:text-xs">
       參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
     </p>
   </section>
@@ -128,8 +128,39 @@ const MediaPage: React.FC = () => {
   useEffect(() => {
     const dialog = albumDialogRef.current;
     if (!dialog) return;
-    if (selectedGroup && !dialog.open) dialog.showModal();
-    if (!selectedGroup && dialog.open) dialog.close();
+    if (!selectedGroup) {
+      if (dialog.open) dialog.close();
+      return;
+    }
+
+    // A native modal traps focus but does not lock background scrolling,
+    // particularly on touch devices. Keep the page at its original position.
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const html = document.documentElement;
+    const previousBody = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    const previousHtmlOverflow = html.style.overflow;
+
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+    if (!dialog.open) dialog.showModal();
+
+    return () => {
+      body.style.position = previousBody.position;
+      body.style.top = previousBody.top;
+      body.style.width = previousBody.width;
+      body.style.overflow = previousBody.overflow;
+      html.style.overflow = previousHtmlOverflow;
+      window.scrollTo(0, scrollY);
+    };
   }, [selectedGroup]);
 
   const scrollGallery = (direction: 'left' | 'right') => {
@@ -251,7 +282,10 @@ const MediaPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div className="mt-6 md:mt-8">
+                <div className="mt-2 space-y-3 md:mt-3 md:space-y-4">
+                  <p className="text-[11px] leading-5 text-neutral-600 md:text-xs">
+                    相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效
+                  </p>
                   <PhotoUsageNotice />
                 </div>
               </div>
@@ -342,6 +376,10 @@ const MediaPage: React.FC = () => {
       <dialog
         ref={albumDialogRef}
         aria-labelledby="match-day-albums-title"
+        onCancel={(event) => {
+          event.preventDefault();
+          setSelectedGroupId(null);
+        }}
         onClose={() => setSelectedGroupId(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) setSelectedGroupId(null);
@@ -371,7 +409,7 @@ const MediaPage: React.FC = () => {
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
-            <div className="max-h-[65dvh] overflow-y-auto px-5 py-2 sm:px-8">
+            <div className="max-h-[65dvh] overflow-y-auto overscroll-contain px-5 py-2 sm:px-8">
               {selectedGroup.albums.map((album, index) => (
                 <a
                   key={album.id}
@@ -380,7 +418,7 @@ const MediaPage: React.FC = () => {
                   rel="noopener noreferrer"
                   className="group flex min-h-24 items-center gap-4 border-b border-neutral-100 py-3 text-left last:border-b-0 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue sm:gap-5"
                 >
-                  <img src={album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
+                  <img src={album.thumbnail ?? album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
                   <div className="min-w-0 flex-1">
                     <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-neutral-500">
                       {selectedGroup.albums.length > 1 ? `第 ${index + 1} 場` : '全日照片'}

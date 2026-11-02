@@ -148,6 +148,11 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-home-match-center-default.mjs
 
+      - name: Validate historical career team attribution for own-goal scorers
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-own-goal-player-history.mjs
+
       - name: Capture responsive screenshots and diagnostics
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

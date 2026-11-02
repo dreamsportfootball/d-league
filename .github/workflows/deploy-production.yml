@@ -17,6 +17,10 @@ concurrency:
 
 jobs:
   deploy-production:
+    # Coordinate writes to gh-pages with the active season preview deployment.
+    concurrency:
+      group: d-league-gh-pages-publish
+      cancel-in-progress: false
     runs-on: ubuntu-latest
 
     steps:
@@ -67,3 +71,17 @@ jobs:
           keep_files: true
           force_orphan: false
           commit_message: "deploy: publish production site"
+
+      # Re-publish the current build's assets into this subdirectory only.
+      # keep_files: false removes old hashed JS/CSS but does not touch preview/.
+      # Run after the full site is published to preserve any existing live pages.
+      - name: Prune obsolete production assets without touching previews
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist/assets
+          destination_dir: assets
+          keep_files: false
+          force_orphan: false
+          commit_message: "deploy: prune old production asset versions"

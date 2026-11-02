@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CalendarDays, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getMatchTeamKitVariant } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { getDefaultHomeMatchCenterFilter } from '../utils/homeMatchCenterDefault.mjs';
-import AutoFitText from './AutoFitText';
 import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
 import Tabs from './Tabs';
@@ -56,6 +56,10 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
   const timeString = formatTaipeiTime(match.timestamp);
   const dateString = formatTaipeiMonthDayWeekday(match.timestamp);
   const isFinished = match.status === MatchStatus.FINISHED;
+  const homeKitVariant = getMatchTeamKitVariant(homeTeam.seasonId, match.id, homeTeam.id, 'home');
+  const awayKitVariant = getMatchTeamKitVariant(awayTeam.seasonId, match.id, awayTeam.id, 'away');
+  const homeKitColor = homeTeam.kits?.[homeKitVariant] ?? homeTeam.primaryColor;
+  const awayKitColor = awayTeam.kits?.[awayKitVariant] ?? awayTeam.primaryColor;
 
   return (
     <button
@@ -65,7 +69,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
       data-analytics-label={match.id}
       className="group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
     >
-      <div className="flex shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
+      <div className="flex w-full min-w-0 shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">
           <span className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-neutral-500">
             {match.league} · 第{match.round}輪
@@ -78,27 +82,26 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
           {isFinished ? '完賽' : timeString}
         </span>
       </div>
-      <div className="flex flex-grow flex-col justify-center p-5">
+      <div className="flex w-full min-w-0 flex-grow flex-col justify-center p-5">
         <div className="space-y-3">
           {[
             { team: homeTeam, score: match.homeScore },
             { team: awayTeam, score: match.awayScore },
           ].map(({ team, score }) => (
-            <div key={team.id} className="flex items-center justify-between">
-              <div className="flex min-w-0 flex-1 items-center space-x-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center">
-                  <img src={team.logo} alt={team.name} className="h-8 w-8 object-contain drop-shadow-sm" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <AutoFitText
-                    text={team.name}
-                    maxFontSize={18}
-                    minFontSize={8}
-                    className="font-bold tracking-tight text-brand-black"
-                  />
-                </div>
+            <div key={team.id} className="grid w-full min-w-0 grid-cols-[2.5rem_minmax(0,1fr)_2rem] items-center gap-x-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                <img
+                  src={team.logo}
+                  alt={team.name}
+                  className="h-8 w-8 object-contain drop-shadow-sm"
+                />
               </div>
-              <div className="ml-2 shrink-0">
+              <div className="min-w-0">
+                <span className="block w-full break-words text-lg font-bold leading-snug tracking-tight text-brand-black">
+                  {team.name}
+                </span>
+              </div>
+              <div className="min-w-0 text-right">
                 <AnimatedScore
                   identity={`${match.id}:${team.id}`}
                   value={isFinished ? score ?? '-' : '-'}
@@ -123,9 +126,9 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
           )}
         </div>
       </div>
-      <div className="flex h-1.5 w-full shrink-0">
-        <div className="w-1/2" style={{ backgroundColor: homeTeam.primaryColor }} />
-        <div className="w-1/2" style={{ backgroundColor: awayTeam.primaryColor }} />
+      <div className="flex h-1.5 w-full shrink-0" aria-hidden="true">
+        <div className="w-1/2" style={{ backgroundColor: homeKitColor }} />
+        <div className="w-1/2" style={{ backgroundColor: awayKitColor }} />
       </div>
     </button>
   );

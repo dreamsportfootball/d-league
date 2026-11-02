@@ -39,6 +39,92 @@ try {
       await cards.first().waitFor({ state: 'visible', timeout: 20000 });
       assert(await cards.count() === 6, viewport.name + ': expected 6 latest result cards');
 
+      const firstCardGeometry = await cards.first().evaluate(async (card) => {
+        const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
+        return await Promise.all(rows.map(async (row) => {
+          const image = row.querySelector('img');
+          const name = row.querySelector('.min-w-0 > span');
+          const score = row.lastElementChild;
+          await image.decode().catch(() => undefined);
+          const imageRect = image.getBoundingClientRect();
+          const nameRect = name?.getBoundingClientRect();
+          const scoreRect = score?.getBoundingClientRect();
+          const canvas = document.createElement('canvas');
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, 64, 64);
+          if (image.naturalWidth && image.naturalHeight) {
+            const scale = Math.min(64 / image.naturalWidth, 64 / image.naturalHeight);
+            const width = image.naturalWidth * scale;
+            const height = image.naturalHeight * scale;
+            ctx.drawImage(image, (64 - width) / 2, (64 - height) / 2, width, height);
+          }
+          const pixels = ctx.getImageData(0, 0, 64, 64).data;
+          let nonWhitePixels = 0;
+          for (let k = 0; k < pixels.length; k += 4) {
+            if (255 - Math.min(pixels[k], pixels[k + 1], pixels[k + 2]) >= 35) nonWhitePixels += 1;
+          }
+          return {
+            alt: image.alt,
+            src: image.currentSrc,
+            loaded: image.complete && image.naturalWidth > 0,
+            naturalWidth: image.naturalWidth,
+            nonWhiteRatio: Number((nonWhitePixels / 4096).toFixed(4)),
+            gap: nameRect && scoreRect ? Number((scoreRect.left - nameRect.right).toFixed(2)) : null,
+            nameFontPx: name ? Number.parseFloat(getComputedStyle(name).fontSize) : 0,
+            nameHeightPx: nameRect?.height ?? 0,
+            nameScrollWidth: name?.scrollWidth ?? 0,
+            nameClientWidth: name?.clientWidth ?? 0,
+            imageInsideCard: imageRect.left >= card.getBoundingClientRect().left,
+          };
+        }));
+      });
+      console.log('[mobile-match-center] ' + viewport.name + ' first-card logos ' + JSON.stringify(firstCardGeometry));
+      const firstCardLayout = await cards.first().evaluate((card) => {
+        const header = card.firstElementChild;
+        const body = card.children[1];
+        const stripes = card.lastElementChild;
+        const rows = [...body.querySelectorAll('.grid')].filter((row) => row.querySelector('img'));
+        const cardRect = card.getBoundingClientRect();
+        const headerRect = header.getBoundingClientRect();
+        const bodyRect = body.getBoundingClientRect();
+        const scoreEdges = rows.map((row) => row.lastElementChild?.getBoundingClientRect().right);
+        return {
+          headerWidthDelta: Math.abs(headerRect.width - cardRect.width),
+          bodyWidthDelta: Math.abs(bodyRect.width - cardRect.width),
+          headerBackground: getComputedStyle(header).backgroundColor,
+          scoreRightDelta: Math.abs(scoreEdges[0] - scoreEdges[1]),
+          stripeColors: [...stripes.children].map((stripe) => getComputedStyle(stripe).backgroundColor),
+        };
+      });
+      assert(firstCardLayout.headerWidthDelta <= 2.5 && firstCardLayout.bodyWidthDelta <= 2.5,
+        viewport.name + ': match header/body do not occupy full card width: ' + JSON.stringify(firstCardLayout));
+      assert(['rgb(250, 250, 250)', 'oklch(0.985 0 0)'].includes(firstCardLayout.headerBackground),
+        viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);
+      assert(firstCardLayout.scoreRightDelta <= 1,
+        viewport.name + ': home/away score columns have different right edges: ' + firstCardLayout.scoreRightDelta);
+      assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(44, 58, 103)', 'rgb(224, 192, 80)']),
+        viewport.name + ': m2627-001 kit colors should be Chen navy and Evergreen yellow: ' + firstCardLayout.stripeColors.join(' | '));
+      const lastCardStripeColors = await cards.last().evaluate((card) =>
+        [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
+      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(255, 255, 255)', 'rgb(86, 62, 146)']),
+        viewport.name + ': m2627-006 must use SOUTHBOYS white away and Pingtung purple home: ' + lastCardStripeColors.join(' | '));
+
+      assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
+      for (const row of firstCardGeometry) {
+        assert(row.loaded, viewport.name + ': logo did not load: ' + row.alt);
+        assert(row.nonWhiteRatio >= 0.01,
+          viewport.name + ': ' + row.alt + ' logo is visually blank at 64px (' + row.nonWhiteRatio + ')');
+        assert(row.gap !== null && row.gap >= 8,
+          viewport.name + ': ' + row.alt + ' team name lacks score separation (' + row.gap + 'px)');
+        assert(row.nameFontPx >= 18,
+          viewport.name + ': ' + row.alt + ' team name shrank below restored 18px size (' + row.nameFontPx + 'px)');
+        assert(row.nameScrollWidth <= row.nameClientWidth + 1,
+          viewport.name + ': ' + row.alt + ' team name overflows its fixed-width column');
+      }
+
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });
       const upcoming = matchCenter.getByRole('tab', { name: '即將開賽' });
       assert(await results.getAttribute('aria-selected') === 'true',

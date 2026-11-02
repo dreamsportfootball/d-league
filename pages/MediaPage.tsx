@@ -128,8 +128,39 @@ const MediaPage: React.FC = () => {
   useEffect(() => {
     const dialog = albumDialogRef.current;
     if (!dialog) return;
-    if (selectedGroup && !dialog.open) dialog.showModal();
-    if (!selectedGroup && dialog.open) dialog.close();
+    if (!selectedGroup) {
+      if (dialog.open) dialog.close();
+      return;
+    }
+
+    // A native modal traps focus but does not lock background scrolling,
+    // particularly on touch devices. Keep the page at its original position.
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const html = document.documentElement;
+    const previousBody = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    const previousHtmlOverflow = html.style.overflow;
+
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+    if (!dialog.open) dialog.showModal();
+
+    return () => {
+      body.style.position = previousBody.position;
+      body.style.top = previousBody.top;
+      body.style.width = previousBody.width;
+      body.style.overflow = previousBody.overflow;
+      html.style.overflow = previousHtmlOverflow;
+      window.scrollTo(0, scrollY);
+    };
   }, [selectedGroup]);
 
   const scrollGallery = (direction: 'left' | 'right') => {
@@ -253,7 +284,7 @@ const MediaPage: React.FC = () => {
                 </div>
                 <div className="mt-2 space-y-3 md:mt-3 md:space-y-4">
                   <p className="text-[11px] leading-5 text-neutral-600 md:text-xs">
-                    相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效，想找的照片就找不到了。
+                    相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效
                   </p>
                   <PhotoUsageNotice />
                 </div>
@@ -345,6 +376,10 @@ const MediaPage: React.FC = () => {
       <dialog
         ref={albumDialogRef}
         aria-labelledby="match-day-albums-title"
+        onCancel={(event) => {
+          event.preventDefault();
+          setSelectedGroupId(null);
+        }}
         onClose={() => setSelectedGroupId(null)}
         onClick={(event) => {
           if (event.target === event.currentTarget) setSelectedGroupId(null);
@@ -374,7 +409,7 @@ const MediaPage: React.FC = () => {
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
-            <div className="max-h-[65dvh] overflow-y-auto px-5 py-2 sm:px-8">
+            <div className="max-h-[65dvh] overflow-y-auto overscroll-contain px-5 py-2 sm:px-8">
               {selectedGroup.albums.map((album, index) => (
                 <a
                   key={album.id}

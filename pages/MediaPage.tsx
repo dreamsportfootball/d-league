@@ -38,7 +38,7 @@ const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
       id: `day-${date}`,
       date,
       title: dailyAlbums.length > 1
-        ? `比賽日 ${index + 1} (Match Day ${index + 1})`
+        ? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1} (Match Day ${dailyAlbums[0].matchDay ?? index + 1})`
         : dailyAlbums[0].title,
       cover: dailyAlbums[0].cover,
       albums: dailyAlbums,

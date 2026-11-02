@@ -1,74 +1,389 @@
 [
   {
-    "id": "album-r1",
+    "id": "album-2025-2025-10-19-m1",
     "seasonId": "2025-26",
-    "title": "比賽日 1 (Match Day 1)",
+    "title": "L2 第 1 輪｜鹿逐俱樂部 vs 屏東野猿足球俱樂部",
     "date": "2025/10/19",
+    "matchDay": 1,
     "cover": "assets/media/1019.jpg",
-    "link": "https://drive.google.com/drive/folders/1R__mtXu96oK1l4kAMQYLJiZxTG-dhRgP?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/1POYdCT3kJ7C6jvHjk8VXiHVIrCaAM6-K"
   },
   {
-    "id": "album-r2",
+    "id": "album-2025-2025-10-19-m2",
     "seasonId": "2025-26",
-    "title": "比賽日 2 (Match Day 2)",
+    "title": "L2 第 1 輪｜瘋Dog vs 蒼龍FC",
+    "date": "2025/10/19",
+    "matchDay": 1,
+    "cover": "assets/media/1019.jpg",
+    "link": "https://drive.google.com/drive/folders/1C2ZUQKuiFs9vf0O8yRGWILp1od6pTsFH"
+  },
+  {
+    "id": "album-2025-2025-10-19-m3",
+    "seasonId": "2025-26",
+    "title": "L1 第 1 輪｜嘉義諸羅山FC vs 酒號矯正署",
+    "date": "2025/10/19",
+    "matchDay": 1,
+    "cover": "assets/media/1019.jpg",
+    "link": "https://drive.google.com/drive/folders/1QgknkP2xUNeransoTdWq7WfrNWSNkU51"
+  },
+  {
+    "id": "album-2025-2025-10-19-m4",
+    "seasonId": "2025-26",
+    "title": "L1 第 1 輪｜銅雀足球俱樂部 vs 陳公舘",
+    "date": "2025/10/19",
+    "matchDay": 1,
+    "cover": "assets/media/1019.jpg",
+    "link": "https://drive.google.com/drive/folders/1ORIYQysPHiV8vqco3YxwJlf5OJNFuzYv"
+  },
+  {
+    "id": "album-2025-2025-10-19-m5",
+    "seasonId": "2025-26",
+    "title": "L2 第 1 輪｜PPI TAINAN vs 鳥仕足球俱樂部",
+    "date": "2025/10/19",
+    "matchDay": 1,
+    "cover": "assets/media/1019.jpg",
+    "link": "https://drive.google.com/drive/folders/1td_BF7j9ZrqLzaQSVJ1O14TUNr4isxJz"
+  },
+  {
+    "id": "album-2025-2025-11-02-m6",
+    "seasonId": "2025-26",
+    "title": "L1 第 2 輪｜嘉義諸羅山FC vs 陳公舘",
     "date": "2025/11/02",
+    "matchDay": 2,
     "cover": "assets/media/1102.jpg",
-    "link": "https://drive.google.com/drive/folders/1S80w0QsX1B_C-ms93hOsYeWrgtMQzsZI?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/1xhG_bfVD1fU_TF4QCBIjtMbaO0I4al2S"
   },
   {
-    "id": "album-r3",
+    "id": "album-2025-2025-11-02-m7",
     "seasonId": "2025-26",
-    "title": "比賽日 3 (Match Day 3)",
+    "title": "L2 第 2 輪｜PPI TAINAN vs 鹿逐俱樂部",
+    "date": "2025/11/02",
+    "matchDay": 2,
+    "cover": "assets/media/1102.jpg",
+    "link": "https://drive.google.com/drive/folders/1bg7l5VE5Icbmp-pG_qoQHCDtDdx_8hW2"
+  },
+  {
+    "id": "album-2025-2025-11-02-m8",
+    "seasonId": "2025-26",
+    "title": "L2 第 2 輪｜瘋Dog vs 鳥仕足球俱樂部",
+    "date": "2025/11/02",
+    "matchDay": 2,
+    "cover": "assets/media/1102.jpg",
+    "link": "https://drive.google.com/drive/folders/1CyElwG57Vj79uri_Bbh46T2z3pcv20hi"
+  },
+  {
+    "id": "album-2025-2025-11-02-m9",
+    "seasonId": "2025-26",
+    "title": "L2 第 2 輪｜蒼龍FC vs 屏東野猿足球俱樂部",
+    "date": "2025/11/02",
+    "matchDay": 2,
+    "cover": "assets/media/1102.jpg",
+    "link": "https://drive.google.com/drive/folders/19yqluGfNZpkxvU9lZ_9mIxpCn5IkKqEy"
+  },
+  {
+    "id": "album-2025-2025-11-16-m10",
+    "seasonId": "2025-26",
+    "title": "L2 第 3 輪｜鳥仕足球俱樂部 vs 鹿逐俱樂部",
     "date": "2025/11/16",
+    "matchDay": 3,
     "cover": "assets/media/1116.jpg",
-    "link": "https://drive.google.com/drive/folders/1LlPJ3m_4VotEkJr30j01WhHL_TKTsxqS?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/1hAk0Aq0tgWEtHSOYk3pJ4MP9zGwHGhDH"
   },
   {
-    "id": "album-r4",
+    "id": "album-2025-2025-11-16-m11",
     "seasonId": "2025-26",
-    "title": "比賽日 4 (Match Day 4)",
+    "title": "L2 第 3 輪｜瘋Dog vs 屏東野猿足球俱樂部",
+    "date": "2025/11/16",
+    "matchDay": 3,
+    "cover": "assets/media/1116.jpg",
+    "link": "https://drive.google.com/drive/folders/163-eJg5RlEC-mC8ke6LcbURjxHs0gHFF"
+  },
+  {
+    "id": "album-2025-2025-11-16-m12",
+    "seasonId": "2025-26",
+    "title": "L1 第 2 輪｜酒號矯正署 vs 銅雀足球俱樂部",
+    "date": "2025/11/16",
+    "matchDay": 3,
+    "cover": "assets/media/1116.jpg",
+    "link": "https://drive.google.com/drive/folders/1ojBDslBNgWOBw_NclveEoidrUoEthN1K"
+  },
+  {
+    "id": "album-2025-2025-11-16-m13",
+    "seasonId": "2025-26",
+    "title": "L2 第 3 輪｜蒼龍FC vs PPI TAINAN",
+    "date": "2025/11/16",
+    "matchDay": 3,
+    "cover": "assets/media/1116.jpg",
+    "link": "https://drive.google.com/drive/folders/16-3q4alZngsgT2EdOvAWXRvqvCoMtRXB"
+  },
+  {
+    "id": "album-2025-2025-12-07-m14",
+    "seasonId": "2025-26",
+    "title": "L2 第 4 輪｜屏東野猿足球俱樂部 vs PPI TAINAN",
     "date": "2025/12/07",
+    "matchDay": 4,
     "cover": "assets/media/1207.jpg",
-    "link": "https://drive.google.com/drive/folders/185Xan_z1EdZanEelYuIiN1X06T7ZTSj9?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/1DIEAHyEVB7XlpF7QUcuV-laEEhetOBJ5"
   },
   {
-    "id": "album-r5",
+    "id": "album-2025-2025-12-07-m15",
     "seasonId": "2025-26",
-    "title": "比賽日 5 (Match Day 5)",
+    "title": "L2 第 4 輪｜瘋Dog vs 鹿逐俱樂部",
+    "date": "2025/12/07",
+    "matchDay": 4,
+    "cover": "assets/media/1207.jpg",
+    "link": "https://drive.google.com/drive/folders/1TC4rUzmvzSKlPQduABQXKcXAsTmfipq9"
+  },
+  {
+    "id": "album-2025-2025-12-07-m16",
+    "seasonId": "2025-26",
+    "title": "L1 第 3 輪｜陳公舘 vs 酒號矯正署",
+    "date": "2025/12/07",
+    "matchDay": 4,
+    "cover": "assets/media/1207.jpg",
+    "link": "https://drive.google.com/drive/folders/1OGw707VT-S_jnsjUovOM8S9KfMmI2Xrs"
+  },
+  {
+    "id": "album-2025-2025-12-07-m17",
+    "seasonId": "2025-26",
+    "title": "L1 第 3 輪｜嘉義諸羅山FC vs 銅雀足球俱樂部",
+    "date": "2025/12/07",
+    "matchDay": 4,
+    "cover": "assets/media/1207.jpg",
+    "link": "https://drive.google.com/drive/folders/1cAFC1Orxqu-fmqJ2LdSAh3l-7HdP1BoB"
+  },
+  {
+    "id": "album-2025-2025-12-07-m18",
+    "seasonId": "2025-26",
+    "title": "L2 第 4 輪｜鳥仕足球俱樂部 vs 蒼龍FC",
+    "date": "2025/12/07",
+    "matchDay": 4,
+    "cover": "assets/media/1207.jpg",
+    "link": "https://drive.google.com/drive/folders/1MqybUrCS1xl8UKOxXLi4JAL2MUh6hGKJ"
+  },
+  {
+    "id": "album-2025-2026-01-11-m19",
+    "seasonId": "2025-26",
+    "title": "L1 第 4 輪｜酒號矯正署 vs 嘉義諸羅山FC",
     "date": "2026/01/11",
+    "matchDay": 5,
     "cover": "assets/media/111.jpg",
-    "link": "https://drive.google.com/drive/folders/1H-hLEKt2-I4D6I2GzeUvn3QWKGxVZ1fN?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/1no09lgwq1IP0cQL0Sv7SLHX7JkJrx_3v"
   },
   {
-    "id": "album-r6",
+    "id": "album-2025-2026-01-11-m20",
     "seasonId": "2025-26",
-    "title": "比賽日 6 (Match Day 6)",
+    "title": "L1 第 4 輪｜陳公舘 vs 銅雀足球俱樂部",
+    "date": "2026/01/11",
+    "matchDay": 5,
+    "cover": "assets/media/111.jpg",
+    "link": "https://drive.google.com/drive/folders/1hGb_lilOsL59Fu1JX9PshHXLm8C-IKeJ"
+  },
+  {
+    "id": "album-2025-2026-01-11-m21",
+    "seasonId": "2025-26",
+    "title": "L2 第 5 輪｜瘋Dog vs PPI TAINAN",
+    "date": "2026/01/11",
+    "matchDay": 5,
+    "cover": "assets/media/111.jpg",
+    "link": "https://drive.google.com/drive/folders/1Vdk3qupyA8v_0bNy13rlKJV2ozKFY7Aw"
+  },
+  {
+    "id": "album-2025-2026-01-11-m22",
+    "seasonId": "2025-26",
+    "title": "L2 第 5 輪｜屏東野猿足球俱樂部 vs 鳥仕足球俱樂部",
+    "date": "2026/01/11",
+    "matchDay": 5,
+    "cover": "assets/media/111.jpg",
+    "link": "https://drive.google.com/drive/folders/1v__2KnclYzfIgCQTCzXvJ5aBTxS6ku2o"
+  },
+  {
+    "id": "album-2025-2026-01-11-m23",
+    "seasonId": "2025-26",
+    "title": "L2 第 5 輪｜鹿逐俱樂部 vs 蒼龍FC",
+    "date": "2026/01/11",
+    "matchDay": 5,
+    "cover": "assets/media/111.jpg",
+    "link": "https://drive.google.com/drive/folders/1Gul2HOumo5gyQIx1MBQpAQKiPxNqKInM"
+  },
+  {
+    "id": "album-2025-2026-02-08-m24",
+    "seasonId": "2025-26",
+    "title": "L2 第 6 輪｜鳥仕足球俱樂部 vs PPI TAINAN",
     "date": "2026/02/08",
+    "matchDay": 6,
     "cover": "assets/media/0208.jpg",
-    "link": "https://drive.google.com/drive/folders/1GGDWDcBm5O7okh_6mXMMMOuMcTj4zNmz"
+    "link": "https://drive.google.com/drive/folders/1eU1dZWN-4Yu1BdCRjaRjLwrL-KdhP3b7"
   },
   {
-    "id": "album-r7",
+    "id": "album-2025-2026-02-08-m25",
     "seasonId": "2025-26",
-    "title": "比賽日 7 (Match Day 7)",
+    "title": "L2 第 6 輪｜蒼龍FC vs 瘋Dog",
+    "date": "2026/02/08",
+    "matchDay": 6,
+    "cover": "assets/media/0208.jpg",
+    "link": "https://drive.google.com/drive/folders/1tUuxLDftOOYHHa_tGVhoN9FlSobmlRiK"
+  },
+  {
+    "id": "album-2025-2026-02-08-m26",
+    "seasonId": "2025-26",
+    "title": "L2 第 6 輪｜屏東野猿足球俱樂部 vs 鹿逐俱樂部",
+    "date": "2026/02/08",
+    "matchDay": 6,
+    "cover": "assets/media/0208.jpg",
+    "link": "https://drive.google.com/drive/folders/15CGRoFPyshTE7vJv6dSu8vIILt7L0IoP"
+  },
+  {
+    "id": "album-2025-2026-02-08-m27",
+    "seasonId": "2025-26",
+    "title": "L1 第 5 輪｜陳公舘 vs 嘉義諸羅山FC",
+    "date": "2026/02/08",
+    "matchDay": 6,
+    "cover": "assets/media/0208.jpg",
+    "link": "https://drive.google.com/drive/folders/1cQYAVDXbqZJ-IhYrgobbdvwxrDq1QwiS"
+  },
+  {
+    "id": "album-2025-2026-02-08-m28",
+    "seasonId": "2025-26",
+    "title": "L1 第 5 輪｜銅雀足球俱樂部 vs 酒號矯正署",
+    "date": "2026/02/08",
+    "matchDay": 6,
+    "cover": "assets/media/0208.jpg",
+    "link": "https://drive.google.com/drive/folders/1i9RLZ1o5WxRYwQFBCAINsm0dlITw6LDa"
+  },
+  {
+    "id": "album-2025-2026-03-08-m29",
+    "seasonId": "2025-26",
+    "title": "L1 第 6 輪｜酒號矯正署 vs 陳公舘",
     "date": "2026/03/08",
+    "matchDay": 7,
     "cover": "assets/media/0308.jpg",
-    "link": "https://drive.google.com/drive/folders/1JZJoP3-R1dPT7oR5RGsNj9YKb2yGB7rM"
+    "link": "https://drive.google.com/drive/folders/1S2xPAuLqwgJx1Rt11tIkaKqQdwQChCOO"
   },
   {
-    "id": "album-r8",
+    "id": "album-2025-2026-03-08-m30",
     "seasonId": "2025-26",
-    "title": "比賽日 8 (Match Day 8)",
+    "title": "L1 第 6 輪｜銅雀足球俱樂部 vs 嘉義諸羅山FC",
+    "date": "2026/03/08",
+    "matchDay": 7,
+    "cover": "assets/media/0308.jpg",
+    "link": "https://drive.google.com/drive/folders/13UpLIyt670MnltjNNyxDqABJzdpoFMy_"
+  },
+  {
+    "id": "album-2025-2026-03-08-m31",
+    "seasonId": "2025-26",
+    "title": "L2 第 7 輪｜鳥仕足球俱樂部 vs 瘋Dog",
+    "date": "2026/03/08",
+    "matchDay": 7,
+    "cover": "assets/media/0308.jpg",
+    "link": "https://drive.google.com/drive/folders/1nYTZ0F97ROkfuZyzBqQ2RXNbcdkQ01YG"
+  },
+  {
+    "id": "album-2025-2026-03-08-m32",
+    "seasonId": "2025-26",
+    "title": "L2 第 7 輪｜鹿逐俱樂部 vs PPI TAINAN",
+    "date": "2026/03/08",
+    "matchDay": 7,
+    "cover": "assets/media/0308.jpg",
+    "link": "https://drive.google.com/drive/folders/18sz07vMntgPVZbXaa2oJf4y7ExCHg2wJ"
+  },
+  {
+    "id": "album-2025-2026-03-08-m33",
+    "seasonId": "2025-26",
+    "title": "L2 第 7 輪｜屏東野猿足球俱樂部 vs 蒼龍FC",
+    "date": "2026/03/08",
+    "matchDay": 7,
+    "cover": "assets/media/0308.jpg",
+    "link": "https://drive.google.com/drive/folders/1Nh6N6hiUQGzzQiM9vrlOjN_Id3jekeLR"
+  },
+  {
+    "id": "album-2025-2026-03-22-m34",
+    "seasonId": "2025-26",
+    "title": "L2 第 8 輪｜鹿逐俱樂部 vs 鳥仕足球俱樂部",
     "date": "2026/03/22",
+    "matchDay": 8,
     "cover": "assets/media/0322.jpg",
-    "link": "https://drive.google.com/drive/folders/1hn5eNN3ktdPIXZX5ry9PW7iZXmwnWEX_?usp=sharing"
+    "link": "https://drive.google.com/drive/folders/16Fcf1WH-7imO7xjnUX_BfhIUmpwLGykJ"
   },
   {
-    "id": "album-r10",
+    "id": "album-2025-2026-03-22-m35",
     "seasonId": "2025-26",
-    "title": "比賽日 10 (Match Day 10)",
+    "title": "L2 第 8 輪｜PPI TAINAN vs 蒼龍FC",
+    "date": "2026/03/22",
+    "matchDay": 8,
+    "cover": "assets/media/0322.jpg",
+    "link": "https://drive.google.com/drive/folders/1PBgcIHUoPW2yfD_NGpAjEOXSlgewsy-c"
+  },
+  {
+    "id": "album-2025-2026-03-22-m36",
+    "seasonId": "2025-26",
+    "title": "L1 第 7 輪｜銅雀足球俱樂部 vs 陳公舘",
+    "date": "2026/03/22",
+    "matchDay": 8,
+    "cover": "assets/media/0322.jpg",
+    "link": "https://drive.google.com/drive/folders/1dNCDPfBTyYxBb1tDi3WeKaKmZQFHr6FN"
+  },
+  {
+    "id": "album-2025-2026-03-22-m37",
+    "seasonId": "2025-26",
+    "title": "L1 第 7 輪｜嘉義諸羅山FC vs 酒號矯正署",
+    "date": "2026/03/22",
+    "matchDay": 8,
+    "cover": "assets/media/0322.jpg",
+    "link": "https://drive.google.com/drive/folders/1FewGa28ou-xU7g_U-wbfA4wv5iGr3JQn"
+  },
+  {
+    "id": "album-2025-2026-03-22-m38",
+    "seasonId": "2025-26",
+    "title": "L2 第 8 輪｜屏東野猿足球俱樂部 vs 瘋Dog",
+    "date": "2026/03/22",
+    "matchDay": 8,
+    "cover": "assets/media/0322.jpg",
+    "link": "https://drive.google.com/drive/folders/1qzzc9KuFBECOTXiD4GxcCa0muq2zt9Q_"
+  },
+  {
+    "id": "album-2025-2026-04-26-m44",
+    "seasonId": "2025-26",
+    "title": "L2 第 10 輪｜PPI TAINAN vs 瘋Dog",
     "date": "2026/04/26",
+    "matchDay": 10,
     "cover": "assets/media/0426.jpg",
-    "link": "https://drive.google.com/drive/folders/1g2LHlvyjrRyIbj6v5YUeOo2ArJNJjtPI?usp=drive_link"
+    "link": "https://drive.google.com/drive/folders/15oMWkaZsVP9aRIYrlIOnApZhm3syBjzl"
+  },
+  {
+    "id": "album-2025-2026-04-26-m45",
+    "seasonId": "2025-26",
+    "title": "L2 第 10 輪｜蒼龍FC vs 鹿逐俱樂部",
+    "date": "2026/04/26",
+    "matchDay": 10,
+    "cover": "assets/media/0426.jpg",
+    "link": "https://drive.google.com/drive/folders/1C310UNIkpwT-NKm7atoWnD3Ixr3gODyd"
+  },
+  {
+    "id": "album-2025-2026-04-26-m46",
+    "seasonId": "2025-26",
+    "title": "L1 第 9 輪｜嘉義諸羅山FC vs 銅雀足球俱樂部",
+    "date": "2026/04/26",
+    "matchDay": 10,
+    "cover": "assets/media/0426.jpg",
+    "link": "https://drive.google.com/drive/folders/1h99CB0ZUWQR6nm4sijBmgHszP2ATCHbR"
+  },
+  {
+    "id": "album-2025-2026-04-26-m47",
+    "seasonId": "2025-26",
+    "title": "L2 第 10 輪｜鳥仕足球俱樂部 vs 屏東野猿足球俱樂部",
+    "date": "2026/04/26",
+    "matchDay": 10,
+    "cover": "assets/media/0426.jpg",
+    "link": "https://drive.google.com/drive/folders/1mBSv4N9Aw3nxdaRmJjdiG-SlFe4h-oiF"
+  },
+  {
+    "id": "album-2025-2026-04-26-m48",
+    "seasonId": "2025-26",
+    "title": "L1 第 9 輪｜陳公舘 vs 酒號矯正署",
+    "date": "2026/04/26",
+    "matchDay": 10,
+    "cover": "assets/media/0426.jpg",
+    "link": "https://drive.google.com/drive/folders/1iHP1DgR-ey79dhnZw04mG3wmC6g_x74j"
   }
 ]

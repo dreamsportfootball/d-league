@@ -5,6 +5,7 @@ export interface MediaAlbum {
   seasonId: SeasonId;
   title: string;
   date: string;
+  matchDay?: number;
   cover: string;
   link: string;
 }

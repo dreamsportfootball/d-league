@@ -253,6 +253,33 @@ const auditViewport = async (viewport) => {
         assert('media-defaults-current-season', diagnostics.bodyText.includes('D LEAGUE 2026/27'), 'Media must default to 2026/27');
       }
 
+      if (route.name === 'media-2025') {
+        const galleryCards = page.locator('main button[aria-haspopup="dialog"]');
+        assert('historical-album-days', await galleryCards.count() === 9,
+          'Expected 9 verified 2025/26 photo days, without inventing 2026/04/12');
+        const latestDay = galleryCards.first();
+        assert('historical-latest-photo-day-10', (await latestDay.textContent() ?? '').includes('比賽日 10 (Match Day 10)'),
+          '2026/04/26 must remain day 10, not day 9');
+        await latestDay.click();
+        const albumDialog = page.locator('dialog[aria-labelledby="match-day-albums-title"]');
+        await albumDialog.waitFor({ state: 'visible' });
+        const firstDayLinks = await albumDialog.locator('a[href*="drive.google.com/drive/folders/"]').evaluateAll(links =>
+          links.map(link => link.getAttribute('href')));
+        assert('historical-day-10-five-distinct-match-folders',
+          firstDayLinks.length === 5 && new Set(firstDayLinks).size === 5 &&
+          firstDayLinks.includes('https://drive.google.com/drive/folders/15oMWkaZsVP9aRIYrlIOnApZhm3syBjzl'),
+          'Expected five correct distinct match album links on 2026/04/26');
+        await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
+        await albumDialog.waitFor({ state: 'hidden' });
+        const oldestDay = galleryCards.last();
+        await oldestDay.click();
+        await albumDialog.waitFor({ state: 'visible' });
+        assert('historical-day-1-five-match-folders',
+          await albumDialog.locator('a[href*="drive.google.com/drive/folders/"]').count() === 5,
+          'Expected five match folders on 2025/10/19');
+        await albumDialog.getByRole('button', { name: '關閉比賽日相簿' }).click();
+      }
+
       const screenshotPath = path.join(outputDir, 'screenshots', `${viewport.name}__${route.name}.png`);
       await page.screenshot({
         path: screenshotPath,

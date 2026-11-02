@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
-const baseUrl = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\\/$/, '');
+const baseUrl = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/[/]$/, '');
 const outputDir = process.env.AUDIT_OUTPUT_DIR ?? 'mobile-match-center-audit';
 const viewports = [
   { name: 'mobile-375', width: 375, height: 812 },

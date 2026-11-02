@@ -28,6 +28,10 @@ try{
      }
      if(new Set(links).size!==player.teams.length)
       throw new Error(`unexpected team links ${JSON.stringify(links)}`);
+     if(player.period) {
+      const note=section.getByText(player.period,{exact:true});
+      if(await note.count()!==1) throw new Error('missing first-half participation label');
+     }
      const stat=page.locator('dt').filter({hasText:/^進球$/}).first().locator('xpath=following-sibling::dd').first();
      const score=Number((await stat.innerText()).trim());
      if(score!==player.goals)throw new Error(`personal goals ${score} instead of ${player.goals}`);

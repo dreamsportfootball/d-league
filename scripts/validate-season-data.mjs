@@ -376,7 +376,7 @@ for (const season of seasons) {
 }
 
 if (read('2025-26', 'teams.json').length !== 10) fail('2025-26: expected 10 teams');
-if (read('2025-26', 'players.json').length !== 191) fail('2025-26: expected 191 players');
+if (read('2025-26', 'players.json').length !== 193) fail('2025-26: expected 193 players');
 if (read('2025-26', 'matches.json').length !== 48) fail('2025-26: expected 48 matches');
 if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-26: expected events for 48 matches');
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');

@@ -64,11 +64,15 @@ export const getPlayerIdentity = (player: PlayerProfile): string => player.ident
 const seasonSort = (a: SeasonId, b: SeasonId): number => b.localeCompare(a);
 
 /**
- * Own-goal events credit the beneficiary team, not the player's team.
- * Resolve team membership using the opposite side for own goals.
+ * Two approved data encodings coexist across seasons:
+ * - Legacy own goals (no scoringTeam): event.team is the benefiting side.
+ * - Current own goals (scoringTeam present): event.team is the scorer's side.
+ * Always derive player membership from the scorer, not the beneficiary.
+ * Never infer a transfer from the side credited with an own goal.
  */
 export const getMatchEventPlayerTeamId = (match: Match, event: MatchEvent): string => {
-  const playerIsHome = event.isOwnGoal ? event.team === 'AWAY' : event.team === 'HOME';
+  const legacyOwnGoal = event.isOwnGoal === true && event.scoringTeam === undefined;
+  const playerIsHome = legacyOwnGoal ? event.team === 'AWAY' : event.team === 'HOME';
   return playerIsHome ? match.homeTeamId : match.awayTeamId;
 };
 

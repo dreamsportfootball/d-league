@@ -8,7 +8,6 @@ import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { getDefaultHomeMatchCenterFilter } from '../utils/homeMatchCenterDefault.mjs';
-import AutoFitText from './AutoFitText';
 import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
 import Tabs from './Tabs';
@@ -97,14 +96,10 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
                   className="h-8 w-8 object-contain drop-shadow-sm"
                 />
               </div>
-              <div className="min-w-0 overflow-hidden">
-                <AutoFitText
-                  text={team.name}
-                  maxFontSize={18}
-                  minFontSize={8}
-                  fitPadding={8}
-                  className="font-bold tracking-tight text-brand-black"
-                />
+              <div className="min-w-0">
+                <span className="block w-full break-words text-lg font-bold leading-snug tracking-tight text-brand-black">
+                  {team.name}
+                </span>
               </div>
               <div className="min-w-0 text-right">
                 <AnimatedScore

@@ -43,7 +43,7 @@ try {
         const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
         return await Promise.all(rows.map(async (row) => {
           const image = row.querySelector('img');
-          const name = row.querySelector('.min-w-0.overflow-hidden span');
+          const name = row.querySelector('.min-w-0 > span');
           const score = row.lastElementChild;
           await image.decode().catch(() => undefined);
           const imageRect = image.getBoundingClientRect();
@@ -73,6 +73,10 @@ try {
             naturalWidth: image.naturalWidth,
             nonWhiteRatio: Number((nonWhitePixels / 4096).toFixed(4)),
             gap: nameRect && scoreRect ? Number((scoreRect.left - nameRect.right).toFixed(2)) : null,
+            nameFontPx: name ? Number.parseFloat(getComputedStyle(name).fontSize) : 0,
+            nameHeightPx: nameRect?.height ?? 0,
+            nameScrollWidth: name?.scrollWidth ?? 0,
+            nameClientWidth: name?.clientWidth ?? 0,
             imageInsideCard: imageRect.left >= card.getBoundingClientRect().left,
           };
         }));
@@ -115,6 +119,10 @@ try {
           viewport.name + ': ' + row.alt + ' logo is visually blank at 64px (' + row.nonWhiteRatio + ')');
         assert(row.gap !== null && row.gap >= 8,
           viewport.name + ': ' + row.alt + ' team name lacks score separation (' + row.gap + 'px)');
+        assert(row.nameFontPx >= 18,
+          viewport.name + ': ' + row.alt + ' team name shrank below restored 18px size (' + row.nameFontPx + 'px)');
+        assert(row.nameScrollWidth <= row.nameClientWidth + 1,
+          viewport.name + ': ' + row.alt + ' team name overflows its fixed-width column');
       }
 
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });

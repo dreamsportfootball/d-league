@@ -424,11 +424,21 @@ for (const file of [
   'disciplineDecisions.json',
   'lineups.json',
   'media.json',
-  'albums.json',
 ]) {
   const value = read(CURRENT_SEASON_ID, file);
   const count = Array.isArray(value) ? value.length : Object.keys(value).length;
   if (count !== 0) fail(`${CURRENT_SEASON_ID} ${file}: must stay empty until official data is confirmed`);
+}
+
+// 2026/27 official matchday photo albums are now published. Do not require
+// albums.json to be empty; validate their provenance and media links instead.
+for (const album of read(CURRENT_SEASON_ID, 'albums.json')) {
+  if (album.seasonId !== CURRENT_SEASON_ID ||
+      typeof album.title !== 'string' || !album.title.trim() ||
+      typeof album.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(album.date) ||
+      !validExternalUrl(album.link)) {
+    fail(`${CURRENT_SEASON_ID} album ${album.id}: incomplete official album metadata`);
+  }
 }
 
 const currentParticipants = read(CURRENT_SEASON_ID, 'participants.json');

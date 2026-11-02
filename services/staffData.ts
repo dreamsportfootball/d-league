@@ -2,7 +2,7 @@ import { getSeasonConfig } from '../config/seasons';
 import { SEASON_IDS } from '../config/siteManifest.js';
 import type { SeasonConfig, SeasonId } from '../types/season';
 import type { SeasonTeam, TeamStaffMember } from '../types/team';
-import { getSeasonData, type SeasonData } from './seasonDataJson';
+import { getLatestPlayerImageUrl, getSeasonData, type SeasonData } from './seasonDataJson';
 
 export interface TeamStaffProfile {
   id: string;
@@ -33,7 +33,7 @@ const getRegisteredPlayerPortrait = (
   const matchedPlayers = data.players.filter(
     (player) => player.teamId === team.id && player.name === member.name,
   );
-  return matchedPlayers.length === 1 ? data.playerImages[matchedPlayers[0].name] : undefined;
+  return matchedPlayers.length === 1 ? getLatestPlayerImageUrl(matchedPlayers[0]) : undefined;
 };
 
 /** One profile per person even when they hold multiple roles in a team. */

@@ -67,6 +67,15 @@ jobs:
       - name: Validate season data
         run: npm run validate:data
 
+      - name: Upload all-player integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: player-history-integrity-report
+          path: audit/player-history-integrity-report.json
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Optimize website images
         run: npm run optimize:images
 

@@ -6,6 +6,7 @@ import {
 import type { LeagueId, SeasonId } from '../types/season';
 import { calculateLeagueTable, calculatePlayerCompetitionStats } from './competitionEngine';
 import {
+  getMatchEventPlayerTeamId,
   getPlayerHistory,
   resolveMatchEventPlayer,
   type PlayerSeasonRecord,
@@ -74,7 +75,7 @@ const getRepresentedTeamIds = (record: PlayerSeasonRecord): Set<string> => {
 
     events.forEach((event) => {
       if (resolveMatchEventPlayer(record.data, match, event)?.id !== record.player.id) return;
-      addTeam(event.team === 'HOME' ? match.homeTeamId : match.awayTeamId);
+      addTeam(getMatchEventPlayerTeamId(match, event));
     });
   });
 

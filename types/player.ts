@@ -22,5 +22,7 @@ export interface PlayerProfile {
   previousTeamIds?: string[];
   /** Confirmed historical participation period, without a fabricated end date. */
   participationPeriod?: 'FIRST_HALF_ONLY';
+  /** Hide a retained historical player from the team's published roster only. */
+  hideFromTeamRoster?: boolean;
   registrations?: PlayerRegistration[];
 }

@@ -152,6 +152,11 @@ for (const season of seasons) {
         (!Number.isInteger(player.age) || player.age < 0 || player.age > 100)) {
       fail(`${season} player ${player.id}: invalid age`);
     }
+    if (player.hideFromTeamRoster !== undefined) {
+      if (player.hideFromTeamRoster !== true || season === CURRENT_SEASON_ID) {
+        fail(`${season} player ${player.id}: roster-hidden flag is only valid for confirmed legacy records`);
+      }
+    }
     if (player.participationPeriod !== undefined) {
       if (season === CURRENT_SEASON_ID || player.participationPeriod !== 'FIRST_HALF_ONLY') {
         fail(`${season} player ${player.id}: unsupported historical participation period`);

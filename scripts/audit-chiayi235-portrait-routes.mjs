@@ -70,7 +70,7 @@ try{
     const ctx=await browser.newContext({viewport:{width:view.width,height:view.height},deviceScaleFactor:1,locale:'zh-TW'});
     const page=await ctx.newPage();
     const errors=[]; page.on('pageerror',e=>errors.push(String(e)));
-    const url=base+'/#/teams/chiayi235?season=2026-27';
+    const url=base+'/#/teams/t_chiayi_235_2026?season=2026-27';
     await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
     const rosterSection=page.locator('section').filter({has:page.locator('h2', {hasText:'球員名單'})}).last();
     await rosterSection.waitFor({state:'visible',timeout:20000});

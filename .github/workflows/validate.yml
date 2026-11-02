@@ -184,6 +184,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-confirmed-legacy-transfers.mjs
 
+      - name: Validate latest photo for every player and historical view
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+          AUDIT_SOURCE_URL: http://127.0.0.1:4174/d-league
+        run: node scripts/validate-historical-portrait-browser.mjs
+
       - name: Capture responsive screenshots and diagnostics
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

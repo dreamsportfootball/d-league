@@ -1,5 +1,5 @@
 // 嘉義 235 FC actual-route portrait QA, separate from the generic component crop sheets.
-// Capture the real TeamPage roster and 17 targeted PlayerPages at mobile and desktop widths.
+// Capture the real TeamPage roster, 18 targeted PlayerPages and 3 StaffPages at mobile and desktop widths.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -9,16 +9,23 @@ import { inspectPortraitCircle } from './portrait-circle-coverage.mjs';
 const root=process.cwd(), out=path.join(root,'audit');
 const base=(process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/,'');
 const players=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/players.json'),'utf8'))
-  .filter(p=>p.teamId==='t_chiayi_235_2026' && [1,2,3,7,9,11,14,17,18,19,26,30,31,32,69,71,77].includes(p.number));
+  .filter(p=>p.teamId==='t_chiayi_235_2026' && [1,2,3,7,9,11,12,14,17,18,19,26,30,31,32,69,71,77].includes(p.number));
 const teams=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/teams.json'),'utf8'));
 const team=teams.find(t=>t.id==='t_chiayi_235_2026');
-if(players.length!==17||!team) throw Error('Chiayi 235 targeted portrait counts changed: review expected list');
+const staff=team?.staff?.filter(s=>['蔡孟勲','蔡明瀚','郭政達'].includes(s.name)) ?? [];
+if(players.length!==18||!team||staff.length!==3) throw Error('Chiayi 235 targeted player/staff portrait counts changed: review expected list');
 const viewports=[{name:'mobile-390',width:390,height:844},{name:'desktop-1280',width:1280,height:900}];
 const run={generatedAt:new Date().toISOString(),team:team.name,season:'2026-27',viewports:[],failures:[]};
 const browser=await chromium.launch({headless:true});
 const original=async p=>{
   const f=path.join(root,'public/assets/seasons/2026-27/players',p.id+'.png');
   const buf=await fs.readFile(f);
+  return (await sharp(buf).rotate().resize(120,138,{fit:'contain',background:'white',withoutEnlargement:false}).png().toBuffer()).toString('base64');
+};
+const originalStaff=async member=>{
+  if (!member.image || !member.image.startsWith('assets/seasons/2026-27/staff/'))
+    throw Error('Unexpected staff image: '+member.name);
+  const buf=await fs.readFile(path.join(root,'public',member.image));
   return (await sharp(buf).rotate().resize(120,138,{fit:'contain',background:'white',withoutEnlargement:false}).png().toBuffer()).toString('base64');
 };
 const getImage=async (locator,expectedId,tag)=>{
@@ -84,7 +91,16 @@ try{
       if(await link.count()!==1)throw Error('Team list missing '+p.name);
       rosterMap.set(p.id,{...await getImage(link.locator('img'),p.id,'roster '+p.name),href:await link.getAttribute('href')});
     }
-    // All 17 targeted roster portraits have now been decoded and element-checked.
+    const staffSection=page.locator('section').filter({has:page.locator('h2',{hasText:'隊職員'})}).last();
+    await staffSection.waitFor({state:'visible',timeout:20000});
+    const staffMap=new Map();
+    for(const member of staff){
+      const link=staffSection.locator('a[aria-label="查看 '+member.name+' 隊職員個人資料"]');
+      if(await link.count()!==1)throw Error('Staff list missing '+member.name);
+      const expectedImageName=path.basename(member.image).replace(/\.[a-z]+$/i,'');
+      staffMap.set(member.id,{...await getImage(link.locator('img'),expectedImageName,'staff roster '+member.name),href:await link.getAttribute('href')});
+    }
+    // All 18 targeted roster and 3 staff portraits have now been decoded and element-checked.
     // Capture the full real page from the top; crop the actual roster's page-coordinate box.
     await page.evaluate(() => window.scrollTo({top:0,behavior:'instant'}));
     await page.waitForTimeout(180);
@@ -105,6 +121,18 @@ try{
       if(overflow)run.failures.push({view:view.name,route:'player '+p.id,problem:'horizontal overflow'});
       entries.push({name:p.name,id:p.id,type:'球員',raw:await original(p),roster:l,profile});
       run.viewports.push({view:view.name,route:'player',id:p.id,name:p.name,roster:l.diagnostics,profile:profile.diagnostics,overflow});
+    }
+    for(const member of staff){
+      const item=staffMap.get(member.id);
+      await page.goto(new URL(item.href,url).href,{waitUntil:'domcontentloaded',timeout:25000});
+      const expectedImageName=path.basename(member.image).replace(/\.[a-z]+$/i,'');
+      const img=page.locator('img[alt="'+member.name+' 大頭貼"]').first();
+      const profile=await getImage(img,expectedImageName,'staff profile '+member.name);
+      if(!await page.locator('h1').filter({hasText:member.name}).count())throw Error('Wrong staff title '+member.name);
+      const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
+      if(overflow)run.failures.push({view:view.name,route:'staff '+member.id,problem:'horizontal overflow'});
+      entries.push({name:member.name,id:member.id,type:'隊職員',raw:await originalStaff(member),roster:item,profile});
+      run.viewports.push({view:view.name,route:'staff',id:member.id,name:member.name,roster:item.diagnostics,profile:profile.diagnostics,overflow});
     }
     if(errors.length)run.failures.push({view:view.name,route:'browser',problem:errors.slice(0,10)});
     await renderSheet(entries,view);

@@ -40,9 +40,9 @@ const SiteViewCount: React.FC = () => {
   }, []);
 
   return (
-    <p data-site-view-count className="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 text-center text-xs font-medium tracking-wide text-neutral-400">
-      <span>網站累計瀏覽次數</span>
-      <span className="font-display text-sm font-bold tabular-nums text-white">
+    <p data-site-view-count className="mt-5 text-[11px] font-medium tracking-wide text-neutral-400">
+      網站累計瀏覽次數
+      <span className="ml-2 font-display text-xs font-bold tabular-nums text-neutral-600">
         {totalViews === null ? '統計更新中' : formatViews(totalViews)}
       </span>
     </p>

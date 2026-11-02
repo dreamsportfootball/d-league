@@ -491,9 +491,9 @@ const App: React.FC = () => (
       <section
         aria-label="網站瀏覽統計"
         data-site-view-count-bar
-        className="w-full border-y border-neutral-800 bg-neutral-900 py-5 text-white"
+        className="flow-root w-full bg-white pb-5"
       >
-        <div className="container mx-auto px-4 md:px-6">
+        <div className="container mx-auto px-4 text-center md:px-6">
           <SiteViewCount />
         </div>
       </section>

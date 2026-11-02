@@ -150,9 +150,23 @@ const auditViewport = async (viewport) => {
         `${diagnostics.documentWidth}/${diagnostics.viewportWidth}`,
       );
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
-      const siteViewCount = await page.locator('footer [data-site-view-count]').count();
-      assert('site-views-shared-footer', siteViewCount === 1,
-        'Expected exactly one cumulative views indicator in the shared footer');
+      const siteViewCountPlacement = await page.evaluate(() => {
+        const bar = document.querySelector('[data-site-view-count-bar]');
+        const footer = document.querySelector('footer');
+        return {
+          count: document.querySelectorAll('[data-site-view-count]').length,
+          insideBar: bar?.querySelectorAll('[data-site-view-count]').length ?? 0,
+          insideFooter: footer?.querySelectorAll('[data-site-view-count]').length ?? 0,
+          directlyBeforeFooter: bar?.nextElementSibling === footer,
+        };
+      });
+      assert('site-views-before-footer',
+        siteViewCountPlacement.count === 1 &&
+        siteViewCountPlacement.insideBar === 1 &&
+        siteViewCountPlacement.insideFooter === 0 &&
+        siteViewCountPlacement.directlyBeforeFooter,
+        'Expected exactly one cumulative views indicator in a separate bar directly above Footer: ' +
+        JSON.stringify(siteViewCountPlacement));
 
       if (route.name === 'home') {
         assert(

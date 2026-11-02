@@ -1,7 +1,6 @@
 import React from 'react';
 import { ExternalLink, Facebook, Instagram, Mail, Youtube } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import SiteViewCount from './SiteViewCount';
 import { getSeasonConfig } from '../config/seasons';
 import {
   CHAOME_TEA_INSTAGRAM_URL,
@@ -81,9 +80,6 @@ const Footer: React.FC = () => {
               <PartnerLogo alt="ENTES" href={ENTES_WEBSITE_URL} src={entesLogoUrl} />
             </div>
           </div>
-        </div>
-        <div className="border-t border-neutral-800 pt-5">
-          <SiteViewCount />
         </div>
       </div>
     </footer>

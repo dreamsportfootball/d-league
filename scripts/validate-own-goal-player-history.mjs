@@ -65,6 +65,7 @@ try {
     } finally {
       await context.close();
     }
+  }
   // 2026/27 encodes event.team as the player's team and scoringTeam as
   // the beneficiary. The own-goal scorer must NOT be moved to SOUTHBOYS.
   for (const width of [390, 1280]) {
@@ -100,7 +101,6 @@ try {
     } finally {
       await context.close();
     }
-  }
   }
 } finally {
   await browser.close();

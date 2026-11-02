@@ -4,8 +4,8 @@ const base = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').re
 // In 2025/26 own-goal event.team identifies the team benefiting from the goal.
 // It MUST NOT create a false career-team entry for the scorer.
 const ownGoals = [
-  { id: 'cy-12', name: '鄭州偉', correct: 't_chiayi', wrong: 't_chen' },
-  { id: 'cl-19', name: '林湧鈞', correct: 't_canglong', wrong: 't_pingtung' },
+  { id: 'cy-12', name: '鄭州偉', correct: 'chiayi-235-fc', wrong: 't_chen' },
+  { id: 'cl-19', name: '林湧鈞', correct: 'wanderers', wrong: 't_pingtung' },
   { id: 'tq-16', name: '巫嘉德', correct: 't_tongque', wrong: 't_chen' },
   { id: 'lz-29', name: '陳泰盛', correct: 't_luzhu', wrong: 't_ppi' },
 ];
@@ -40,7 +40,7 @@ try {
             const currentLinks = await currentCareer.locator('a[href*="/teams/"][href*="season=2026-27"]').evaluateAll(
               (elements) => elements.map((el) => el.getAttribute('href') ?? ''),
             );
-            if (!currentLinks.some((href) => href.includes('/teams/t_chiayi_235_2026?season=2026-27'))) {
+            if (!currentLinks.some((href) => href.includes('/teams/chiayi-235-fc?season=2026-27'))) {
               throw new Error('current-season Chiayi 235 record missing: ' + JSON.stringify(currentLinks));
             }
           }

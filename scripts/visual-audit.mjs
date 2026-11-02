@@ -150,6 +150,9 @@ const auditViewport = async (viewport) => {
         `${diagnostics.documentWidth}/${diagnostics.viewportWidth}`,
       );
       assert('no-page-error', pageErrors.length === 0, pageErrors.join(' | '));
+      const siteViewCount = await page.locator('footer [data-site-view-count]').count();
+      assert('site-views-shared-footer', siteViewCount === 1,
+        'Expected exactly one cumulative views indicator in the shared footer');
 
       if (route.name === 'home') {
         assert(

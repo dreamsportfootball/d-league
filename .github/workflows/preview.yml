@@ -16,6 +16,10 @@ concurrency:
 
 jobs:
   deploy-preview:
+    # Serialize gh-pages branch updates with production; retain preview push cancellation above.
+    concurrency:
+      group: d-league-gh-pages-publish
+      cancel-in-progress: false
     runs-on: ubuntu-latest
 
     steps:

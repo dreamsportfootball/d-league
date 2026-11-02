@@ -233,6 +233,9 @@ const MediaPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
+                <p className="mb-4 text-xs leading-5 text-neutral-600 md:mb-5 md:text-sm">
+                  喜歡的比賽照片，歡迎點進相簿下載原圖保存，盡量不要直接截圖，才能保留清晰畫質。
+                </p>
                 {galleryGroups.length > 1 && (
                   <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
                     左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />

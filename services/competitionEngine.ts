@@ -4,6 +4,7 @@ import type { MatchEvent } from '../types/matchEvent';
 import type { PlayerProfile } from '../types/player';
 import type { CompetitionRules, LeagueConfig, LeagueId, RankingCriterion } from '../types/season';
 import type { SeasonTeam } from '../types/team';
+import { getMatchEventPlayerTeamId } from '../utils/matchEventTeam';
 
 interface LeagueTableOptions {
   league: LeagueId;
@@ -465,7 +466,7 @@ export const calculatePlayerCompetitionStats = (
         !activeTeamIds.has(match.awayTeamId);
 
       (matchEvents[match.id] ?? []).forEach((event) => {
-        const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+        const eventTeamId = getMatchEventPlayerTeamId(match, event);
         const subject = resolveEventSubject(event, eventTeamId, players);
         const key = `${subject.subjectId}:${eventTeamId}`;
         const row = stats.get(key) ?? {

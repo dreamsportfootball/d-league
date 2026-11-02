@@ -48,7 +48,7 @@ try {
         : older.playerImages[person.name];
       const actual=getLatestPlayerImageUrl(person);
       if(expected&&actual!==expected)failures.push({person:person.name,identity,expected,actual});
-      if(latest&&older.players.some(p=>(p.identityId??p.id)===identity)){
+      if(latest&&older.players.includes(person)){
         if(recent.playerImages[latest.name])newerPortraits++;
         else earlierFallbacks++;
       }
@@ -65,10 +65,11 @@ try {
         await page.goto(`${base}/#/teams/${item.team}?season=${item.season}`,{waitUntil:'domcontentloaded',timeout:30000});
         const roster=page.locator('section').filter({has:page.getByRole('heading',{name:'球員名單',exact:true})});
         const link=roster.getByRole('link',{name:`查看 ${item.player} 球員個人資料`});
+        await link.first().waitFor({state:'visible',timeout:20000});
         if(await link.count()!==1)throw Error('roster link missing or duplicated');
         await checkImage(link.locator('img'),item.file,'roster '+item.player);
         await page.goto(`${base}/#/players/${item.id}?season=2025-26`,{waitUntil:'domcontentloaded',timeout:30000});
-        await checkImage(page.locator('img[alt="'+item.player+'"]').first(),item.file,'profile '+item.player);
+        await checkImage(page.locator('main img.object-cover').first(),item.file,'profile '+item.player);
         console.log(`[historical-portraits] ${width}px ${item.player} correct`);
       }catch(e){errors.push(`${width}px ${item.player}: ${e.message}`);}
     }

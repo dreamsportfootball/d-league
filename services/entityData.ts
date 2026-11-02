@@ -7,6 +7,9 @@ import type { PlayerProfile } from '../types/player';
 import type { SeasonConfig, SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 import { getSeasonData, type SeasonData } from './seasonDataJson';
+import { getMatchEventPlayerTeamId } from '../utils/matchEventTeam';
+
+export { getMatchEventPlayerTeamId } from '../utils/matchEventTeam';
 
 export interface TeamSeasonRecord {
   seasonId: SeasonId;
@@ -71,7 +74,7 @@ export const resolveMatchEventPlayer = (
   const explicitId = event.playerId ?? event.subjectId;
   if (explicitId) return data.players.find((player) => player.id === explicitId);
 
-  const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+  const eventTeamId = getMatchEventPlayerTeamId(match, event);
   const candidates = data.players.filter((player) => player.name === event.player);
   return candidates.find((player) => player.teamId === eventTeamId) ??
     (candidates.length === 1 ? candidates[0] : undefined);
@@ -203,7 +206,7 @@ export const getPlayerSeasonStats = (
       const resolvedPlayer = resolveMatchEventPlayer(record.data, match, event);
       if (resolvedPlayer?.id !== record.player.id) return;
 
-      const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+      const eventTeamId = getMatchEventPlayerTeamId(match, event);
       if (teamId && eventTeamId !== teamId) return;
 
       matchIds.add(matchId);

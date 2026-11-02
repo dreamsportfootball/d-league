@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "id": "album-2026-11-01-m2627-001",
+    "seasonId": "2026-27",
+    "title": "L1 第 1 輪｜陳公舘 vs 台南長青足球俱樂部",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-001.jpg",
+    "link": "https://drive.google.com/drive/folders/1-zCEeVCnJZoIyT6QAk42Sfk_FnTf2snp"
+  },
+  {
+    "id": "album-2026-11-01-m2627-002",
+    "seasonId": "2026-27",
+    "title": "L1 第 1 輪｜KUROMI vs 阿蓮FC",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-002.jpg",
+    "link": "https://drive.google.com/drive/folders/1kCLtTcfaCLpK-WLEVSW2914h-oUnhD7P"
+  },
+  {
+    "id": "album-2026-11-01-m2627-003",
+    "seasonId": "2026-27",
+    "title": "L1 第 1 輪｜嘉義 235 FC vs 高雄黑騎士足球隊",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-003.jpg",
+    "link": "https://drive.google.com/drive/folders/1Snvvo18cR7xbLHmbt3Jxl85rsg0iIcAT"
+  },
+  {
+    "id": "album-2026-11-01-m2627-004",
+    "seasonId": "2026-27",
+    "title": "L2 第 1 輪｜銅雀 vs 高雄業餘足球俱樂部",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-004.jpg",
+    "link": "https://drive.google.com/drive/folders/1-X8tg-6W95OZk_PUHp-g8zL-byEqp2c7"
+  },
+  {
+    "id": "album-2026-11-01-m2627-005",
+    "seasonId": "2026-27",
+    "title": "L2 第 1 輪｜高雄香港人足球俱樂部 vs 黑狼FC",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-005.jpg",
+    "link": "https://drive.google.com/drive/folders/1bPo1JAjys1CvFT8N6zxwzclLtprwVfmJ"
+  },
+  {
+    "id": "album-2026-11-01-m2627-006",
+    "seasonId": "2026-27",
+    "title": "L2 第 1 輪｜SOUTHBOYS FC vs 屏東野猿足球俱樂部",
+    "date": "2026/11/01",
+    "cover": "assets/media/2026-27/m2627-006.jpg",
+    "link": "https://drive.google.com/drive/folders/1fTPrDe5_qMarJbYzeYVOn-BN5i-tvkjf"
+  }
+]

@@ -67,6 +67,15 @@ jobs:
       - name: Validate season data
         run: npm run validate:data
 
+      - name: Upload all-player integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: player-history-integrity-report
+          path: audit/player-history-integrity-report.json
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Optimize website images
         run: npm run optimize:images
 
@@ -122,6 +131,23 @@ jobs:
           cat /tmp/d-league-preview.log
           exit 1
 
+      - name: Start isolated source server for full-player honours audit
+        run: |
+          nohup npx vite --host 127.0.0.1 --port 4174 > /tmp/d-league-source.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:4174/d-league/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/d-league-source.log
+          exit 1
+
+      - name: Audit all players' actual career, honours and goals
+        env:
+          AUDIT_SOURCE_URL: http://127.0.0.1:4174/d-league
+        run: node scripts/audit-all-player-honours-runtime.mjs
+
       - name: Validate back navigation scroll restoration
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
@@ -142,6 +168,27 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-return-state.mjs
+
+      - name: Validate homepage match-centre three-day result priority
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-home-match-center-default.mjs
+
+      - name: Validate historical career team attribution for own-goal scorers
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-own-goal-player-history.mjs
+
+      - name: Validate four confirmed legacy transfer histories
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-confirmed-legacy-transfers.mjs
+
+      - name: Validate latest photo for every player and historical view
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+          AUDIT_SOURCE_URL: http://127.0.0.1:4174/d-league
+        run: node scripts/validate-historical-portrait-browser.mjs
 
       - name: Capture responsive screenshots and diagnostics
         env:
@@ -177,6 +224,7 @@ jobs:
           name: responsive-visual-audit
           path: |
             visual-audit
+            audit/player-honours-runtime-audit.json
             image-optimization-report.json
             hero-performance-diagnostics.json
           if-no-files-found: error

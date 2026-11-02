@@ -18,7 +18,11 @@ const playerIdentity = (player) => player.identityId ?? player.id;
 const resolveEventPlayer = (payload, match, event) => {
   const explicitId = event.playerId ?? event.subjectId;
   if (explicitId) return payload.players.find((player) => player.id === explicitId);
-  const eventTeamId = event.team === 'HOME' ? match.homeTeamId : match.awayTeamId;
+  // Legacy own goals record the beneficiary in event.team; current data stores
+  // the player's team in event.team and the beneficiary in scoringTeam.
+  const legacyOwnGoal = event.isOwnGoal === true && event.scoringTeam === undefined;
+  const playerIsHome = legacyOwnGoal ? event.team === 'AWAY' : event.team === 'HOME';
+  const eventTeamId = playerIsHome ? match.homeTeamId : match.awayTeamId;
   const candidates = payload.players.filter((player) => player.name === event.player);
   return candidates.find((player) => player.teamId === eventTeamId) ??
     (candidates.length === 1 ? candidates[0] : undefined);

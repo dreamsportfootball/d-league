@@ -30,6 +30,7 @@ import {
 import { useSeason } from '../hooks/useSeason';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
+import { getLatestPlayerImageUrl } from '../services/seasonDataJson';
 import { getTeamStaffProfiles } from '../services/staffData';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam, TeamKitPattern, TeamSocialLinks } from '../types/team';
@@ -350,7 +351,7 @@ const TeamPage: React.FC = () => {
   const { team, data, season, seasonId } = selectedRecord;
   const socialLinks = getTeamSocialLinks(team);
   const players = data.players
-    .filter((player) => player.teamId === team.id)
+    .filter((player) => player.teamId === team.id && player.hideFromTeamRoster !== true)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
@@ -593,7 +594,7 @@ const TeamPage: React.FC = () => {
                   className="group grid min-h-16 grid-cols-[3rem_2.5rem_minmax(0,1fr)] items-center gap-3 border-b border-neutral-100 py-3 transition-colors hover:bg-neutral-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-blue"
                   aria-label={`查看 ${player.name} 球員個人資料`}
                 >
-                  <StaffAvatar src={data.playerImages[player.name]} name={player.name} />
+                  <StaffAvatar src={getLatestPlayerImageUrl(player)} name={player.name} />
                   <span className="font-display text-xl font-black tabular-nums text-brand-blue">{player.number}</span>
                   <div className="min-w-0">
                     <p className="break-words text-sm font-bold text-brand-black group-hover:text-brand-blue">{player.name}</p>

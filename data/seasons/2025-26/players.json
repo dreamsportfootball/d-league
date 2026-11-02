@@ -1307,7 +1307,10 @@
     "englishName": "Yang-Cheng-Yen",
     "gender": "男",
     "nationality": "台灣",
-    "age": 19
+    "age": 29,
+    "previousTeamIds": [
+      "t_canglong"
+    ]
   },
   {
     "id": "cd-08",
@@ -1507,7 +1510,10 @@
     "englishName": "Dai Wei Hong",
     "gender": "男",
     "nationality": "台灣",
-    "age": 22
+    "age": 22,
+    "previousTeamIds": [
+      "t_crazydog"
+    ]
   },
   {
     "id": "ns-16",
@@ -1908,5 +1914,30 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 19
+  },
+  {
+    "id": "tq-90",
+    "teamId": "t_tongque",
+    "number": 90,
+    "name": "趙學邦",
+    "englishName": "Zhao Xuebang",
+    "gender": "男",
+    "nationality": "台灣",
+    "age": 25,
+    "previousTeamIds": [
+      "t_crazydog"
+    ],
+    "identityId": "kuromi-chao-hsueh-pang"
+  },
+  {
+    "id": "ns-51",
+    "teamId": "t_niaoshi",
+    "number": 51,
+    "name": "蔡軒誠",
+    "gender": "未提供",
+    "nationality": "未提供",
+    "age": null,
+    "participationPeriod": "FIRST_HALF_ONLY",
+    "hideFromTeamRoster": true
   }
 ]

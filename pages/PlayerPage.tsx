@@ -10,6 +10,7 @@ import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
 import {
+  getMatchEventPlayerTeamId,
   getPlayerHistory,
   getPlayerMatchRecords,
   getPlayerSeasonStats,
@@ -17,7 +18,7 @@ import {
   resolveMatchEventPlayer,
   type PlayerSeasonRecord,
 } from '../services/entityData';
-import { getSeasonData } from '../services/seasonDataJson';
+import { getLatestPlayerImageUrl, getSeasonData } from '../services/seasonDataJson';
 import type { SeasonId } from '../types/season';
 import type { SeasonTeam } from '../types/team';
 
@@ -49,23 +50,20 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
     timeline.push({ teamId, timestamp });
   };
 
+  // Confirmed former teams without a verified transfer date must not be
+  // assigned a fabricated effectiveFrom timestamp.
+  record.player.previousTeamIds?.forEach((teamId) => {
+    addTeam(teamId, Number.NEGATIVE_INFINITY);
+  });
+
   if (record.player.registrations?.length) {
     record.player.registrations.forEach((registration) => {
       addTeam(registration.teamId, new Date(registration.effectiveFrom).getTime());
     });
   }
 
-  const playerImage = record.data.playerImages[record.player.name];
-  if (playerImage) {
-    const pathParts = playerImage.split('/').filter(Boolean);
-    const imageTeamName = pathParts[pathParts.length - 2];
-    const imageTeam = imageTeamName
-      ? record.data.teams.find(
-          (team) => team.name === imageTeamName || team.shortName === imageTeamName,
-        )
-      : undefined;
-    if (imageTeam) addTeam(imageTeam.id, Number.NEGATIVE_INFINITY);
-  }
+  // An image folder is not proof of a player registration or transfer.
+  // Only season records, effective registrations, lineups and match events can add teams.
 
   Object.entries(record.data.lineups).forEach(([matchId, lineup]) => {
     const match = record.data.matches.find((candidate) => candidate.id === matchId);
@@ -82,7 +80,7 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
     const timestamp = new Date(match.timestamp).getTime();
     events.forEach((event) => {
       if (resolveMatchEventPlayer(record.data, match, event)?.id !== record.player.id) return;
-      addTeam(event.team === 'HOME' ? match.homeTeamId : match.awayTeamId, timestamp);
+      addTeam(getMatchEventPlayerTeamId(match, event), timestamp);
     });
   });
 
@@ -207,7 +205,7 @@ const PlayerPage: React.FC = () => {
       ? history.find((record) => record.seasonId === requestedSeason)
       : undefined) ?? history[0];
   const player = preferredRecord.player;
-  const image = preferredRecord.data.playerImages[player.name];
+  const image = getLatestPlayerImageUrl(player);
   const preferredSeasonStats = getPlayerSeasonStats(preferredRecord);
   const preferredSeasonRedCards =
     preferredSeasonStats.directRedCards + preferredSeasonStats.secondYellowDismissals;
@@ -305,7 +303,7 @@ const PlayerPage: React.FC = () => {
                 <dl className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] sm:text-[11px]">
                   {[
                     ['國籍', player.nationality],
-                    ['年齡', `${player.age} 歲`],
+                    ['年齡', player.age === null ? '未提供' : `${player.age} 歲`],
                     ['性別', player.gender],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-baseline gap-1.5 whitespace-nowrap">

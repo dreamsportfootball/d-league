@@ -6,6 +6,7 @@ import { useSeason } from '../hooks/useSeason';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
+import { getDefaultHomeMatchCenterFilter } from '../utils/homeMatchCenterDefault.mjs';
 import AutoFitText from './AutoFitText';
 import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
@@ -13,20 +14,30 @@ import Tabs from './Tabs';
 
 type MatchCenterFilter = 'Upcoming' | 'Results';
 
-const HOME_MATCH_CENTER_FILTER_STORAGE_KEY = 'dleague:home-match-center-filter';
+// Only explicit user tab choices are persisted, scoped to the current Taipei
+// calendar day and operating season. Older automatic choices are intentionally ignored.
+const HOME_MATCH_CENTER_FILTER_STORAGE_KEY = 'dleague:home-match-center-manual-filter';
 
-const readStoredFilter = (): MatchCenterFilter | null => {
+const readStoredFilter = (seasonId: string, todayKey: string): MatchCenterFilter | null => {
   try {
-    const saved = window.sessionStorage.getItem(HOME_MATCH_CENTER_FILTER_STORAGE_KEY);
-    return saved === 'Upcoming' || saved === 'Results' ? saved : null;
+    const raw = window.sessionStorage.getItem(HOME_MATCH_CENTER_FILTER_STORAGE_KEY);
+    if (!raw) return null;
+    const saved: unknown = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return null;
+    if (!('filter' in saved) || !('seasonId' in saved) || !('dateKey' in saved)) return null;
+    if (saved.seasonId !== seasonId || saved.dateKey !== todayKey) return null;
+    return saved.filter === 'Upcoming' || saved.filter === 'Results' ? saved.filter : null;
   } catch {
     return null;
   }
 };
 
-const writeStoredFilter = (filter: MatchCenterFilter): void => {
+const writeStoredFilter = (filter: MatchCenterFilter, seasonId: string, todayKey: string): void => {
   try {
-    window.sessionStorage.setItem(HOME_MATCH_CENTER_FILTER_STORAGE_KEY, filter);
+    window.sessionStorage.setItem(
+      HOME_MATCH_CENTER_FILTER_STORAGE_KEY,
+      JSON.stringify({ filter, seasonId, dateKey: todayKey }),
+    );
   } catch {
     // Session storage may be unavailable.
   }
@@ -122,7 +133,6 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
 
 const MatchCenter: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
-  const [filter, setFilter] = useState<MatchCenterFilter>(() => readStoredFilter() ?? 'Results');
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const todayKey = formatTaipeiDateKey(new Date());
@@ -141,34 +151,36 @@ const MatchCenter: React.FC = () => {
     [seasonData.matches],
   );
 
-  useEffect(() => {
-    const savedFilter = readStoredFilter();
-    const savedFilterHasData = savedFilter === 'Results'
+  const defaultFilter = useMemo<MatchCenterFilter>(
+    () => getDefaultHomeMatchCenterFilter({
+      todayKey,
+      finishedDateKeys: finishedMatches.map((match) => formatTaipeiDateKey(match.timestamp)),
+      hasUpcoming: scheduledMatches.length > 0,
+    }),
+    [todayKey, finishedMatches, scheduledMatches],
+  );
+
+  // Decide before first paint: returning visitors see the correct tab without
+  // flashing the previous one. Preserve manual choices only for this Taipei day.
+  const [filter, setFilter] = useState<MatchCenterFilter>(() => {
+    const saved = readStoredFilter(activeSeason.id, todayKey);
+    const savedHasData = saved === 'Results'
       ? finishedMatches.length > 0
-      : savedFilter === 'Upcoming'
+      : saved === 'Upcoming'
         ? scheduledMatches.length > 0
         : false;
+    return saved && savedHasData ? saved : defaultFilter;
+  });
 
-    if (savedFilter && savedFilterHasData) {
-      setFilter(savedFilter);
-      return;
-    }
-
-    const hasFinishedToday = finishedMatches.some(
-      (match) => formatTaipeiDateKey(match.timestamp) === todayKey,
-    );
-    const hasScheduledToday = scheduledMatches.some(
-      (match) => formatTaipeiDateKey(match.timestamp) === todayKey,
-    );
-    const nextFilter: MatchCenterFilter = hasFinishedToday
-      ? 'Results'
-      : hasScheduledToday || scheduledMatches.length > 0
-        ? 'Upcoming'
-        : 'Results';
-
-    setFilter(nextFilter);
-    writeStoredFilter(nextFilter);
-  }, [activeSeason.id, finishedMatches, scheduledMatches, todayKey]);
+  useEffect(() => {
+    const saved = readStoredFilter(activeSeason.id, todayKey);
+    const savedHasData = saved === 'Results'
+      ? finishedMatches.length > 0
+      : saved === 'Upcoming'
+        ? scheduledMatches.length > 0
+        : false;
+    setFilter(saved && savedHasData ? saved : defaultFilter);
+  }, [activeSeason.id, defaultFilter, finishedMatches, scheduledMatches, todayKey]);
 
   const filteredMatches = useMemo(() => {
     const source = filter === 'Results' ? finishedMatches : scheduledMatches;
@@ -180,9 +192,8 @@ const MatchCenter: React.FC = () => {
   }, [filter, finishedMatches, scheduledMatches]);
 
   const upcomingLabel =
-    filteredMatches.length > 0 &&
-    filter === 'Upcoming' &&
-    formatTaipeiDateKey(filteredMatches[0].timestamp) === todayKey
+    scheduledMatches.length > 0 &&
+    formatTaipeiDateKey(scheduledMatches[0].timestamp) === todayKey
       ? '今日賽程'
       : '即將開賽';
   const scroll = (direction: 'left' | 'right') =>
@@ -215,7 +226,7 @@ const MatchCenter: React.FC = () => {
                   active={filter}
                   onChange={(nextFilter) => {
                     setFilter(nextFilter);
-                    writeStoredFilter(nextFilter);
+                    writeStoredFilter(nextFilter, activeSeason.id, todayKey);
                     scrollContainerRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
                   }}
                   getLabel={(value) => (value === 'Results' ? '最新賽果' : upcomingLabel)}

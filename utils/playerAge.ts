@@ -50,7 +50,7 @@ export const calculateAgeOnDate = (birthDate: string, referenceDate: string): nu
 export const resolvePlayerAge = (
   player: PlayerProfile,
   referenceDate: string,
-): number =>
+): number | null =>
   player.birthDate
     ? calculateAgeOnDate(player.birthDate, referenceDate)
     : player.age;

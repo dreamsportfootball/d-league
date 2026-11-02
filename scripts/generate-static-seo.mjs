@@ -381,7 +381,12 @@ for (const [identity, recordsInput] of playerGroups) {
   const redCards = totals.directRedCards + totals.secondYellowDismissals;
   const title = `${latest.player.name}｜D LEAGUE 官方球員資料｜${SITE_NAME}`;
   const description = `${latest.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張、紅牌 ${redCards} 張及比賽事件`;
-  const image = absoluteAssetUrl(latest.payload.playerImages[latest.player.name] || latest.team?.logo);
+  // Player records are already newest-first; prefer the newest available
+  // portrait even for historical profile routes. Never match by name alone.
+  const latestPortrait = records
+    .map(({ payload, player }) => payload.playerImages[player.name])
+    .find((imagePath) => typeof imagePath === 'string' && imagePath.length > 0);
+  const image = absoluteAssetUrl(latestPortrait || latest.team?.logo);
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -389,7 +394,7 @@ for (const [identity, recordsInput] of playerGroups) {
     alternateName: latest.player.englishName || undefined,
     nationality: latest.player.nationality || undefined,
     url: routeUrl(canonicalRoute),
-    image: latest.payload.playerImages[latest.player.name] ? image : undefined,
+    image: latestPortrait ? image : undefined,
     affiliation: latest.team ? {
       '@type': 'SportsTeam',
       name: latest.team.name,

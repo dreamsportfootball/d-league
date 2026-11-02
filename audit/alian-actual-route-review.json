@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T22:41:58.201Z",
+  "generatedAt": "2026-11-02T07:39:25.634Z",
   "team": "阿蓮FC",
   "teamId": "t_alian_2026",
   "season": "2026-27",
@@ -31,7 +31,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 87.44
+        "centerPixelStddev": 87.4
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
@@ -129,7 +129,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 82.4
+        "centerPixelStddev": 82.38
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-03-excel-20261031.webp",
@@ -227,7 +227,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.55
+        "centerPixelStddev": 80.53
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
@@ -276,7 +276,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 77.51
+        "centerPixelStddev": 77.47
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
@@ -619,7 +619,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 74.25
+        "centerPixelStddev": 74.2
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-13-excel-20261031.webp",
@@ -668,7 +668,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 67.71
+        "centerPixelStddev": 67.7
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-14-excel-20261031.webp",
@@ -864,7 +864,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 66.65
+        "centerPixelStddev": 66.67
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
@@ -913,7 +913,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 90.85
+        "centerPixelStddev": 90.84
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",
@@ -1058,7 +1058,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.23
+        "centerPixelStddev": 80.24
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/staff/alian-lin-yu-ting.webp",
@@ -1106,7 +1106,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 87.43
+        "centerPixelStddev": 87.4
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-01-excel-20261031.webp",
@@ -1155,7 +1155,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 63.58
+        "centerPixelStddev": 63.6
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-02-excel-20261031.webp",
@@ -1302,7 +1302,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 80.56
+        "centerPixelStddev": 80.53
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-05-excel-20261031.webp",
@@ -1351,7 +1351,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 77.5
+        "centerPixelStddev": 77.48
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-06-excel-20261031.webp",
@@ -1449,7 +1449,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 78.78
+        "centerPixelStddev": 78.81
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-08-excel-20261031.webp",
@@ -1498,7 +1498,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 57.87
+        "centerPixelStddev": 57.86
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-09-excel-20261031.webp",
@@ -1547,7 +1547,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 73.85
+        "centerPixelStddev": 73.84
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-10-excel-20261031.webp",
@@ -1645,7 +1645,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.73
+        "centerPixelStddev": 79.75
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-12-excel-20261031.webp",
@@ -1890,7 +1890,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 79.1
+        "centerPixelStddev": 79.11
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-17-excel-20261031.webp",
@@ -1939,7 +1939,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 66.66
+        "centerPixelStddev": 66.62
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-18-excel-20261031.webp",
@@ -1988,7 +1988,7 @@
           "uncoveredSamples": 0,
           "errors": []
         },
-        "centerPixelStddev": 90.83
+        "centerPixelStddev": 90.85
       },
       "profile": {
         "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/al26-19-excel-20261031.webp",

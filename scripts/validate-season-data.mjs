@@ -147,7 +147,42 @@ for (const season of seasons) {
     }
     if (typeof player.gender !== 'string' || !player.gender.trim()) fail(`${season} player ${player.id}: missing gender`);
     if (typeof player.nationality !== 'string' || !player.nationality.trim()) fail(`${season} player ${player.id}: missing nationality`);
-    if (!Number.isInteger(player.age) || player.age < 0 || player.age > 100) fail(`${season} player ${player.id}: invalid age`);
+    // Historical data may lack a verified age. Do not substitute a fake age.
+    if (!(player.age === null && season !== CURRENT_SEASON_ID) &&
+        (!Number.isInteger(player.age) || player.age < 0 || player.age > 100)) {
+      fail(`${season} player ${player.id}: invalid age`);
+    }
+    if (player.hideFromTeamRoster !== undefined) {
+      if (player.hideFromTeamRoster !== true || season === CURRENT_SEASON_ID) {
+        fail(`${season} player ${player.id}: roster-hidden flag is only valid for confirmed legacy records`);
+      }
+    }
+    if (player.participationPeriod !== undefined) {
+      if (season === CURRENT_SEASON_ID || player.participationPeriod !== 'FIRST_HALF_ONLY') {
+        fail(`${season} player ${player.id}: unsupported historical participation period`);
+      }
+      // The 2025/26 L2 regular season had 10 rounds (two halves of five).
+      // A confirmed first-half-only player must not be assigned a later event.
+      for (const [matchId, matchEventList] of Object.entries(events)) {
+        const match = matches.find(item => item.id === matchId);
+        if (match?.round > 5 && matchEventList.some(event =>
+          event.playerId === player.id || event.subjectId === player.id ||
+          event.player === player.name
+        )) fail(`${season} player ${player.id}: second-half event contradicts first-half-only record`);
+      }
+    }
+    if (player.previousTeamIds !== undefined) {
+      if (!Array.isArray(player.previousTeamIds) || season === CURRENT_SEASON_ID) {
+        fail(`${season} player ${player.id}: previousTeamIds is reserved for confirmed legacy transfers`);
+      }
+      const formerTeams = new Set();
+      for (const teamId of player.previousTeamIds) {
+        if (!teamIds.has(teamId) || teamId === player.teamId || formerTeams.has(teamId)) {
+          fail(`${season} player ${player.id}: invalid former team ${teamId}`);
+        }
+        formerTeams.add(teamId);
+      }
+    }
     if (player.englishName !== undefined && !player.englishName?.trim()) fail(`${season} player ${player.id}: invalid englishName`);
     if (player.identityId) {
       if (playerIdentityIds.has(player.identityId)) fail(`${season} player ${player.id}: duplicate identityId ${player.identityId}`);
@@ -360,7 +395,7 @@ for (const season of seasons) {
 }
 
 if (read('2025-26', 'teams.json').length !== 10) fail('2025-26: expected 10 teams');
-if (read('2025-26', 'players.json').length !== 191) fail('2025-26: expected 191 players');
+if (read('2025-26', 'players.json').length !== 193) fail('2025-26: expected 193 players');
 if (read('2025-26', 'matches.json').length !== 48) fail('2025-26: expected 48 matches');
 if (Object.keys(read('2025-26', 'matchEvents.json')).length !== 48) fail('2025-26: expected events for 48 matches');
 if (read('2025-26', 'news.json').length !== 66) fail('2025-26: expected 66 news articles');
@@ -389,11 +424,21 @@ for (const file of [
   'disciplineDecisions.json',
   'lineups.json',
   'media.json',
-  'albums.json',
 ]) {
   const value = read(CURRENT_SEASON_ID, file);
   const count = Array.isArray(value) ? value.length : Object.keys(value).length;
   if (count !== 0) fail(`${CURRENT_SEASON_ID} ${file}: must stay empty until official data is confirmed`);
+}
+
+// 2026/27 official matchday photo albums are now published. Do not require
+// albums.json to be empty; validate their provenance and media links instead.
+for (const album of read(CURRENT_SEASON_ID, 'albums.json')) {
+  if (album.seasonId !== CURRENT_SEASON_ID ||
+      typeof album.title !== 'string' || !album.title.trim() ||
+      typeof album.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(album.date) ||
+      !validExternalUrl(album.link)) {
+    fail(`${CURRENT_SEASON_ID} album ${album.id}: incomplete official album metadata`);
+  }
 }
 
 const currentParticipants = read(CURRENT_SEASON_ID, 'participants.json');

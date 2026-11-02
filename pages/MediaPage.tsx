@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, Youtube } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, X, Youtube } from 'lucide-react';
 import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -13,34 +13,76 @@ import type { SeasonId } from '../types/season';
 const formatMediaDate = (value: string): string =>
   value.replaceAll('.', '/').replaceAll('-', '/');
 
-const ZenAlbum: React.FC<{ album: MediaAlbum }> = ({ album }) => (
-  <a
-    href={album.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-  >
-    <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
-      <img
-        src={album.cover}
-        alt={album.title}
-        loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
-      />
-    </div>
+interface GalleryGroup {
+  id: string;
+  date: string;
+  title: string;
+  cover: string;
+  albums: MediaAlbum[];
+}
 
-    <div className="flex flex-col items-start">
-      <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
-        {formatMediaDate(album.date)}
-      </span>
-      <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
-        <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">查看相簿</span>
-        <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-      </span>
-      <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{album.title}</h3>
-    </div>
-  </a>
-);
+// The same match-day card and gallery chooser serve every season.
+// Older seasons may have one shared folder per day rather than per-match folders.
+const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
+  const albumsByDate = new Map<string, MediaAlbum[]>();
+  albums.forEach((album) => {
+    const dailyAlbums = albumsByDate.get(album.date) ?? [];
+    dailyAlbums.push(album);
+    albumsByDate.set(album.date, dailyAlbums);
+  });
+
+  return Array.from(albumsByDate.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([date, dailyAlbums], index) => ({
+      id: `day-${date}`,
+      date,
+      title: dailyAlbums.length > 1
+        ? `比賽日 ${index + 1} (Match Day ${index + 1})`
+        : dailyAlbums[0].title,
+      cover: dailyAlbums[0].cover,
+      albums: dailyAlbums,
+    }))
+    .reverse();
+};
+
+const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group, onOpen }) => {
+  const content = (
+    <>
+      <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
+        <img
+          src={group.cover}
+          alt={group.title}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+        />
+      </div>
+
+      <div className="flex flex-col items-start">
+        <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
+          {formatMediaDate(group.date)}
+        </span>
+        <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
+          <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">
+            {group.albums.length > 1 ? `查看 ${group.albums.length} 場相簿` : '查看相簿'}
+          </span>
+          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+        </span>
+        <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{group.title}</h3>
+      </div>
+    </>
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="group block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+      aria-haspopup="dialog"
+    >
+      {content}
+    </button>
+  );
+};
 
 const PhotoUsageNotice: React.FC = () => (
   <section aria-labelledby="photo-usage-notice-title">
@@ -62,6 +104,8 @@ const MediaPage: React.FC = () => {
     setActiveSeason,
   } = useSeason();
   const galleryRef = useRef<HTMLDivElement | null>(null);
+  const albumDialogRef = useRef<HTMLDialogElement | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
 
@@ -74,10 +118,18 @@ const MediaPage: React.FC = () => {
     season.id !== activeSeasonId &&
     (getSeasonData(season.id).albums.length > 0 || Boolean(season.youtubePlaylistEmbedUrl)),
   );
-  const reversedAlbums = useMemo(
-    () => seasonData.albums.slice().reverse(),
+  const galleryGroups = useMemo(
+    () => buildGalleryGroups(seasonData.albums),
     [seasonData.albums],
   );
+  const selectedGroup = galleryGroups.find((group) => group.id === selectedGroupId);
+
+  useEffect(() => {
+    const dialog = albumDialogRef.current;
+    if (!dialog) return;
+    if (selectedGroup && !dialog.open) dialog.showModal();
+    if (!selectedGroup && dialog.open) dialog.close();
+  }, [selectedGroup]);
 
   const scrollGallery = (direction: 'left' | 'right') => {
     const gallery = galleryRef.current;
@@ -91,10 +143,10 @@ const MediaPage: React.FC = () => {
   };
 
   const hasMedia =
-    reversedAlbums.length > 0 ||
+    galleryGroups.length > 0 ||
     Boolean(activeSeason.youtubePlaylistEmbedUrl);
   const mediaItemCount =
-    reversedAlbums.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
+    galleryGroups.length + (activeSeason.youtubePlaylistEmbedUrl ? 1 : 0);
   const seasonField: FilterDrawerField = {
     id: 'season',
     label: '賽季',
@@ -152,7 +204,7 @@ const MediaPage: React.FC = () => {
           </>
         ) : (
           <>
-            {reversedAlbums.length > 0 && (
+            {galleryGroups.length > 0 && (
               <div className="mb-12 md:mb-16">
                 <div className="mb-6 flex items-center justify-between md:mb-8">
                   <div className="flex items-center">
@@ -180,7 +232,7 @@ const MediaPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                {reversedAlbums.length > 1 && (
+                {galleryGroups.length > 1 && (
                   <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
                     左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
                   </div>
@@ -192,9 +244,9 @@ const MediaPage: React.FC = () => {
                   aria-label="賽事相簿，可左右滑動瀏覽"
                   className="no-scrollbar flex snap-x snap-proximity space-x-6 overflow-x-auto pb-6 pt-1 scroll-smooth"
                 >
-                  {reversedAlbums.map((album) => (
-                    <div key={album.id} className="w-[80vw] shrink-0 snap-start sm:w-[400px]">
-                      <ZenAlbum album={album} />
+                  {galleryGroups.map((group) => (
+                    <div key={group.id} className="w-[80vw] shrink-0 snap-start sm:w-[400px]">
+                      <ZenAlbum group={group} onOpen={() => setSelectedGroupId(group.id)} />
                     </div>
                   ))}
                 </div>
@@ -204,7 +256,7 @@ const MediaPage: React.FC = () => {
               </div>
             )}
 
-            {reversedAlbums.length === 0 && (
+            {galleryGroups.length === 0 && (
               <div className="mb-8">
                 <PhotoUsageNotice />
               </div>
@@ -285,6 +337,62 @@ const MediaPage: React.FC = () => {
         title="篩選賽事媒體"
         subtitle="目前可依賽季切換媒體內容"
       />
+
+      <dialog
+        ref={albumDialogRef}
+        aria-labelledby="match-day-albums-title"
+        onClose={() => setSelectedGroupId(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setSelectedGroupId(null);
+        }}
+        className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-hidden rounded-[20px] border-0 bg-white p-0 text-brand-black shadow-2xl backdrop:bg-black/65 sm:rounded-[24px]"
+      >
+        {selectedGroup && (
+          <>
+            <div className="flex items-start justify-between border-b border-neutral-200 px-5 py-5 sm:px-8 sm:py-6">
+              <div className="min-w-0 pr-3">
+                <p className="text-xs font-bold tracking-widest text-neutral-500">{formatMediaDate(selectedGroup.date)}</p>
+                <h2 id="match-day-albums-title" className="mt-1 font-display text-2xl font-bold leading-tight">
+                  {selectedGroup.title}
+                </h2>
+                <p className="mt-2 text-sm text-neutral-500">
+                  {selectedGroup.albums.length > 1
+                    ? '選擇比賽，查看 Google Drive 照片'
+                    : '查看此比賽日的 Google Drive 相簿'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedGroupId(null)}
+                aria-label="關閉比賽日相簿"
+                className="flex h-11 w-11 shrink-0 items-center justify-center text-neutral-500 transition-colors hover:text-brand-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="max-h-[65dvh] overflow-y-auto px-5 py-2 sm:px-8">
+              {selectedGroup.albums.map((album, index) => (
+                <a
+                  key={album.id}
+                  href={album.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex min-h-24 items-center gap-4 border-b border-neutral-100 py-3 text-left last:border-b-0 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue sm:gap-5"
+                >
+                  <img src={album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
+                  <div className="min-w-0 flex-1">
+                    <span className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                      {selectedGroup.albums.length > 1 ? `第 ${index + 1} 場` : '全日照片'}
+                    </span>
+                    <span className="block text-sm font-bold leading-relaxed sm:text-base">{album.title}</span>
+                  </div>
+                  <ArrowUpRight className="h-5 w-5 shrink-0 text-brand-blue" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+      </dialog>
     </div>
   );
 };

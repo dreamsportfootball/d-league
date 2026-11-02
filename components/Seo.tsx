@@ -17,7 +17,7 @@ import {
   getTeamHistory,
   getTeamIdentity,
 } from '../services/entityData';
-import { getNewsArticle, getSeasonData } from '../services/seasonDataJson';
+import { getLatestPlayerImageUrl, getNewsArticle, getSeasonData } from '../services/seasonDataJson';
 import { getStaffHistory } from '../services/staffData';
 
 interface PageSeoEntry {
@@ -137,7 +137,7 @@ const Seo: React.FC = () => {
         return {
           title: `${record.player.name}｜D LEAGUE 官方球員資料｜${SITE_NAME}`,
           description: `${record.player.name} D LEAGUE 官方球員頁，包含歷年效力球隊、賽季紀錄、進球 ${totals.goals} 球、黃牌 ${totals.yellowCards} 張、紅牌 ${totals.redCards} 張及比賽事件`,
-          image: absoluteAssetUrl(record.data.playerImages[record.player.name]),
+          image: absoluteAssetUrl(getLatestPlayerImageUrl(record.player)),
           type: 'website',
           canonicalPath: `/players/${encodeURIComponent(record.player.identityId ?? record.player.id)}`,
         };

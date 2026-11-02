@@ -17,6 +17,12 @@ export interface PlayerProfile {
   /** ISO date (YYYY-MM-DD). When present, age is resolved at the season age reference date. */
   birthDate?: string;
   /** Legacy/reference-date age retained for records that do not yet have a verified birth date. */
-  age: number;
+  age: number | null;
+  /** Confirmed former teams in the same season; transfer dates are not recorded. */
+  previousTeamIds?: string[];
+  /** Confirmed historical participation period, without a fabricated end date. */
+  participationPeriod?: 'FIRST_HALF_ONLY';
+  /** Hide a retained historical player from the team's published roster only. */
+  hideFromTeamRoster?: boolean;
   registrations?: PlayerRegistration[];
 }

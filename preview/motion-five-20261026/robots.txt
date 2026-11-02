@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://dreamsportfootball.github.io/d-league/sitemap.xml

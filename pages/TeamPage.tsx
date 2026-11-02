@@ -350,7 +350,7 @@ const TeamPage: React.FC = () => {
   const { team, data, season, seasonId } = selectedRecord;
   const socialLinks = getTeamSocialLinks(team);
   const players = data.players
-    .filter((player) => player.teamId === team.id)
+    .filter((player) => player.teamId === team.id && player.hideFromTeamRoster !== true)
     .sort((a, b) => a.number - b.number || a.name.localeCompare(b.name, 'zh-TW'));
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)

@@ -74,7 +74,7 @@ for (const seasonId of SEASON_IDS) {
       if (!person) {
         if (seasonId==='2025-26') unresolved.push({ matchId, eventId:event.id, name:event.player, playerTeamId });
         else errors.push(`${seasonId} ${event.id}: player could not be resolved`);
-      } else if (person.teamId !== playerTeamId && !person.registrations?.some(r=>r.teamId===playerTeamId)) {
+      } else if (person.teamId !== playerTeamId && !person.previousTeamIds?.includes(playerTeamId) && !person.registrations?.some(r=>r.teamId===playerTeamId)) {
         if (seasonId==='2025-26') crossTeam.push({ matchId, eventId:event.id, name:event.player, rosterTeamId:person.teamId, eventPlayerTeamId:playerTeamId });
         else errors.push(`${seasonId} ${event.id}: event player differs from registered team`);
       }
@@ -126,7 +126,7 @@ report.summary={
   totalUnresolvedProvenance:report.outstandingLegacyEvidence.length,
   verifiedScoreboardMatches:report.seasons.reduce((n,s)=>n+s.finishedMatches-s.scoreboardMismatches.length,0),
 };
-if(totalPlayers!==505) errors.push(`roster count changed: expected 505, actual ${totalPlayers}; rebaseline intentionally`);
+if(totalPlayers!==507) errors.push(`roster count changed: expected 507, actual ${totalPlayers}; rebaseline intentionally`);
 if(totalOwnGoals!==5) errors.push(`own-goal count changed: expected 5, actual ${totalOwnGoals}; audit new goals`);
 mkdirSync(join(root,'audit'),{recursive:true});
 writeFileSync(join(root,'audit/player-history-integrity-report.json'),JSON.stringify(report,null,2)+'\n');

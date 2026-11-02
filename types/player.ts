@@ -20,5 +20,7 @@ export interface PlayerProfile {
   age: number | null;
   /** Confirmed former teams in the same season; transfer dates are not recorded. */
   previousTeamIds?: string[];
+  /** Confirmed historical participation period, without a fabricated end date. */
+  participationPeriod?: 'FIRST_HALF_ONLY';
   registrations?: PlayerRegistration[];
 }

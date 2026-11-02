@@ -179,6 +179,11 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-own-goal-player-history.mjs
 
+      - name: Validate four confirmed legacy transfer histories
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-confirmed-legacy-transfers.mjs
+
       - name: Capture responsive screenshots and diagnostics
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

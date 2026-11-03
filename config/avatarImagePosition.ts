@@ -13,7 +13,7 @@ type AvatarStyle = Partial<Pick<CSSProperties, 'objectPosition' | 'transform'>>;
 const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // 陳公舘 2026/27: original Excel photos; use object-position first to avoid exposed circular edges.
   // #13 李秉錦 uses a separately padded square source for full hairline and chin.
-  '/assets/seasons/2026-27/players/ch26-02.': { objectPosition: '50% 30.91%', transform: 'translate(0.2%, 0%) scale(1.1)' }, // 陳公舘 林家銘：保留髮頂／完整五官
+  '/assets/seasons/2026-27/players/ch26-02.': { objectPosition: '50% 0%' }, // 陳公舘 林家銘：以相同照片的乾淨裁切來源取代黑邊截圖；完整保留髮頂及五官
   '/assets/seasons/2026-27/players/ch26-03.': { objectPosition: '50% 63.56%', transform: 'translate(-1.45%, 0%) scale(1.04)' }, // 陳公舘 倪柏瑄：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-04.': { objectPosition: '50% 0%', transform: 'translate(-19.12%, 77.94%) scale(3.23)' }, // 陳公舘 張健治：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-05.': { objectPosition: '50% 8.95%', transform: 'translate(-2.5%, 0%) scale(1.3)' }, // 陳公舘 孫裕程：保留髮頂／完整五官

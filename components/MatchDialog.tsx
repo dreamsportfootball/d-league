@@ -425,11 +425,23 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                     href={album.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
+                    data-match-photo-link
+                    className="group flex min-h-24 items-center gap-3 py-3 text-brand-black transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 sm:gap-4"
                   >
-                    <span className="min-w-0 truncate">{album.title || '比賽相簿'}</span>
-                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
-                      查看照片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    <img
+                      src={album.thumbnail ?? album.cover}
+                      alt=""
+                      loading="lazy"
+                      data-match-photo-cover
+                      className="h-[72px] w-24 shrink-0 bg-neutral-100 object-cover sm:h-20 sm:w-32"
+                    />
+                    <span className="flex min-w-0 flex-1 flex-col items-start gap-2">
+                      <span className="line-clamp-2 text-sm font-bold leading-5">
+                        {album.title || '比賽相簿'}
+                      </span>
+                      <span className="inline-flex items-center text-xs font-bold text-brand-blue group-hover:text-blue-800">
+                        查看照片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
                     </span>
                   </a>
                 ) : (

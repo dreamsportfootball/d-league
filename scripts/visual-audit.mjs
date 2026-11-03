@@ -28,6 +28,8 @@ const routes = [
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
   { name: 'match-permalink', path: '/matches/m1?season=2025-26' },
+  { name: 'match-photo-2026-001', path: '/matches/m2627-001?season=2026-27' },
+  { name: 'match-photo-2026-002', path: '/matches/m2627-002?season=2026-27' },
   { name: 'media-default', path: '/media' },
   { name: 'media-2025', path: '/media?season=2025-26' },
   { name: 'cup', path: '/cup' },
@@ -247,6 +249,31 @@ const auditViewport = async (viewport) => {
       if (route.name === 'match-permalink') {
         const dialogVisible = (await page.locator('[role="dialog"]').count()) > 0;
         assert('match-permalink-opens-direct-dialog', page.url().includes('#/matches/m1?season=2025-26') && dialogVisible, `Resolved ${page.url()}, dialog=${dialogVisible}`);
+      }
+
+      if (route.name.startsWith('match-photo-2026-')) {
+        const expectedMatchId = route.name.endsWith('001') ? 'm2627-001' : 'm2627-002';
+        const expectedFolderId = expectedMatchId === 'm2627-001'
+          ? '1-zCEeVCnJZoIyT6QAk42Sfk_FnTf2snp'
+          : '1kCLtTcfaCLpK-WLEVSW2914h-oUnhD7P';
+        const photoLink = page.locator('[role="dialog"] a[data-match-photo-link]');
+        assert('match-photo-link-visible', await photoLink.count() === 1,
+          `Expected one photo link for ${expectedMatchId}`);
+        if (await photoLink.count() === 1) {
+          const photoHref = await photoLink.getAttribute('href');
+          assert('match-photo-links-correct-folder',
+            photoHref === `https://drive.google.com/drive/folders/${expectedFolderId}`,
+            `Unexpected folder for ${expectedMatchId}: ${photoHref}`);
+          const cover = photoLink.locator('img[data-match-photo-cover]');
+          await cover.scrollIntoViewIfNeeded();
+          const imageState = await cover.evaluate(async (image) => {
+            try { await image.decode(); } catch { /* validated through naturalWidth */ }
+            return { src: image.getAttribute('src'), naturalWidth: image.naturalWidth };
+          });
+          assert('match-photo-uses-its-own-cover',
+            imageState.src?.includes(`/${expectedMatchId}.`) && imageState.naturalWidth > 0,
+            `Expected loaded image from ${expectedMatchId}: ${JSON.stringify(imageState)}`);
+        }
       }
 
       if (route.name === 'media-default') {

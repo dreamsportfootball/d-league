@@ -46,7 +46,12 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-31%, 36%) scale(1.6)' },
+  '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-28%, 28%) scale(1.6)' }, // #10 Joel Vega：保留髮頂，單獨聚焦本人，避免頂部露底
+  '/assets/seasons/2026-27/players/kbk26-02.': { objectPosition: '50% 0%' }, // #17 王家偉：恢復完整髮頂
+  '/assets/seasons/2026-27/players/kbk26-07.': { objectPosition: '50% 35%' }, // #79 ALI：保留頭頂與下巴
+  '/assets/seasons/2026-27/players/kbk26-08.': { objectPosition: '50% 10%' }, // #29 LUCAS ROA：保留完整捲髮
+  '/assets/seasons/2026-27/players/kbk26-09.': { objectPosition: '50% 50%', transform: 'translate(60%, 24%) scale(2.8)' }, // #11 連于翔：從 Excel 限制性社群截圖內聚焦本人，仍需補清晰單人照
+  '/assets/seasons/2026-27/players/kbk26-13.': { objectPosition: '50% 0%' }, // #2 DOUGLAS：保留髮頂
   '/assets/players/陳公舘/吳明威.': { objectPosition: '50% 0%', transform: 'translateY(30%) scale(1.5)' },
   '/assets/players/酒號矯正署/顏廷邕.': { objectPosition: '50% 0%', transform: 'translateY(28%) scale(1.5)' },
   '/assets/players/酒號矯正署/吳啓明.': { objectPosition: '50% 0%', transform: 'translateY(40%) scale(1.8)' },
@@ -56,7 +61,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   'assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-35%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
   '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
   '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
-  '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 31%) scale(1.85)' },
+  '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 38%) scale(1.85)' }, // #7 姜斌：保留髮頂，聚焦合照左側本人
   '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(34%) scale(2.5) scaleX(1.49)' }, // 高雄業餘 #7 潘晨維：依 Excel 內嵌圖片的橫向拉伸比例
 
   // Second-pass 104px / 48px face and hairline review (2026-10-30).
@@ -145,8 +150,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/lz26-06.': { objectPosition: '50% 0%' }, // 避免頭頂二次裁切
   '/assets/seasons/2026-27/players/lz26-13.': { transform: 'translate(14%, -1%) scale(2.4)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/wa26-06.': { transform: 'translateY(19%) scale(1.6)' }, // 手持球衣
-  '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(31%, 31%) scale(2)' }, // 雙人照內聚焦左側球員
-  '/assets/seasons/2026-27/players/kbk26-11.': { transform: 'translateY(48%) scale(1.55)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(30%, 90%) scale(3)' }, // #36 PATRICK HAINES：從遠距離合照聚焦本人頭肩，原圖清晰度仍有限
+  '/assets/seasons/2026-27/players/kbk26-11.': { objectPosition: '50% 0%', transform: 'scale(1.2)' }, // #35 DICKSON：保留髮頂與下巴；原照僅 163×279，需更高清來源
   '/assets/seasons/2026-27/players/holy26-07.': { objectPosition: '50% 0%', transform: 'translateY(-24%) scale(1.85)' }, // 第二輪實圖回歸校正
   '/assets/seasons/2026-27/players/sb26-02.': { transform: 'translateY(19%) scale(1.7)' }, // SOUTHBOYS 拉非：去除過多背景、放大臉部
   '/assets/seasons/2026-27/players/sb26-09.': { objectPosition: '50% 15%' }, // SOUTHBOYS 艾力夫：保留頭髮頂部

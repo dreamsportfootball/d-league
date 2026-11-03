@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
@@ -7,6 +7,7 @@ import MatchDialog from '../components/MatchDialog';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { getSeasonData } from '../services/seasonDataJson';
 import type { LeagueId } from '../types/season';
 
@@ -16,10 +17,14 @@ const isLeagueId = (value: string | undefined): value is LeagueId =>
 const RoundPage: React.FC = () => {
   const params = useParams<{ seasonId: string; league: string; round: string }>();
   const { availableSeasons } = useSeason();
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const seasonId = isSeasonId(params.seasonId) ? params.seasonId : undefined;
   const league = isLeagueId(params.league) ? params.league : undefined;
   const round = params.round ? decodeURIComponent(params.round) : '';
+  const validMatchIds = useMemo(
+    () => new Set(seasonId ? getSeasonData(seasonId).matches.map((match) => match.id) : []),
+    [seasonId],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
 
   const payload = useMemo(() => {
     if (!seasonId || !league || !round) return null;
@@ -94,7 +99,7 @@ const RoundPage: React.FC = () => {
             matches={matches}
             teamMap={data.teamMap}
             leagueFilter="ALL"
-            onMatchClick={setSelectedMatchId}
+            onMatchClick={selectMatch}
           />
         </section>
 
@@ -118,8 +123,8 @@ const RoundPage: React.FC = () => {
         <SeasonContext.Provider value={dialogSeasonContext}>
           <MatchDialog
             matchId={selectedMatchId}
-            onClose={() => setSelectedMatchId(null)}
-            onSelectMatch={setSelectedMatchId}
+            onClose={closeMatch}
+            onSelectMatch={selectMatch}
             navigationMatchIds={matches.map((match) => match.id)}
           />
         </SeasonContext.Provider>

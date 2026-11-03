@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 
 interface NavItem {
   name: string;
@@ -12,6 +13,7 @@ interface NavItem {
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  useModalScrollLock(mobileMenuOpen);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState<string | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -39,13 +41,6 @@ const Header: React.FC = () => {
     setMobileDropdownOpen(null);
     setDesktopDropdownOpen(null);
   }, [location.pathname]);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

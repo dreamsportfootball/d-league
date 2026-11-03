@@ -185,6 +185,10 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
 
   // Source photos with large empty margins: individually focus on faces.
   // 嘉義 235 FC 隊職員（依已核准 KUROMI #16 人像構圖標準逐人校正）
+  // 台南長青隊職員：依 Excel xl/media/image1.png、image2.png 與 48/104/160px 圓形對照，
+  // 將偏向原圖頂端的髮型完整保留；曹冠祥沿用球員 #8 te26-04 的既有取景。
+  '/assets/seasons/2026-27/staff/evergreen-kung-ping-fang.': { objectPosition: '50% 0%' }, // 領隊 龔炳芳：髮頂保留，避免置中裁切
+  '/assets/seasons/2026-27/staff/evergreen-zhuang-jin-sheng.': { objectPosition: '50% 0%' }, // 管理 莊金生：保留灰髮頂部，臉部置中
   '/assets/seasons/2026-27/staff/chiayi235-tsai-meng-hsun.': { objectPosition: '50% 4%' }, // 蔡孟勲：原圖上方取景，避免髮頂被圓形切斷
   '/assets/seasons/2026-27/staff/chiayi235-tsai-ming-han.': { objectPosition: '50% 10%' }, // 蔡明瀚：完整頭髮／眼鼻／下巴於中線，避免預設中央裁掉髮頂
   '/assets/seasons/2026-27/staff/chiayi235-guo-zheng-da.': { objectPosition: '50% 7%' }, // 郭政達：將取景往上移，保留完整髮型

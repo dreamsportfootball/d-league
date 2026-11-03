@@ -43,6 +43,19 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'translateY(-8%) scale(2.7)' }, // SF 鄭詠翰：放大球場遠景中的臉部
   '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 63%', transform: 'translate(28%, -18%) scale(1.7)' },
   '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
+  // 高雄業餘 2026/27：逐張比對 Excel xl/media 原圖及 48/104/160px 實際圓形裁切。
+  // 只對髮頂受預設垂直置中影響的人物調整；不套用全隊相同倍率或犧牲下巴。
+  '/assets/seasons/2026-27/players/ka26-01.': { objectPosition: '50% 30%' }, // #9 劉力瑋：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-29.': { objectPosition: '50% 15%' }, // #6 湯弘君：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-30.': { objectPosition: '50% 15%' }, // #19 吳詠祥：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-32.': { objectPosition: '50% 25%' }, // #20 陳建宏：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-34.': { objectPosition: '50% 25%' }, // #14 王劭愷：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-35.': { objectPosition: '50% 25%' }, // #12 曾瀚陞：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-36.': { objectPosition: '50% 25%' }, // #16 林煒哲：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-37.': { objectPosition: '50% 25%' }, // #51 王笙翰：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-39.': { objectPosition: '50% 25%' }, // #17 王文賢：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-40.': { objectPosition: '50% 15%' }, // #8 侯奕賢：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-42.': { objectPosition: '50% 30%' }, // #23 林品華：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正

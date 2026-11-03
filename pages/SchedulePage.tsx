@@ -15,6 +15,7 @@ import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { getSeasonData } from '../services/seasonDataJson';
 import type { SeasonId } from '../types/season';
 import {
@@ -112,7 +113,15 @@ const SchedulePage: React.FC = () => {
     filters: { ...EMPTY_FILTERS },
   });
 
-  const selectedMatchId = searchParams.get('match');
+  const validMatchIds = useMemo(
+    () => new Set(seasonData.matches.map((match) => match.id)),
+    [seasonData.matches],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(
+    validMatchIds,
+    { replaceOnOpen: false },
+  );
+  const requestedMatchId = searchParams.get('match');
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
     [availableSeasons],
@@ -186,12 +195,12 @@ const SchedulePage: React.FC = () => {
   }, [activeSeason.enabledLeagues, activeSeasonId, seasonData.matches, seasonData.teams]);
 
   useEffect(() => {
-    if (selectedMatchId && !seasonData.matches.some((match) => match.id === selectedMatchId)) {
+    if (requestedMatchId && !validMatchIds.has(requestedMatchId)) {
       const next = new URLSearchParams(searchParams);
       next.delete('match');
       setSearchParams(next, { replace: true });
     }
-  }, [searchParams, seasonData.matches, selectedMatchId, setSearchParams]);
+  }, [searchParams, requestedMatchId, setSearchParams, validMatchIds]);
 
   useEffect(() => {
     if (!desktopFiltersOpen) return;
@@ -324,18 +333,6 @@ const SchedulePage: React.FC = () => {
     const nextFilters = { ...EMPTY_FILTERS };
     writeScheduleFilters(activeSeasonId, nextFilters);
     setFilters(nextFilters);
-  };
-
-  const selectMatch = (matchId: string) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('match', matchId);
-    setSearchParams(next, { replace: false });
-  };
-
-  const closeMatch = () => {
-    const next = new URLSearchParams(searchParams);
-    next.delete('match');
-    setSearchParams(next, { replace: true });
   };
 
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;

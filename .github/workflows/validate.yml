@@ -170,6 +170,12 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-home-match-dialog-return.mjs
 
+      - name: Validate shared match dialog return routes
+        if: always()
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-shared-match-dialog-return.mjs
+
       - name: Validate return-state persistence
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league

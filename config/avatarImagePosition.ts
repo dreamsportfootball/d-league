@@ -47,7 +47,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // 只對髮頂受預設垂直置中影響的人物調整；不套用全隊相同倍率或犧牲下巴。
   '/assets/seasons/2026-27/players/ka26-01.': { objectPosition: '50% 30%' }, // #9 劉力瑋：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-29.': { objectPosition: '50% 15%' }, // #6 湯弘君：保留完整髮頂、下巴與五官
-  '/assets/seasons/2026-27/players/ka26-30.': { objectPosition: '50% 15%' }, // #19 吳詠祥：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-30.': { objectPosition: '50% 0%' }, // #19 吳詠祥：保留整個髮頂；Excel 原圖本身模糊，避免放大造成假清晰度
   '/assets/seasons/2026-27/players/ka26-32.': { objectPosition: '50% 25%' }, // #20 陳建宏：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-34.': { objectPosition: '50% 25%' }, // #14 王劭愷：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-35.': { objectPosition: '50% 25%' }, // #12 曾瀚陞：保留完整髮頂、下巴與五官
@@ -56,6 +56,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-39.': { objectPosition: '50% 25%' }, // #17 王文賢：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-40.': { objectPosition: '50% 15%' }, // #8 侯奕賢：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-42.': { objectPosition: '50% 30%' }, // #23 林品華：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-41.': { objectPosition: '50% 0%' }, // #2 林郁任：避免預設置中裁掉髮頂，保留自然頭肩比例
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正

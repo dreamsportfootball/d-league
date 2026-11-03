@@ -25,6 +25,12 @@ const routes = [
   { name: 'stats-2025', path: '/stats?season=2025-26' },
   { name: 'news', path: '/news' },
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
+  { name: 'article-standings-2026', path: '/news/2026-27-match-report-m2627-001' },
+  { name: 'article-standings-2025', path: '/news/match-report-l2-r10-tie-20260429' },
+  { name: 'article-standings-2025-legacy', path: '/news/match-report-m4-20251024' },
+  { name: 'article-standings-2025-summary', path: '/news/match-report-l2-summary-20260415' },
+  { name: 'standings-direct-l2', path: '/standings?season=2026-27&league=L2' },
+  { name: 'article-match-report', path: '/news/2026-27-match-report-m2627-001' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
   { name: 'match-permalink', path: '/matches/m1?season=2025-26' },
@@ -225,6 +231,68 @@ const auditViewport = async (viewport) => {
       if (route.name === 'article-detail') {
         assert('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article');
         assert('article-date-uses-taipei-timezone', diagnostics.bodyText.includes('2026.06.23'), 'Expected 2026.06.23 under UTC browser timezone');
+      }
+
+      if (route.name === 'article-match-report') {
+        const body = page.locator('section[aria-label="文章正文"]');
+        const informationCards = await body.locator('[aria-label="賽事資訊"]').count();
+        const lastGoalParagraph = body.locator('p').filter({ hasText: '第 36 分鐘' });
+        const photoCredit = body.locator('[data-article-photo-credit]');
+
+        assert('match-report-detail-resolves',
+          diagnostics.bodyText.includes('陳公舘八球大勝') &&
+          diagnostics.bodyText.includes('台南長青') &&
+          !diagnostics.bodyText.includes('找不到這篇文章'),
+          'Expected published match report content');
+        assert('match-report-final-score-stays-prose',
+          informationCards === 0 &&
+          await lastGoalParagraph.count() === 1 &&
+          (await lastGoalParagraph.textContent() ?? '').includes('最終以 8-0 收下開季首勝'),
+          'Final goal paragraph with 8-0 must not render as a grey match-info card');
+        assert('match-report-photo-credit-separate',
+          await photoCredit.count() === 1 &&
+          (await photoCredit.textContent() ?? '').trim() === 'Photo credit @b1lly0510' &&
+          !(await lastGoalParagraph.textContent() ?? '').includes('Photo credit'),
+          'Photo credit should appear as a separate, subdued line');
+      }
+
+      if (route.name.startsWith('article-standings-')) {
+        const historical = route.name !== 'article-standings-2026';
+        const table = page.locator('[data-match-report-standings]');
+        const league = route.name === 'article-standings-2026' ||
+          route.name === 'article-standings-2025-legacy' ? 'L1' : 'L2';
+        const season = historical ? '2025-26' : '2026-27';
+        const expectedHeading = historical ? `2025/26 ${league}｜最終積分榜` : `2026/27 ${league}｜最新積分榜`;
+        const rows = table.locator('[data-motion-standings-row^="widget-"]');
+        const fullStandingsLink = table.locator('a[href*="/standings?"]');
+        assert('article-standings-visible', await table.count() === 1,
+          'Match report should show one embedded league table');
+        if (await table.count() === 1) {
+          assert('article-standings-correct-season-and-league',
+            (await table.textContent() ?? '').includes(expectedHeading),
+            `Expected ${expectedHeading}`);
+          assert('article-standings-six-teams',
+            await rows.count() === 6, `Expected 6 team rows, found ${await rows.count()}`);
+          assert('article-standings-deeplink',
+            (await fullStandingsLink.getAttribute('href') ?? '').includes(`/standings?season=${season}&league=${league}`),
+            'Full standings link must preserve the report season and league');
+          const credit = page.locator('section[aria-label="文章正文"] [data-article-photo-credit]');
+          if (!historical) {
+            assert('article-standings-after-photo-credit',
+              await credit.count() === 1 && await credit.evaluate((node) => {
+                const standings = document.querySelector('[data-match-report-standings]');
+                return Boolean(standings && (node.compareDocumentPosition(standings) & Node.DOCUMENT_POSITION_FOLLOWING));
+              }),
+              'League table must follow report text and photographer attribution');
+          }
+        }
+      }
+
+      if (route.name === 'standings-direct-l2') {
+        const expectedSelectedLeague = viewport.width < 768 ? '2026/27 · L2' : '2026/27 · LEAGUE 2';
+        assert('standings-direct-league-query',
+          diagnostics.bodyText.includes(expectedSelectedLeague),
+          `Deep link must show ${expectedSelectedLeague}, not the last viewed league`);
       }
 
       if (route.name === 'team-detail') {

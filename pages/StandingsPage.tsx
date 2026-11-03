@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, BookOpen } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -18,9 +19,12 @@ const StandingsPage: React.FC = () => {
     activeSeason,
     seasonData,
     availableSeasons,
-    setActiveSeason,
   } = useSeason();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedLeague = searchParams.get('league');
   const [activeLeague, setActiveLeague] = useState<LeagueId>(() => {
+    const linkedLeague = activeSeason.enabledLeagues.find((league) => league === requestedLeague);
+    if (linkedLeague) return linkedLeague;
     try {
       const saved = window.sessionStorage.getItem('standingsActiveLeague');
       return activeSeason.enabledLeagues.find((league) => league === saved) ?? activeSeason.enabledLeagues[0];
@@ -45,6 +49,19 @@ const StandingsPage: React.FC = () => {
   const draftSeason = availableSeasons.find((season) => season.id === draftSeasonId) ?? activeSeason;
   const currentSeason = availableSeasons.find((season) => season.id === CURRENT_SEASON_ID) ?? activeSeason;
   const defaultLeague = currentSeason.enabledLeagues[0];
+
+  // Opening a report's "完整積分榜" link should select its league directly.
+  useEffect(() => {
+    const linkedLeague = activeSeason.enabledLeagues.find((league) => league === requestedLeague);
+    if (linkedLeague && linkedLeague !== activeLeague) {
+      setActiveLeague(linkedLeague);
+      try {
+        window.sessionStorage.setItem('standingsActiveLeague', linkedLeague);
+      } catch {
+        // Session storage may be unavailable.
+      }
+    }
+  }, [activeLeague, activeSeason.enabledLeagues, requestedLeague]);
 
   useEffect(() => {
     if (!activeSeason.enabledLeagues.includes(activeLeague)) {
@@ -138,7 +155,10 @@ const StandingsPage: React.FC = () => {
       : nextSeason.enabledLeagues[0];
 
     if (nextLeague !== activeLeague) updateLeague(nextLeague);
-    if (draftSeasonId !== activeSeasonId) setActiveSeason(draftSeasonId);
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('season', draftSeasonId);
+    nextParams.set('league', nextLeague);
+    setSearchParams(nextParams, { replace: true });
     setFiltersOpen(false);
   };
 

@@ -1,10 +1,12 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSeason } from '../hooks/useSeason';
+import { getSeasonConfig } from '../config/seasons';
+import { getSeasonData } from '../services/seasonDataJson';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getTeamIdentity } from '../services/entityData';
 import type { Standing } from '../types';
-import type { LeagueId } from '../types/season';
+import type { LeagueId, SeasonId } from '../types/season';
 import AutoFitText from './AutoFitText';
 import { useRankingMotion } from '../hooks/useRankingMotion';
 
@@ -13,7 +15,7 @@ const FormBadge: React.FC<{ result: 'W' | 'D' | 'L' }> = ({ result }) => {
   return <div className={`mx-0.5 h-2 w-2 rounded-full ${colorClass}`} title={result} />;
 };
 
-interface StandingsProps { league: LeagueId; variant?: 'widget' | 'page'; }
+interface StandingsProps { league: LeagueId; variant?: 'widget' | 'page'; seasonId?: SeasonId; }
 
 const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact = false }) => {
   if (row.tieStatus !== 'DRAW_REQUIRED') return null;
@@ -21,8 +23,12 @@ const TieLabel: React.FC<{ row: Standing; compact?: boolean }> = ({ row, compact
   return <span className={`ml-1 whitespace-nowrap font-bold text-amber-700 ${compact ? 'text-[8px]' : 'text-[9px]'}`}>{label}</span>;
 };
 
-const Standings: React.FC<StandingsProps> = ({ league, variant = 'page' }) => {
-  const { activeSeason, seasonData } = useSeason();
+const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonId }) => {
+  const { activeSeason: contextSeason, seasonData: contextData } = useSeason();
+  // Embedded league tables must belong to the article's season, not the visitor's
+  // last selected season. Keep existing homepage/standings defaults unchanged.
+  const activeSeason = seasonId ? getSeasonConfig(seasonId) : contextSeason;
+  const seasonData = seasonId ? getSeasonData(seasonId) : contextData;
   const standingsContainerRef = useRef<HTMLDivElement>(null);
   const [mobileExpanded, setMobileExpanded] = useState(() => {
     if (variant !== 'page') return false;

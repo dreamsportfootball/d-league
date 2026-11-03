@@ -1,9 +1,11 @@
 import React, { Fragment, useMemo, useState } from 'react';
-import { ExternalLink } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { ArrowRight, ExternalLink } from 'lucide-react';
+import { Link, useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
+import Standings from '../components/Standings';
 import { getSeasonConfig } from '../config/seasons';
-import { assetUrl, getNewsArticle } from '../services/seasonDataJson';
+import { assetUrl, getNewsArticle, getSeasonData } from '../services/seasonDataJson';
+import type { LeagueId } from '../types/season';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
 const CATEGORY_META = {
@@ -37,7 +39,8 @@ type ArticleContentBlock =
   | { type: 'heading'; text: string }
   | { type: 'info'; lines: string[] }
   | { type: 'list'; ordered: boolean; items: string[] }
-  | { type: 'paragraph'; text: string };
+  | { type: 'paragraph'; text: string }
+  | { type: 'credit'; text: string };
 
 type GalleryItem = {
   src: string;
@@ -64,6 +67,10 @@ const parseArticleBlock = (
     return { type: 'label', text: lines[0] };
   }
 
+  if (category === 'Match Report' && /^Photo credit\s+@\S+$/i.test(text)) {
+    return { type: 'credit', text };
+  }
+
   if (lines.length > 0 && lines.every((line) => BULLET_PATTERN.test(line))) {
     return {
       type: 'list',
@@ -80,11 +87,14 @@ const parseArticleBlock = (
     };
   }
 
+  // A score mentioned inside prose (e.g. "最終以 8-0 收下開季首勝")
+  // must never turn an entire paragraph into a highlighted match-info card.
   const looksLikeMatchInfo =
     category === 'Match Report' &&
     lines.length >= 2 &&
     lines.length <= 4 &&
-    (lines[0].startsWith('D LEAGUE｜') || lines.some((line) => /\d+\s*-\s*\d+/.test(line)));
+    lines[0].startsWith('D LEAGUE｜') &&
+    lines.slice(1).some((line) => /^\S.+\s+\d+\s*[-–]\s*\d+\s+\S.+$/.test(line));
 
   if (looksLikeMatchInfo) {
     return { type: 'info', lines };
@@ -203,6 +213,7 @@ const ArticleBody: React.FC<{
 }> = ({ text, category, articleId }) => {
   const blocks = useMemo(() => {
     const parsedBlocks = text
+      .replace(/\n(?=Photo credit\s+@)/gi, '\n\n')
       .split(/\n{2,}/)
       .map((block) => block.trim())
       .filter(Boolean)
@@ -260,6 +271,18 @@ const ArticleBody: React.FC<{
             >
               {renderInlineText(block.text)}
             </h2>
+          );
+        }
+
+        if (block.type === 'credit') {
+          return (
+            <p
+              key={key}
+              data-article-photo-credit
+              className="mt-7 text-xs font-medium leading-relaxed tracking-[0.02em] text-neutral-500 md:text-sm"
+            >
+              {renderInlineText(block.text)}
+            </p>
           );
         }
 
@@ -347,7 +370,24 @@ const ArticleDetailPage: React.FC = () => {
 
   const contentText = article.content || article.summary || '';
   const highlightText = article.highlight || article.summary;
-  const seasonLabel = article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
+  const reportSeason = article.seasonId ? getSeasonConfig(article.seasonId) : null;
+  const seasonLabel = reportSeason?.shortName ?? null;
+  // Prefer the match's confirmed report reference. Older articles may not have
+  // that link, so fall back only when their text explicitly names an L1/L2/L3.
+  const reportLeague: LeagueId | null = (() => {
+    if (article.category !== 'Match Report' || !article.seasonId || !reportSeason) return null;
+    const matches = getSeasonData(article.seasonId).matches;
+    const match = matches.find((item) => item.reportArticleId === article.id);
+    // Earlier seasons did not link their reports directly to match records.
+    // Only use the exact legacy match ID or an explicit league label.
+    const legacyMatchId = article.id.match(/^match-report-(m\d+)-\d{8}$/)?.[1];
+    const legacyMatch = legacyMatchId ? matches.find((item) => item.id === legacyMatchId) : null;
+    const sourceLeague = match?.league ??
+      legacyMatch?.league ??
+      (article.content + '\n' + article.summary).match(/D LEAGUE[｜\s]+(L[123])\b/)?.[1] ??
+      article.title.match(/^(L[123])\b/)?.[1];
+    return reportSeason.enabledLeagues.find((league) => league === sourceLeague) ?? null;
+  })();
   const sponsorGallery: GalleryItem[] | null =
     article.id === '2026-27-chaome-tea-sponsor'
       ? [
@@ -446,6 +486,35 @@ const ArticleDetailPage: React.FC = () => {
                   <SponsorGalleryImage key={item.src} {...item} />
                 ))}
               </div>
+            </section>
+          )}
+
+          {reportLeague && reportSeason && article.seasonId && (
+            <section
+              data-match-report-standings
+              aria-label="戰報最新積分榜"
+              className="mt-12 border-t border-neutral-200 pt-9 md:mt-16 md:pt-11"
+            >
+              <div className="mb-6 flex flex-wrap items-end justify-between gap-x-5 gap-y-3">
+                <div>
+                  <p className="mb-2 font-display text-[11px] font-bold tracking-[0.16em] text-brand-blue">
+                    LEAGUE TABLE
+                  </p>
+                  <h2 className="font-display text-xl font-bold leading-snug text-brand-black md:text-2xl">
+                    {seasonLabel} {reportLeague}｜{reportSeason.status === 'completed' ? '最終積分榜' : '最新積分榜'}
+                  </h2>
+                </div>
+                <Link
+                  to={`/standings?season=${article.seasonId}&league=${reportLeague}`}
+                  className="inline-flex min-h-11 items-center gap-1.5 text-xs font-bold text-brand-blue transition-colors hover:text-brand-black focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+                >
+                  查看完整積分榜 <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+              <Standings league={reportLeague} seasonId={article.seasonId} variant="widget" />
+              <p className="mt-4 text-[11px] leading-relaxed text-neutral-500">
+                {reportSeason.status === 'completed' ? '以該賽季最終賽果計算。' : '依官網目前已公布賽果計算，後續賽果更新時同步調整。'}
+              </p>
             </section>
           )}
         </div>

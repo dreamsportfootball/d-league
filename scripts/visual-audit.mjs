@@ -293,7 +293,7 @@ const auditViewport = async (viewport) => {
           dayCoverSources.every(src => /\/assets\/media\/(?:1019|1102|1116|1207|111|0208|0308|0322|0426)\.(?:webp|jpg)$/.test(src)),
           'All nine match-day cards must preserve the original local cover images: ' + JSON.stringify(dayCoverSources));
         const latestDay = galleryCards.first();
-        assert('historical-latest-photo-day-10', (await latestDay.textContent() ?? '').includes('比賽日 10'),
+        assert('historical-latest-photo-day-10', (await latestDay.getAttribute('aria-label') ?? '').includes('比賽日 10'),
           '2026/04/26 must remain day 10, not day 9');
         await latestDay.click();
         const albumDialog = page.locator('dialog[aria-labelledby="match-day-albums-title"]');

@@ -37,7 +37,8 @@ type ArticleContentBlock =
   | { type: 'heading'; text: string }
   | { type: 'info'; lines: string[] }
   | { type: 'list'; ordered: boolean; items: string[] }
-  | { type: 'paragraph'; text: string };
+  | { type: 'paragraph'; text: string }
+  | { type: 'credit'; text: string };
 
 type GalleryItem = {
   src: string;
@@ -64,6 +65,10 @@ const parseArticleBlock = (
     return { type: 'label', text: lines[0] };
   }
 
+  if (category === 'Match Report' && /^Photo credit\s+@\S+$/i.test(text)) {
+    return { type: 'credit', text };
+  }
+
   if (lines.length > 0 && lines.every((line) => BULLET_PATTERN.test(line))) {
     return {
       type: 'list',
@@ -80,11 +85,14 @@ const parseArticleBlock = (
     };
   }
 
+  // A score mentioned inside prose (e.g. "最終以 8-0 收下開季首勝")
+  // must never turn an entire paragraph into a highlighted match-info card.
   const looksLikeMatchInfo =
     category === 'Match Report' &&
     lines.length >= 2 &&
     lines.length <= 4 &&
-    (lines[0].startsWith('D LEAGUE｜') || lines.some((line) => /\d+\s*-\s*\d+/.test(line)));
+    lines[0].startsWith('D LEAGUE｜') &&
+    lines.slice(1).some((line) => /^\S.+\s+\d+\s*[-–]\s*\d+\s+\S.+$/.test(line));
 
   if (looksLikeMatchInfo) {
     return { type: 'info', lines };
@@ -203,6 +211,7 @@ const ArticleBody: React.FC<{
 }> = ({ text, category, articleId }) => {
   const blocks = useMemo(() => {
     const parsedBlocks = text
+      .replace(/\n(?=Photo credit\s+@)/gi, '\n\n')
       .split(/\n{2,}/)
       .map((block) => block.trim())
       .filter(Boolean)
@@ -260,6 +269,18 @@ const ArticleBody: React.FC<{
             >
               {renderInlineText(block.text)}
             </h2>
+          );
+        }
+
+        if (block.type === 'credit') {
+          return (
+            <p
+              key={key}
+              data-article-photo-credit
+              className="mt-7 text-xs font-medium leading-relaxed tracking-[0.02em] text-neutral-500 md:text-sm"
+            >
+              {renderInlineText(block.text)}
+            </p>
           );
         }
 

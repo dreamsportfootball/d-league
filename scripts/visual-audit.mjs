@@ -286,9 +286,10 @@ const auditViewport = async (viewport) => {
       }
 
       if (route.name === 'standings-direct-l2') {
+        const expectedSelectedLeague = viewport.width < 768 ? '2026/27 · L2' : '2026/27 · LEAGUE 2';
         assert('standings-direct-league-query',
-          diagnostics.bodyText.includes('2026/27 · L2') && diagnostics.bodyText.includes('LEAGUE 2'),
-          'Deep link must open the selected league, not the last viewed league');
+          diagnostics.bodyText.includes(expectedSelectedLeague),
+          `Deep link must show ${expectedSelectedLeague}, not the last viewed league`);
       }
 
       if (route.name === 'team-detail') {

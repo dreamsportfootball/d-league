@@ -98,23 +98,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
 
     const html = document.documentElement;
     const body = document.body;
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-    const previousBody = {
-      position: body.style.position,
-      top: body.style.top,
-      left: body.style.left,
-      width: body.style.width,
-      overflow: body.style.overflow,
-    };
+    const previousBodyOverflow = body.style.overflow;
     const previousHtmlOverflow = html.style.overflow;
-
-    // Lock the actual page position, including iOS Safari where
-    // overflow:hidden alone can still allow the background to move.
-    body.style.position = 'fixed';
-    body.style.top = `-${scrollY}px`;
-    body.style.left = `-${scrollX}px`;
-    body.style.width = '100%';
     body.style.overflow = 'hidden';
     html.style.overflow = 'hidden';
 
@@ -149,13 +134,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
-      body.style.position = previousBody.position;
-      body.style.top = previousBody.top;
-      body.style.left = previousBody.left;
-      body.style.width = previousBody.width;
-      body.style.overflow = previousBody.overflow;
+      body.style.overflow = previousBodyOverflow;
       html.style.overflow = previousHtmlOverflow;
-      window.scrollTo(scrollX, scrollY);
     };
   }, [isMatchOpen]);
   useEffect(() => {

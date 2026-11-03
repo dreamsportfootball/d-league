@@ -25,6 +25,7 @@ const routes = [
   { name: 'stats-2025', path: '/stats?season=2025-26' },
   { name: 'news', path: '/news' },
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
+  { name: 'article-match-report', path: '/news/2026-27-match-report-m2627-001' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
   { name: 'player-detail', path: '/players/cy-01?season=2025-26' },
   { name: 'match-permalink', path: '/matches/m1?season=2025-26' },
@@ -225,6 +226,29 @@ const auditViewport = async (viewport) => {
       if (route.name === 'article-detail') {
         assert('article-detail-resolves', diagnostics.bodyText.includes('D LEAGUE 2026/27 正式開放報名') && !diagnostics.bodyText.includes('文章不存在'), 'Expected registration article');
         assert('article-date-uses-taipei-timezone', diagnostics.bodyText.includes('2026.06.23'), 'Expected 2026.06.23 under UTC browser timezone');
+      }
+
+      if (route.name === 'article-match-report') {
+        const body = page.locator('section[aria-label="文章正文"]');
+        const informationCards = await body.locator('[aria-label="賽事資訊"]').count();
+        const lastGoalParagraph = body.locator('p').filter({ hasText: '第 36 分鐘' });
+        const photoCredit = body.locator('[data-article-photo-credit]');
+
+        assert('match-report-detail-resolves',
+          diagnostics.bodyText.includes('陳公舘八球大勝') &&
+          diagnostics.bodyText.includes('台南長青') &&
+          !diagnostics.bodyText.includes('找不到這篇文章'),
+          'Expected published match report content');
+        assert('match-report-final-score-stays-prose',
+          informationCards === 0 &&
+          await lastGoalParagraph.count() === 1 &&
+          (await lastGoalParagraph.textContent() ?? '').includes('最終以 8-0 收下開季首勝'),
+          'Final goal paragraph with 8-0 must not render as a grey match-info card');
+        assert('match-report-photo-credit-separate',
+          await photoCredit.count() === 1 &&
+          (await photoCredit.textContent() ?? '').trim() === 'Photo credit @b1lly0510' &&
+          !(await lastGoalParagraph.textContent() ?? '').includes('Photo credit'),
+          'Photo credit should appear as a separate, subdued line');
       }
 
       if (route.name === 'team-detail') {

@@ -89,45 +89,55 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
 
   const isMatchOpen = match !== null;
 
-  // Lock the document (including iOS touch scrolling) for the entire lifetime of
-  // this dialog. Do not re-lock when browsing previous/next matches: doing so
-  // would capture scrollY=0 and lose the original page position.
+  // Prevent scroll chaining behind the match dialog without changing the
+  // document's scroll position (schedule uses it for match URL navigation).
+  // Safari needs an explicit non-passive touchmove guard in addition to
+  // overflow:hidden; touches inside the dialog's scroll region stay usable.
   useLayoutEffect(() => {
     if (!isMatchOpen) return;
 
     const html = document.documentElement;
     const body = document.body;
-    const savedScrollX = window.scrollX;
-    const savedScrollY = window.scrollY;
-    const previous = {
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyWidth: body.style.width,
-      bodyOverflow: body.style.overflow,
-      htmlOverflow: html.style.overflow,
-    };
-
-    body.style.position = 'fixed';
-    body.style.top = `-${savedScrollY}px`;
-    body.style.width = '100%';
+    const previousBodyOverflow = body.style.overflow;
+    const previousHtmlOverflow = html.style.overflow;
     body.style.overflow = 'hidden';
     html.style.overflow = 'hidden';
 
-    return () => {
-      body.style.position = previous.bodyPosition;
-      body.style.top = previous.bodyTop;
-      body.style.width = previous.bodyWidth;
-      body.style.overflow = previous.bodyOverflow;
-      html.style.overflow = previous.htmlOverflow;
+    let lastTouchY = 0;
+    const handleTouchStart = (event: TouchEvent) => {
+      lastTouchY = event.touches[0]?.clientY ?? 0;
+    };
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      const scrollable = event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-match-dialog-scroller]')
+        : null;
 
-      // An app-level smooth-scroll rule must not animate background restoration.
-      const previousBehavior = html.style.scrollBehavior;
-      html.style.scrollBehavior = 'auto';
-      window.scrollTo(savedScrollX, savedScrollY);
-      html.style.scrollBehavior = previousBehavior;
+      if (!touch || !scrollable || !dialogRef.current?.contains(scrollable)) {
+        event.preventDefault();
+        return;
+      }
+
+      const deltaY = lastTouchY - touch.clientY;
+      lastTouchY = touch.clientY;
+      const atTop = scrollable.scrollTop <= 0;
+      const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1;
+      if (scrollable.scrollHeight <= scrollable.clientHeight ||
+          (deltaY < 0 && atTop) ||
+          (deltaY > 0 && atBottom)) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      body.style.overflow = previousBodyOverflow;
+      html.style.overflow = previousHtmlOverflow;
     };
   }, [isMatchOpen]);
-
   useEffect(() => {
     if (!match) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
@@ -298,6 +308,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
       <button
         type="button"
         aria-label="關閉比賽詳情"
+        data-match-dialog-backdrop
         className="absolute inset-0 bg-black/60 backdrop-blur-[3px]"
         onClick={onClose}
       />
@@ -417,7 +428,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
+        <div data-match-dialog-scroller className="flex-1 overflow-y-auto overscroll-contain bg-white">
           <section className="border-b border-neutral-100 px-5 pb-8 pt-2 sm:px-12 sm:pb-10 sm:pt-3">
             <div className="flex items-center justify-center gap-4" aria-hidden="true">
               <span className="h-px w-9 bg-neutral-200 sm:w-12" />

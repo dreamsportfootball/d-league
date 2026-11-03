@@ -161,20 +161,29 @@ for (const viewport of viewports) {
       await page.waitForTimeout(320);
 
       const openLock = await readDocumentLock(page);
-      const openDelta = assertDelta(viewport.name, testCase.name, 'open-body-offset', -openLock.bodyTop, before.scrollY);
-      assertDelta(viewport.name, testCase.name, 'open-window-scroll-locked', openLock.scrollY, 0);
-      if (openLock.bodyPosition !== 'fixed' || openLock.bodyWidth !== '100%' ||
+      const openDelta = assertDelta(viewport.name, testCase.name, 'open-scroll', openLock.scrollY, before.scrollY);
+      if (openLock.bodyPosition !== beforeStyles.bodyPosition ||
           openLock.bodyOverflow !== 'hidden' || openLock.htmlOverflow !== 'hidden') {
         failures.push(`${viewport.name} / ${testCase.name} / open-lock-styles: ${JSON.stringify(openLock)}`);
       }
 
-      // Attempts to scroll behind the modal must not move the document.
+      // Wheel and touch gestures on the backdrop must not reach the page.
       await page.mouse.move(0, 0);
       await page.mouse.wheel(0, 500);
       await page.waitForTimeout(80);
       const attemptedBackgroundScroll = await readDocumentLock(page);
-      assertDelta(viewport.name, testCase.name, 'background-wheel-lock', attemptedBackgroundScroll.scrollY, 0);
-      assertDelta(viewport.name, testCase.name, 'background-body-offset', attemptedBackgroundScroll.bodyTop, openLock.bodyTop);
+      assertDelta(viewport.name, testCase.name, 'background-wheel-lock', attemptedBackgroundScroll.scrollY, before.scrollY);
+      const touchBlocked = await page.evaluate(() => {
+        const backdrop = document.querySelector('[data-match-dialog-backdrop]');
+        if (!backdrop) return false;
+        const touch = new Touch({ identifier: 1, target: backdrop, clientX: 0, clientY: 0 });
+        const move = new TouchEvent('touchmove', {
+          bubbles: true, cancelable: true, touches: [touch], changedTouches: [touch],
+        });
+        backdrop.dispatchEvent(move);
+        return move.defaultPrevented;
+      });
+      if (!touchBlocked) failures.push(`${viewport.name} / ${testCase.name} / background-touch-not-blocked`);
 
       if (testCase.expectsMatchQuery && !new URL(page.url()).hash.includes('match=')) {
         failures.push(`${viewport.name} / ${testCase.name} / open-url: expected match query in ${page.url()}`);
@@ -190,9 +199,8 @@ for (const viewport of viewports) {
         await navigationButton.click();
         await page.waitForTimeout(220);
         const switchedLock = await readDocumentLock(page);
-        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-body-offset', switchedLock.bodyTop, openLock.bodyTop);
-        assertDelta(viewport.name, testCase.name, 'switch-match-window-scroll', switchedLock.scrollY, 0);
-        if (switchedLock.bodyPosition !== 'fixed' ||
+        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-scroll', switchedLock.scrollY, before.scrollY);
+        if (switchedLock.bodyPosition !== beforeStyles.bodyPosition ||
             switchedLock.bodyOverflow !== 'hidden' || switchedLock.htmlOverflow !== 'hidden') {
           failures.push(`${viewport.name} / ${testCase.name} / switch-lock-styles: ${JSON.stringify(switchedLock)}`);
         }

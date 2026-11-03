@@ -130,6 +130,20 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-07.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.55)' }, // #17 高義莉：減少過度放大、讓臉部居中
   '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(35%) scale(2)' }, // 站立半身照
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
+  // 屏東野猿：依原始 Excel xl/media 與 48/104/160px 實圖逐張檢查。
+  // 只修髮頂遭預設置中裁切的照片；#2 比賽截圖特殊裁切及 #88 已確認設定保留。
+  '/assets/seasons/2026-27/players/pwa26-02.': { objectPosition: '50% 0%' }, // #44 連哲緯：證件照髮頂接近原始上緣，不再垂直置中截斷
+  '/assets/seasons/2026-27/players/pwa26-05.': { objectPosition: '50% 0%' }, // #7 林彥文：證件照優先保留上方髮型；原圖本身帶證件紋路
+  '/assets/seasons/2026-27/players/pwa26-06.': { objectPosition: '50% 0%' }, // #9 戴威閎：完整保留上方捲髮及五官
+  '/assets/seasons/2026-27/players/pwa26-07.': { objectPosition: '50% 30%' }, // #3 黃浩程：直式生活照上移至自然頭肩比例
+  '/assets/seasons/2026-27/players/pwa26-08.': { objectPosition: '50% 0%' }, // #50 吳明興：證件照髮頂完整納入圓框
+  '/assets/seasons/2026-27/players/pwa26-09.': { objectPosition: '50% 0%' }, // #8 簡法亦：保留髮頂並同步隊職員領隊頭像
+  '/assets/seasons/2026-27/players/pwa26-11.': { objectPosition: '50% 10%' }, // #43 陳奕盛：證件照保留上方髮型並維持下巴空間
+  '/assets/seasons/2026-27/players/pwa26-14.': { objectPosition: '50% 0%' }, // #13 張富勝：證件照保留直立髮型
+  '/assets/seasons/2026-27/players/pwa26-15.': { objectPosition: '50% 0%' }, // #17 簡罡正：完整保留軍服照上方髮型
+  '/assets/seasons/2026-27/players/pwa26-16.': { objectPosition: '50% 0%' }, // #16 吳明遠：證件照保留髮頂及臉部
+  '/assets/seasons/2026-27/players/pwa26-17.': { objectPosition: '50% 20%' }, // #5 陳柏諧：原圖長身照調整至頭肩、完整頭髮與下巴
+  '/assets/seasons/2026-27/players/pwa26-19.': { objectPosition: '50% 0%' }, // #40 黃震浩：保留髮頂並同步隊職員教練頭像
   '/assets/seasons/2026-27/players/pwa26-04.': { transform: 'translateY(18%) scale(1.45)' }, // 比賽照
   '/assets/seasons/2026-27/players/pwa26-18.': { objectPosition: '50% 0%' }, // 屏東野猿 蔡振偉：上移裁切以保留頭頂與髮型
   // 台南長青第二輪嚴格髮頂驗收：以 #21 吳進偉（本隊）及 KUROMI #16（全站）作參考。

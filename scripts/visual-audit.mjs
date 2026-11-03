@@ -271,8 +271,15 @@ const auditViewport = async (viewport) => {
           assert('article-standings-correct-season-and-league',
             (await table.textContent() ?? '').includes(expectedHeading),
             `Expected ${expectedHeading}`);
-          assert('article-standings-six-teams',
-            await rows.count() === 6, `Expected 6 team rows, found ${await rows.count()}`);
+          // Team counts vary by season and league (e.g. 2025/26 L1 had four teams).
+          // Assert against published season data rather than a fixed six-team format.
+          const seasonTeams = JSON.parse(
+            await fs.readFile(path.join('data', 'seasons', season, 'teams.json'), 'utf8'),
+          );
+          const expectedTeamCount = seasonTeams.filter((team) => team.leagueId === league).length;
+          assert('article-standings-team-count',
+            await rows.count() === expectedTeamCount,
+            `Expected ${expectedTeamCount} team rows, found ${await rows.count()}`);
           assert('article-standings-deeplink',
             (await fullStandingsLink.getAttribute('href') ?? '').includes(`/standings?season=${season}&league=${league}`),
             'Full standings link must preserve the report season and league');

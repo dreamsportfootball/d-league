@@ -118,6 +118,8 @@ const readDocumentLock = (page) => page.evaluate(() => ({
   bodyWidth: document.body.style.width,
   bodyOverflow: document.body.style.overflow,
   htmlOverflow: document.documentElement.style.overflow,
+  htmlScrollbarGutter: document.documentElement.style.scrollbarGutter,
+  rootWidth: document.getElementById('root')?.getBoundingClientRect().width ?? 0,
 }));
 
 const assertDelta = (viewportName, caseName, phase, actual, expected) => {
@@ -162,6 +164,7 @@ for (const viewport of viewports) {
 
       const openLock = await readDocumentLock(page);
       const openDelta = assertDelta(viewport.name, testCase.name, 'open-scroll', openLock.scrollY, before.scrollY);
+      assertDelta(viewport.name, testCase.name, 'open-background-width', openLock.rootWidth, beforeStyles.rootWidth);
       if (openLock.bodyPosition !== beforeStyles.bodyPosition ||
           openLock.bodyOverflow !== 'hidden' || openLock.htmlOverflow !== 'hidden') {
         failures.push(`${viewport.name} / ${testCase.name} / open-lock-styles: ${JSON.stringify(openLock)}`);
@@ -200,6 +203,7 @@ for (const viewport of viewports) {
         await page.waitForTimeout(220);
         const switchedLock = await readDocumentLock(page);
         switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-scroll', switchedLock.scrollY, before.scrollY);
+        assertDelta(viewport.name, testCase.name, 'switch-background-width', switchedLock.rootWidth, beforeStyles.rootWidth);
         if (switchedLock.bodyPosition !== beforeStyles.bodyPosition ||
             switchedLock.bodyOverflow !== 'hidden' || switchedLock.htmlOverflow !== 'hidden') {
           failures.push(`${viewport.name} / ${testCase.name} / switch-lock-styles: ${JSON.stringify(switchedLock)}`);
@@ -217,8 +221,9 @@ for (const viewport of viewports) {
       const after = await readPosition(page, originalButton);
       const afterStyles = await readDocumentLock(page);
       const closeDelta = assertDelta(viewport.name, testCase.name, 'close-scroll', after.scrollY, before.scrollY);
+      assertDelta(viewport.name, testCase.name, 'close-background-width', afterStyles.rootWidth, beforeStyles.rootWidth);
       const cardDelta = assertDelta(viewport.name, testCase.name, 'close-card-position', after.top, before.top);
-      for (const styleKey of ['bodyPosition', 'bodyWidth', 'bodyOverflow', 'htmlOverflow']) {
+      for (const styleKey of ['bodyPosition', 'bodyWidth', 'bodyOverflow', 'htmlOverflow', 'htmlScrollbarGutter']) {
         if (afterStyles[styleKey] !== beforeStyles[styleKey]) {
           failures.push(`${viewport.name} / ${testCase.name} / close-restores-${styleKey}: ${afterStyles[styleKey]} (was ${beforeStyles[styleKey]})`);
         }

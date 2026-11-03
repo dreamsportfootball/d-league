@@ -22,6 +22,7 @@ import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { useActionFeedback } from '../hooks/useActionFeedback';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
 import ActionFeedbackLabel from './ActionFeedbackLabel';
@@ -34,6 +35,7 @@ interface MatchDialogProps {
   matchId: string | null;
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
+  navigationMatchIds?: readonly string[];
 }
 
 const copyText = async (value: string): Promise<void> => {
@@ -57,6 +59,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   matchId,
   onClose,
   onSelectMatch,
+  navigationMatchIds,
 }) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -70,14 +73,16 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     [matchId, seasonData.matches],
   );
 
-  // Previous/next follows every match in the active season, independently of
-  // the page's league, matchday, or team filters.
-  const chronologicalMatches = useMemo(
-    () => [...seasonData.matches].sort((a, b) =>
-      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-      || a.id.localeCompare(b.id)),
-    [seasonData.matches],
-  );
+  // Keep previous/next within the caller's explicit match set when supplied.
+  // Homepage and schedule default to the entire active season.
+  const chronologicalMatches = useMemo(() => {
+    const allowedIds = navigationMatchIds ? new Set(navigationMatchIds) : null;
+    return seasonData.matches
+      .filter((item) => !allowedIds || allowedIds.has(item.id))
+      .sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        || a.id.localeCompare(b.id));
+  }, [navigationMatchIds, seasonData.matches]);
 
   const currentIndex = match
     ? chronologicalMatches.findIndex((item) => item.id === match.id)
@@ -88,6 +93,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     : null;
 
   const isMatchOpen = match !== null;
+  useModalScrollLock(isMatchOpen);
 
   // Prevent scroll chaining behind the match dialog without changing the
   // document's scroll position (schedule uses it for match URL navigation).
@@ -95,13 +101,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   // overflow:hidden; touches inside the dialog's scroll region stay usable.
   useLayoutEffect(() => {
     if (!isMatchOpen) return;
-
-    const html = document.documentElement;
-    const body = document.body;
-    const previousBodyOverflow = body.style.overflow;
-    const previousHtmlOverflow = html.style.overflow;
-    body.style.overflow = 'hidden';
-    html.style.overflow = 'hidden';
 
     let lastTouchY = 0;
     const handleTouchStart = (event: TouchEvent) => {
@@ -134,8 +133,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
-      body.style.overflow = previousBodyOverflow;
-      html.style.overflow = previousHtmlOverflow;
     };
   }, [isMatchOpen]);
   useEffect(() => {
@@ -295,7 +292,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return (
       <Link
         to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
-        onClick={onClose}
         className="group flex min-w-0 flex-col items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
       >
         {content}
@@ -547,7 +543,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               <div className="grid gap-3 sm:grid-cols-3">
                 <Link
                   to={`/news/${report.id}?season=${activeSeason.id}`}
-                  onClick={onClose}
                   className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
                 >
                   <span className="flex items-center"><Newspaper className="mr-2 h-4 w-4" />賽事戰報</span>

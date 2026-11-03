@@ -4,6 +4,7 @@ import { CalendarDays, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getMatchTeamKitVariant } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -136,7 +137,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
 
 const MatchCenter: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const validMatchIds = useMemo(
+    () => new Set(seasonData.matches.map((match) => match.id)),
+    [seasonData.matches],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const todayKey = formatTaipeiDateKey(new Date());
   const scheduledMatches = useMemo(
@@ -289,7 +294,7 @@ const MatchCenter: React.FC = () => {
                     key={match.id}
                     match={match}
                     teamMap={seasonData.teamMap}
-                    onOpenMatch={setSelectedMatchId}
+                    onOpenMatch={selectMatch}
                   />
                 ))
               ) : (
@@ -326,8 +331,8 @@ const MatchCenter: React.FC = () => {
       {selectedMatchId && typeof document !== 'undefined' && createPortal(
         <MatchDialog
           matchId={selectedMatchId}
-          onClose={() => setSelectedMatchId(null)}
-          onSelectMatch={setSelectedMatchId}
+          onClose={closeMatch}
+          onSelectMatch={selectMatch}
         />,
         document.body,
       )}

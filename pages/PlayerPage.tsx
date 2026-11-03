@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { CalendarDays, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
@@ -9,6 +9,7 @@ import PortraitPhoto from '../components/PortraitPhoto';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import {
   getMatchEventPlayerTeamId,
   getPlayerHistory,
@@ -138,11 +139,17 @@ const PlayerPage: React.FC = () => {
   const setEventSeason = (season: EventSeasonFilter) => {
     setEventSeasonByPlayer({ key: eventSeasonStateKey, season });
   };
-  const [selectedMatch, setSelectedMatch] = useState<SelectedMatchState | null>(null);
-
-  useEffect(() => {
-    setSelectedMatch(null);
-  }, [id]);
+  const validMatchIds = useMemo(
+    () => new Set(history.flatMap((record) => record.data.matches.map((match) => match.id))),
+    [history],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
+  const selectedMatch = useMemo<SelectedMatchState | null>(() => {
+    if (!selectedMatchId) return null;
+    const record = history.find((item) =>
+      item.data.matches.some((match) => match.id === selectedMatchId));
+    return record ? { matchId: selectedMatchId, seasonId: record.seasonId } : null;
+  }, [history, selectedMatchId]);
 
   const filteredMatchRecords = useMemo(
     () =>
@@ -497,7 +504,7 @@ const PlayerPage: React.FC = () => {
                     <button
                       key={`${record.seasonId}-${record.match.id}`}
                       type="button"
-                      onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                      onClick={() => selectMatch(record.match.id)}
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
                       className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
@@ -565,7 +572,7 @@ const PlayerPage: React.FC = () => {
                       <button
                         key={`${record.seasonId}-${record.match.id}`}
                         type="button"
-                        onClick={() => setSelectedMatch({ matchId: record.match.id, seasonId: record.seasonId })}
+                        onClick={() => selectMatch(record.match.id)}
                         data-analytics-event="match_open"
                         data-analytics-label={record.match.id}
                         className="grid w-full grid-cols-[120px_minmax(250px,1fr)_72px_72px_72px] items-center border-b border-neutral-100 py-4 text-left transition-colors hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
@@ -597,10 +604,8 @@ const PlayerPage: React.FC = () => {
         <SeasonContext.Provider value={dialogSeasonContext}>
           <MatchDialog
             matchId={selectedMatch.matchId}
-            onClose={() => setSelectedMatch(null)}
-            onSelectMatch={(matchId) =>
-              setSelectedMatch((current) => (current ? { ...current, matchId } : current))
-            }
+            onClose={closeMatch}
+            onSelectMatch={selectMatch}
             navigationMatchIds={dialogNavigationMatchIds}
           />
         </SeasonContext.Provider>

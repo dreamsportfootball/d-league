@@ -28,6 +28,7 @@ import {
   getCupTeamPlacementLabel,
 } from '../cupData';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
 import { getLatestPlayerImageUrl } from '../services/seasonDataJson';
@@ -323,10 +324,16 @@ const TeamPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const { availableSeasons } = useSeason();
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
   const [failedTeamLogo, setFailedTeamLogo] = useState<string | null>(null);
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getTeamHistory(id), [id]);
+  const validMatchIds = useMemo(() => {
+    const record = (isSeasonId(requestedSeason)
+      ? history.find((item) => item.seasonId === requestedSeason)
+      : undefined) ?? history[0];
+    return new Set(record?.data.matches.map((match) => match.id) ?? []);
+  }, [history, requestedSeason]);
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
 
   if (history.length === 0) {
     return (
@@ -560,7 +567,7 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-500">共 {teamMatches.length} 場</span></div>
-          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={setSelectedMatchId} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
+          {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={selectMatch} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 
         {team.staff && team.staff.length > 0 && (
@@ -643,8 +650,8 @@ const TeamPage: React.FC = () => {
         <SeasonContext.Provider value={dialogSeasonContext}>
           <MatchDialog
             matchId={selectedMatchId}
-            onClose={() => setSelectedMatchId(null)}
-            onSelectMatch={setSelectedMatchId}
+            onClose={closeMatch}
+            onSelectMatch={selectMatch}
             navigationMatchIds={teamMatches.map((match) => match.id)}
           />
         </SeasonContext.Provider>

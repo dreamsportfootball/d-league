@@ -25,6 +25,7 @@ jobs:
           - { team: t_chen_2026, prefix: next-chen }
           - { team: t_tainan_evergreen_2026, prefix: next-tainan-evergreen }
           - { team: t_black_wolf_2026, prefix: next-black-wolf }
+          - { team: t_kaohsiung_black_knights_2026, prefix: next-kaohsiung-black-knights }
     steps:
       - uses: actions/checkout@v4
         with:

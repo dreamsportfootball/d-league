@@ -1,0 +1,1510 @@
+{
+  "generatedAt": "2026-11-03T08:56:01.584Z",
+  "team": "高雄黑騎士足球隊",
+  "teamId": "t_kaohsiung_black_knights_2026",
+  "season": "2026-27",
+  "playerCount": 13,
+  "staffRecords": 3,
+  "distinctStaff": 3,
+  "viewports": [
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-01",
+      "name": "Joel Vega",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "Joel Vega",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-02",
+      "name": "王家偉",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "王家偉",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-03",
+      "name": "MICHAEL LENIHAN",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "MICHAEL LENIHAN",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-04",
+      "name": "PATRICK HAINES",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-04.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(3, 0, 0, 3, 14.4, 43.2)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "PATRICK HAINES 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-04.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(3, 0, 0, 3, 31.2, 93.6)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "PATRICK HAINES",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-05",
+      "name": "CHARLES NWANGI",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-05.webp",
+        "naturalWidth": 302,
+        "naturalHeight": 384,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "CHARLES NWANGI 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-05.webp",
+        "naturalWidth": 302,
+        "naturalHeight": 384,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "CHARLES NWANGI",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-06",
+      "name": "LIKHWA",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-06.webp",
+        "naturalWidth": 228,
+        "naturalHeight": 227,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "LIKHWA 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-06.webp",
+        "naturalWidth": 228,
+        "naturalHeight": 227,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "LIKHWA",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-07",
+      "name": "ALI",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-07.webp",
+        "naturalWidth": 434,
+        "naturalHeight": 768,
+        "objectFit": "cover",
+        "objectPosition": "50% 35%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "ALI 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-07.webp",
+        "naturalWidth": 434,
+        "naturalHeight": 768,
+        "objectFit": "cover",
+        "objectPosition": "50% 35%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "ALI",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-08",
+      "name": "LUCAS ROA",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-08.webp",
+        "naturalWidth": 551,
+        "naturalHeight": 697,
+        "objectFit": "cover",
+        "objectPosition": "50% 10%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "LUCAS ROA 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-08.webp",
+        "naturalWidth": 551,
+        "naturalHeight": 697,
+        "objectFit": "cover",
+        "objectPosition": "50% 10%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "LUCAS ROA",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-13",
+      "name": "DOUGLAS",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-13.webp",
+        "naturalWidth": 351,
+        "naturalHeight": 467,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "DOUGLAS 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-13.webp",
+        "naturalWidth": 351,
+        "naturalHeight": 467,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "DOUGLAS",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-09",
+      "name": "連于翔",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-09.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 1386,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(2.8, 0, 0, 2.8, 28.8, 11.52)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "連于翔 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-09.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 1386,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(2.8, 0, 0, 2.8, 62.4, 24.96)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "連于翔",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-10",
+      "name": "黃衍普",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-10.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "黃衍普 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-10.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "黃衍普",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-11",
+      "name": "DICKSON",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-11.webp",
+        "naturalWidth": 163,
+        "naturalHeight": 279,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "matrix(1.2, 0, 0, 1.2, 0, 0)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "DICKSON 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-11.webp",
+        "naturalWidth": 163,
+        "naturalHeight": 279,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "matrix(1.2, 0, 0, 1.2, 0, 0)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "DICKSON",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "player",
+      "id": "kbk26-12",
+      "name": "姜斌",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-12.webp",
+        "naturalWidth": 528,
+        "naturalHeight": 547,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(1.85, 0, 0, 1.85, 9.12, 18.24)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "姜斌 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-12.webp",
+        "naturalWidth": 528,
+        "naturalHeight": 547,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(1.85, 0, 0, 1.85, 19.76, 39.52)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "姜斌",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "mobile-390",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-01",
+      "name": "Joel Vega",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    },
+    {
+      "view": "mobile-390",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-02",
+      "name": "王家偉",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    },
+    {
+      "view": "mobile-390",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-03",
+      "name": "MICHAEL LENIHAN",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 104,
+        "height": 104,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-01",
+      "name": "Joel Vega",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "Joel Vega",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-02",
+      "name": "王家偉",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "王家偉",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-03",
+      "name": "MICHAEL LENIHAN",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "MICHAEL LENIHAN",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-04",
+      "name": "PATRICK HAINES",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-04.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(3, 0, 0, 3, 14.4, 43.2)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "PATRICK HAINES 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-04.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(3, 0, 0, 3, 48, 144)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "PATRICK HAINES",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-05",
+      "name": "CHARLES NWANGI",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-05.webp",
+        "naturalWidth": 302,
+        "naturalHeight": 384,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "CHARLES NWANGI 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-05.webp",
+        "naturalWidth": 302,
+        "naturalHeight": 384,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "CHARLES NWANGI",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-06",
+      "name": "LIKHWA",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-06.webp",
+        "naturalWidth": 228,
+        "naturalHeight": 227,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "LIKHWA 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-06.webp",
+        "naturalWidth": 228,
+        "naturalHeight": 227,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "LIKHWA",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-07",
+      "name": "ALI",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-07.webp",
+        "naturalWidth": 434,
+        "naturalHeight": 768,
+        "objectFit": "cover",
+        "objectPosition": "50% 35%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "ALI 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-07.webp",
+        "naturalWidth": 434,
+        "naturalHeight": 768,
+        "objectFit": "cover",
+        "objectPosition": "50% 35%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "ALI",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-08",
+      "name": "LUCAS ROA",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-08.webp",
+        "naturalWidth": 551,
+        "naturalHeight": 697,
+        "objectFit": "cover",
+        "objectPosition": "50% 10%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "LUCAS ROA 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-08.webp",
+        "naturalWidth": 551,
+        "naturalHeight": 697,
+        "objectFit": "cover",
+        "objectPosition": "50% 10%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "LUCAS ROA",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-13",
+      "name": "DOUGLAS",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-13.webp",
+        "naturalWidth": 351,
+        "naturalHeight": 467,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "DOUGLAS 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-13.webp",
+        "naturalWidth": 351,
+        "naturalHeight": 467,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "DOUGLAS",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-09",
+      "name": "連于翔",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-09.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 1386,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(2.8, 0, 0, 2.8, 28.8, 11.52)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "連于翔 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-09.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 1386,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(2.8, 0, 0, 2.8, 96, 38.4)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "連于翔",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-10",
+      "name": "黃衍普",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-10.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "黃衍普 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-10.webp",
+        "naturalWidth": 640,
+        "naturalHeight": 853,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "黃衍普",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-11",
+      "name": "DICKSON",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-11.webp",
+        "naturalWidth": 163,
+        "naturalHeight": 279,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "matrix(1.2, 0, 0, 1.2, 0, 0)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "DICKSON 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-11.webp",
+        "naturalWidth": 163,
+        "naturalHeight": 279,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "matrix(1.2, 0, 0, 1.2, 0, 0)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "DICKSON",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "player",
+      "id": "kbk26-12",
+      "name": "姜斌",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-12.webp",
+        "naturalWidth": 528,
+        "naturalHeight": 547,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(1.85, 0, 0, 1.85, 9.12, 18.24)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "姜斌 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-12.webp",
+        "naturalWidth": 528,
+        "naturalHeight": 547,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "matrix(1.85, 0, 0, 1.85, 30.4, 60.8)",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "姜斌",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "overflow": false
+    },
+    {
+      "view": "desktop-1280",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-01",
+      "name": "Joel Vega",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-01.webp",
+        "naturalWidth": 366,
+        "naturalHeight": 451,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "Joel Vega 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    },
+    {
+      "view": "desktop-1280",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-02",
+      "name": "王家偉",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-02.webp",
+        "naturalWidth": 553,
+        "naturalHeight": 738,
+        "objectFit": "cover",
+        "objectPosition": "50% 0%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "王家偉 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    },
+    {
+      "view": "desktop-1280",
+      "route": "staff",
+      "id": "staff-kaohsiung-black-knights-03",
+      "name": "MICHAEL LENIHAN",
+      "roster": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 48,
+        "height": 48,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      },
+      "profile": {
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/kbk26-03.webp",
+        "naturalWidth": 359,
+        "naturalHeight": 447,
+        "objectFit": "cover",
+        "objectPosition": "50% 50%",
+        "transform": "none",
+        "shape": "3.35544e+07px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "width": 160,
+        "height": 160,
+        "alt": "MICHAEL LENIHAN 大頭貼",
+        "coverage": {
+          "passed": true,
+          "uncoveredRatio": 0,
+          "uncoveredSamples": 0,
+          "errors": []
+        }
+      }
+    }
+  ],
+  "failures": []
+}

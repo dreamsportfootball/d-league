@@ -6,6 +6,7 @@ import EmptyState from '../components/EmptyState';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { getSeasonData } from '../services/seasonDataJson';
 import { getMatchDayPhotoCredits, type PhotographerCredit } from '../services/photoCredits';
 import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
@@ -164,6 +165,7 @@ const MediaPage: React.FC = () => {
     [seasonData.albums, activeSeasonId],
   );
   const selectedGroup = galleryGroups.find((group) => group.id === selectedGroupId);
+  useModalScrollLock(Boolean(selectedGroup), 'fixed');
 
   useEffect(() => {
     const dialog = albumDialogRef.current;
@@ -173,34 +175,9 @@ const MediaPage: React.FC = () => {
       return;
     }
 
-    // A native modal traps focus but does not lock background scrolling,
-    // particularly on touch devices. Keep the page at its original position.
-    const scrollY = window.scrollY;
-    const body = document.body;
-    const html = document.documentElement;
-    const previousBody = {
-      position: body.style.position,
-      top: body.style.top,
-      width: body.style.width,
-      overflow: body.style.overflow,
-    };
-    const previousHtmlOverflow = html.style.overflow;
-
-    body.style.position = 'fixed';
-    body.style.top = `-${scrollY}px`;
-    body.style.width = '100%';
-    body.style.overflow = 'hidden';
-    html.style.overflow = 'hidden';
+    // Native modal supplies the focus trap; the shared hook manages scroll
+    // locking, iOS fixed-body behavior, and restoring the original position.
     if (!dialog.open) dialog.showModal();
-
-    return () => {
-      body.style.position = previousBody.position;
-      body.style.top = previousBody.top;
-      body.style.width = previousBody.width;
-      body.style.overflow = previousBody.overflow;
-      html.style.overflow = previousHtmlOverflow;
-      window.scrollTo(0, scrollY);
-    };
   }, [selectedGroup]);
 
   const scrollGallery = (direction: 'left' | 'right') => {

@@ -7,6 +7,7 @@ import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/Re
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import { getSeasonData } from '../services/seasonDataJson';
+import { getMatchDayPhotoCredits, type PhotographerCredit } from '../services/photoCredits';
 import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
@@ -20,11 +21,12 @@ interface GalleryGroup {
   title: string;
   cover: string;
   albums: MediaAlbum[];
+  photographers: PhotographerCredit[];
 }
 
 // The same match-day card and gallery chooser serve every season.
 // Older seasons may have one shared folder per day rather than per-match folders.
-const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
+const buildGalleryGroups = (albums: MediaAlbum[], seasonId: SeasonId): GalleryGroup[] => {
   const albumsByDate = new Map<string, MediaAlbum[]>();
   albums.forEach((album) => {
     const dailyAlbums = albumsByDate.get(album.date) ?? [];
@@ -42,8 +44,38 @@ const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
         : dailyAlbums[0].title,
       cover: dailyAlbums[0].cover,
       albums: dailyAlbums,
+      photographers: getMatchDayPhotoCredits(seasonId, date),
     }))
     .reverse();
+};
+
+const PhotographerCredits: React.FC<{
+  photographers: PhotographerCredit[];
+  className?: string;
+}> = ({ photographers, className = '' }) => {
+  if (photographers.length === 0) return null;
+
+  return (
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-0 ${className}`}>
+      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-neutral-400">
+        PHOTO CREDIT
+      </span>
+      {photographers.map(({ instagram, name }) => (
+        <a
+          key={instagram}
+          href={`https://www.instagram.com/${instagram}/`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`前往攝影師 ${name ?? '@' + instagram} 的 Instagram`}
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm text-xs font-semibold text-neutral-600 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+        >
+          <Instagram className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
+          <ArrowUpRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+        </a>
+      ))}
+    </div>
+  );
 };
 
 const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group, onOpen }) => {
@@ -74,14 +106,20 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
   );
 
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="group block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-      aria-haspopup="dialog"
-    >
-      {content}
-    </button>
+    <div className="group">
+      <button
+        type="button"
+        onClick={onOpen}
+        className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+        aria-haspopup="dialog"
+      >
+        {content}
+      </button>
+      <PhotographerCredits
+        photographers={group.photographers}
+        className="mt-2 border-t border-neutral-100 pt-1"
+      />
+    </div>
   );
 };
 
@@ -120,8 +158,8 @@ const MediaPage: React.FC = () => {
     (getSeasonData(season.id).albums.length > 0 || Boolean(season.youtubePlaylistEmbedUrl)),
   );
   const galleryGroups = useMemo(
-    () => buildGalleryGroups(seasonData.albums),
-    [seasonData.albums],
+    () => buildGalleryGroups(seasonData.albums, activeSeasonId),
+    [seasonData.albums, activeSeasonId],
   );
   const selectedGroup = galleryGroups.find((group) => group.id === selectedGroupId);
 
@@ -399,6 +437,7 @@ const MediaPage: React.FC = () => {
                     ? '選擇比賽，查看 Google Drive 照片'
                     : '查看此比賽日的 Google Drive 相簿'}
                 </p>
+                <PhotographerCredits photographers={selectedGroup.photographers} className="mt-1" />
               </div>
               <button
                 type="button"

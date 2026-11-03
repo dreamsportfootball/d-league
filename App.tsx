@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
 import Analytics from './components/Analytics';
 import AppErrorBoundary from './components/AppErrorBoundary';
@@ -237,9 +237,21 @@ const isInsideViewportPinnedContainer = (element: HTMLElement): boolean => {
   return false;
 };
 
+const isHomeMatchDialogQueryChange = (previousSearch: string, nextSearch: string): boolean => {
+  const previous = new URLSearchParams(previousSearch);
+  const next = new URLSearchParams(nextSearch);
+  if (previous.get('match') === next.get('match')) return false;
+  previous.delete('match');
+  next.delete('match');
+  previous.sort();
+  next.sort();
+  return previous.toString() === next.toString();
+};
+
 const ScrollMemory: React.FC = () => {
   const { pathname, search, hash, key } = useLocation();
   const navigationType = useNavigationType();
+  const previousLocationRef = useRef({ pathname, search, hash });
   const storageLocationKey = `${key}:${pathname}${search}${hash}`;
 
   useLayoutEffect(() => {
@@ -324,6 +336,18 @@ const ScrollMemory: React.FC = () => {
   }, [storageLocationKey]);
 
   useLayoutEffect(() => {
+    const previousLocation = previousLocationRef.current;
+    previousLocationRef.current = { pathname, search, hash };
+
+    // Opening, switching, or closing the homepage match dialog only changes
+    // ?match=. Keep the current page position rather than scrolling to top.
+    if (
+      pathname === '/' &&
+      previousLocation.pathname === '/' &&
+      hash === previousLocation.hash &&
+      isHomeMatchDialogQueryChange(previousLocation.search, search)
+    ) return;
+
     let cancelled = false;
     let frameId = 0;
     let attempts = 0;

@@ -40,7 +40,7 @@ const TimelineRow: React.FC<TimelineRowProps> = ({ event, playerHref }) => {
   const isHome = (event.scoringTeam ?? event.team) === 'HOME';
   const isLongName = event.player.length > 12;
   const textSizeClass = isLongName ? 'text-[11px] leading-tight' : 'text-[13px] sm:text-sm';
-  const extraText = event.isPK ? '（十二碼）' : event.isOwnGoal ? '（烏龍球）' : '';
+  const extraText = event.isPK ? '（點球）' : event.isOwnGoal ? '（烏龍球）' : '';
   const playerClass = `break-words font-semibold text-brand-black transition-colors ${textSizeClass} ${playerHref ? 'hover:text-brand-blue' : ''}`;
 
   const playerName = playerHref ? (

@@ -64,10 +64,10 @@ const PhotographerCredits: React.FC<{
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`前往攝影師 ${name ?? '@' + instagram} 的 Instagram`}
-          className="inline-flex min-h-11 min-w-0 max-w-full items-center gap-1.5 rounded-sm text-xs font-medium text-neutral-500 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 min-w-0 max-w-full items-center gap-1 rounded-sm text-[11px] font-medium text-neutral-500 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
         >
           <Instagram className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span className="min-w-0 truncate"><span className="text-neutral-400">PHOTO · </span>{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
+          <span className="min-w-0 truncate">{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
         </a>
       ))}
     </div>

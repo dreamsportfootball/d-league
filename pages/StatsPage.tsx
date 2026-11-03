@@ -12,6 +12,7 @@ import SeasonPageHeader from '../components/SeasonPageHeader';
 import Tabs from '../components/Tabs';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { calculatePlayerCompetitionStats } from '../services/competitionEngine';
 import { calculateDiscipline } from '../services/disciplineEngine';
 import { getPlayerIdentity, getTeamIdentity } from '../services/entityData';
@@ -81,7 +82,11 @@ const StatsPage: React.FC = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);
-  const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const validMatchIds = useMemo(
+    () => new Set(seasonData.matches.map((match) => match.id)),
+    [seasonData.matches],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
 
   const sortedSeasons = useMemo(
     () => [...availableSeasons].sort((a, b) => b.id.localeCompare(a.id)),
@@ -114,7 +119,6 @@ const StatsPage: React.FC = () => {
         // Session storage may be unavailable.
       }
     }
-    setSelectedMatchId(null);
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
 
   const updateTab = (tab: StatsTab) => {
@@ -430,7 +434,7 @@ const StatsPage: React.FC = () => {
                       {decision.sourceMatchId && (
                         <button
                           type="button"
-                          onClick={() => setSelectedMatchId(decision.sourceMatchId ?? null)}
+                          onClick={() => decision.sourceMatchId && selectMatch(decision.sourceMatchId)}
                           className="mt-2 inline-block text-xs font-black text-brand-blue"
                         >
                           查看來源比賽 →
@@ -515,8 +519,8 @@ const StatsPage: React.FC = () => {
       {selectedMatchId && (
         <MatchDialog
           matchId={selectedMatchId}
-          onClose={() => setSelectedMatchId(null)}
-          onSelectMatch={setSelectedMatchId}
+          onClose={closeMatch}
+          onSelectMatch={selectMatch}
           navigationMatchIds={seasonData.matches
             .filter((match) => match.league === activeLeague)
             .map((match) => match.id)}

@@ -116,7 +116,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                 aria-label={`查看 ${team.name} 球隊頁`}
               >
                 <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain" />
-                <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black" /></div>
+                <div className="min-w-0 flex-1 text-[13px] font-bold leading-[1.25] break-words text-brand-black">{team.name}</div>
                 <TieLabel row={row} compact />
               </Link>
               <span className="text-center tabular-nums">{row.played}</span>

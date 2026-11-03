@@ -14,6 +14,7 @@ import FullSchedule from '../components/FullSchedule';
 import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { getSeasonData } from '../services/seasonDataJson';
 import type { SeasonId } from '../types/season';
 import {
@@ -104,6 +105,7 @@ const SchedulePage: React.FC = () => {
     filters: { ...EMPTY_FILTERS },
   });
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  useModalScrollLock(desktopFiltersOpen || mobileFiltersOpen);
   const [mobileFilterView, setMobileFilterView] = useState<MobileFilterView>('ROOT');
   const [mobileDraft, setMobileDraft] = useState<ScheduleFilterDraft>({
     seasonId: activeSeasonId,
@@ -193,8 +195,6 @@ const SchedulePage: React.FC = () => {
 
   useEffect(() => {
     if (!desktopFiltersOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     const frame = window.requestAnimationFrame(() => {
       const dialog = desktopFilterDialogRef.current;
       const initial = dialog?.querySelector<HTMLElement>('[data-schedule-filter-initial-focus]');
@@ -214,7 +214,6 @@ const SchedulePage: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       window.cancelAnimationFrame(frame);
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
       desktopFilterTriggerRef.current?.focus();
     };
@@ -222,8 +221,6 @@ const SchedulePage: React.FC = () => {
 
   useEffect(() => {
     if (!mobileFiltersOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     const frame = window.requestAnimationFrame(() => {
       const dialog = mobileFilterDialogRef.current;
       const initial = dialog?.querySelector<HTMLElement>('[data-schedule-filter-initial-focus]');
@@ -244,7 +241,6 @@ const SchedulePage: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       window.cancelAnimationFrame(frame);
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
       mobileFilterTriggerRef.current?.focus();
     };

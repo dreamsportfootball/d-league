@@ -302,7 +302,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return (
       <Link
         to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
-        onClick={onClose}
         className="group flex min-w-0 flex-col items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
       >
         {content}
@@ -554,7 +553,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               <div className="grid gap-3 sm:grid-cols-3">
                 <Link
                   to={`/news/${report.id}?season=${activeSeason.id}`}
-                  onClick={onClose}
                   className="flex min-h-12 items-center justify-between rounded-lg border border-neutral-200 px-4 text-sm font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue"
                 >
                   <span className="flex items-center"><Newspaper className="mr-2 h-4 w-4" />賽事戰報</span>

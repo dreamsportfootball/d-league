@@ -237,7 +237,7 @@ const isInsideViewportPinnedContainer = (element: HTMLElement): boolean => {
   return false;
 };
 
-const isHomeMatchDialogQueryChange = (previousSearch: string, nextSearch: string): boolean => {
+const isMatchDialogQueryChange = (previousSearch: string, nextSearch: string): boolean => {
   const previous = new URLSearchParams(previousSearch);
   const next = new URLSearchParams(nextSearch);
   if (previous.get('match') === next.get('match')) return false;
@@ -339,13 +339,12 @@ const ScrollMemory: React.FC = () => {
     const previousLocation = previousLocationRef.current;
     previousLocationRef.current = { pathname, search, hash };
 
-    // Opening, switching, or closing the homepage match dialog only changes
-    // ?match=. Keep the current page position rather than scrolling to top.
+    // A shared match-modal URL transition does not represent a new page.
+    // Keep the viewport stable across all match-capable routes.
     if (
-      pathname === '/' &&
-      previousLocation.pathname === '/' &&
+      pathname === previousLocation.pathname &&
       hash === previousLocation.hash &&
-      isHomeMatchDialogQueryChange(previousLocation.search, search)
+      isMatchDialogQueryChange(previousLocation.search, search)
     ) return;
 
     let cancelled = false;

@@ -46,7 +46,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-02.': { objectPosition: '50% 0%', transform: 'translateY(37%) scale(2.9) scaleX(1.56)' }, // 高雄業餘 #3 李昆鴻：依 Excel 內嵌圖片的橫向拉伸比例
   '/assets/seasons/2026-27/players/tq26-06.': { objectPosition: '50% 0%', transform: 'translateY(50%) scale(2)' },
   '/assets/seasons/2026-27/players/ku26-04.': { objectPosition: '50% 0%', transform: 'translate(4%, -30%) scale(2)' }, // 第二輪實圖回歸校正
-  '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%', transform: 'translate(-28%, 28%) scale(1.6)' }, // #10 Joel Vega：保留髮頂，單獨聚焦本人，避免頂部露底
+  '/assets/seasons/2026-27/players/kbk26-01.': { objectPosition: '50% 0%' }, // #10 Joel Vega：允許合照同框，完整保留髮頂、自然比例，勿強制單人放大
   '/assets/seasons/2026-27/players/kbk26-02.': { objectPosition: '50% 0%' }, // #17 王家偉：恢復完整髮頂
   '/assets/seasons/2026-27/players/kbk26-07.': { objectPosition: '50% 35%' }, // #79 ALI：保留頭頂與下巴
   '/assets/seasons/2026-27/players/kbk26-08.': { objectPosition: '50% 10%' }, // #29 LUCAS ROA：保留完整捲髮

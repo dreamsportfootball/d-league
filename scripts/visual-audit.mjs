@@ -27,6 +27,8 @@ const routes = [
   { name: 'article-detail', path: '/news/2026-27-registration-open' },
   { name: 'article-standings-2026', path: '/news/2026-27-match-report-m2627-001' },
   { name: 'article-standings-2025', path: '/news/match-report-l2-r10-tie-20260429' },
+  { name: 'article-standings-2025-legacy', path: '/news/match-report-m4-20251024' },
+  { name: 'article-standings-2025-summary', path: '/news/match-report-l2-summary-20260415' },
   { name: 'standings-direct-l2', path: '/standings?season=2026-27&league=L2' },
   { name: 'article-match-report', path: '/news/2026-27-match-report-m2627-001' },
   { name: 'team-detail', path: '/teams/t_chiayi?season=2025-26' },
@@ -254,10 +256,11 @@ const auditViewport = async (viewport) => {
           'Photo credit should appear as a separate, subdued line');
       }
 
-      if (route.name === 'article-standings-2026' || route.name === 'article-standings-2025') {
-        const historical = route.name === 'article-standings-2025';
+      if (route.name.startsWith('article-standings-')) {
+        const historical = route.name !== 'article-standings-2026';
         const table = page.locator('[data-match-report-standings]');
-        const league = historical ? 'L2' : 'L1';
+        const league = route.name === 'article-standings-2026' ||
+          route.name === 'article-standings-2025-legacy' ? 'L1' : 'L2';
         const season = historical ? '2025-26' : '2026-27';
         const expectedHeading = historical ? '2025/26 L2｜最終積分榜' : '2026/27 L1｜最新積分榜';
         const rows = table.locator('[data-motion-standings-row^="widget-"]');

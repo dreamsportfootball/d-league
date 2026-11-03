@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { Check, ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react';
 
 export interface FilterDrawerOption {
@@ -184,6 +185,7 @@ const getFocusableElements = (container: HTMLElement): HTMLElement[] =>
 
 const ResponsiveFilterDrawer: React.FC<ResponsiveFilterDrawerProps> = (props) => {
   const { open, onClose, fields, title = '篩選資料' } = props;
+  useModalScrollLock(open);
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
   const fieldIds = useMemo(() => new Set(fields.map((field) => field.id)), [fields]);
   const desktopDialogRef = useRef<HTMLElement | null>(null);
@@ -204,11 +206,7 @@ const ResponsiveFilterDrawer: React.FC<ResponsiveFilterDrawerProps> = (props) =>
     previousFocusRef.current = document.activeElement instanceof HTMLElement
       ? document.activeElement
       : null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
     return () => {
-      document.body.style.overflow = previousOverflow;
       previousFocusRef.current?.focus();
     };
   }, [open]);

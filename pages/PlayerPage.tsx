@@ -216,37 +216,6 @@ const PlayerPage: React.FC = () => {
   const preferredSeasonStats = getPlayerSeasonStats(preferredRecord);
   const preferredSeasonRedCards =
     preferredSeasonStats.directRedCards + preferredSeasonStats.secondYellowDismissals;
-  const appearanceRecords = Object.entries(preferredRecord.data.lineups)
-    .flatMap(([matchId, lineup]) => {
-      const match = preferredRecord.data.matches.find((candidate) => candidate.id === matchId);
-      if (!match) return [];
-
-      const side = getPlayerLineupSide(lineup, player.id);
-      if (!side) return [];
-
-      const playerEvents = (preferredRecord.data.matchEvents[match.id] ?? []).filter(
-        (event) => resolveMatchEventPlayer(preferredRecord.data, match, event)?.id === player.id,
-      );
-      const goals = playerEvents.filter(
-        (event) =>
-          event.type === 'GOAL' &&
-          !event.isOwnGoal &&
-          match.resultType !== 'VOID' &&
-          match.countsForPlayerStats !== false,
-      ).length;
-      const yellowCards = playerEvents.filter(
-        (event) => event.type === 'YELLOW_CARD' || event.type === 'SECOND_YELLOW',
-      ).length;
-      const redCards = playerEvents.filter(
-        (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
-      ).length;
-
-      return [{ match, goals, yellowCards, redCards }];
-    })
-    .sort(
-      (a, b) => new Date(b.match.timestamp).getTime() - new Date(a.match.timestamp).getTime(),
-    );
-
   const seasonRows = history.flatMap((record) => {
     const seasonTeams = getPlayerSeasonTeams(record);
     const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
@@ -340,9 +309,8 @@ const PlayerPage: React.FC = () => {
               </h2>
               <div className="mt-3 h-0.5 w-10 bg-brand-blue" aria-hidden="true" />
 
-              <dl className="mt-5 grid grid-cols-4 divide-x divide-neutral-200">
+              <dl className="mt-5 grid grid-cols-3 divide-x divide-neutral-200">
                 {[
-                  ['出賽', appearanceRecords.length],
                   ['進球', preferredSeasonStats.goals],
                   ['黃牌', preferredSeasonStats.yellowCards],
                   ['紅牌', preferredSeasonRedCards],

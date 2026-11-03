@@ -111,6 +111,15 @@ const readPosition = async (page, button) => ({
   top: await button.evaluate((element) => element.getBoundingClientRect().top),
 });
 
+const readDocumentLock = (page) => page.evaluate(() => ({
+  scrollY: window.scrollY,
+  bodyPosition: document.body.style.position,
+  bodyTop: Number.parseFloat(document.body.style.top),
+  bodyWidth: document.body.style.width,
+  bodyOverflow: document.body.style.overflow,
+  htmlOverflow: document.documentElement.style.overflow,
+}));
+
 const assertDelta = (viewportName, caseName, phase, actual, expected) => {
   const difference = delta(actual, expected);
   if (difference > tolerancePx) {
@@ -145,13 +154,36 @@ for (const viewport of viewports) {
       if (!matchId) throw new Error('target match button has no analytics label');
 
       const before = await readPosition(page, targetButton);
+      const beforeStyles = await readDocumentLock(page);
       await targetButton.click();
       const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
       await dialog.waitFor({ state: 'visible' });
       await page.waitForTimeout(320);
 
-      const openScrollY = await page.evaluate(() => window.scrollY);
-      const openDelta = assertDelta(viewport.name, testCase.name, 'open-scroll', openScrollY, before.scrollY);
+      const openLock = await readDocumentLock(page);
+      const openDelta = assertDelta(viewport.name, testCase.name, 'open-scroll', openLock.scrollY, before.scrollY);
+      if (openLock.bodyPosition !== beforeStyles.bodyPosition ||
+          openLock.bodyOverflow !== 'hidden' || openLock.htmlOverflow !== 'hidden') {
+        failures.push(`${viewport.name} / ${testCase.name} / open-lock-styles: ${JSON.stringify(openLock)}`);
+      }
+
+      // Wheel and touch gestures on the backdrop must not reach the page.
+      await page.mouse.move(0, 0);
+      await page.mouse.wheel(0, 500);
+      await page.waitForTimeout(80);
+      const attemptedBackgroundScroll = await readDocumentLock(page);
+      assertDelta(viewport.name, testCase.name, 'background-wheel-lock', attemptedBackgroundScroll.scrollY, before.scrollY);
+      const touchBlocked = await page.evaluate(() => {
+        const backdrop = document.querySelector('[data-match-dialog-backdrop]');
+        if (!backdrop) return false;
+        const touch = new Touch({ identifier: 1, target: backdrop, clientX: 0, clientY: 0 });
+        const move = new TouchEvent('touchmove', {
+          bubbles: true, cancelable: true, touches: [touch], changedTouches: [touch],
+        });
+        backdrop.dispatchEvent(move);
+        return move.defaultPrevented;
+      });
+      if (!touchBlocked) failures.push(`${viewport.name} / ${testCase.name} / background-touch-not-blocked`);
 
       if (testCase.expectsMatchQuery && !new URL(page.url()).hash.includes('match=')) {
         failures.push(`${viewport.name} / ${testCase.name} / open-url: expected match query in ${page.url()}`);
@@ -166,8 +198,12 @@ for (const viewport of viewports) {
         const navigationButton = canUseNext ? nextButton : previousButton;
         await navigationButton.click();
         await page.waitForTimeout(220);
-        const switchedScrollY = await page.evaluate(() => window.scrollY);
-        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-scroll', switchedScrollY, before.scrollY);
+        const switchedLock = await readDocumentLock(page);
+        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-scroll', switchedLock.scrollY, before.scrollY);
+        if (switchedLock.bodyPosition !== beforeStyles.bodyPosition ||
+            switchedLock.bodyOverflow !== 'hidden' || switchedLock.htmlOverflow !== 'hidden') {
+          failures.push(`${viewport.name} / ${testCase.name} / switch-lock-styles: ${JSON.stringify(switchedLock)}`);
+        }
       }
 
       await page.getByRole('button', { name: '關閉比賽詳情' }).click({ position: { x: 4, y: 4 } });
@@ -179,8 +215,14 @@ for (const viewport of viewports) {
       ).first();
       await originalButton.waitFor({ state: 'visible' });
       const after = await readPosition(page, originalButton);
+      const afterStyles = await readDocumentLock(page);
       const closeDelta = assertDelta(viewport.name, testCase.name, 'close-scroll', after.scrollY, before.scrollY);
       const cardDelta = assertDelta(viewport.name, testCase.name, 'close-card-position', after.top, before.top);
+      for (const styleKey of ['bodyPosition', 'bodyWidth', 'bodyOverflow', 'htmlOverflow']) {
+        if (afterStyles[styleKey] !== beforeStyles[styleKey]) {
+          failures.push(`${viewport.name} / ${testCase.name} / close-restores-${styleKey}: ${afterStyles[styleKey]} (was ${beforeStyles[styleKey]})`);
+        }
+      }
 
       if (testCase.expectsMatchQuery && new URL(page.url()).hash.includes('match=')) {
         failures.push(`${viewport.name} / ${testCase.name} / close-url: match query remained in ${page.url()}`);

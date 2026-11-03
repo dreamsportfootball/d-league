@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, ChevronLeft, ChevronRight, Instagram, X, Youtube } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Instagram, X, Youtube } from 'lucide-react';
 import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
@@ -7,6 +7,7 @@ import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/Re
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
 import { getSeasonData } from '../services/seasonDataJson';
+import { getMatchDayPhotoCredits, type PhotographerCredit } from '../services/photoCredits';
 import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
@@ -20,11 +21,12 @@ interface GalleryGroup {
   title: string;
   cover: string;
   albums: MediaAlbum[];
+  photographers: PhotographerCredit[];
 }
 
 // The same match-day card and gallery chooser serve every season.
 // Older seasons may have one shared folder per day rather than per-match folders.
-const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
+const buildGalleryGroups = (albums: MediaAlbum[], seasonId: SeasonId): GalleryGroup[] => {
   const albumsByDate = new Map<string, MediaAlbum[]>();
   albums.forEach((album) => {
     const dailyAlbums = albumsByDate.get(album.date) ?? [];
@@ -38,18 +40,50 @@ const buildGalleryGroups = (albums: MediaAlbum[]): GalleryGroup[] => {
       id: `day-${date}`,
       date,
       title: dailyAlbums.length > 1
-        ? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1} (Match Day ${dailyAlbums[0].matchDay ?? index + 1})`
+        ? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1}`
         : dailyAlbums[0].title,
       cover: dailyAlbums[0].cover,
       albums: dailyAlbums,
+      photographers: getMatchDayPhotoCredits(seasonId, date),
     }))
     .reverse();
 };
 
-const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group, onOpen }) => {
-  const content = (
-    <>
-      <div className="relative mb-4 aspect-[3/2] overflow-hidden bg-neutral-100">
+const PhotographerCredits: React.FC<{
+  photographers: PhotographerCredit[];
+  className?: string;
+}> = ({ photographers, className = '' }) => {
+  if (photographers.length === 0) return null;
+
+  return (
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-0 ${className}`}>
+      {photographers.map(({ instagram, name }) => (
+        <a
+          key={instagram}
+          href={`https://www.instagram.com/${instagram}/`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`前往攝影師 ${name ?? '@' + instagram} 的 Instagram`}
+          className="inline-flex min-h-11 min-w-0 max-w-full items-center gap-1 rounded-sm text-[11px] font-medium text-neutral-500 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+        >
+          <Instagram className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 truncate">{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
+        </a>
+      ))}
+    </div>
+  );
+};
+
+const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group, onOpen }) => (
+  <article className="group">
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`查看 ${group.title} 相簿，${group.albums.length} 場比賽`}
+      className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
+      aria-haspopup="dialog"
+    >
+      <div className="relative aspect-[3/2] overflow-hidden bg-neutral-100">
         <img
           src={group.cover}
           alt={group.title}
@@ -57,43 +91,49 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
           className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
         />
       </div>
-
-      <div className="flex flex-col items-start">
-        <span className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500">
-          {formatMediaDate(group.date)}
-        </span>
-        <span className="mb-2 inline-flex min-h-11 items-center space-x-1 text-[11px] font-bold text-brand-blue transition-colors group-hover:text-blue-800">
-          <span className="border-b border-transparent pb-0.5 transition-colors group-hover:border-blue-800">
-            {group.albums.length > 1 ? `查看 ${group.albums.length} 場相簿` : '查看相簿'}
-          </span>
-          <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-        </span>
-        <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">{group.title}</h3>
-      </div>
-    </>
-  );
-
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="group block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
-      aria-haspopup="dialog"
-    >
-      {content}
+      <p className="mb-1 mt-3 text-[11px] font-semibold tracking-[0.08em] text-neutral-500">
+        {formatMediaDate(group.date)}
+      </p>
     </button>
-  );
-};
+    <div className="flex min-w-0 items-center justify-between gap-2">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`查看 ${group.title} 相簿`}
+        aria-haspopup="dialog"
+        className="flex min-w-0 flex-1 items-center gap-1.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+      >
+        <h3 className="min-w-0 text-pretty font-display text-xl font-bold leading-tight text-brand-black">
+          {group.title}
+        </h3>
+        <ArrowUpRight
+          className="h-4 w-4 shrink-0 text-neutral-400 transition-colors group-hover:text-brand-blue"
+          aria-hidden="true"
+        />
+      </button>
+      <PhotographerCredits
+        photographers={group.photographers}
+        className="min-w-0 max-w-[59%] shrink-0 justify-end text-right"
+      />
+    </div>
+  </article>
+);
 
 const PhotoUsageNotice: React.FC = () => (
-  <section aria-labelledby="photo-usage-notice-title">
-    <h2 id="photo-usage-notice-title" className="mb-0 text-xs font-bold leading-5 text-brand-black md:text-sm">
-      照片使用須知
-    </h2>
-    <p className="text-[11px] leading-5 text-neutral-500 md:text-xs">
-      參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
+  <details className="group mt-3 border-t border-neutral-200">
+    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 py-3 marker:hidden [&::-webkit-details-marker]:hidden">
+      <span className="text-[11px] font-medium leading-5 text-neutral-500 md:text-xs">
+        相簿照片建議儘早下載保存
+      </span>
+      <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-brand-blue md:text-xs">
+        使用須知
+        <ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden="true" />
+      </span>
+    </summary>
+    <p className="max-w-3xl pb-4 text-xs leading-6 text-neutral-600">
+      相簿整理或連結失效後，照片可能無法再取得。參賽球隊及球員可免費下載照片，供個人或球隊非商業分享；發布時請標記攝影師及 D LEAGUE 官方帳號。不確定攝影師或有商業用途，請先聯絡主辦單位確認。
     </p>
-  </section>
+  </details>
 );
 
 const MediaPage: React.FC = () => {
@@ -120,8 +160,8 @@ const MediaPage: React.FC = () => {
     (getSeasonData(season.id).albums.length > 0 || Boolean(season.youtubePlaylistEmbedUrl)),
   );
   const galleryGroups = useMemo(
-    () => buildGalleryGroups(seasonData.albums),
-    [seasonData.albums],
+    () => buildGalleryGroups(seasonData.albums, activeSeasonId),
+    [seasonData.albums, activeSeasonId],
   );
   const selectedGroup = galleryGroups.find((group) => group.id === selectedGroupId);
 
@@ -230,9 +270,6 @@ const MediaPage: React.FC = () => {
                 to: `/media?season=${alternativeSeason.id}`,
               } : undefined}
             />
-            <div className="mt-6 md:mt-8">
-              <PhotoUsageNotice />
-            </div>
           </>
         ) : (
           <>
@@ -264,12 +301,6 @@ const MediaPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                {galleryGroups.length > 1 && (
-                  <div className="mb-3 flex justify-end text-xs font-semibold text-brand-blue md:hidden">
-                    左右滑動 <ChevronRight className="ml-0.5 h-4 w-4" aria-hidden="true" />
-                  </div>
-                )}
-
                 <div
                   ref={galleryRef}
                   role="region"
@@ -282,17 +313,6 @@ const MediaPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <div className="mt-2 space-y-3 md:mt-3 md:space-y-4">
-                  <p className="text-[11px] leading-5 text-neutral-600 md:text-xs">
-                    相簿照片建議大家儘早下載保存，避免日後相簿整理或連結失效
-                  </p>
-                  <PhotoUsageNotice />
-                </div>
-              </div>
-            )}
-
-            {galleryGroups.length === 0 && (
-              <div className="mb-8">
                 <PhotoUsageNotice />
               </div>
             )}
@@ -399,6 +419,7 @@ const MediaPage: React.FC = () => {
                     ? '選擇比賽，查看 Google Drive 照片'
                     : '查看此比賽日的 Google Drive 相簿'}
                 </p>
+                <PhotographerCredits photographers={selectedGroup.photographers} className="mt-1" />
               </div>
               <button
                 type="button"

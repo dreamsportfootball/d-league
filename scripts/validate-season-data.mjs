@@ -391,6 +391,36 @@ for (const season of seasons) {
   for (const item of media) asset(item.thumbnail, `${season} media ${item.id}`);
   for (const album of albums) asset(album.cover, `${season} album ${album.id}`);
 
+  // Photographer acknowledgements belong to the season's match day rather than
+  // being repeated on every game album. Reject wrong dates or unsafe IG handles.
+  const photoCredits = read(season, 'photoCredits.json');
+  if (!photoCredits || typeof photoCredits !== 'object' || Array.isArray(photoCredits)) {
+    fail(`${season}: photoCredits.json must be an object keyed by match day`);
+  }
+  const albumDates = new Set(albums.map((album) => album.date));
+  for (const [date, photographers] of Object.entries(photoCredits)) {
+    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(date) || !albumDates.has(date)) {
+      fail(`${season}: photo credit date ${date} does not match a published album day`);
+    }
+    if (!Array.isArray(photographers) || photographers.length === 0) {
+      fail(`${season} ${date}: photographers must be a non-empty array`);
+    }
+    const handles = new Set();
+    for (const photographer of photographers) {
+      if (!photographer || typeof photographer.instagram !== 'string' ||
+          !/^[a-zA-Z0-9._]{1,30}$/.test(photographer.instagram)) {
+        fail(`${season} ${date}: photographer has an invalid Instagram handle`);
+      }
+      if (photographer.name !== undefined &&
+          (typeof photographer.name !== 'string' || !photographer.name.trim())) {
+        fail(`${season} ${date}: photographer name must be non-empty when supplied`);
+      }
+      const handle = photographer.instagram.toLowerCase();
+      if (handles.has(handle)) fail(`${season} ${date}: duplicate photographer @${handle}`);
+      handles.add(handle);
+    }
+  }
+
   console.log(`${season}: ${teams.length} teams, ${players.length} players, ${matches.length} matches, ${news.length} news`);
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -87,11 +87,60 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     ? chronologicalMatches[currentIndex + 1]
     : null;
 
+  const isMatchOpen = match !== null;
+
+  // Prevent scroll chaining behind the match dialog without changing the
+  // document's scroll position (schedule uses it for match URL navigation).
+  // Safari needs an explicit non-passive touchmove guard in addition to
+  // overflow:hidden; touches inside the dialog's scroll region stay usable.
+  useLayoutEffect(() => {
+    if (!isMatchOpen) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const previousBodyOverflow = body.style.overflow;
+    const previousHtmlOverflow = html.style.overflow;
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+
+    let lastTouchY = 0;
+    const handleTouchStart = (event: TouchEvent) => {
+      lastTouchY = event.touches[0]?.clientY ?? 0;
+    };
+    const handleTouchMove = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      const scrollable = event.target instanceof Element
+        ? event.target.closest<HTMLElement>('[data-match-dialog-scroller]')
+        : null;
+
+      if (!touch || !scrollable || !dialogRef.current?.contains(scrollable)) {
+        event.preventDefault();
+        return;
+      }
+
+      const deltaY = lastTouchY - touch.clientY;
+      lastTouchY = touch.clientY;
+      const atTop = scrollable.scrollTop <= 0;
+      const atBottom = scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1;
+      if (scrollable.scrollHeight <= scrollable.clientHeight ||
+          (deltaY < 0 && atTop) ||
+          (deltaY > 0 && atBottom)) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      body.style.overflow = previousBodyOverflow;
+      html.style.overflow = previousHtmlOverflow;
+    };
+  }, [isMatchOpen]);
   useEffect(() => {
     if (!match) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
-    const previousBodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     const focusTimer = window.setTimeout(
       () => closeButtonRef.current?.focus({ preventScroll: true }),
       0,
@@ -127,7 +176,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return () => {
       window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousBodyOverflow;
       const previousFocus = previousFocusRef.current;
       if (previousFocus?.isConnected) {
         previousFocus.focus({ preventScroll: true });
@@ -260,6 +308,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
       <button
         type="button"
         aria-label="關閉比賽詳情"
+        data-match-dialog-backdrop
         className="absolute inset-0 bg-black/60 backdrop-blur-[3px]"
         onClick={onClose}
       />
@@ -379,7 +428,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
+        <div data-match-dialog-scroller className="flex-1 overflow-y-auto overscroll-contain bg-white">
           <section className="border-b border-neutral-100 px-5 pb-8 pt-2 sm:px-12 sm:pb-10 sm:pt-3">
             <div className="flex items-center justify-center gap-4" aria-hidden="true">
               <span className="h-px w-9 bg-neutral-200 sm:w-12" />
@@ -425,11 +474,23 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                     href={album.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-brand-black transition-colors hover:text-brand-blue"
+                    data-match-photo-link
+                    className="group flex min-h-24 items-center gap-3 py-3 text-brand-black transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 sm:gap-4"
                   >
-                    <span className="min-w-0 truncate">{album.title || '比賽相簿'}</span>
-                    <span className="flex shrink-0 items-center text-xs text-brand-blue">
-                      查看照片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" />
+                    <img
+                      src={album.thumbnail ?? album.cover}
+                      alt=""
+                      loading="lazy"
+                      data-match-photo-cover
+                      className="h-[72px] w-24 shrink-0 bg-neutral-100 object-cover sm:h-20 sm:w-32"
+                    />
+                    <span className="flex min-w-0 flex-1 flex-col items-start gap-2">
+                      <span className="line-clamp-2 text-sm font-bold leading-5">
+                        {album.title || '比賽相簿'}
+                      </span>
+                      <span className="inline-flex items-center text-xs font-bold text-brand-blue group-hover:text-blue-800">
+                        查看照片 <ExternalLink className="ml-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
                     </span>
                   </a>
                 ) : (

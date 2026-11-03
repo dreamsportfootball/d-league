@@ -72,7 +72,8 @@
       "player": "王家偉",
       "playerId": "kbk26-02",
       "type": "GOAL",
-      "team": "AWAY"
+      "team": "AWAY",
+      "isPK": true
     },
     {
       "id": "m2627-003-2",

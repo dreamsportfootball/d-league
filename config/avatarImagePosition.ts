@@ -113,13 +113,28 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   '/assets/seasons/2026-27/players/pwa26-04.': { transform: 'translateY(18%) scale(1.45)' }, // 比賽照
   '/assets/seasons/2026-27/players/pwa26-18.': { objectPosition: '50% 0%' }, // 屏東野猿 蔡振偉：上移裁切以保留頭頂與髮型
-  // 台南長青：對照 Excel 內嵌原照、48/104/160px 圓形視覺以及 KUROMI #16 超級範本。
-  // 僅微調臉部顯得偏小的個案，保留髮頂、五官與下巴，其他球員不變。
-  '/assets/seasons/2026-27/players/te26-04.': { transform: 'translateY(5.5%) scale(1.12)' }, // #8 曹冠祥：近距離呈現臉部，仍保留髮頂與肩部
-  '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // #14 徐鈺凱：原圖頭頂靠上，沿用已驗證取景
-  '/assets/seasons/2026-27/players/te26-08.': { transform: 'translateY(5%) scale(1.15)' }, // #18 葉博煜：減少相簿背景，突出人物五官
-  '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // #21 吳進偉：原圖頭頂靠上，沿用已驗證取景
-  '/assets/seasons/2026-27/players/te26-18.': { transform: 'translateY(6%) scale(1.18)' }, // #66 周學廣：縮小上半身佔比並放大五官
+  // 台南長青第二輪嚴格髮頂驗收：以 #21 吳進偉（本隊）及 KUROMI #16（全站）作參考。
+  // 與 2026/27 Excel xl/media 內嵌原圖、48/104/160px 實際路由對照後，逐人保留頭髮與下巴。
+  // 某些原圖頂端本身空間極少；禁止用放大犧牲髮頂、誤當合格。
+  '/assets/seasons/2026-27/players/te26-01.': { objectPosition: '50% 0%' }, // #5 林昱丞：髮頂／頭皮保留
+  '/assets/seasons/2026-27/players/te26-02.': { objectPosition: '50% 0%' }, // #6 陳柏宇：目前髮頂被中央裁切
+  '/assets/seasons/2026-27/players/te26-03.': { objectPosition: '50% 0%' }, // #7 劉宗瑋：保留上方髮型
+  '/assets/seasons/2026-27/players/te26-04.': { objectPosition: '50% 0%' }, // #8 曹冠祥：取消上一輪過度放大，恢復完整髮頂
+  '/assets/seasons/2026-27/players/te26-05.': { objectPosition: '50% 0%' }, // #10 蕭貽陽：保留髮頂與額頭
+  '/assets/seasons/2026-27/players/te26-07.': { objectPosition: '50% 0%' }, // #16 毛鎮峰：上移取景完整髮型
+  '/assets/seasons/2026-27/players/te26-08.': { objectPosition: '50% 0%' }, // #18 葉博煜：取消上一輪過度放大，保留髮型
+  '/assets/seasons/2026-27/players/te26-09.': { objectPosition: '50% 0%' }, // #19 李進豐：保留頭頂
+  '/assets/seasons/2026-27/players/te26-10.': { objectPosition: '50% 0%' }, // #20 劉錦鴻：保留完整髮頂
+  '/assets/seasons/2026-27/players/te26-12.': { objectPosition: '50% 0%' }, // #23 譚敬耀：保留髮型上緣
+  '/assets/seasons/2026-27/players/te26-13.': { objectPosition: '50% 0%' }, // #24 涂旭東：避免灰髮髮頂被切掉
+  '/assets/seasons/2026-27/players/te26-14.': { objectPosition: '50% 0%' }, // #29 陳建華：網站已有來源，上方取景保留髮型；Excel 缺原圖
+  '/assets/seasons/2026-27/players/te26-15.': { objectPosition: '50% 0%' }, // #33 李鎰昇：保留上方髮頂
+  '/assets/seasons/2026-27/players/te26-16.': { objectPosition: '50% 0%' }, // #36 劉允閎：保留前額與上方髮型
+  '/assets/seasons/2026-27/players/te26-18.': { objectPosition: '50% 0%' }, // #66 周學廣：取消上一輪過度放大，保留完整頭髮
+  '/assets/seasons/2026-27/players/te26-19.': { objectPosition: '50% 0%' }, // #75 鄭俊麟：上移取景保留髮型
+  '/assets/seasons/2026-27/players/te26-20.': { objectPosition: '50% 0%' }, // #88 王中更：避免頂部頭髮被切掉
+  '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // #14 徐鈺凱：既有合格上緣取景，保留
+  '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // #21 吳進偉：Owner 確認的本隊參考範本，保留
   'assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴
   'assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
   'assets/seasons/2026-27/players/bw26-07.': { objectPosition: '50% 18%' }, // 黑狼 #7 張智勇：取景上移、髮頂與下巴完整

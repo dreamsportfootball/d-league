@@ -64,10 +64,10 @@ const PhotographerCredits: React.FC<{
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`前往攝影師 ${name ?? '@' + instagram} 的 Instagram`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm text-xs font-medium text-neutral-500 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 min-w-0 max-w-full items-center gap-1.5 rounded-sm text-xs font-medium text-neutral-500 transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
         >
           <Instagram className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span><span className="text-neutral-400">PHOTO · </span>{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
+          <span className="min-w-0 truncate"><span className="text-neutral-400">PHOTO · </span>{name ? `${name} · @${instagram}` : `@${instagram}`}</span>
         </a>
       ))}
     </div>
@@ -91,22 +91,31 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
           className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
         />
       </div>
-      <div className="mt-3 flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="mb-1 text-[11px] font-semibold tracking-[0.08em] text-neutral-500">
-            {formatMediaDate(group.date)}
-          </p>
-          <h3 className="text-pretty font-display text-xl font-bold leading-tight text-brand-black">
-            {group.title}
-          </h3>
-        </div>
+      <p className="mb-1 mt-3 text-[11px] font-semibold tracking-[0.08em] text-neutral-500">
+        {formatMediaDate(group.date)}
+      </p>
+    </button>
+    <div className="flex min-w-0 items-center justify-between gap-2">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`查看 ${group.title} 相簿`}
+        aria-haspopup="dialog"
+        className="flex min-w-0 flex-1 items-center gap-1.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
+      >
+        <h3 className="min-w-0 text-pretty font-display text-xl font-bold leading-tight text-brand-black">
+          {group.title}
+        </h3>
         <ArrowUpRight
-          className="h-5 w-5 shrink-0 text-neutral-400 transition-colors group-hover:text-brand-blue"
+          className="h-4 w-4 shrink-0 text-neutral-400 transition-colors group-hover:text-brand-blue"
           aria-hidden="true"
         />
-      </div>
-    </button>
-    <PhotographerCredits photographers={group.photographers} className="mt-1" />
+      </button>
+      <PhotographerCredits
+        photographers={group.photographers}
+        className="min-w-0 max-w-[59%] shrink-0 justify-end text-right"
+      />
+    </div>
   </article>
 );
 

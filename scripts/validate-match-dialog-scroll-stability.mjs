@@ -111,6 +111,15 @@ const readPosition = async (page, button) => ({
   top: await button.evaluate((element) => element.getBoundingClientRect().top),
 });
 
+const readDocumentLock = (page) => page.evaluate(() => ({
+  scrollY: window.scrollY,
+  bodyPosition: document.body.style.position,
+  bodyTop: Number.parseFloat(document.body.style.top),
+  bodyWidth: document.body.style.width,
+  bodyOverflow: document.body.style.overflow,
+  htmlOverflow: document.documentElement.style.overflow,
+}));
+
 const assertDelta = (viewportName, caseName, phase, actual, expected) => {
   const difference = delta(actual, expected);
   if (difference > tolerancePx) {
@@ -145,13 +154,27 @@ for (const viewport of viewports) {
       if (!matchId) throw new Error('target match button has no analytics label');
 
       const before = await readPosition(page, targetButton);
+      const beforeStyles = await readDocumentLock(page);
       await targetButton.click();
       const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
       await dialog.waitFor({ state: 'visible' });
       await page.waitForTimeout(320);
 
-      const openScrollY = await page.evaluate(() => window.scrollY);
-      const openDelta = assertDelta(viewport.name, testCase.name, 'open-scroll', openScrollY, before.scrollY);
+      const openLock = await readDocumentLock(page);
+      const openDelta = assertDelta(viewport.name, testCase.name, 'open-body-offset', -openLock.bodyTop, before.scrollY);
+      assertDelta(viewport.name, testCase.name, 'open-window-scroll-locked', openLock.scrollY, 0);
+      if (openLock.bodyPosition !== 'fixed' || openLock.bodyWidth !== '100%' ||
+          openLock.bodyOverflow !== 'hidden' || openLock.htmlOverflow !== 'hidden') {
+        failures.push(`${viewport.name} / ${testCase.name} / open-lock-styles: ${JSON.stringify(openLock)}`);
+      }
+
+      // Attempts to scroll behind the modal must not move the document.
+      await page.mouse.move(0, 0);
+      await page.mouse.wheel(0, 500);
+      await page.waitForTimeout(80);
+      const attemptedBackgroundScroll = await readDocumentLock(page);
+      assertDelta(viewport.name, testCase.name, 'background-wheel-lock', attemptedBackgroundScroll.scrollY, 0);
+      assertDelta(viewport.name, testCase.name, 'background-body-offset', attemptedBackgroundScroll.bodyTop, openLock.bodyTop);
 
       if (testCase.expectsMatchQuery && !new URL(page.url()).hash.includes('match=')) {
         failures.push(`${viewport.name} / ${testCase.name} / open-url: expected match query in ${page.url()}`);
@@ -166,8 +189,13 @@ for (const viewport of viewports) {
         const navigationButton = canUseNext ? nextButton : previousButton;
         await navigationButton.click();
         await page.waitForTimeout(220);
-        const switchedScrollY = await page.evaluate(() => window.scrollY);
-        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-scroll', switchedScrollY, before.scrollY);
+        const switchedLock = await readDocumentLock(page);
+        switchDelta = assertDelta(viewport.name, testCase.name, 'switch-match-body-offset', switchedLock.bodyTop, openLock.bodyTop);
+        assertDelta(viewport.name, testCase.name, 'switch-match-window-scroll', switchedLock.scrollY, 0);
+        if (switchedLock.bodyPosition !== 'fixed' ||
+            switchedLock.bodyOverflow !== 'hidden' || switchedLock.htmlOverflow !== 'hidden') {
+          failures.push(`${viewport.name} / ${testCase.name} / switch-lock-styles: ${JSON.stringify(switchedLock)}`);
+        }
       }
 
       await page.getByRole('button', { name: '關閉比賽詳情' }).click({ position: { x: 4, y: 4 } });
@@ -179,8 +207,14 @@ for (const viewport of viewports) {
       ).first();
       await originalButton.waitFor({ state: 'visible' });
       const after = await readPosition(page, originalButton);
+      const afterStyles = await readDocumentLock(page);
       const closeDelta = assertDelta(viewport.name, testCase.name, 'close-scroll', after.scrollY, before.scrollY);
       const cardDelta = assertDelta(viewport.name, testCase.name, 'close-card-position', after.top, before.top);
+      for (const styleKey of ['bodyPosition', 'bodyWidth', 'bodyOverflow', 'htmlOverflow']) {
+        if (afterStyles[styleKey] !== beforeStyles[styleKey]) {
+          failures.push(`${viewport.name} / ${testCase.name} / close-restores-${styleKey}: ${afterStyles[styleKey]} (was ${beforeStyles[styleKey]})`);
+        }
+      }
 
       if (testCase.expectsMatchQuery && new URL(page.url()).hash.includes('match=')) {
         failures.push(`${viewport.name} / ${testCase.name} / close-url: match query remained in ${page.url()}`);

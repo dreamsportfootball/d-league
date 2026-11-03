@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -87,11 +87,50 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     ? chronologicalMatches[currentIndex + 1]
     : null;
 
+  const isMatchOpen = match !== null;
+
+  // Lock the document (including iOS touch scrolling) for the entire lifetime of
+  // this dialog. Do not re-lock when browsing previous/next matches: doing so
+  // would capture scrollY=0 and lose the original page position.
+  useLayoutEffect(() => {
+    if (!isMatchOpen) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const savedScrollX = window.scrollX;
+    const savedScrollY = window.scrollY;
+    const previous = {
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyWidth: body.style.width,
+      bodyOverflow: body.style.overflow,
+      htmlOverflow: html.style.overflow,
+    };
+
+    body.style.position = 'fixed';
+    body.style.top = `-${savedScrollY}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+    html.style.overflow = 'hidden';
+
+    return () => {
+      body.style.position = previous.bodyPosition;
+      body.style.top = previous.bodyTop;
+      body.style.width = previous.bodyWidth;
+      body.style.overflow = previous.bodyOverflow;
+      html.style.overflow = previous.htmlOverflow;
+
+      // An app-level smooth-scroll rule must not animate background restoration.
+      const previousBehavior = html.style.scrollBehavior;
+      html.style.scrollBehavior = 'auto';
+      window.scrollTo(savedScrollX, savedScrollY);
+      html.style.scrollBehavior = previousBehavior;
+    };
+  }, [isMatchOpen]);
+
   useEffect(() => {
     if (!match) return;
     previousFocusRef.current = document.activeElement as HTMLElement | null;
-    const previousBodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     const focusTimer = window.setTimeout(
       () => closeButtonRef.current?.focus({ preventScroll: true }),
       0,
@@ -127,7 +166,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return () => {
       window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousBodyOverflow;
       const previousFocus = previousFocusRef.current;
       if (previousFocus?.isConnected) {
         previousFocus.focus({ preventScroll: true });

@@ -113,8 +113,13 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   '/assets/seasons/2026-27/players/pwa26-04.': { transform: 'translateY(18%) scale(1.45)' }, // 比賽照
   '/assets/seasons/2026-27/players/pwa26-18.': { objectPosition: '50% 0%' }, // 屏東野猿 蔡振偉：上移裁切以保留頭頂與髮型
-  '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
-  '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // 原圖頭頂靠上
+  // 台南長青：對照 Excel 內嵌原照、48/104/160px 圓形視覺以及 KUROMI #16 超級範本。
+  // 僅微調臉部顯得偏小的個案，保留髮頂、五官與下巴，其他球員不變。
+  '/assets/seasons/2026-27/players/te26-04.': { transform: 'translateY(5.5%) scale(1.12)' }, // #8 曹冠祥：近距離呈現臉部，仍保留髮頂與肩部
+  '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // #14 徐鈺凱：原圖頭頂靠上，沿用已驗證取景
+  '/assets/seasons/2026-27/players/te26-08.': { transform: 'translateY(5%) scale(1.15)' }, // #18 葉博煜：減少相簿背景，突出人物五官
+  '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // #21 吳進偉：原圖頭頂靠上，沿用已驗證取景
+  '/assets/seasons/2026-27/players/te26-18.': { transform: 'translateY(6%) scale(1.18)' }, // #66 周學廣：縮小上半身佔比並放大五官
   'assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴
   'assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
   'assets/seasons/2026-27/players/bw26-07.': { objectPosition: '50% 18%' }, // 黑狼 #7 張智勇：取景上移、髮頂與下巴完整

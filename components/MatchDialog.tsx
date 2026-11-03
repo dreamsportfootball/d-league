@@ -35,6 +35,7 @@ interface MatchDialogProps {
   matchId: string | null;
   onClose: () => void;
   onSelectMatch: (matchId: string) => void;
+  navigationMatchIds?: readonly string[];
 }
 
 const copyText = async (value: string): Promise<void> => {
@@ -58,6 +59,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   matchId,
   onClose,
   onSelectMatch,
+  navigationMatchIds,
 }) => {
   const { activeSeason, seasonData } = useSeason();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -71,14 +73,16 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     [matchId, seasonData.matches],
   );
 
-  // Previous/next follows every match in the active season, independently of
-  // the page's league, matchday, or team filters.
-  const chronologicalMatches = useMemo(
-    () => [...seasonData.matches].sort((a, b) =>
-      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-      || a.id.localeCompare(b.id)),
-    [seasonData.matches],
-  );
+  // Keep previous/next within the caller's explicit match set when supplied.
+  // Homepage and schedule default to the entire active season.
+  const chronologicalMatches = useMemo(() => {
+    const allowedIds = navigationMatchIds ? new Set(navigationMatchIds) : null;
+    return seasonData.matches
+      .filter((item) => !allowedIds || allowedIds.has(item.id))
+      .sort((a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        || a.id.localeCompare(b.id));
+  }, [navigationMatchIds, seasonData.matches]);
 
   const currentIndex = match
     ? chronologicalMatches.findIndex((item) => item.id === match.id)

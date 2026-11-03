@@ -101,9 +101,11 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     const previousBodyOverflow = body.style.overflow;
     const previousHtmlOverflow = html.style.overflow;
     const previousScrollbarGutter = html.style.scrollbarGutter;
-    // Keep the page width unchanged when its vertical scrollbar disappears.
-    // This prevents centered match cards and the header from shifting sideways.
-    html.style.scrollbarGutter = 'stable';
+    // Only reserve a gutter if the page already had a classic scrollbar.
+    // Otherwise a short page would shift when the dialog opens.
+    if (window.innerWidth > html.clientWidth) {
+      html.style.scrollbarGutter = 'stable';
+    }
     body.style.overflow = 'hidden';
     html.style.overflow = 'hidden';
 

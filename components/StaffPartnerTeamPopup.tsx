@@ -11,9 +11,11 @@ import {
   X,
 } from 'lucide-react';
 import { STAFF_PARTNER_TEAM_POPUP } from '../config/siteConfig';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 
 const StaffPartnerTeamPopup: React.FC = () => {
   const [open, setOpen] = useState(false);
+  useModalScrollLock(open);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -46,8 +48,6 @@ const StaffPartnerTeamPopup: React.FC = () => {
     if (!open) return;
 
     previousFocusRef.current = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -82,7 +82,6 @@ const StaffPartnerTeamPopup: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = previousOverflow;
       previousFocusRef.current?.focus();
     };
   }, [dismiss, open]);

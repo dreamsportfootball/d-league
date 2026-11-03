@@ -376,9 +376,16 @@ const ArticleDetailPage: React.FC = () => {
   // that link, so fall back only when their text explicitly names an L1/L2/L3.
   const reportLeague: LeagueId | null = (() => {
     if (article.category !== 'Match Report' || !article.seasonId || !reportSeason) return null;
-    const match = getSeasonData(article.seasonId).matches.find((item) => item.reportArticleId === article.id);
+    const matches = getSeasonData(article.seasonId).matches;
+    const match = matches.find((item) => item.reportArticleId === article.id);
+    // Earlier seasons did not link their reports directly to match records.
+    // Only use the exact legacy match ID or an explicit league label.
+    const legacyMatchId = article.id.match(/^match-report-(m\d+)-\d{8}$/)?.[1];
+    const legacyMatch = legacyMatchId ? matches.find((item) => item.id === legacyMatchId) : null;
     const sourceLeague = match?.league ??
-      (article.content + '\n' + article.summary).match(/D LEAGUE[｜\s]+(L[123])\b/)?.[1];
+      legacyMatch?.league ??
+      (article.content + '\n' + article.summary).match(/D LEAGUE[｜\s]+(L[123])\b/)?.[1] ??
+      article.title.match(/^(L[123])\b/)?.[1];
     return reportSeason.enabledLeagues.find((league) => league === sourceLeague) ?? null;
   })();
   const sponsorGallery: GalleryItem[] | null =

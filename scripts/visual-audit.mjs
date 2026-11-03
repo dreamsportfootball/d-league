@@ -262,7 +262,7 @@ const auditViewport = async (viewport) => {
         const league = route.name === 'article-standings-2026' ||
           route.name === 'article-standings-2025-legacy' ? 'L1' : 'L2';
         const season = historical ? '2025-26' : '2026-27';
-        const expectedHeading = historical ? '2025/26 L2｜最終積分榜' : '2026/27 L1｜最新積分榜';
+        const expectedHeading = historical ? `2025/26 ${league}｜最終積分榜` : `2026/27 ${league}｜最新積分榜`;
         const rows = table.locator('[data-motion-standings-row^="widget-"]');
         const fullStandingsLink = table.locator('a[href*="/standings?"]');
         assert('article-standings-visible', await table.count() === 1,

@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CalendarDays, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getMatchTeamKitVariant } from '../config/teamKitAssets';
 import { useSeason } from '../hooks/useSeason';
+import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { MatchStatus, type Match } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
@@ -136,25 +137,12 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
 
 const MatchCenter: React.FC = () => {
   const { activeSeason, seasonData } = useSeason();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const requestedMatchId = searchParams.get('match');
-  const selectedMatchId = seasonData.matches.some((match) => match.id === requestedMatchId)
-    ? requestedMatchId
-    : null;
+  const validMatchIds = useMemo(
+    () => new Set(seasonData.matches.map((match) => match.id)),
+    [seasonData.matches],
+  );
+  const { matchId: selectedMatchId, selectMatch, closeMatch } = useMatchDialogQuery(validMatchIds);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // Store the open match in the current homepage history entry. Returning
-  // from a player/team profile then restores this same dialog, not just '/'.
-  const selectMatch = (matchId: string) => {
-    const next = new URLSearchParams(searchParams);
-    next.set('match', matchId);
-    setSearchParams(next, { replace: true });
-  };
-  const closeMatch = () => {
-    const next = new URLSearchParams(searchParams);
-    next.delete('match');
-    setSearchParams(next, { replace: true });
-  };
   const todayKey = formatTaipeiDateKey(new Date());
   const scheduledMatches = useMemo(
     () =>

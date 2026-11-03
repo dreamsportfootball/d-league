@@ -22,6 +22,7 @@ import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { useActionFeedback } from '../hooks/useActionFeedback';
+import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { buildMatchPermalink } from '../utils/matchPermalink';
 import AutoFitText from './AutoFitText';
 import ActionFeedbackLabel from './ActionFeedbackLabel';
@@ -88,6 +89,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     : null;
 
   const isMatchOpen = match !== null;
+  useModalScrollLock(isMatchOpen);
 
   // Prevent scroll chaining behind the match dialog without changing the
   // document's scroll position (schedule uses it for match URL navigation).
@@ -95,19 +97,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   // overflow:hidden; touches inside the dialog's scroll region stay usable.
   useLayoutEffect(() => {
     if (!isMatchOpen) return;
-
-    const html = document.documentElement;
-    const body = document.body;
-    const previousBodyOverflow = body.style.overflow;
-    const previousHtmlOverflow = html.style.overflow;
-    const previousScrollbarGutter = html.style.scrollbarGutter;
-    // Only reserve a gutter if the page already had a classic scrollbar.
-    // Otherwise a short page would shift when the dialog opens.
-    if (window.innerWidth > html.clientWidth) {
-      html.style.scrollbarGutter = 'stable';
-    }
-    body.style.overflow = 'hidden';
-    html.style.overflow = 'hidden';
 
     let lastTouchY = 0;
     const handleTouchStart = (event: TouchEvent) => {
@@ -140,9 +129,6 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
-      body.style.overflow = previousBodyOverflow;
-      html.style.overflow = previousHtmlOverflow;
-      html.style.scrollbarGutter = previousScrollbarGutter;
     };
   }, [isMatchOpen]);
   useEffect(() => {

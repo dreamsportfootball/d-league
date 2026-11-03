@@ -16,6 +16,7 @@ interface ScrollStyleSnapshot {
 let activeLocks = 0;
 let snapshot: ScrollStyleSnapshot | null = null;
 let fixedLocks = 0;
+let hadFixedBody = false;
 
 const applyFixedBody = (scrollY: number): void => {
   const body = document.body;
@@ -39,6 +40,7 @@ export const acquireModalScrollLock = (
   const html = document.documentElement;
 
   if (activeLocks === 0) {
+    hadFixedBody = false;
     snapshot = {
       bodyOverflow: body.style.overflow,
       bodyPosition: body.style.position,
@@ -60,6 +62,7 @@ export const acquireModalScrollLock = (
 
   activeLocks += 1;
   if (mode === 'fixed') {
+    hadFixedBody = true;
     fixedLocks += 1;
     if (fixedLocks === 1 && snapshot) {
       applyFixedBody(snapshot.scrollY);
@@ -88,9 +91,10 @@ export const acquireModalScrollLock = (
     body.style.position = original.bodyPosition;
     body.style.top = original.bodyTop;
     body.style.width = original.bodyWidth;
-    if (mode === 'fixed' || fixedLocks !== 0) {
+    if (hadFixedBody) {
       window.scrollTo({ top: original.scrollY, behavior: 'instant' });
     }
     fixedLocks = 0;
+    hadFixedBody = false;
   };
 };

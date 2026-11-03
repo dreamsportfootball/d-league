@@ -399,7 +399,7 @@ for (const season of seasons) {
   }
   const albumDates = new Set(albums.map((album) => album.date));
   for (const [date, photographers] of Object.entries(photoCredits)) {
-    if (!/^\\d{4}\\/\\d{2}\\/\\d{2}$/.test(date) || !albumDates.has(date)) {
+    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(date) || !albumDates.has(date)) {
       fail(`${season}: photo credit date ${date} does not match a published album day`);
     }
     if (!Array.isArray(photographers) || photographers.length === 0) {

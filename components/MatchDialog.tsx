@@ -100,6 +100,10 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     const body = document.body;
     const previousBodyOverflow = body.style.overflow;
     const previousHtmlOverflow = html.style.overflow;
+    const previousScrollbarGutter = html.style.scrollbarGutter;
+    // Keep the page width unchanged when its vertical scrollbar disappears.
+    // This prevents centered match cards and the header from shifting sideways.
+    html.style.scrollbarGutter = 'stable';
     body.style.overflow = 'hidden';
     html.style.overflow = 'hidden';
 
@@ -136,6 +140,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
       document.removeEventListener('touchmove', handleTouchMove);
       body.style.overflow = previousBodyOverflow;
       html.style.overflow = previousHtmlOverflow;
+      html.style.scrollbarGutter = previousScrollbarGutter;
     };
   }, [isMatchOpen]);
   useEffect(() => {

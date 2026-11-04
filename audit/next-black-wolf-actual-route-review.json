@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T07:38:49.650Z",
+  "generatedAt": "2026-11-04T07:53:26.361Z",
   "team": "黑狼FC",
   "teamId": "t_black_wolf_2026",
   "season": "2026-27",
@@ -718,9 +718,9 @@
       "id": "bw26-16",
       "name": "王廷夫",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16.webp",
-        "naturalWidth": 214,
-        "naturalHeight": 285,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16-excel-portrait-20261104.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -738,9 +738,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16.webp",
-        "naturalWidth": 214,
-        "naturalHeight": 285,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16-excel-portrait-20261104.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1516,9 +1516,9 @@
       "id": "bw26-16",
       "name": "王廷夫",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16.webp",
-        "naturalWidth": 214,
-        "naturalHeight": 285,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16-excel-portrait-20261104.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1536,9 +1536,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16.webp",
-        "naturalWidth": 214,
-        "naturalHeight": 285,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/bw26-16-excel-portrait-20261104.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",

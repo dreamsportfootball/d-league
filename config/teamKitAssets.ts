@@ -106,6 +106,74 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
       t_southboys_2026: 'away',
       t_pingtung_wild_ape_2026: 'home',
     },
+    'm2627-008': {
+      // Organizer-approved color separation: 2026-11-08 L3 Wolves vs Luzhu: Luzhu blue home.
+      t_luzhu_2026: 'home',
+    },
+    'm2627-019': {
+      // Organizer-approved color separation: 2026-12-06 L1 KUROMI vs Chiayi 235: Chiayi light gray-blue home.
+      t_chiayi_235_2026: 'home',
+    },
+    'm2627-024': {
+      // Organizer-approved color separation: 2026-12-06 L2 SOUTHBOYS vs Kaohsiung Hongkongers: yellow-black home.
+      t_kaohsiung_hk_2026: 'home',
+    },
+    'm2627-025': {
+      // Organizer-approved color separation: 2026-12-13 L3 Holy Knights vs SF: SF pink home.
+      t_sf_2026: 'home',
+    },
+    'm2627-031': {
+      // Organizer-approved color separation: 2026-12-20 L1 Alian vs Chiayi 235: Chiayi light gray-blue home.
+      t_chiayi_235_2026: 'home',
+    },
+    'm2627-040': {
+      // Organizer-approved color separation: 2027-01-17 L3 Niaoshi vs Wolves: Wolves white home.
+      t_pingtung_wolves_2026: 'home',
+    },
+    'm2627-044': {
+      // Organizer-approved color separation: 2027-01-24 L2 Black Wolf vs Kaohsiung Hongkongers: yellow-black home.
+      t_kaohsiung_hk_2026: 'home',
+    },
+    'm2627-046': {
+      // Organizer-approved color separation: 2027-01-24 L1 Evergreen vs Chen: Chen navy home.
+      t_chen_2026: 'home',
+    },
+    'm2627-047': {
+      // Organizer-approved color separation: 2027-01-24 L1 Black Knights vs Chiayi 235: Chiayi light gray-blue home.
+      t_chiayi_235_2026: 'home',
+    },
+    'm2627-063': {
+      // Organizer-approved color separation: 2027-03-07 L3 SF vs Wolves: Wolves white home.
+      t_pingtung_wolves_2026: 'home',
+    },
+    'm2627-066': {
+      // Organizer-approved color separation: 2027-03-14 L2 Black Wolf vs Amateur: Amateur red home.
+      t_kaohsiung_amateur_2026: 'home',
+    },
+    'm2627-070': {
+      // Organizer-approved color separation: 2027-03-21 L3 Wolves vs Wanderers: Wanderers navy home.
+      t_wanderers_2026: 'home',
+    },
+    'm2627-071': {
+      // Organizer-approved color separation: 2027-03-21 L3 SF vs Holy Knights: Holy Knights navy home.
+      t_holy_knights_2026: 'home',
+    },
+    'm2627-074': {
+      // Organizer-approved color separation: 2027-03-28 L3 Wanderers vs SF: SF pink home.
+      t_sf_2026: 'home',
+    },
+    'm2627-078': {
+      // Organizer-approved color separation: 2027-04-11 L1 Chiayi 235 vs Alian: Alian black home.
+      t_alian_2026: 'home',
+    },
+    'm2627-084': {
+      // Organizer-approved color separation: 2027-04-18 L3 Luzhu vs SF: SF pink home.
+      t_sf_2026: 'home',
+    },
+    'm2627-086': {
+      // Organizer-approved color separation: 2027-04-25 L2 Tongque vs Kaohsiung Hongkongers: yellow-black home.
+      t_kaohsiung_hk_2026: 'home',
+    },
     'm2627-056': {
       // Organizer-approved: Chen wears pink away; Chiayi 235 keeps its default away kit.
       t_chen_2026: 'away',

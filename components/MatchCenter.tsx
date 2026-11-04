@@ -225,7 +225,7 @@ const MatchCenter: React.FC = () => {
               <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-neutral-600 md:text-[10px] md:text-neutral-400">
                 {activeSeason.shortName} · MATCH CENTRE
               </p>
-              <h2 className="mb-2 font-sans text-3xl font-black uppercase tracking-tight text-brand-black md:font-display md:tracking-tighter">
+              <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">
                 賽事 <span className="text-brand-blue">中心</span>
               </h2>
               <div className="w-full border-b border-neutral-200 md:w-auto md:rounded-full md:border-0 md:bg-neutral-100 md:p-1 [&_[role=tablist]]:w-full [&_[role=tablist]]:gap-0 md:[&_[role=tablist]]:gap-2 [&_[role=tab]]:min-h-11 [&_[role=tab]]:flex-1 [&_[role=tab]]:rounded-none [&_[role=tab]]:border-b-2 [&_[role=tab]]:border-transparent [&_[role=tab]]:px-2 [&_[role=tab]]:py-2.5 [&_[role=tab]]:text-sm [&_[role=tab][aria-selected=true]]:font-black [&_[role=tab][aria-selected=false]]:font-medium [&_[aria-selected=true]]:border-brand-blue [&_[aria-selected=true]]:bg-transparent [&_[aria-selected=true]]:shadow-none md:[&_[role=tab]]:min-h-0 md:[&_[role=tab]]:flex-none md:[&_[role=tab]]:rounded-full md:[&_[role=tab]]:border-b-0 md:[&_[role=tab]]:px-4 md:[&_[role=tab]]:py-1.5 md:[&_[role=tab]]:text-xs md:[&_[role=tab]]:font-bold md:[&_[aria-selected=true]]:bg-white md:[&_[aria-selected=true]]:shadow-sm">

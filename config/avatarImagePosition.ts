@@ -39,12 +39,11 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/pw26-11.': { transform: 'scale(1.18)' }, // 屏東野狼 林瑶璇：取消向下位移，令臉部重新置中
 
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
+  // SF #16, #12 (coach), #82 and #11: individually cropped square WebP from 2026/27 Excel originals.
+  // Default 50% 50% framing; do not restore transforms calibrated for full-body photos.
   '/assets/seasons/2026-27/players/sf26-01.': { transform: 'translateY(16%) scale(1.4)' }, // SF 陳欣敏：半身照讓臉部比例清楚
   '/assets/seasons/2026-27/players/sf26-13.': { objectPosition: '50% 85%' },
   '/assets/seasons/2026-27/players/sf26-15.': { objectPosition: '50% 0%' },
-  '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'translateY(-8%) scale(2.7)' }, // SF 鄭詠翰：放大球場遠景中的臉部
-  '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 63%', transform: 'translate(28%, -18%) scale(1.7)' },
-  '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
   // 高雄香港人 #31 謝俊杰（兼領隊）：使用 Excel 內嵌原圖重新直立及裁切的獨立 WebP，
   // 新圖片為正方形，維持預設置中；不再套舊版合照的 1.75 倍位移裁切。
   '/assets/seasons/2026-27/players/khk26-05.': { objectPosition: '50% 20%', transform: 'scale(1.12)' }, // #15 阮文南：臉部比例稍放大，髮頂與下巴完整

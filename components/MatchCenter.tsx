@@ -72,14 +72,14 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
     >
       <div className="flex w-full min-w-0 shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">
-          <span className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-neutral-500">
+          <span className="whitespace-nowrap text-xs font-extrabold uppercase tracking-wider text-neutral-500 md:font-bold">
             {match.league} · 第{match.round}輪
           </span>
           <span className="ml-2 truncate border-l border-neutral-200 pl-2 text-xs font-medium text-neutral-600 md:text-neutral-400">
             {dateString}
           </span>
         </div>
-        <span className="ml-2 shrink-0 text-xs font-bold text-neutral-600 md:text-neutral-400">
+        <span className="ml-2 shrink-0 text-xs font-extrabold text-neutral-600 md:font-bold md:text-neutral-400">
           {isFinished ? '完賽' : timeString}
         </span>
       </div>
@@ -98,7 +98,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
                 />
               </div>
               <div className="min-w-0">
-                <span className="block w-full break-words text-lg font-bold leading-snug tracking-tight text-brand-black">
+                <span className="block w-full break-words text-lg font-extrabold leading-snug tracking-tight text-brand-black md:font-bold">
                   {team.name}
                 </span>
               </div>
@@ -225,10 +225,10 @@ const MatchCenter: React.FC = () => {
               <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-neutral-600 md:text-[10px] md:text-neutral-400">
                 {activeSeason.shortName} · MATCH CENTRE
               </p>
-              <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">
+              <h2 className="mb-2 font-sans text-3xl font-black uppercase tracking-tight text-brand-black md:font-display md:tracking-tighter">
                 賽事 <span className="text-brand-blue">中心</span>
               </h2>
-              <div className="w-full border-b border-neutral-200 md:w-auto md:rounded-full md:border-0 md:bg-neutral-100 md:p-1 [&_[role=tablist]]:w-full [&_[role=tablist]]:gap-0 md:[&_[role=tablist]]:gap-2 [&_[role=tab]]:min-h-11 [&_[role=tab]]:flex-1 [&_[role=tab]]:rounded-none [&_[role=tab]]:border-b-2 [&_[role=tab]]:border-transparent [&_[role=tab]]:px-2 [&_[role=tab]]:py-2.5 [&_[role=tab]]:text-sm [&_[aria-selected=true]]:border-brand-blue [&_[aria-selected=true]]:bg-transparent [&_[aria-selected=true]]:shadow-none md:[&_[role=tab]]:min-h-0 md:[&_[role=tab]]:flex-none md:[&_[role=tab]]:rounded-full md:[&_[role=tab]]:border-b-0 md:[&_[role=tab]]:px-4 md:[&_[role=tab]]:py-1.5 md:[&_[role=tab]]:text-xs md:[&_[aria-selected=true]]:bg-white md:[&_[aria-selected=true]]:shadow-sm">
+              <div className="w-full border-b border-neutral-200 md:w-auto md:rounded-full md:border-0 md:bg-neutral-100 md:p-1 [&_[role=tablist]]:w-full [&_[role=tablist]]:gap-0 md:[&_[role=tablist]]:gap-2 [&_[role=tab]]:min-h-11 [&_[role=tab]]:flex-1 [&_[role=tab]]:rounded-none [&_[role=tab]]:border-b-2 [&_[role=tab]]:border-transparent [&_[role=tab]]:px-2 [&_[role=tab]]:py-2.5 [&_[role=tab]]:text-sm [&_[role=tab][aria-selected=true]]:font-black [&_[role=tab][aria-selected=false]]:font-medium [&_[aria-selected=true]]:border-brand-blue [&_[aria-selected=true]]:bg-transparent [&_[aria-selected=true]]:shadow-none md:[&_[role=tab]]:min-h-0 md:[&_[role=tab]]:flex-none md:[&_[role=tab]]:rounded-full md:[&_[role=tab]]:border-b-0 md:[&_[role=tab]]:px-4 md:[&_[role=tab]]:py-1.5 md:[&_[role=tab]]:text-xs md:[&_[role=tab]]:font-bold md:[&_[aria-selected=true]]:bg-white md:[&_[aria-selected=true]]:shadow-sm">
                 <Tabs
                   options={['Results', 'Upcoming'] as const}
                   active={filter}
@@ -270,7 +270,7 @@ const MatchCenter: React.FC = () => {
             </div>
           </div>
           {filteredMatches.length > 0 && (
-            <div className="mb-3 flex items-center justify-between gap-3 px-0.5 text-xs font-semibold text-neutral-600 md:hidden">
+            <div className="mb-3 flex items-center justify-between gap-3 px-0.5 text-xs font-bold text-neutral-600 md:hidden">
               <span className="min-w-0 truncate">
                 {formatTaipeiMonthDayWeekday(filteredMatches[0].timestamp)} · {filteredMatches.length} 場比賽
               </span>

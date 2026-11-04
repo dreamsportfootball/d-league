@@ -43,6 +43,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sf26-18.': { objectPosition: '50% 20%', transform: 'translateY(-8%) scale(2.7)' }, // SF 鄭詠翰：放大球場遠景中的臉部
   '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 63%', transform: 'translate(28%, -18%) scale(1.7)' },
   '/assets/seasons/2026-27/players/sf26-20.': { transform: 'translateY(67%) scale(3)' }, // SF 呂承燁：全身照拉近至頭肩
+  // 高雄香港人 #31 謝俊杰（兼領隊）：使用 Excel 內嵌原圖重新直立及裁切的獨立 WebP，
+  // 新圖片為正方形，維持預設置中；不再套舊版合照的 1.75 倍位移裁切。
+  '/assets/seasons/2026-27/players/khk26-05.': { objectPosition: '50% 20%', transform: 'scale(1.12)' }, // #15 阮文南：臉部比例稍放大，髮頂與下巴完整
   // 高雄業餘 2026/27：逐張比對 Excel xl/media 原圖及 48/104/160px 實際圓形裁切。
   // 只對髮頂受預設垂直置中影響的人物調整；不套用全隊相同倍率或犧牲下巴。
   '/assets/seasons/2026-27/players/ka26-01.': { objectPosition: '50% 30%' }, // #9 劉力瑋：保留完整髮頂、下巴與五官
@@ -72,8 +75,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
 
   // Rechecked against 2026/27 original team Excel embedded images on 2026-10-30.
   // Preserve the source images; reframe only the circular avatar presentation.
-  'assets/seasons/2026-27/players/khk26-02.': { transform: 'translate(-35%, 29%) scale(1.75)' }, // 高雄香港人 謝俊杰：以人物頭臉為中心，避開前景貓咪
-  '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(4%, -3%) scale(1.9)' },
+  '/assets/seasons/2026-27/players/khk26-06.': { transform: 'translate(0%, -12%) scale(2.1)' }, // #24 游淙瑋：原圖遠景，保留髮頂且臉部向圓形中央上移；清晰度仍受限
   '/assets/seasons/2026-27/players/khk26-11.': { transform: 'translate(-11%, 24%) scale(2)' },
   '/assets/seasons/2026-27/players/kbk26-12.': { transform: 'translate(19%, 38%) scale(1.85)' }, // #7 姜斌：保留髮頂，聚焦合照左側本人
   '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(34%) scale(2.5) scaleX(1.49)' }, // 高雄業餘 #7 潘晨維：依 Excel 內嵌圖片的橫向拉伸比例
@@ -127,8 +129,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/tq26-09.': { transform: 'translate(-27%, 37%) scale(2.1)' }, // 銅雀 #9 陳宗漢：臉部更清楚、保留原本橫向中心
   '/assets/seasons/2026-27/players/tq26-04.': { transform: 'translateY(9%) scale(1.25)' }, // 銅雀 #93 施博允：放大臉部、位置維持中央
   '/assets/seasons/2026-27/players/tq26-15.': { transform: 'translateY(6%) scale(1.15)' }, // 銅雀 #46 林宴丞：小幅放大、置中臉部
-  '/assets/seasons/2026-27/players/khk26-07.': { objectPosition: '50% 0%', transform: 'translateY(10%) scale(1.55)' }, // #17 高義莉：減少過度放大、讓臉部居中
-  '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(35%) scale(2)' }, // 站立半身照
+  '/assets/seasons/2026-27/players/khk26-07.': { objectPosition: '50% 0%', transform: 'translateY(-6%) scale(1.65)' }, // #17 高義莉：上移偏低的臉與五官，保留髮型及下巴
+  '/assets/seasons/2026-27/players/khk26-09.': { transform: 'translateY(28%) scale(2)' }, // #23 李世琦：將人臉置中，保留完整髮頂
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   // 屏東野猿：依原始 Excel xl/media 與 48/104/160px 實圖逐張檢查。
   // 只修髮頂遭預設置中裁切的照片；#2 比賽截圖特殊裁切及 #88 已確認設定保留。

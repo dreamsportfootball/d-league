@@ -170,8 +170,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/te26-20.': { objectPosition: '50% 0%' }, // #88 王中更：避免頂部頭髮被切掉
   '/assets/seasons/2026-27/players/te26-06.': { objectPosition: '50% 0%' }, // #14 徐鈺凱：既有合格上緣取景，保留
   '/assets/seasons/2026-27/players/te26-11.': { objectPosition: '50% 0%' }, // #21 吳進偉：Owner 確認的本隊參考範本，保留
-  'assets/seasons/2026-27/players/bw26-01.': { objectPosition: '50% 22%' }, // 黑狼 王浩誠：上移取景，保留髮頂、臉與下巴
-  'assets/seasons/2026-27/players/bw26-02.': { objectPosition: '50% 0%' }, // 黑狼 王瑞淯：保留帽頂，避免居中裁去上緣
+  // 黑狼 #67、#9、#18、#22、#12：使用 2026-11-04 Excel 原圖專用 720px 正方形取景；
+  // 不再套舊版長方形縮圖的取景偏移，由來源直接保障完整髮頂及下巴。
   'assets/seasons/2026-27/players/bw26-07.': { objectPosition: '50% 18%' }, // 黑狼 #7 張智勇：取景上移、髮頂與下巴完整
   'assets/seasons/2026-27/players/bw26-10.': { objectPosition: '50% 12%' }, // 黑狼 #20 朱天灝：由置中改為略偏上取景、保留完整髮頂
   '/assets/seasons/2026-27/players/bw26-08.': { objectPosition: '50% 0%', transform: 'translateY(55%) scale(2.2)' }, // 第二輪實圖回歸校正

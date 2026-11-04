@@ -445,7 +445,7 @@ const ArticleDetailPage: React.FC = () => {
         {article.imageUrl && (
           <figure className="mt-9 md:mt-12">
             {article.id === '2026-27-match-report-m2627-004' ? (
-              <div className="mx-auto aspect-video w-full max-w-[1080px] overflow-hidden rounded-lg bg-neutral-100">
+              <div className="mx-auto aspect-[3/2] w-full max-w-[1080px] overflow-hidden rounded-lg bg-neutral-100">
                 <img
                   src={article.imageUrl}
                   alt={article.title}

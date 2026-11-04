@@ -444,13 +444,23 @@ const ArticleDetailPage: React.FC = () => {
 
         {article.imageUrl && (
           <figure className="mt-9 md:mt-12">
-            <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
-              <img
-                src={article.imageUrl}
-                alt={article.title}
-                className="h-auto max-h-[760px] w-auto max-w-full object-contain"
-              />
-            </div>
+            {article.id === '2026-27-match-report-m2627-004' ? (
+              <div className="mx-auto aspect-video w-full max-w-[1080px] overflow-hidden rounded-lg bg-neutral-100">
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+            ) : (
+              <div className="flex min-h-[220px] w-full items-center justify-center overflow-hidden px-3 py-3 md:min-h-[360px] md:px-6 md:py-6">
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="h-auto max-h-[760px] w-auto max-w-full object-contain"
+                />
+              </div>
+            )}
           </figure>
         )}
 

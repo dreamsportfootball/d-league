@@ -6,6 +6,8 @@ on:
       - scripts/audit-next-five-portrait-routes.mjs
       - .github/workflows/next-five-portrait-route-qa.yml
       - config/avatarImagePosition.ts
+      - data/seasons/2026-27/playerImages.json
+      - public/assets/seasons/2026-27/players/**
   workflow_dispatch:
 permissions:
   contents: write

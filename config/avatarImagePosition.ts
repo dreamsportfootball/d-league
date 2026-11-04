@@ -41,9 +41,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
   // SF #16, #12 (coach), #82 and #11: individually cropped square WebP from 2026/27 Excel originals.
   // Default 50% 50% framing; do not restore transforms calibrated for full-body photos.
-  '/assets/seasons/2026-27/players/sf26-01.': { transform: 'translateY(16%) scale(1.4)' }, // SF 陳欣敏：半身照讓臉部比例清楚
+  // 14 SF owner-rejected avatars are already cropped to 720x720. Do not reapply
+  // transforms for the old rectangular sources; retain circular overflow clipping.
   '/assets/seasons/2026-27/players/sf26-13.': { objectPosition: '50% 85%' },
-  '/assets/seasons/2026-27/players/sf26-15.': { objectPosition: '50% 0%' },
   // 高雄香港人 #31 謝俊杰（兼領隊）：使用 Excel 內嵌原圖重新直立及裁切的獨立 WebP，
   // 新圖片為正方形，維持預設置中；不再套舊版合照的 1.75 倍位移裁切。
   '/assets/seasons/2026-27/players/khk26-05.': { objectPosition: '50% 20%', transform: 'scale(1.12)' }, // #15 阮文南：臉部比例稍放大，髮頂與下巴完整
@@ -82,8 +82,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(34%) scale(2.5) scaleX(1.49)' }, // 高雄業餘 #7 潘晨維：依 Excel 內嵌圖片的橫向拉伸比例
 
   // Second-pass 104px / 48px face and hairline review (2026-10-30).
-  '/assets/seasons/2026-27/players/sf26-05.': { objectPosition: '50% 0%' }, // 廖新凱：避免裁掉髮頂
-  '/assets/seasons/2026-27/players/sf26-12.': { objectPosition: '50% 0%' }, // 洪家庭：維持照片完整頂部
   '/assets/seasons/2026-27/players/lz26-17.': { objectPosition: '50% 0%' }, // 林宜蓁：維持照片完整頂部
   '/assets/seasons/2026-27/players/wa26-04.': { objectPosition: '50% 0%' }, // 蔡羿丞：避免裁掉髮頂
   '/assets/seasons/2026-27/players/lz26-05.': { objectPosition: '50% 0%' }, // 李修沛：避開原始照片下方其他畫面

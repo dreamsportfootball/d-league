@@ -49,6 +49,8 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
     isFinalStandings: activeSeason.status === 'completed',
   }), [activeSeason.rules, activeSeason.status, league, leagueConfig, seasonData.matchEvents, seasonData.matches, seasonData.teams]);
   const isWidget = variant === 'widget';
+  // Visual table positions are always 1...N, even if the competition engine keeps an unresolved tie.
+  // Do not alter row.rank or tieStatus: they are used for actual promotion/relegation decisions.
   const displayed = standings.slice(0, isWidget ? 6 : standings.length);
 
   useRankingMotion(standingsContainerRef, `${activeSeason.id}:${league}:${variant}`, displayed);
@@ -77,7 +79,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
   };
   const rowStatusText = (row: Standing): string | null => {
     if (row.tieStatus === 'DRAW_REQUIRED') return '此順位待公開抽籤確認';
-    if (row.tieStatus === 'SHARED') return '目前並列';
+    if (row.tieStatus === 'SHARED') return '排序條件相同，依表格順序顯示暫定序號';
     if (isPromotionRank(row)) return '升級席位';
     if (isChampionRank(row)) return '冠軍順位';
     if (isRelegationRank(row)) return '降級席位';
@@ -100,14 +102,14 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
         <div className="grid grid-cols-[2rem_1fr_2rem_2rem] gap-2 border-b border-neutral-100 py-2 text-[10px] font-bold tracking-wider text-neutral-500">
           <span>#</span><span>球隊</span><span className="text-center">場次</span><span className="text-center">積分</span>
         </div>
-        {displayed.map((row) => {
+        {displayed.map((row, index) => {
           const team = seasonData.teamMap[row.teamId];
           if (!team) return null;
           return (
             <div key={row.teamId} data-motion-standings-row={`widget-${row.teamId}`} className="grid grid-cols-[2rem_1fr_2rem_2rem] items-center gap-2 border-b border-neutral-50 py-3">
               <div className="relative flex items-center pl-1">
                 <div className={`absolute left-0 h-3 w-0.5 rounded-full ${rankBar(row)}`} />
-                <span className="ml-2 font-medium tabular-nums text-brand-black">{row.rank}</span>
+                <span className="ml-2 font-medium tabular-nums text-brand-black">{index + 1}</span>
               </div>
               <Link
                 to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
@@ -153,7 +155,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                 <th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th>
               </tr>
             </thead>
-            <tbody>{displayed.map((row) => {
+            <tbody>{displayed.map((row, index) => {
               const team = seasonData.teamMap[row.teamId];
               if (!team) return null;
               const statusText = rowStatusText(row);
@@ -162,7 +164,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                   <td className="px-1 py-3">
                     <div className="relative flex items-center pl-1">
                       <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
-                      <span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span>
+                      <span className="ml-3 font-mono text-xs font-bold tabular-nums">{index + 1}</span>
                       {statusText && <span className="sr-only">，{statusText}</span>}
                     </div>
                   </td>
@@ -196,7 +198,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                 <th className="w-8 px-1 py-3 text-left">名次</th><th className="w-[140px] py-3 pl-2 pr-2 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th>
               </tr>
             </thead>
-            <tbody>{displayed.map((row) => {
+            <tbody>{displayed.map((row, index) => {
               const team = seasonData.teamMap[row.teamId];
               if (!team) return null;
               const statusText = rowStatusText(row);
@@ -205,7 +207,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                   <td className="px-1 py-3">
                     <div className="relative flex items-center pl-1">
                       <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
-                      <span className="ml-3 font-mono text-xs font-bold tabular-nums">{row.rank}</span>
+                      <span className="ml-3 font-mono text-xs font-bold tabular-nums">{index + 1}</span>
                       {statusText && <span className="sr-only">，{statusText}</span>}
                     </div>
                   </td>
@@ -244,7 +246,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
               <th className="w-10 px-1 py-3 text-left">名次</th><th className="w-[220px] px-4 py-3 text-left">球隊</th><th className="w-10 px-1 py-3 text-center">場次</th><th className="w-10 px-1 py-3 text-center">勝</th><th className="w-10 px-1 py-3 text-center">和</th><th className="w-10 px-1 py-3 text-center">敗</th><th className="w-10 px-1 py-3 text-center">進球</th><th className="w-10 px-1 py-3 text-center">失球</th><th className="w-12 px-1 py-3 text-center">淨勝</th><th className="w-12 px-1 py-3 text-center text-brand-blue">積分</th><th className="w-[50px] px-1 py-3 text-left">近況</th>
             </tr>
           </thead>
-          <tbody>{displayed.map((row) => {
+          <tbody>{displayed.map((row, index) => {
             const team = seasonData.teamMap[row.teamId];
             if (!team) return null;
             const statusText = rowStatusText(row);
@@ -253,7 +255,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                 <td className="px-1 py-3">
                   <div className="relative flex items-center pl-1">
                     <div className={`absolute left-0 h-6 w-1 rounded-full ${rankBar(row)}`} />
-                    <span className="ml-3 font-mono text-sm font-bold tabular-nums">{row.rank}</span>
+                    <span className="ml-3 font-mono text-sm font-bold tabular-nums">{index + 1}</span>
                     {statusText && <span className="sr-only">，{statusText}</span>}
                   </div>
                 </td>

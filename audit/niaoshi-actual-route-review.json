@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T13:15:11.649Z",
+  "generatedAt": "2026-11-05T13:20:00.914Z",
   "team": "台南鳥仕足球俱樂部",
   "teamId": "t_niaoshi_2026",
   "season": "2026-27",
@@ -624,9 +624,9 @@
       "id": "ns26-14",
       "name": "黃首駿",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 821,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -644,9 +644,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 821,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1515,9 +1515,9 @@
       "id": "ns26-14",
       "name": "黃首駿",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 821,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1535,9 +1535,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 821,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-14-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",

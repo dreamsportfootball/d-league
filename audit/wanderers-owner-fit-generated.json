@@ -1,0 +1,113 @@
+{
+  "season": "2026-27",
+  "teamId": "t_wanderers_2026",
+  "source": "Wanderers.xlsx / canonical same-person GitHub original PNG",
+  "changed": [
+    {
+      "person": "林湧鈞",
+      "id": "01",
+      "src": "assets/seasons/2026-27/players/wa26-01.png",
+      "dst": "assets/seasons/2026-27/players/wa26-01-owner-fit-20261105.webp",
+      "sourceSize": [
+        405,
+        515
+      ],
+      "scale": 0.96
+    },
+    {
+      "person": "蔡羿丞",
+      "id": "04",
+      "src": "assets/seasons/2026-27/players/wa26-04.png",
+      "dst": "assets/seasons/2026-27/players/wa26-04-owner-fit-20261105.webp",
+      "sourceSize": [
+        407,
+        534
+      ],
+      "scale": 0.96
+    },
+    {
+      "person": "洪萁宏",
+      "id": "05",
+      "src": "assets/seasons/2026-27/players/wa26-05.png",
+      "dst": "assets/seasons/2026-27/players/wa26-05-owner-fit-20261105.webp",
+      "sourceSize": [
+        406,
+        547
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "陳韋廷",
+      "id": "07",
+      "src": "assets/seasons/2026-27/players/wa26-07.png",
+      "dst": "assets/seasons/2026-27/players/wa26-07-owner-fit-20261105.webp",
+      "sourceSize": [
+        272,
+        378
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "毛邦丞",
+      "id": "10",
+      "src": "assets/seasons/2026-27/players/wa26-10.png",
+      "dst": "assets/seasons/2026-27/players/wa26-10-owner-fit-20261105.webp",
+      "sourceSize": [
+        346,
+        532
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "王亮鈞",
+      "id": "11",
+      "src": "assets/seasons/2026-27/players/wa26-11.png",
+      "dst": "assets/seasons/2026-27/players/wa26-11-owner-fit-20261105.webp",
+      "sourceSize": [
+        509,
+        573
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "洪子程",
+      "id": "14",
+      "src": "assets/seasons/2026-27/players/wa26-14.png",
+      "dst": "assets/seasons/2026-27/players/wa26-14-owner-fit-20261105.webp",
+      "sourceSize": [
+        282,
+        379
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "張賢國",
+      "id": "15",
+      "src": "assets/seasons/2026-27/players/wa26-15.png",
+      "dst": "assets/seasons/2026-27/players/wa26-15-owner-fit-20261105.webp",
+      "sourceSize": [
+        262,
+        399
+      ],
+      "scale": 0.94
+    },
+    {
+      "person": "尤昱翔",
+      "id": "16",
+      "src": "assets/seasons/2026-27/players/wa26-16.png",
+      "dst": "assets/seasons/2026-27/players/wa26-16-owner-fit-20261105.webp",
+      "sourceSize": [
+        416,
+        527
+      ],
+      "scale": 0.98
+    },
+    {
+      "person": "沈家弘",
+      "id": "09",
+      "src": "assets/seasons/2026-27/players/wa26-09.png",
+      "dst": "assets/seasons/2026-27/players/wa26-09-owner-light-20261105.webp",
+      "lighting": "brightness 1.18; no face retouch"
+    }
+  ]
+}

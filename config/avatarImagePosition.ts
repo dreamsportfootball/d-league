@@ -43,6 +43,10 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // Default 50% 50% framing; do not restore transforms calibrated for full-body photos.
   // 14 SF owner-rejected avatars are already cropped to 720x720. Do not reapply
   // transforms for the old rectangular sources; retain circular overflow clipping.
+  // Owner recheck 2026-11-05: SF #82 uses unpadded Excel source; zoom to centre face without blank lower strip.
+  '/assets/seasons/2026-27/players/sf26-19.': { objectPosition: '50% 100%', transform: 'translateX(14%) scale(1.3)' },
+  // SF manager 吳孟容: portrait source is tall; align at top to retain her hair.
+  '/assets/seasons/2026-27/staff/sf-wu-meng-rong.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/sf26-13.': { objectPosition: '50% 85%' },
   // 高雄香港人 #31 謝俊杰（兼領隊）：使用 Excel 內嵌原圖重新直立及裁切的獨立 WebP，
   // 新圖片為正方形，維持預設置中；不再套舊版合照的 1.75 倍位移裁切。

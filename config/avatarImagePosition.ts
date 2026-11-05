@@ -39,10 +39,10 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // Framing is shared by 48px roster and 104/160px profile portraits; no global avatar change.
   '/assets/seasons/2026-27/players/pw26-01.': { objectPosition: '50% 0%' }, // #27 周宗德：上移保留直式原照的髮頂
   '/assets/seasons/2026-27/players/pw26-02.': { objectPosition: '50% 0%' }, // #6 林大雄：上移避免髮頂被方形置中裁掉
-  '/assets/seasons/2026-27/players/pw26-03.': { objectPosition: '50% 24%' }, // #11 謝晉元：髮頂與下巴兼顧
-  '/assets/seasons/2026-27/players/pw26-05.': { objectPosition: '50% 0%' }, // #21 張春生：保留原圖最上緣的髮型
+  '/assets/seasons/2026-27/players/pw26-03.': { objectPosition: '50% 12%' }, // #11 謝晉元：重新留出髮頂空間且保留臉部
+  '/assets/seasons/2026-27/players/pw26-05.': { objectPosition: '50% 0%', transform: 'translateY(7.5%) scale(1.15)' }, // #21 張春生：改善人臉過小，同時不讓圖片邊緣脫框
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%', transform: 'translateY(-4%) scale(1.1)' }, // #12 鄧進成：臉部上移、放大且不露出底邊
-  '/assets/seasons/2026-27/players/pw26-10.': { objectPosition: '50% 0%' }, // #29 周承政：避免直式照片裁去上方髮型
+  '/assets/seasons/2026-27/players/pw26-10.': { objectPosition: '50% 0%', transform: 'translateY(4%) scale(1.08)' }, // #29 周承政：臉部微放大，保留上方髮型與圓形邊緣
   '/assets/seasons/2026-27/players/pw26-11-owner-crop-20261105.': { transform: 'scale(1.1)' }, // #28 林瑶璇：新版正方形照片適度放大，保留髮型
   // 屏東野狼 #56／#33／#37／#97 已改為正方形來源，維持此前核准設定。
   // 僅控制當季頭像，不改其他隊／2025-26。

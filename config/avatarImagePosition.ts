@@ -32,6 +32,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ch26-18.': { objectPosition: '50% 0%', transform: 'translate(-1.86%, 0.37%) scale(1.05)' }, // 陳公舘 鍾皓弦：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-19.': { objectPosition: '50% 18.64%', transform: 'translate(-0.16%, 0%) scale(1.03)' }, // 陳公舘 黃杰：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translate(-0.37%, 2.59%) scale(1.13)' }, // 陳公舘 林祐丞：保留髮頂／完整五官
+  // 台南鳥仕 2026/27：13 位原本依賴 CSS 放大的全／半身照，已由各自原始登錄照
+  // 重裁為 720×720 -super-20261105.webp。保持預設置中，不重套舊版放大與位移；
+  // #14／#42／#11／#18 已有合適近照，保留原樣。名單與球員／隊職員頁共用來源。
   // SOUTHBOYS 2026/27: 2026-11-04 accepted candidate source crops (sb26-04/05/08/09/11/13/14/15)
   // are square 720px photos; avoid reapplying stale transforms from long/full-body originals.
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
@@ -225,19 +228,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(47%) scale(2.1)' }, // SOUTHBOYS 孺立：原圖人頭位置偏上，放大至清楚可辨
   '/assets/seasons/2026-27/players/sb26-06.': { objectPosition: '50% 0%' }, // 蘇凡迪：保留 2026/27 原照頭頂
   '/assets/players/PPI TAINAN FC/蘇凡迪.': { objectPosition: '50% 0%' }, // 蘇凡迪：2025/26 歷史原照也保留頭頂
-  '/assets/seasons/2026-27/players/ns26-02.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-03.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-04.': { transform: 'translateY(34%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-05.': { transform: 'translateY(27%) scale(1.9)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-06.': { objectPosition: '50% 18%', transform: 'translateY(35%) scale(1.85)' }, // 台南鳥仕 #6 吳昱陞：原圖取景往上且保留圓形圖片完整覆蓋，完整頭髮／五官／下巴
-  '/assets/seasons/2026-27/players/ns26-07.': { transform: 'translateY(26%) scale(1.8)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-08.': { transform: 'translateY(28%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-09.': { transform: 'translateY(27%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-10.': { transform: 'translateY(27%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-11.': { transform: 'translateY(28%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-12.': { transform: 'translateY(25%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-13.': { transform: 'translateY(24%) scale(1.85)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-15.': { transform: 'translateY(20%) scale(1.55)' }, // 人像半身照
   '/assets/players/酒號矯正署/何柏緯.': { transform: 'translateY(25%) scale(2)' }, // 歷史戶外夜景
   '/assets/players/酒號矯正署/李宗翰.': { transform: 'translateY(14%) scale(1.55)' }, // 歷史鏡自拍
   '/assets/players/酒號矯正署/鄭詠翰.': { transform: 'translateY(51%) scale(1.7)' }, // 第二輪實圖回歸校正

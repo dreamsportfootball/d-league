@@ -201,6 +201,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/holy26-02.': { objectPosition: '50% 15%' }, // #14 劉子祥：避免中置裁斷分線髮型
   '/assets/seasons/2026-27/players/holy26-03.': { objectPosition: '50% 0%' }, // #13 蘇帟緁：保留完整瀏海和髮頂
   '/assets/seasons/2026-27/players/holy26-05.': { objectPosition: '50% 0%' }, // #23 徐貫評：完整髮頂、學士袍視覺
+  // 2026-11-05 Owner 反驗：以下 3 名已更新當季圖片映射，不沿用舊 PNG 的 object-position；須以真實 48/104/160px 重驗。
   // #3 黃柏文：改用相同原圖的獨立方形 WebP，避免舊版髮頂與下巴受裁
   // #79 謝承晉：改用相同原圖的獨立方形 WebP，避免原照太滿
   '/assets/seasons/2026-27/players/holy26-09.': { objectPosition: '50% 0%' }, // #86 周宥廷：避免髮型貼圓框

@@ -195,7 +195,21 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/wa26-06.': { transform: 'translateY(19%) scale(1.6)' }, // 手持球衣
   '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(30%, 90%) scale(3)' }, // #36 PATRICK HAINES：從遠距離合照聚焦本人頭肩，原圖清晰度仍有限
   '/assets/seasons/2026-27/players/kbk26-11.': { objectPosition: '50% 0%', transform: 'scale(1.2)' }, // #35 DICKSON：保留髮頂與下巴；原照僅 163×279，需更高清來源
-  '/assets/seasons/2026-27/players/holy26-07.': { objectPosition: '50% 0%', transform: 'translateY(-24%) scale(1.85)' }, // 第二輪實圖回歸校正
+  // 聖騎士 2026/27 — 最新 Excel 19 張內嵌人物照片已核對。
+  // 各人物獨立調整，依 KUROMI #16 已核准臉部／髮頂／下巴的構圖比例。
+  '/assets/seasons/2026-27/players/holy26-01.': { objectPosition: '50% 20%' }, // #77 林暐傑：髮頂與下巴保留
+  '/assets/seasons/2026-27/players/holy26-02.': { objectPosition: '50% 15%' }, // #14 劉子祥：避免中置裁斷分線髮型
+  '/assets/seasons/2026-27/players/holy26-03.': { objectPosition: '50% 0%' }, // #13 蘇帟緁：保留完整瀏海和髮頂
+  '/assets/seasons/2026-27/players/holy26-05.': { objectPosition: '50% 0%' }, // #23 徐貫評：完整髮頂、學士袍視覺
+  '/assets/seasons/2026-27/players/holy26-06.': { objectPosition: '50% 0%' }, // #3 黃柏文：保留髮頂
+  '/assets/seasons/2026-27/players/holy26-08.': { objectPosition: '50% 10%' }, // #79 謝承晉：完整髮型與下巴
+  '/assets/seasons/2026-27/players/holy26-09.': { objectPosition: '50% 0%' }, // #86 周宥廷：避免髮型貼圓框
+  '/assets/seasons/2026-27/players/holy26-12.': { objectPosition: '50% 10%' }, // #7 王立任：減少證件相片下半身佔比
+  '/assets/seasons/2026-27/players/holy26-13.': { objectPosition: '50% 15%' }, // #9 姚昇宏：留出髮頂
+  '/assets/seasons/2026-27/players/holy26-15.': { objectPosition: '50% 0%' }, // #53 范丞佑：保留上緣髮型
+  '/assets/seasons/2026-27/players/holy26-17.': { objectPosition: '50% 20%' }, // #33 張至虔：完整頭髮、臉部置中
+  '/assets/seasons/2026-27/staff/holy-chan-jing-sen.': { objectPosition: '50% 20%' }, // 領隊 詹景森：長型自拍保留髮頂，與臉部視覺中心對齊
+  // #1 陳竑沅的過度放大舊規則已移除，改用同人原圖的獨立方形裁切。
   '/assets/seasons/2026-27/players/sb26-02.': { transform: 'translateY(19%) scale(1.7)' }, // SOUTHBOYS 拉非：去除過多背景、放大臉部
   '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(47%) scale(2.1)' }, // SOUTHBOYS 孺立：原圖人頭位置偏上，放大至清楚可辨
   '/assets/seasons/2026-27/players/sb26-06.': { objectPosition: '50% 0%' }, // 蘇凡迪：保留 2026/27 原照頭頂

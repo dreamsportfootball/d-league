@@ -1,0 +1,149 @@
+{
+  "season": "2026-27",
+  "team": "t_holy_knights_2026",
+  "source": "latest 聖騎士.xlsx verified against canonical PNG",
+  "changes": [
+    {
+      "number": 21,
+      "name": "戴吉甫",
+      "source": "assets/seasons/2026-27/players/holy26-04.png",
+      "output": "assets/seasons/2026-27/players/holy26-04-owner-soft-inset-20261105.webp",
+      "sourcePixels": [
+        334,
+        415
+      ],
+      "mode": "soft-inset",
+      "crop": null,
+      "sourceSha256": "d737217d6cf5077e077315c2423ef0975338322d4bdf41f433f6cef5e56b5cf8"
+    },
+    {
+      "number": 1,
+      "name": "陳竑沅",
+      "source": "assets/seasons/2026-27/players/holy26-07.png",
+      "output": "assets/seasons/2026-27/players/holy26-07-owner-face-crop-20261105.webp",
+      "sourcePixels": [
+        288,
+        438
+      ],
+      "mode": "face-crop",
+      "crop": {
+        "left": 75,
+        "top": 90,
+        "width": 170,
+        "height": 170
+      },
+      "sourceSha256": "31c4f50e55d503abebe7e3ca105793fdf0398931fc98ccf1cca0654eba79e787"
+    },
+    {
+      "number": 95,
+      "name": "黃品喬",
+      "source": "assets/seasons/2026-27/players/holy26-10.png",
+      "output": "assets/seasons/2026-27/players/holy26-10-owner-face-crop-20261105.webp",
+      "sourcePixels": [
+        315,
+        397
+      ],
+      "mode": "face-crop",
+      "crop": {
+        "left": 54,
+        "top": 32,
+        "width": 205,
+        "height": 205
+      },
+      "sourceSha256": "d964851525439e4825846751cb6b6ab04f819531457a411f7356d1437bfe70da"
+    },
+    {
+      "number": 26,
+      "name": "黃祥恩",
+      "source": "assets/seasons/2026-27/players/holy26-11.png",
+      "output": "assets/seasons/2026-27/players/holy26-11-owner-face-crop-20261105.webp",
+      "sourcePixels": [
+        315,
+        423
+      ],
+      "mode": "face-crop",
+      "crop": {
+        "left": 44,
+        "top": 62,
+        "width": 225,
+        "height": 225
+      },
+      "sourceSha256": "4bb6a00e1835951f5f467b31c04caf68c20935421a16d556f6e512a2b74c4989"
+    },
+    {
+      "number": 2,
+      "name": "蘇憲奕",
+      "source": "assets/seasons/2026-27/players/holy26-14.png",
+      "output": "assets/seasons/2026-27/players/holy26-14-owner-soft-inset-20261105.webp",
+      "sourcePixels": [
+        313,
+        450
+      ],
+      "mode": "soft-inset",
+      "crop": null,
+      "sourceSha256": "6ad0c6ee4ce0b739441ee73e47af3ec6eddf956299b3b05fbeb059c63cd6b1f4"
+    },
+    {
+      "number": 16,
+      "name": "蘇子恆",
+      "source": "assets/seasons/2026-27/players/holy26-16.png",
+      "output": "assets/seasons/2026-27/players/holy26-16-owner-soft-inset-20261105.webp",
+      "sourcePixels": [
+        328,
+        589
+      ],
+      "mode": "soft-inset",
+      "crop": {
+        "left": 0,
+        "top": 53,
+        "width": 328,
+        "height": 472
+      },
+      "sourceSha256": "4ab45042aa1dfef57bebe09d45845b09a5717c1e84383fd72f2c6afbdd88921d"
+    },
+    {
+      "number": 3,
+      "name": "黃柏文",
+      "source": "assets/seasons/2026-27/players/holy26-06.png",
+      "output": "assets/seasons/2026-27/players/holy26-06-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        307,
+        439
+      ],
+      "mode": "full-head",
+      "crop": null,
+      "sourceSha256": "561a3943ea5d75c90934925b17980f6bb3d118434b9f260786bcaed657825b5b"
+    },
+    {
+      "number": 79,
+      "name": "謝承晉",
+      "source": "assets/seasons/2026-27/players/holy26-08.png",
+      "output": "assets/seasons/2026-27/players/holy26-08-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        283,
+        411
+      ],
+      "mode": "full-head",
+      "crop": null,
+      "sourceSha256": "af6eab3d29336890800d70becb486c058c5dbc7fb5972be8cce396685d6edefb"
+    },
+    {
+      "number": 53,
+      "name": "范丞佑",
+      "source": "assets/seasons/2026-27/players/holy26-15.png",
+      "output": "assets/seasons/2026-27/players/holy26-15-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        313,
+        397
+      ],
+      "mode": "full-head",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 313,
+        "height": 380
+      },
+      "sourceSha256": "fa34c136090df495dfbc249125a61e6d803a16e62d4a08acfd4f58876362f0b0"
+    }
+  ]
+}

@@ -6,6 +6,8 @@ on:
       - scripts/audit-next-five-portrait-routes.mjs
       - .github/workflows/next-five-portrait-route-qa.yml
       - config/avatarImagePosition.ts
+      - data/seasons/2026-27/playerImages.json
+      - public/assets/seasons/2026-27/players/**
   workflow_dispatch:
 permissions:
   contents: write
@@ -26,6 +28,10 @@ jobs:
           - { team: t_tainan_evergreen_2026, prefix: next-tainan-evergreen }
           - { team: t_black_wolf_2026, prefix: next-black-wolf }
           - { team: t_kaohsiung_black_knights_2026, prefix: next-kaohsiung-black-knights }
+          - { team: t_southboys_2026, prefix: next-southboys }
+          - { team: t_luzhu_2026, prefix: next-luzhu }
+          - { team: t_wanderers_2026, prefix: next-wanderers }
+          - { team: t_holy_knights_2026, prefix: next-holy-knights }
     steps:
       - uses: actions/checkout@v4
         with:

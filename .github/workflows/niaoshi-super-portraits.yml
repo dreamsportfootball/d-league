@@ -1,0 +1,64 @@
+name: Niaoshi super-template portrait source crops
+
+on:
+  push:
+    branches: [season/2026-27]
+    paths:
+      - scripts/generate-niaoshi-super-portraits.mjs
+      - .github/workflows/niaoshi-super-portraits.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: niaoshi-super-portrait-generation
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source branch
+        uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+          show-progress: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install sharp for portrait crops
+        run: |
+          npm ci --silent
+          npm install --no-save sharp
+
+      - name: Generate only Niaoshi super-template portraits
+        run: node scripts/generate-niaoshi-super-portraits.mjs
+
+      - name: Commit derived source crops and photo mappings
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/seasons/2026-27/playerImages.json
+          git add -A -- ':(glob)public/assets/seasons/2026-27/players/ns26-*-super-*.webp'
+          if git diff --cached --quiet; then
+            echo 'No portrait changes to publish'
+            exit 0
+          fi
+          git commit -m "fix(portraits): publish corrected Niaoshi #6 #16 #20 #88 source crops"
+          for attempt in 1 2 3 4 5 6 7 8; do
+            git fetch origin season/2026-27
+            git rebase origin/season/2026-27
+            if git push origin HEAD:season/2026-27; then
+              echo 'Niaoshi portraits committed'
+              exit 0
+            fi
+            sleep $((attempt * 3))
+          done
+          echo 'Failed to publish portrait assets'
+          exit 1

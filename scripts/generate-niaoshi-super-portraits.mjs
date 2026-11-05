@@ -4,8 +4,8 @@
  * of the existing 2026/27 registration photographs. No AI filling or
  * reshaping; a conventional, independently reviewed square crop only.
  *
- * The four already suitable close-up portraits (#14, #42, #11, #18) are
- * deliberately untouched. Team staff reuse the corresponding player photo.
+ * The two already square and suitable close-ups (#14 and #18) are
+ * deliberately untouched. Existing originals for all people are retained. Team staff reuse the corresponding player photo.
  */
 import sharp from 'sharp';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -31,7 +31,9 @@ const frames = [
   { id: 'ns26-11', no: 64, name: '薛易昀', left: 190, top: 234, size: 260 },
   { id: 'ns26-12', no: 44, name: '林宏懋', left: 155, top: 158, size: 330 },
   { id: 'ns26-13', no: 88, name: '許漢權', left: 180, top: 184, size: 280 },
+  { id: 'ns26-14', no: 42, name: '黃首駿', left: 0, top: 18, size: 640 },
   { id: 'ns26-15', no: 30, name: '陳學璋', left: 142, top: 30, size: 355 },
+  { id: 'ns26-16', no: 11, name: '魏嘉成', left: 20, top: 0, size: 600 },
 ];
 
 const players = JSON.parse(await readFile(playersPath, 'utf8'));
@@ -43,7 +45,7 @@ for (const f of frames) {
   const record = team.find(p => p.id === f.id && p.number === f.no && p.name === f.name);
   if (!record) throw new Error('Roster identity changed: ' + f.id + ' #' + f.no + ' ' + f.name);
 
-  const input = path.join(assets, f.id + '.png');
+  const input = path.join(assets, f.id + (f.id === 'ns26-16' ? '.jpg' : '.png'));
   const outputName = f.id + '-super-20261105.webp';
   const output = path.join(assets, outputName);
   const normalized = await sharp(input).rotate().resize({ width: 640, fit: 'inside' }).toBuffer();
@@ -71,4 +73,4 @@ for (const f of frames) {
 }
 
 await writeFile(mappingsPath, JSON.stringify(images, null, 2) + '\n', 'utf8');
-console.log('[niaoshi-super] 13 independent 720×720 crops generated; 4 existing portraits preserved.');
+console.log('[niaoshi-super] 15 independent 720×720 crops generated; 2 existing square portraits preserved.');

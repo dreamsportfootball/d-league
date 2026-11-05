@@ -100,6 +100,50 @@
         "height": 472
       },
       "sourceSha256": "4ab45042aa1dfef57bebe09d45845b09a5717c1e84383fd72f2c6afbdd88921d"
+    },
+    {
+      "number": 3,
+      "name": "黃柏文",
+      "source": "assets/seasons/2026-27/players/holy26-06.png",
+      "output": "assets/seasons/2026-27/players/holy26-06-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        307,
+        439
+      ],
+      "mode": "full-head",
+      "crop": null,
+      "sourceSha256": "561a3943ea5d75c90934925b17980f6bb3d118434b9f260786bcaed657825b5b"
+    },
+    {
+      "number": 79,
+      "name": "謝承晉",
+      "source": "assets/seasons/2026-27/players/holy26-08.png",
+      "output": "assets/seasons/2026-27/players/holy26-08-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        283,
+        411
+      ],
+      "mode": "full-head",
+      "crop": null,
+      "sourceSha256": "af6eab3d29336890800d70becb486c058c5dbc7fb5972be8cce396685d6edefb"
+    },
+    {
+      "number": 53,
+      "name": "范丞佑",
+      "source": "assets/seasons/2026-27/players/holy26-15.png",
+      "output": "assets/seasons/2026-27/players/holy26-15-owner-full-head-20261105.webp",
+      "sourcePixels": [
+        313,
+        397
+      ],
+      "mode": "full-head",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 313,
+        "height": 380
+      },
+      "sourceSha256": "fa34c136090df495dfbc249125a61e6d803a16e62d4a08acfd4f58876362f0b0"
     }
   ]
 }

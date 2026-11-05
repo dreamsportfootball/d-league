@@ -25,6 +25,10 @@ const portraits = [
   // Original paper border is excluded without altering the person.
   {id:'16',name:'尤昱翔',scale:.98,crop:{left:48,top:50,width:325,height:420}},
 ];
+const backgroundById={
+  '01':'#f9f9f9','04':'#dfe6eb','05':'#fafafa','07':'#fafafa',
+  '10':'#d8eff5','11':'#d9dcdd','14':'#d5e7f4','15':'#fafafa','16':'#bae4e8'
+};
 const images=JSON.parse(await fs.readFile(mapPath,'utf8'));
 let positions=await fs.readFile(cssPath,'utf8');
 const changed=[];
@@ -37,23 +41,32 @@ for(const p of portraits){
   const meta=await img.metadata();
   if(meta.width<120||meta.height<150) throw Error('Unexpected too-small original '+p.name);
   const source=p.crop?img.extract(p.crop):img;
-  // Extend only the photograph's boundary pixels to a square.
-  // This avoids unnatural rectangular white/gray seams in the 48/104/160px circle.
+  // Use only original pixels and a soft edge against the photograph's neutral
+  // background. This retains complete hair/chin and avoids both rectangular
+  // source edges and stretched streaks from boundary-pixel replication.
   const overlay=await source
     .resize(Math.round(width*p.scale),Math.round(width*p.scale),{fit:'inside',withoutEnlargement:false})
     .removeAlpha().raw().toBuffer({resolveWithObject:true});
   const md=overlay.info;
   if(md.channels!==3) throw Error('Expected RGB source '+p.name);
   const x0=Math.floor((width-md.width)/2), y0=Math.floor((width-md.height)/2);
+  const bg=backgroundById[p.id];
+  if(!/^#[0-9a-f]{6}$/i.test(bg)) throw Error('Missing approved background '+p.id);
+  const rgb=[1,3,5].map(i=>parseInt(bg.slice(i,i+2),16));
   const square=Buffer.alloc(width*width*3);
   for(let y=0;y<width;y++){
-    const sy=Math.max(0,Math.min(md.height-1,y-y0));
     for(let x=0;x<width;x++){
-      const sx=Math.max(0,Math.min(md.width-1,x-x0));
-      const srcOffset=(sy*md.width+sx)*3, dstOffset=(y*width+x)*3;
-      square[dstOffset]=overlay.data[srcOffset];
-      square[dstOffset+1]=overlay.data[srcOffset+1];
-      square[dstOffset+2]=overlay.data[srcOffset+2];
+      const sx=x-x0,sy=y-y0, dstOffset=(y*width+x)*3;
+      const inside=sx>=0&&sy>=0&&sx<md.width&&sy<md.height;
+      if(!inside){
+        for(let channel=0;channel<3;channel++)square[dstOffset+channel]=rgb[channel];
+      }else{
+        const edge=Math.min(sx,sy,md.width-1-sx,md.height-1-sy);
+        const alpha=Math.min(1,(edge+1)/17); // 5px feather at 160px.
+        const srcOffset=(sy*md.width+sx)*3;
+        for(let channel=0;channel<3;channel++)
+          square[dstOffset+channel]=Math.round(overlay.data[srcOffset+channel]*alpha+rgb[channel]*(1-alpha));
+      }
     }
   }
   const dst=path.join(folder,'wa26-'+p.id+suffix);

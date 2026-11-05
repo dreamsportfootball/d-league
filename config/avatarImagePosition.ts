@@ -32,9 +32,10 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ch26-18.': { objectPosition: '50% 0%', transform: 'translate(-1.86%, 0.37%) scale(1.05)' }, // 陳公舘 鍾皓弦：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-19.': { objectPosition: '50% 18.64%', transform: 'translate(-0.16%, 0%) scale(1.03)' }, // 陳公舘 黃杰：保留髮頂／完整五官
   '/assets/seasons/2026-27/players/ch26-20.': { objectPosition: '50% 0%', transform: 'translate(-0.37%, 2.59%) scale(1.13)' }, // 陳公舘 林祐丞：保留髮頂／完整五官
-  // 台南鳥仕 2026/27：13 位原本依賴 CSS 放大的全／半身照，已由各自原始登錄照
-  // 重裁為 720×720 -super-20261105.webp。保持預設置中，不重套舊版放大與位移；
-  // #14／#42／#11／#18 已有合適近照，保留原樣。名單與球員／隊職員頁共用來源。
+  // 台南鳥仕 2026/27：15 位分別從其原始登錄照片製作 720×720 正方形來源；
+  // 其中 13 位原本以 CSS 放大全／半身照，另 #42／#11 原近照仍會因直式置中切髮頂。
+  // -super-20261105.webp 已內建各人的完整髮頂／五官／下巴，請保持預設置中。
+  // #14／#18 原本就是可用正方形近照，保留不動。名單與球員／隊職員頁共用來源。
   // SOUTHBOYS 2026/27: 2026-11-04 accepted candidate source crops (sb26-04/05/08/09/11/13/14/15)
   // are square 720px photos; avoid reapplying stale transforms from long/full-body originals.
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },

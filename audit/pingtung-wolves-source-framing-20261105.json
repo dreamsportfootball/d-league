@@ -1,0 +1,94 @@
+{
+  "team": "t_pingtung_wolves_2026",
+  "season": "2026-27",
+  "source": "Latest Excel verified same-person PNG source",
+  "changed": [
+    {
+      "number": 56,
+      "name": "黃翊軒",
+      "old": "assets/seasons/2026-27/players/pw26-04.png",
+      "new": "assets/seasons/2026-27/players/pw26-04-owner-crop-20261105.webp",
+      "mode": "crop",
+      "rect": {
+        "left": 0,
+        "top": 20,
+        "width": 337,
+        "height": 337
+      },
+      "sourceSize": [
+        337,
+        449
+      ],
+      "sourceSha256": "62c9dcf2f47ce5bd15cc0acd2a7e3fb094d99ca1596ae4d2359b50c1c0834a74"
+    },
+    {
+      "number": 28,
+      "name": "林瑶璇",
+      "old": "assets/seasons/2026-27/players/pw26-11.png",
+      "new": "assets/seasons/2026-27/players/pw26-11-owner-crop-20261105.webp",
+      "mode": "crop",
+      "rect": {
+        "left": 40,
+        "top": 68,
+        "width": 176,
+        "height": 176
+      },
+      "sourceSize": [
+        252,
+        448
+      ],
+      "sourceSha256": "141560de34fd21b4cd931ad0cd9a980e69cac91f47d8c33546e985f86c4b52f1"
+    },
+    {
+      "number": 33,
+      "name": "黃旭盛",
+      "old": "assets/seasons/2026-27/players/pw26-13.png",
+      "new": "assets/seasons/2026-27/players/pw26-13-owner-crop-20261105.webp",
+      "mode": "crop",
+      "rect": {
+        "left": 0,
+        "top": 0,
+        "width": 661,
+        "height": 661
+      },
+      "sourceSize": [
+        661,
+        827
+      ],
+      "sourceSha256": "05f1ac68238a04a5c536e43945b8b424af3f15e13a901be5b3a9de90288d2244"
+    },
+    {
+      "number": 37,
+      "name": "張承堯",
+      "old": "assets/seasons/2026-27/players/pw26-15.png",
+      "new": "assets/seasons/2026-27/players/pw26-15-owner-crop-20261105.webp",
+      "mode": "crop",
+      "rect": {
+        "left": 0,
+        "top": 82,
+        "width": 252,
+        "height": 252
+      },
+      "sourceSize": [
+        252,
+        448
+      ],
+      "sourceSha256": "cc5a9f0c2dfe7665e83238ac60ea341365c66e4576ce9d25cefb1d54e1bd664d"
+    },
+    {
+      "number": 97,
+      "name": "吳宇唐",
+      "old": "assets/seasons/2026-27/players/pw26-14.png",
+      "new": "assets/seasons/2026-27/players/pw26-14-owner-inset-20261105.webp",
+      "mode": "inset",
+      "rect": null,
+      "sourceSize": [
+        327,
+        436
+      ],
+      "sourceSha256": "65075051955f3dd2508407a8d75c01da17b2f67d5d9856b491c94ac37717372d"
+    }
+  ],
+  "unchangedPlayers": 10,
+  "unchangedStaff": 3
+}

@@ -92,6 +92,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/lz26-02.': { objectPosition: '50% 0%' }, // #3 宋映德（兼教練）
   '/assets/seasons/2026-27/players/lz26-03.': { objectPosition: '50% 0%' }, // #4 謝詒婷
   '/assets/seasons/2026-27/players/lz26-07.': { objectPosition: '50% 0%' }, // #52 鐘佳勳
+  '/assets/seasons/2026-27/players/lz26-08.': { transform: 'translateY(8%) scale(1.25)' }, // #8 王子豪：放大遠景人臉並維持完整髮頂
+  '/assets/seasons/2026-27/players/lz26-15.': { objectPosition: '50% 0%' }, // #88 林冠宇：直式照片往上取景，保留完整翹髮
+  '/assets/seasons/2026-27/players/lz26-16.': { objectPosition: '50% 20%' }, // #9 古智尹：長型證件照兼顧髮頂及下巴
   '/assets/seasons/2026-27/players/lz26-10.': { objectPosition: '50% 0%' }, // #21 林敬祐
   '/assets/seasons/2026-27/players/lz26-11.': { objectPosition: '50% 0%' }, // #56 陳穧元
   '/assets/seasons/2026-27/players/lz26-14.': { objectPosition: '50% 0%', transform: 'scale(1.4)' }, // #38 方韻雅：去除證件相片外緣背景；保留整顆頭

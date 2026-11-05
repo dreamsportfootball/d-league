@@ -37,9 +37,9 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
   // 屏東野狼 2026/27 owner recheck 2026-11-05: only the seven rejected shirt numbers.
   // Framing is shared by 48px roster and 104/160px profile portraits; no global avatar change.
-  '/assets/seasons/2026-27/players/pw26-01.': { objectPosition: '50% 0%' }, // #27 周宗德：上移保留直式原照的髮頂
+  '/assets/seasons/2026-27/players/pw26-01.': { objectPosition: '50% 7%' }, // #27 周宗德：以最小幅度修正下緣，仍完整保留髮頂
   '/assets/seasons/2026-27/players/pw26-02.': { objectPosition: '50% 0%' }, // #6 林大雄：上移避免髮頂被方形置中裁掉
-  '/assets/seasons/2026-27/players/pw26-03.': { objectPosition: '50% 12%' }, // #11 謝晉元：重新留出髮頂空間且保留臉部
+  '/assets/seasons/2026-27/players/pw26-03.': { objectPosition: '50% 27%' }, // #11 謝晉元：使下巴完整落在圓框內，同時保留髮頂
   '/assets/seasons/2026-27/players/pw26-05.': { objectPosition: '50% 0%', transform: 'translateY(7.5%) scale(1.15)' }, // #21 張春生：改善人臉過小，同時不讓圖片邊緣脫框
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%', transform: 'translateY(-4%) scale(1.1)' }, // #12 鄧進成：臉部上移、放大且不露出底邊
   '/assets/seasons/2026-27/players/pw26-10.': { objectPosition: '50% 0%', transform: 'translateY(4%) scale(1.08)' }, // #29 周承政：臉部微放大，保留上方髮型與圓形邊緣

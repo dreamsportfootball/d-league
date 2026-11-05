@@ -229,7 +229,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ns26-03.': { transform: 'translateY(25%) scale(1.8)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-04.': { transform: 'translateY(34%) scale(1.85)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-05.': { transform: 'translateY(27%) scale(1.9)' }, // 球衣定裝照
-  '/assets/seasons/2026-27/players/ns26-06.': { transform: 'translateY(55%) scale(1.85)' }, // 台南鳥仕 #6 吳昱陞：依 640×853 原圖與圓框幾何，頭髮與下巴完整置中
+  '/assets/seasons/2026-27/players/ns26-06.': { objectPosition: '50% 18%', transform: 'translateY(35%) scale(1.85)' }, // 台南鳥仕 #6 吳昱陞：原圖取景往上且保留圓形圖片完整覆蓋，完整頭髮／五官／下巴
   '/assets/seasons/2026-27/players/ns26-07.': { transform: 'translateY(26%) scale(1.8)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-08.': { transform: 'translateY(28%) scale(1.85)' }, // 球衣定裝照
   '/assets/seasons/2026-27/players/ns26-09.': { transform: 'translateY(27%) scale(1.85)' }, // 球衣定裝照

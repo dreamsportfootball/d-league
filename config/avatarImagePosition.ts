@@ -35,9 +35,17 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // SOUTHBOYS 2026/27: 2026-11-04 accepted candidate source crops (sb26-04/05/08/09/11/13/14/15)
   // are square 720px photos; avoid reapplying stale transforms from long/full-body originals.
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
-  '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
-  // 屏東野狼 #56／#28／#33／#37／#97 已改為各自的正方形來源；#28 舊版 scale(1.18) 停用。
-  // 來源及裁切規則只控制當季頭像，不改其他隊／2025-26。
+  // 屏東野狼 2026/27 owner recheck 2026-11-05: only the seven rejected shirt numbers.
+  // Framing is shared by 48px roster and 104/160px profile portraits; no global avatar change.
+  '/assets/seasons/2026-27/players/pw26-01.': { objectPosition: '50% 0%' }, // #27 周宗德：上移保留直式原照的髮頂
+  '/assets/seasons/2026-27/players/pw26-02.': { objectPosition: '50% 0%' }, // #6 林大雄：上移避免髮頂被方形置中裁掉
+  '/assets/seasons/2026-27/players/pw26-03.': { objectPosition: '50% 24%' }, // #11 謝晉元：髮頂與下巴兼顧
+  '/assets/seasons/2026-27/players/pw26-05.': { objectPosition: '50% 0%' }, // #21 張春生：保留原圖最上緣的髮型
+  '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%', transform: 'translateY(-4%) scale(1.1)' }, // #12 鄧進成：臉部上移、放大且不露出底邊
+  '/assets/seasons/2026-27/players/pw26-10.': { objectPosition: '50% 0%' }, // #29 周承政：避免直式照片裁去上方髮型
+  '/assets/seasons/2026-27/players/pw26-11-owner-crop-20261105.': { transform: 'scale(1.1)' }, // #28 林瑶璇：新版正方形照片適度放大，保留髮型
+  // 屏東野狼 #56／#33／#37／#97 已改為正方形來源，維持此前核准設定。
+  // 僅控制當季頭像，不改其他隊／2025-26。
 
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
   // SF #16, #12 (coach), #82 and #11: individually cropped square WebP from 2026/27 Excel originals.

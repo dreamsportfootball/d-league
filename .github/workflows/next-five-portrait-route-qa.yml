@@ -30,6 +30,7 @@ jobs:
           - { team: t_kaohsiung_black_knights_2026, prefix: next-kaohsiung-black-knights }
           - { team: t_southboys_2026, prefix: next-southboys }
           - { team: t_luzhu_2026, prefix: next-luzhu }
+          - { team: t_wanderers_2026, prefix: next-wanderers }
     steps:
       - uses: actions/checkout@v4
         with:

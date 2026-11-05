@@ -97,6 +97,12 @@ try{
       const link=rosterSection.locator('a[aria-label="查看 '+p.name+' 球員個人資料"]');
       if(await link.count()!==1)throw Error('Team list missing '+p.name);
       const photo=images[p.name];if(!photo)throw Error('Missing source photo for '+p.name);
+      // Four 2026-11-06 recrops must show the new source, not a stale asset.
+      if (teamId==='t_niaoshi_2026' && ['ns26-05','ns26-06','ns26-10','ns26-13'].includes(p.id)) {
+        const expectedName=p.id+'-super-20261106.webp';
+        if (path.posix.basename(photo)!==expectedName)
+          throw Error('Niaoshi refined portrait mismatch for '+p.id+': '+photo);
+      }
       const avatar=await getImage(link.locator('img'),p.id,'roster '+p.name);
       // Guard the accepted Niaoshi square photos against stale runtime hardcoded overrides.
       if(teamId==='t_niaoshi_2026'){

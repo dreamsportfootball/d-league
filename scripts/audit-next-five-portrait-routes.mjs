@@ -14,7 +14,7 @@ const players=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/
   .filter(p=>p.teamId===teamId);
 const teams=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/teams.json'),'utf8'));
 const team=teams.find(t=>t.id===teamId);
-if(!team || !players.length || !['t_kaohsiung_hk_2026','t_pingtung_wild_ape_2026','t_chen_2026','t_tainan_evergreen_2026','t_black_wolf_2026','t_kaohsiung_black_knights_2026','t_southboys_2026','t_luzhu_2026','t_wanderers_2026'].includes(teamId)) throw Error('Unexpected TEAM_ID '+teamId);
+if(!team || !players.length || !['t_kaohsiung_hk_2026','t_pingtung_wild_ape_2026','t_chen_2026','t_tainan_evergreen_2026','t_black_wolf_2026','t_kaohsiung_black_knights_2026','t_southboys_2026','t_luzhu_2026','t_wanderers_2026','t_holy_knights_2026'].includes(teamId)) throw Error('Unexpected TEAM_ID '+teamId);
 const staff=[...new Map(team.staff.map(s=>[s.identityId??s.id??s.name,s])).values()];
 const images=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2026-27/playerImages.json'),'utf8'));
 const historicImages=JSON.parse(await fs.readFile(path.join(root,'data/seasons/2025-26/playerImages.json'),'utf8'));

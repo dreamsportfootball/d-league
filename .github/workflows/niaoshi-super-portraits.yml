@@ -45,12 +45,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/seasons/2026-27/playerImages.json
-          git add public/assets/seasons/2026-27/players/ns26-*-super-20261105.webp
+          git add -A -- ':(glob)public/assets/seasons/2026-27/players/ns26-*-super-*.webp'
           if git diff --cached --quiet; then
             echo 'No portrait changes to publish'
             exit 0
           fi
-          git commit -m "feat(portraits): publish Niaoshi 13 individual super-template crops"
+          git commit -m "fix(portraits): publish corrected Niaoshi #6 #16 #20 #88 source crops"
           for attempt in 1 2 3 4 5 6 7 8; do
             git fetch origin season/2026-27
             git rebase origin/season/2026-27

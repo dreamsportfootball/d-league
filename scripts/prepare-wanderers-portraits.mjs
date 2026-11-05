@@ -68,8 +68,8 @@ for(const p of portraits){
 {
   const p={id:'09',name:'沈家弘'};
   const src='assets/seasons/2026-27/players/wa26-09.png';
-  if(images[p.name]!==src && images[p.name]!==dst) throw Error('Image mapping changed for '+p.name);
   const dst='assets/seasons/2026-27/players/wa26-09-owner-light-20261105.webp';
+  if(images[p.name]!==src && images[p.name]!==dst) throw Error('Image mapping changed for '+p.name);
   await sharp(path.join(folder,'wa26-09.png'))
     .modulate({brightness:1.18,saturation:1.03})
     .webp({quality:94,effort:5}).toFile(path.join(folder,'wa26-09-owner-light-20261105.webp'));

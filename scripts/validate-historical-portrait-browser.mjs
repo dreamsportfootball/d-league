@@ -8,7 +8,7 @@ const cases=[
   {team:'chiayi-235-fc',season:'2025-26',player:'溫立丞',id:'cy-32',file:'assets/seasons/2026-27/players/c23526-17.png'},
   {team:'t_tongque',season:'2025-26',player:'巫嘉德',id:'tq-16',file:'assets/seasons/2026-27/players/ku26-13.png'},
   {team:'tainan-niaoshi-fc',season:'2025-26',player:'戴威閎',id:'ns-11',file:'assets/seasons/2026-27/players/pwa26-06.png'},
-  {team:'t_pingtung',season:'2025-26',player:'邱文良',id:'pt-38',file:'assets/players/屏東野猿足球俱樂部/邱文良.png'},
+  {team:'t_pingtung',season:'2025-26',player:'邱文良',id:'pt-38',file:'assets/seasons/2026-27/players/pwa26-01.webp'}, // Returning player: display latest portrait while keeping the 2025/26 roster
   {team:'kuromi',season:'2025-26',player:'陳建宏',id:'cd-20',file:'assets/players/瘋Dog/陳建宏.png'},
 ];
 const browser=await chromium.launch({headless:true});

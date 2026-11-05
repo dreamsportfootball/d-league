@@ -18,7 +18,7 @@ const variants=[
   {id:'11',number:28,name:'林瑶璇',mode:'crop',rect:{left:40,top:68,width:176,height:176},size:[252,448]},
   {id:'13',number:33,name:'黃旭盛',mode:'crop',rect:{left:0,top:0,width:661,height:661},size:[661,827]},
   {id:'15',number:37,name:'張承堯',mode:'crop',rect:{left:0,top:82,width:252,height:252},size:[252,448]},
-  {id:'14',number:97,name:'吳宇唐',mode:'inset',size:[327,460]},
+  {id:'14',number:97,name:'吳宇唐',mode:'inset',size:[327,436]},
 ];
 const map=JSON.parse(await fs.readFile(mappingPath,'utf8'));
 const results=[];

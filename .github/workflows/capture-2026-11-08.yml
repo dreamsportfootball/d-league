@@ -1,0 +1,99 @@
+name: Capture D LEAGUE 11-08 official match screenshots
+
+on:
+  push:
+    branches:
+      - ops/matchday-2026-11-08-screenshots
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install screenshot tools
+        run: |
+          npm ci --silent
+          npm install --no-save playwright sharp
+          npx playwright install --with-deps chromium
+      - name: Capture the actual published match dialog headers
+        run: |
+          mkdir -p artifacts
+          cat > /tmp/capture-1108.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import sharp from 'sharp';
+          import fs from 'node:fs/promises';
+          import path from 'node:path';
+          const BASE = 'https://dreamsportfootball.github.io/d-league';
+          const fixtures = [
+            {id:'m2627-007',time:'09:00',home:'SF',away:'鳥仕'},
+            {id:'m2627-008',time:'10:00',home:'屏東野狼',away:'鹿逐'},
+            {id:'m2627-009',time:'11:00',home:'WANDERERS',away:'聖騎士'}
+          ];
+          const browser = await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
+          const shots=[], report=[];
+          try{
+            for(const fixture of fixtures){
+              const page=await browser.newPage({viewport:{width:1280,height:900},deviceScaleFactor:2,locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'});
+              const url=BASE+'/matches/'+fixture.id+'?notice=20261108';
+              await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
+              await page.locator('[role="dialog"] #match-dialog-title').waitFor({state:'visible',timeout:45000});
+              const header=page.locator('[role="dialog"] > div.relative.shrink-0.bg-white').first();
+              await header.waitFor({state:'visible',timeout:15000});
+              const headerText=await header.innerText();
+              for(const s of [fixture.time,fixture.home,fixture.away]){
+                if(!headerText.includes(s))throw Error('Match '+fixture.id+' mismatch: missing '+s+'; '+headerText.slice(0,300));
+              }
+              const jersey=page.locator('[role="dialog"] img[title*="球衣"]');
+              if(await jersey.count()!==2)throw Error('Match '+fixture.id+' does not show two jersey images');
+              const images=await jersey.evaluateAll(async images=>{
+                await Promise.all(images.map(img=>new Promise(resolve=>{
+                  if(img.complete)return resolve();
+                  img.addEventListener('load',resolve,{once:true});
+                  img.addEventListener('error',resolve,{once:true});
+                  setTimeout(resolve,12000);
+                })));
+                return images.map(img=>({src:img.src,title:img.title,loaded:img.complete&&img.naturalWidth>0,width:img.naturalWidth}));
+              });
+              if(images.some(img=>!img.loaded))throw Error('Unloaded actual jersey '+fixture.id+': '+JSON.stringify(images));
+              if(fixture.id==='m2627-008'&&!images.some(img=>img.title.includes('鹿逐')&&img.title.includes('主場'))){
+                throw Error('Luzhu not using approved blue home jersey');
+              }
+              await page.screenshot({path:'artifacts/'+fixture.id+'-full-page-proof.png',fullPage:false});
+              const raw=await header.screenshot({animations:'disabled'});
+              await fs.writeFile('artifacts/'+fixture.id+'-official-header.png',raw);
+              const scale=await sharp(raw).resize({width:1592}).png().toBuffer();
+              const md=await sharp(scale).metadata();
+              shots.push({input:scale,top:shots.reduce((sum,s)=>sum+s.height+9,0),height:md.height});
+              report.push({id:fixture.id,time:fixture.time,url,jersey:images,headerText:headerText.slice(0,500)});
+              await page.close();
+            }
+            const height=shots.reduce((sum,s)=>sum+s.height+9,0)-9;
+            const stacked=sharp({create:{width:1592,height,channels:3,background:'#ffffff'}});
+            const composites=shots.map(s=>({input:s.input,top:s.top,left:0}));
+            const output='artifacts/D_LEAGUE_2026-11-08_L3_球衣安排_官網截圖合併長圖.png';
+            await stacked.composite(composites).png().toFile(output);
+            await fs.writeFile('artifacts/capture-proof.json',JSON.stringify({date:'2026-11-08',fixtures:report,image:output,size:{width:1592,height}},null,2));
+            console.log('CREATED '+output+' '+height+'px from 3 actual official webpage screenshots');
+          }finally{await browser.close();}
+          EOF
+          cp /tmp/capture-1108.mjs ./capture-1108-tmp.mjs
+          node ./capture-1108-tmp.mjs
+      - name: Upload genuine browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: D_LEAGUE_2026-11-08_official_page_screenshots
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 7

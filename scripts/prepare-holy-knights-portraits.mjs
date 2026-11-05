@@ -20,6 +20,11 @@ const configs=[
   {id:'11',name:'黃祥恩',number:26,mode:'face-crop',crop:{left:44,top:62,width:225,height:225}},
   {id:'14',name:'蘇憲奕',number:2,mode:'soft-inset',ratio:.88},
   {id:'16',name:'蘇子恆',number:16,mode:'soft-inset',ratio:.95,cropFraction:{top:.09,bottom:.89}},
+  // Three previously rejected portraits: preserve hair, chin and exact identity.
+  // The original image is tall; object-position alone used to cut the chin.
+  {id:'06',name:'黃柏文',number:3,mode:'full-head',scale:1.25,offsetY:6,bg:'#f2f0e8'},
+  {id:'08',name:'謝承晉',number:79,mode:'full-head',scale:1.30,offsetY:0,bg:'#b1b1b1'},
+  {id:'15',name:'范丞佑',number:53,mode:'full-head',scale:1.27,offsetY:8,bg:'#d8c9ba',crop:{left:0,top:0,width:313,height:380}},
 ];
 const mapping=JSON.parse(await fs.readFile(mappingFile,'utf8'));
 const changes=[];
@@ -56,6 +61,36 @@ async function letterbox(photo,region,ratio){
   return sharp(background).composite([{input:foreground,left:Math.floor((width-fw)/2),top:Math.floor((width-fh)/2)}])
     .webp({quality:92,effort:5}).toBuffer();
 }
+/**
+ * Square-fit a tall, already verified original. Use the photograph's own pixels
+ * in the centre and softly blend only the image's outer border into a matching
+ * neutral backdrop; do not alter, invent or regenerate facial details.
+ */
+async function fullHeadPortrait(photo,region,cfg){
+  const img=region?sharp(photo).extract(region):sharp(photo);
+  const meta=await img.metadata();
+  if(!meta.width||!meta.height)throw Error('Unknown source dimensions '+cfg.name);
+  const w=Math.round(meta.width*cfg.scale),h=Math.round(meta.height*cfg.scale);
+  const r=await img.resize({width:w,height:h,fit:'fill'}).removeAlpha().raw().toBuffer({resolveWithObject:true});
+  if(r.info.channels!==3)throw Error('Expected RGB source '+cfg.name);
+  const rgb=[1,3,5].map(i=>parseInt(cfg.bg.slice(i,i+2),16));
+  if(rgb.some(n=>!Number.isInteger(n)))throw Error('Invalid backdrop '+cfg.name);
+  const canvas=Buffer.alloc(width*width*3);
+  const left=Math.floor((width-w)/2),top=cfg.offsetY;
+  for(let y=0;y<width;y++)for(let x=0;x<width;x++){
+    const sx=x-left,sy=y-top,dst=(y*width+x)*3;
+    if(sx<0||sy<0||sx>=w||sy>=h){
+      canvas[dst]=rgb[0];canvas[dst+1]=rgb[1];canvas[dst+2]=rgb[2];
+      continue;
+    }
+    const edge=Math.min(sx,sy,w-1-sx,h-1-sy);
+    const alpha=Math.max(0,Math.min(1,(edge+1)/24));
+    const src=(sy*w+sx)*3;
+    for(let c=0;c<3;c++)canvas[dst+c]=Math.round(r.data[src+c]*alpha+rgb[c]*(1-alpha));
+  }
+  return sharp(canvas,{raw:{width,height:width,channels:3}}).webp({quality:92,effort:5}).toBuffer();
+}
+
 for(const cfg of configs){
   const old='assets/seasons/2026-27/players/holy26-'+cfg.id+'.png';
   const name='holy26-'+cfg.id+'-owner-'+cfg.mode+'-20261105.webp';
@@ -68,7 +103,9 @@ for(const cfg of configs){
   const region=asRegion(meta,cfg);
   const output=cfg.mode==='face-crop'
     ?await sharp(input).extract(region).resize(width,width,{fit:'fill'}).webp({quality:92,effort:5}).toBuffer()
-    :await letterbox(input,region,cfg.ratio);
+    :cfg.mode==='full-head'
+      ?await fullHeadPortrait(input,region,cfg)
+      :await letterbox(input,region,cfg.ratio);
   await fs.writeFile(path.join(playerFolder,name),output);
   mapping[cfg.name]=next;
   changes.push({number:cfg.number,name:cfg.name,source:old,output:next,sourcePixels:[meta.width,meta.height],mode:cfg.mode,crop:region,sourceSha256:createHash('sha256').update(input).digest('hex')});

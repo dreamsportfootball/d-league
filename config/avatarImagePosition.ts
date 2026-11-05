@@ -201,12 +201,12 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/holy26-02.': { objectPosition: '50% 15%' }, // #14 劉子祥：避免中置裁斷分線髮型
   '/assets/seasons/2026-27/players/holy26-03.': { objectPosition: '50% 0%' }, // #13 蘇帟緁：保留完整瀏海和髮頂
   '/assets/seasons/2026-27/players/holy26-05.': { objectPosition: '50% 0%' }, // #23 徐貫評：完整髮頂、學士袍視覺
-  '/assets/seasons/2026-27/players/holy26-06.': { objectPosition: '50% 0%' }, // #3 黃柏文：保留髮頂
-  '/assets/seasons/2026-27/players/holy26-08.': { objectPosition: '50% 10%' }, // #79 謝承晉：完整髮型與下巴
+  // #3 黃柏文：改用相同原圖的獨立方形 WebP，避免舊版髮頂與下巴受裁
+  // #79 謝承晉：改用相同原圖的獨立方形 WebP，避免原照太滿
   '/assets/seasons/2026-27/players/holy26-09.': { objectPosition: '50% 0%' }, // #86 周宥廷：避免髮型貼圓框
   '/assets/seasons/2026-27/players/holy26-12.': { objectPosition: '50% 10%' }, // #7 王立任：減少證件相片下半身佔比
   '/assets/seasons/2026-27/players/holy26-13.': { objectPosition: '50% 15%' }, // #9 姚昇宏：留出髮頂
-  '/assets/seasons/2026-27/players/holy26-15.': { objectPosition: '50% 0%' }, // #53 范丞佑：保留上緣髮型
+  // #53 范丞佑：改用同人原圖獨立方形 WebP，移除照片底部紙張白邊
   '/assets/seasons/2026-27/players/holy26-17.': { objectPosition: '50% 20%' }, // #33 張至虔：完整頭髮、臉部置中
   // 領隊 詹景森：新一輪真實路由實圖確認 20% 令五官偏低；恢復預設 50% 50%（保留原圖、避免裁到臉部）。
   // #1 陳竑沅的過度放大舊規則已移除，改用同人原圖的獨立方形裁切。

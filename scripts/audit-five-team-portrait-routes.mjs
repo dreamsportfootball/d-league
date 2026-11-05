@@ -96,8 +96,15 @@ try{
     for(const p of players){
       const link=rosterSection.locator('a[aria-label="查看 '+p.name+' 球員個人資料"]');
       if(await link.count()!==1)throw Error('Team list missing '+p.name);
-      const photo=images[p.name] ?? (p.name==='魏嘉成' ? 'assets/seasons/2026-27/players/ns26-16.jpg' : null);if(!photo)throw Error('Missing source photo for '+p.name);
-      rosterMap.set(p.id,{...await getImage(link.locator('img'),p.id,'roster '+p.name),href:await link.getAttribute('href'),photo});
+      const photo=images[p.name];if(!photo)throw Error('Missing source photo for '+p.name);
+      const avatar=await getImage(link.locator('img'),p.id,'roster '+p.name);
+      // Guard the accepted Niaoshi square photos against stale runtime hardcoded overrides.
+      if(teamId==='t_niaoshi_2026'){
+        const expected=path.posix.basename(photo).replace(/\.(png|jpe?g)$/i,'.webp');
+        if(!new URL(avatar.diagnostics.src).pathname.endsWith('/'+expected))
+          throw Error('Niaoshi roster image does not match season mapping for '+p.name+': '+avatar.diagnostics.src+' expected '+expected);
+      }
+      rosterMap.set(p.id,{...avatar,href:await link.getAttribute('href'),photo});
     }
     const staffSection=page.locator('section').filter({has:page.locator('h2',{hasText:'隊職員'})}).last();
     const staffLinks=new Map();
@@ -124,6 +131,13 @@ try{
       await page.goto(new URL(l.href,url).href,{waitUntil:'domcontentloaded',timeout:25000});
       const profileImg=page.locator('img[alt="'+p.name+'"]').first();
       const profile=await getImage(profileImg,p.id,'profile '+p.name);
+      if(teamId==='t_niaoshi_2026'){
+        const expected=path.posix.basename(l.photo).replace(/\.(png|jpe?g)$/i,'.webp');
+        if(!new URL(profile.diagnostics.src).pathname.endsWith('/'+expected))
+          throw Error('Niaoshi profile image does not match season mapping for '+p.name+': '+profile.diagnostics.src+' expected '+expected);
+        if(l.photo.endsWith('-super-20261105.webp') && profile.diagnostics.transform!=='none')
+          throw Error('Niaoshi new square photo has leftover transform: '+p.name);
+      }
       if(!await page.locator('h1').filter({hasText:p.name}).count())throw Error('Wrong profile title '+p.name);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1);
       if(overflow)run.failures.push({view:view.name,route:'player '+p.id,problem:'horizontal overflow'});

@@ -36,7 +36,8 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   // are square 720px photos; avoid reapplying stale transforms from long/full-body originals.
   '/assets/seasons/2026-27/staff/southboys-chen-mei-ling-excel.': { objectPosition: '50% 0%' },
   '/assets/seasons/2026-27/players/pw26-08.': { objectPosition: '50% 85%' },
-  '/assets/seasons/2026-27/players/pw26-11.': { transform: 'scale(1.18)' }, // 屏東野狼 林瑶璇：取消向下位移，令臉部重新置中
+  // 屏東野狼 #56／#28／#33／#37／#97 已改為各自的正方形來源；#28 舊版 scale(1.18) 停用。
+  // 來源及裁切規則只控制當季頭像，不改其他隊／2025-26。
 
   // Individually reviewed in the 104px / 48px circular portrait QA sheets.
   // SF #16, #12 (coach), #82 and #11: individually cropped square WebP from 2026/27 Excel originals.

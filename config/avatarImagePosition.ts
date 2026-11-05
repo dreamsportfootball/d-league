@@ -210,6 +210,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/holy26-17.': { objectPosition: '50% 20%' }, // #33 張至虔：完整頭髮、臉部置中
   '/assets/seasons/2026-27/staff/holy-chan-jing-sen.': { objectPosition: '50% 20%' }, // 領隊 詹景森：長型自拍保留髮頂，與臉部視覺中心對齊
   // #1 陳竑沅的過度放大舊規則已移除，改用同人原圖的獨立方形裁切。
+  // 另 #21、#95、#26、#2、#16 已在當季圖片映射切換至同人原圖的個別 WebP；保留舊 PNG 供溯源。
   '/assets/seasons/2026-27/players/sb26-02.': { transform: 'translateY(19%) scale(1.7)' }, // SOUTHBOYS 拉非：去除過多背景、放大臉部
   '/assets/seasons/2026-27/players/sb26-03.': { transform: 'translateY(47%) scale(2.1)' }, // SOUTHBOYS 孺立：原圖人頭位置偏上，放大至清楚可辨
   '/assets/seasons/2026-27/players/sb26-06.': { objectPosition: '50% 0%' }, // 蘇凡迪：保留 2026/27 原照頭頂

@@ -1,0 +1,37 @@
+name: Generate WANDERERS source-preserving portraits
+on:
+  push:
+    branches: [season/2026-27]
+    paths: [scripts/prepare-wanderers-portraits.mjs]
+permissions:
+  contents: write
+concurrency:
+  group: wanderers-owner-fit-20261105
+  cancel-in-progress: false
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: season/2026-27
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Generate only the approved same-person variants
+        run: |
+          npm ci --silent
+          npm install --no-save sharp
+          node scripts/prepare-wanderers-portraits.mjs
+      - name: Publish generated sources and mappings to development branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/assets/seasons/2026-27/players/wa26-*owner-*.webp data/seasons/2026-27/playerImages.json config/avatarImagePosition.ts audit/wanderers-owner-fit-generated.json
+          git diff --cached --check
+          git commit -m "fix(wanderers): preserve complete heads in individually prepared avatar sources"
+          git fetch origin season/2026-27
+          git rebase origin/season/2026-27
+          git push origin HEAD:season/2026-27

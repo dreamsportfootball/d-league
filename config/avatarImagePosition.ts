@@ -86,6 +86,16 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-38.': { transform: 'translateY(34%) scale(2.5) scaleX(1.49)' }, // 高雄業餘 #7 潘晨維：依 Excel 內嵌圖片的橫向拉伸比例
 
   // Second-pass 104px / 48px face and hairline review (2026-10-30).
+  // 鹿逐 2026/27: per-source hairline framing; these portraits have extra canvas height and
+  // centred object-fit would cut into the source hair. Keep default size unless noted.
+  '/assets/seasons/2026-27/players/lz26-01.': { objectPosition: '50% 0%' }, // #10 陳麒竣
+  '/assets/seasons/2026-27/players/lz26-02.': { objectPosition: '50% 0%' }, // #3 宋映德（兼教練）
+  '/assets/seasons/2026-27/players/lz26-03.': { objectPosition: '50% 0%' }, // #4 謝詒婷
+  '/assets/seasons/2026-27/players/lz26-07.': { objectPosition: '50% 0%' }, // #52 鐘佳勳
+  '/assets/seasons/2026-27/players/lz26-10.': { objectPosition: '50% 0%' }, // #21 林敬祐
+  '/assets/seasons/2026-27/players/lz26-11.': { objectPosition: '50% 0%' }, // #56 陳穧元
+  '/assets/seasons/2026-27/players/lz26-14.': { objectPosition: '50% 0%', transform: 'scale(1.4)' }, // #38 方韻雅：去除證件相片外緣背景；保留整顆頭
+  '/assets/seasons/2026-27/players/lz26-18.': { objectPosition: '50% 0%' }, // #14 蘇宗霆：長型照片優先完整髮頂
   '/assets/seasons/2026-27/players/lz26-17.': { objectPosition: '50% 0%' }, // 林宜蓁：維持照片完整頂部
   '/assets/seasons/2026-27/players/wa26-04.': { objectPosition: '50% 0%' }, // 蔡羿丞：避免裁掉髮頂
   '/assets/seasons/2026-27/players/lz26-05.': { objectPosition: '50% 0%' }, // 李修沛：避開原始照片下方其他畫面
@@ -178,7 +188,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/bw26-12.': { objectPosition: '50% 0%', transform: 'translate(6%, 15%) scale(1.35)' }, // 黑狼 #28 胡立邦：微向右置中臉部；保留髮頂與原縮放比例
   '/assets/seasons/2026-27/players/bw26-13.': { transform: 'translateY(19%) scale(1.6)' }, // 隊服全身照
   '/assets/seasons/2026-27/players/lz26-06.': { objectPosition: '50% 0%' }, // 避免頭頂二次裁切
-  '/assets/seasons/2026-27/players/lz26-13.': { transform: 'translate(14%, -1%) scale(2.4)' }, // 第二輪實圖回歸校正
+  '/assets/seasons/2026-27/players/lz26-13.': { transform: 'scale(1.72)' }, // #2 蔡昀晏：減少舊版過度放大與偏移，保留髮頂／五官；遮住相片外的木色背景
   '/assets/seasons/2026-27/players/wa26-06.': { transform: 'translateY(19%) scale(1.6)' }, // 手持球衣
   '/assets/seasons/2026-27/players/kbk26-04.': { transform: 'translate(30%, 90%) scale(3)' }, // #36 PATRICK HAINES：從遠距離合照聚焦本人頭肩，原圖清晰度仍有限
   '/assets/seasons/2026-27/players/kbk26-11.': { objectPosition: '50% 0%', transform: 'scale(1.2)' }, // #35 DICKSON：保留髮頂與下巴；原照僅 163×279，需更高清來源

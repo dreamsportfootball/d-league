@@ -23,6 +23,17 @@ const historicImagesByIdentity=new Map(historicPlayers
   .filter(p=>historicImages[p.name])
   .map(p=>[p.identityId??p.id,historicImages[p.name]]));
 const photoForPlayer=p=>images[p.name]??historicImagesByIdentity.get(p.identityId??p.id);
+// Owner-verified Excel drawing anchors: #44 row 14, #7 row 16, #3 row 19.
+if(teamId==='t_pingtung_wild_ape_2026'){
+  const expectedPhotos={
+    '連哲緯':'assets/seasons/2026-27/players/pwa26-02-excel-center-20261106.webp',
+    '林彥文':'assets/seasons/2026-27/players/pwa26-05-chin-center-20261106.webp',
+    '黃浩程':'assets/seasons/2026-27/players/pwa26-07-face-center-20261106.webp',
+  };
+  for(const [name,photo] of Object.entries(expectedPhotos)){
+    if(images[name]!==photo)throw Error('Incorrect source for Pingtung '+name+': '+images[name]);
+  }
+}
 const photoForStaff=s=>s.image??images[s.name]??(s.name==='邱文良'?historicImages[s.name]:undefined);
 const short='next-'+team.id.replace(/^t_/,'').replace(/_2026$/,'').replaceAll('_','-');
 const viewports=[{name:'mobile-390',width:390,height:844},{name:'desktop-1280',width:1280,height:900}];
@@ -68,8 +79,6 @@ const getImage=async (locator,expectedId,tag)=>{
     throw Error(tag+': KA HK face framing override did not apply');
   if(expectedId==='bw26-01' && diag.objectPosition!=='50% 22%')
     throw Error(tag+': Black Wolf #1 image position override did not apply: '+diag.objectPosition);
-  if(teamId==='t_pingtung_wild_ape_2026' && expectedId==='pwa26-05' && diag.objectPosition!=='50% 25%')
-    throw Error(tag+': Pingtung #7 centered crop override missing: '+diag.objectPosition);
   if(teamId==='t_pingtung_wild_ape_2026' && expectedId==='pwa26-10' && diag.transform==='none')
     throw Error(tag+': Pingtung #24 centered crop transform missing');
   if(expectedId==='bw26-02' && diag.objectPosition!=='50% 0%')

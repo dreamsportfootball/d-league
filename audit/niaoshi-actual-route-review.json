@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T13:20:00.914Z",
+  "generatedAt": "2026-11-06T08:04:39.997Z",
   "team": "台南鳥仕足球俱樂部",
   "teamId": "t_niaoshi_2026",
   "season": "2026-27",
@@ -201,7 +201,7 @@
       "id": "ns26-05",
       "name": "于克偉",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -221,7 +221,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -248,7 +248,7 @@
       "id": "ns26-06",
       "name": "吳昱陞",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -268,7 +268,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -436,7 +436,7 @@
       "id": "ns26-10",
       "name": "蘇智龍",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -456,7 +456,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -577,7 +577,7 @@
       "id": "ns26-13",
       "name": "許漢權",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -597,7 +597,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -718,9 +718,9 @@
       "id": "ns26-16",
       "name": "魏嘉成",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 823,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -738,9 +738,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 823,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1092,7 +1092,7 @@
       "id": "ns26-05",
       "name": "于克偉",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1112,7 +1112,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-05-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1139,7 +1139,7 @@
       "id": "ns26-06",
       "name": "吳昱陞",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1159,7 +1159,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-06-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1327,7 +1327,7 @@
       "id": "ns26-10",
       "name": "蘇智龍",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1347,7 +1347,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-10-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1468,7 +1468,7 @@
       "id": "ns26-13",
       "name": "許漢權",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1488,7 +1488,7 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261105.webp",
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-13-super-20261106.webp",
         "naturalWidth": 720,
         "naturalHeight": 720,
         "objectFit": "cover",
@@ -1609,9 +1609,9 @@
       "id": "ns26-16",
       "name": "魏嘉成",
       "roster": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 823,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",
@@ -1629,9 +1629,9 @@
         }
       },
       "profile": {
-        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16.webp",
-        "naturalWidth": 640,
-        "naturalHeight": 823,
+        "src": "http://127.0.0.1:4173/d-league/assets/seasons/2026-27/players/ns26-16-super-20261105.webp",
+        "naturalWidth": 720,
+        "naturalHeight": 720,
         "objectFit": "cover",
         "objectPosition": "50% 50%",
         "transform": "none",

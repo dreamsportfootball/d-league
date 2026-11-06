@@ -160,7 +160,6 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/khk26-14.': { transform: 'translateY(17%) scale(1.5)' }, // 隊服半身照
   // 屏東野猿：依原始 Excel xl/media 與 48/104/160px 實圖逐張檢查。
   // 只修髮頂遭預設置中裁切的照片；#2 比賽截圖特殊裁切及 #88 已確認設定保留。
-  '/assets/seasons/2026-27/players/pwa26-02.': { objectPosition: '50% 0%' }, // #44 連哲緯：證件照髮頂接近原始上緣，不再垂直置中截斷
   '/assets/seasons/2026-27/players/pwa26-05.': { objectPosition: '50% 25%' }, // #7 林彥文：下移取景以兼顧髮頂、五官及下巴；球員與管理同圖
   '/assets/seasons/2026-27/players/pwa26-06.': { objectPosition: '50% 0%' }, // #9 戴威閎：完整保留上方捲髮及五官
   '/assets/seasons/2026-27/players/pwa26-07.': { objectPosition: '50% 30%' }, // #3 黃浩程：直式生活照上移至自然頭肩比例

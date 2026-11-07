@@ -74,7 +74,7 @@ const AVATAR_OVERRIDES: Readonly<Record<string, AvatarStyle>> = {
   '/assets/seasons/2026-27/players/ka26-35.': { objectPosition: '50% 25%' }, // #12 曾瀚陞：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-36.': { objectPosition: '50% 25%' }, // #16 林煒哲：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-37.': { objectPosition: '50% 25%' }, // #51 王笙翰：保留完整髮頂、下巴與五官
-  '/assets/seasons/2026-27/players/ka26-39.': { objectPosition: '50% 25%' }, // #17 王文賢：保留完整髮頂、下巴與五官
+  '/assets/seasons/2026-27/players/ka26-39.': { objectPosition: '50% 25%' }, // #1 王文賢：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-40.': { objectPosition: '50% 15%' }, // #8 侯奕賢：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-42.': { objectPosition: '50% 30%' }, // #23 林品華：保留完整髮頂、下巴與五官
   '/assets/seasons/2026-27/players/ka26-41.': { objectPosition: '50% 0%' }, // #2 林郁任：避免預設置中裁掉髮頂，保留自然頭肩比例

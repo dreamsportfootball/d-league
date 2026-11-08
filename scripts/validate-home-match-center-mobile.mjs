@@ -30,14 +30,14 @@ try {
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      await page.clock.setFixedTime(new Date('2026-11-08T10:30:00+08:00'));
+      await page.clock.setFixedTime(new Date('2026-11-08T13:00:00+08:00'));
       await page.goto(baseUrl + '/#/', { waitUntil: 'domcontentloaded', timeout: 30000 });
       const matchCenter = page.locator('#match-center');
       await matchCenter.waitFor({ state: 'visible', timeout: 30000 });
       await matchCenter.scrollIntoViewIfNeeded();
       const cards = matchCenter.locator('[data-analytics-event="match_open"]');
       await cards.first().waitFor({ state: 'visible', timeout: 20000 });
-      assert(await cards.count() === 2, viewport.name + ': expected 2 completed L3 matches on November 8');
+      assert(await cards.count() === 3, viewport.name + ': expected 3 completed L3 matches on November 8');
 
       const firstCardGeometry = await cards.first().evaluate(async (card) => {
         const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
@@ -109,8 +109,8 @@ try {
         viewport.name + ': m2627-007 kit colors should be SF pink and Niaoshi beige: ' + firstCardLayout.stripeColors.join(' | '));
       const lastCardStripeColors = await cards.last().evaluate((card) =>
         [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
-      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(255, 255, 255)', 'rgb(56, 89, 132)']),
-        viewport.name + ': m2627-008 must use Pingtung Wolves white home and Luzhu blue home: ' + lastCardStripeColors.join(' | '));
+      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(25, 30, 84)', 'rgb(239, 180, 198)']),
+        viewport.name + ': m2627-009 must use Wanderers navy home and Holy Knights pink away: ' + lastCardStripeColors.join(' | '));
 
       assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
       for (const row of firstCardGeometry) {
@@ -126,7 +126,7 @@ try {
       }
 
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });
-      const upcoming = matchCenter.getByRole('tab', { name: '今日賽程' });
+      const upcoming = matchCenter.getByRole('tab', { name: '即將開賽' });
       assert(await results.getAttribute('aria-selected') === 'true',
         viewport.name + ': result tab should be active on November 8');
       const tabBounds = await Promise.all([results, upcoming].map((tab) =>
@@ -160,7 +160,7 @@ try {
       assert(await upcoming.getAttribute('aria-selected') === 'true',
         viewport.name + ': upcoming tab did not activate');
       await cards.first().waitFor({ state: 'visible' });
-      assert(await cards.count() === 1, viewport.name + ': expected 1 remaining upcoming match on November 8');
+      assert(await cards.count() === 6, viewport.name + ': expected 6 next matchday fixtures on November 15');
       await carousel.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }));
       await page.waitForTimeout(100);
       await centering(cards.first(), 'first upcoming card');
@@ -168,7 +168,7 @@ try {
       await results.click();
       assert(await results.getAttribute('aria-selected') === 'true',
         viewport.name + ': result tab did not reactivate');
-      assert(await cards.count() === 2, viewport.name + ': November 8 results not restored');
+      assert(await cards.count() === 3, viewport.name + ': November 8 results not restored');
       const beforeScroll = await page.evaluate(() => window.scrollY);
       await cards.first().click();
       const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');

@@ -329,5 +329,23 @@
       "type": "GOAL",
       "team": "AWAY"
     }
+  ],
+  "m2627-009": [
+    {
+      "id": "m2627-009-1",
+      "minute": 33,
+      "player": "周宥廷",
+      "playerId": "holy26-09",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-009-2",
+      "minute": 38,
+      "player": "徐貫評",
+      "playerId": "holy26-05",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
   ]
 }

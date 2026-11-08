@@ -253,5 +253,81 @@
       "isOwnGoal": true,
       "scoringTeam": "HOME"
     }
+  ],
+  "m2627-007": [
+    {
+      "id": "m2627-007-1",
+      "minute": 7,
+      "player": "呂承燁",
+      "playerId": "sf26-20",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-007-2",
+      "minute": 21,
+      "player": "蔡仲恩",
+      "playerId": "sf26-11",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-007-3",
+      "minute": 23,
+      "player": "王竣弘",
+      "playerId": "ns26-03",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-007-4",
+      "minute": 33,
+      "player": "郭奕辰",
+      "playerId": "ns26-08",
+      "type": "GOAL",
+      "team": "AWAY"
+    },
+    {
+      "id": "m2627-007-5",
+      "minute": 34,
+      "player": "黃嵩崴",
+      "playerId": "sf26-14",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-007-6",
+      "minute": 39,
+      "player": "蔡仲恩",
+      "playerId": "sf26-11",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-007-7",
+      "minute": 40,
+      "player": "趙苡翔",
+      "playerId": "sf26-13",
+      "type": "GOAL",
+      "team": "HOME"
+    }
+  ],
+  "m2627-008": [
+    {
+      "id": "m2627-008-1",
+      "minute": 33,
+      "player": "林哲維",
+      "playerId": "pw26-12",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-008-2",
+      "minute": 38,
+      "player": "陳麒竣",
+      "playerId": "lz26-01",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
   ]
 }

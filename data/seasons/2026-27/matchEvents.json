@@ -311,5 +311,23 @@
       "type": "GOAL",
       "team": "HOME"
     }
+  ],
+  "m2627-008": [
+    {
+      "id": "m2627-008-1",
+      "minute": 33,
+      "player": "林哲維",
+      "playerId": "pw26-12",
+      "type": "GOAL",
+      "team": "HOME"
+    },
+    {
+      "id": "m2627-008-2",
+      "minute": 38,
+      "player": "陳麒竣",
+      "playerId": "lz26-01",
+      "type": "GOAL",
+      "team": "AWAY"
+    }
   ]
 }

@@ -30,14 +30,14 @@ try {
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      await page.clock.setFixedTime(new Date('2026-11-02T12:00:00+08:00'));
+      await page.clock.setFixedTime(new Date('2026-11-08T10:30:00+08:00'));
       await page.goto(baseUrl + '/#/', { waitUntil: 'domcontentloaded', timeout: 30000 });
       const matchCenter = page.locator('#match-center');
       await matchCenter.waitFor({ state: 'visible', timeout: 30000 });
       await matchCenter.scrollIntoViewIfNeeded();
       const cards = matchCenter.locator('[data-analytics-event="match_open"]');
       await cards.first().waitFor({ state: 'visible', timeout: 20000 });
-      assert(await cards.count() === 6, viewport.name + ': expected 6 latest result cards');
+      assert(await cards.count() === 2, viewport.name + ': expected 2 completed L3 matches on November 8');
 
       const firstCardGeometry = await cards.first().evaluate(async (card) => {
         const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
@@ -105,12 +105,12 @@ try {
         viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);
       assert(firstCardLayout.scoreRightDelta <= 1,
         viewport.name + ': home/away score columns have different right edges: ' + firstCardLayout.scoreRightDelta);
-      assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(44, 58, 103)', 'rgb(224, 192, 80)']),
-        viewport.name + ': m2627-001 kit colors should be Chen navy and Evergreen yellow: ' + firstCardLayout.stripeColors.join(' | '));
+      assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(225, 135, 161)', 'rgb(236, 223, 190)']),
+        viewport.name + ': m2627-007 kit colors should be SF pink and Niaoshi beige: ' + firstCardLayout.stripeColors.join(' | '));
       const lastCardStripeColors = await cards.last().evaluate((card) =>
         [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
-      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(255, 255, 255)', 'rgb(86, 62, 146)']),
-        viewport.name + ': m2627-006 must use SOUTHBOYS white away and Pingtung purple home: ' + lastCardStripeColors.join(' | '));
+      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(255, 255, 255)', 'rgb(56, 89, 132)']),
+        viewport.name + ': m2627-008 must use Pingtung Wolves white home and Luzhu blue home: ' + lastCardStripeColors.join(' | '));
 
       assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
       for (const row of firstCardGeometry) {
@@ -126,9 +126,9 @@ try {
       }
 
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });
-      const upcoming = matchCenter.getByRole('tab', { name: '即將開賽' });
+      const upcoming = matchCenter.getByRole('tab', { name: '今日賽程' });
       assert(await results.getAttribute('aria-selected') === 'true',
-        viewport.name + ': result tab should be active on November 2');
+        viewport.name + ': result tab should be active on November 8');
       const tabBounds = await Promise.all([results, upcoming].map((tab) =>
         tab.boundingBox()));
       assert(tabBounds.every((box) => box && box.height >= 44),
@@ -160,7 +160,7 @@ try {
       assert(await upcoming.getAttribute('aria-selected') === 'true',
         viewport.name + ': upcoming tab did not activate');
       await cards.first().waitFor({ state: 'visible' });
-      assert(await cards.count() === 3, viewport.name + ': expected 3 upcoming matches on November 8');
+      assert(await cards.count() === 1, viewport.name + ': expected 1 remaining upcoming match on November 8');
       await carousel.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }));
       await page.waitForTimeout(100);
       await centering(cards.first(), 'first upcoming card');
@@ -168,7 +168,7 @@ try {
       await results.click();
       assert(await results.getAttribute('aria-selected') === 'true',
         viewport.name + ': result tab did not reactivate');
-      assert(await cards.count() === 6, viewport.name + ': results not restored');
+      assert(await cards.count() === 2, viewport.name + ': November 8 results not restored');
       const beforeScroll = await page.evaluate(() => window.scrollY);
       await cards.first().click();
       const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');

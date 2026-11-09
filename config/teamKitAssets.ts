@@ -110,6 +110,10 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
       // Organizer-approved color separation: 2026-11-08 L3 Wolves vs Luzhu: Luzhu blue home.
       t_luzhu_2026: 'home',
     },
+    'm2627-010': {
+      // 2026-11-15 L2 R2: organizer's latest decision: Kaohsiung Hongkongers wear yellow-black home kit against Pingtung Wild Ape.
+      t_kaohsiung_hk_2026: 'home',
+    },
     'm2627-019': {
       // Organizer-approved color separation: 2026-12-06 L1 KUROMI vs Chiayi 235: Chiayi light gray-blue home.
       t_chiayi_235_2026: 'home',

@@ -146,6 +146,10 @@ const MATCH_TEAM_KIT_VARIANTS: Partial<
       // Organizer-approved color separation: 2027-01-24 L1 Black Knights vs Chiayi 235: Chiayi light gray-blue home.
       t_chiayi_235_2026: 'home',
     },
+    'm2627-061': {
+      // Organizer-approved: 2027-03-07 L3 Niaoshi vs Holy Knights. Holy Knights change from pink away to navy home; Niaoshi stays red home.
+      t_holy_knights_2026: 'home',
+    },
     'm2627-063': {
       // Organizer-approved color separation: 2027-03-07 L3 SF vs Wolves: Wolves white home.
       t_pingtung_wolves_2026: 'home',

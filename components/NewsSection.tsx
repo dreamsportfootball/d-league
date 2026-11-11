@@ -42,14 +42,11 @@ const NewsSection: React.FC = () => {
   );
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm transition-shadow duration-500 hover:shadow-xl">
-      <div className="flex items-center justify-between border-b border-neutral-100 bg-white p-5">
-        <h3 className="font-display text-xl font-bold uppercase tracking-tight text-brand-black">
+    <div className="dl-news-section flex h-full flex-col overflow-hidden bg-white">
+      <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-0 py-3">
+        <h3 className="font-display text-3xl font-bold tracking-tight text-brand-black">
           最新消息
         </h3>
-        <span className="rounded-full bg-brand-blue/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-brand-blue">
-          LATEST
-        </span>
       </div>
 
       <div className="flex flex-grow flex-col divide-y divide-neutral-100">
@@ -61,12 +58,12 @@ const NewsSection: React.FC = () => {
                 key={`${article.seasonId ?? 'global'}-${article.id}`}
                 to={`/news/${article.id}`}
                 data-scroll-anchor-id={`home-news-article-${article.seasonId ?? 'global'}-${article.id}`}
-                className="group relative flex cursor-pointer items-start space-x-5 overflow-hidden p-5 text-left transition-colors hover:bg-neutral-50"
+                className="group relative flex cursor-pointer items-start gap-4 overflow-hidden px-0 py-5 text-left transition-colors hover:bg-neutral-50 md:gap-6"
               >
                 <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
 
                 <div className="z-10 min-w-0 flex-1">
-                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span
                       className={`inline-flex h-[18px] items-center justify-center rounded-sm px-2 text-[10px] font-bold uppercase leading-none tracking-[0.08em] shadow-sm ${getBadgeStyle(
                         article.category,
@@ -83,7 +80,7 @@ const NewsSection: React.FC = () => {
                       {formatTaipeiDate(article.timestamp)}
                     </span>
                   </div>
-                  <h4 className="mb-2.5 line-clamp-2 font-display text-lg font-bold uppercase leading-[1.15] tracking-[-0.025em] text-brand-black transition-colors group-hover:text-brand-blue">
+                  <h4 className="mb-2.5 line-clamp-2 font-display text-xl font-bold leading-[1.3] tracking-tight text-brand-black transition-colors group-hover:text-brand-blue">
                     {renderNewsTitle(article.title)}
                   </h4>
                   <p className="line-clamp-2 text-sm leading-[1.65] tracking-[0.005em] text-neutral-500 opacity-80 transition-opacity group-hover:opacity-100">

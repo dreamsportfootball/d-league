@@ -63,7 +63,7 @@ const VideoHub: React.FC = () => {
   }
 
   return (
-    <section className="relative overflow-hidden border-y border-neutral-900 bg-neutral-950 py-12 md:py-20">
+    <section className="relative overflow-hidden border-y border-neutral-900 bg-neutral-950 py-16 md:py-28">
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         <div className="mb-10 flex items-end justify-between">
           <div>
@@ -91,7 +91,7 @@ const VideoHub: React.FC = () => {
           <div className="group lg:col-span-2">
             {activeSeason.youtubePlaylistEmbedUrl ? (
               <>
-                <div className="relative aspect-video overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900 shadow-2xl ring-1 ring-white/5">
+                <div className="relative aspect-video overflow-hidden border border-neutral-700 bg-neutral-900">
                   <iframe
                     className="relative z-10 h-full w-full"
                     src={activeSeason.youtubePlaylistEmbedUrl}

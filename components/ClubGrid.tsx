@@ -75,14 +75,11 @@ const ClubGrid: React.FC = () => {
   const thumbLeftPercent = (100 - thumbWidthPercent) * scrollProgress;
 
   return (
-    <section className="overflow-hidden border-t border-neutral-200 bg-neutral-50 pb-6 pt-8 md:pb-12 md:pt-16">
-      <div className="container mx-auto px-4 text-center md:px-6">
-        <div className="relative mb-6 inline-block md:mb-10">
-          <span className="absolute -top-4 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-display text-5xl font-black uppercase text-neutral-200/50 md:-top-6 md:text-8xl">
-            The Teams
-          </span>
-          <h2 className="relative z-10 font-display text-3xl font-black uppercase text-brand-black md:text-5xl">
-            參賽 <span className="bg-gradient-to-r from-brand-blue to-cyan-500 bg-clip-text text-transparent">球隊</span>
+    <section className="dl-clubs-section overflow-hidden bg-neutral-50 pb-12 pt-14 md:pb-24 md:pt-24">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="relative mb-9 md:mb-12">
+          <h2 className="dl-clubs-title font-display text-4xl font-black tracking-tight text-brand-black md:text-6xl">
+            參賽 <span className="text-brand-blue">球隊</span>
           </h2>
         </div>
 
@@ -94,38 +91,38 @@ const ClubGrid: React.FC = () => {
           />
         ) : (
           <>
-            <p className="-mt-3 mb-9 text-xs font-medium text-neutral-400 md:-mt-5 md:mb-14 md:text-sm">
+            <p className="mb-9 text-sm font-medium text-neutral-600 md:mb-12">
               {activeSeason.shortName}｜{clubs.length} 支正式參賽球隊
             </p>
 
             <div
               ref={scrollRef}
               onScroll={updateScrollState}
-              className="no-scrollbar -mx-4 flex snap-x snap-proximity gap-5 overflow-x-auto px-4 pb-6 pt-1 touch-pan-x md:mx-0 md:grid md:grid-cols-4 md:items-end md:justify-items-center md:gap-x-8 md:gap-y-14 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-6"
+              className="no-scrollbar -mx-4 flex snap-x snap-proximity gap-3 overflow-x-auto px-4 pb-6 pt-1 touch-pan-x md:mx-0 md:grid md:grid-cols-3 md:items-stretch md:gap-4 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-6"
             >
               {clubs.map((club) => {
-                const className = "group flex w-[24vw] shrink-0 snap-center flex-col items-center transition-transform md:w-full";
+                const className = "dl-club-item group flex w-[42vw] max-w-[190px] shrink-0 snap-center flex-col items-center justify-center transition-transform md:w-full md:max-w-none";
                 const content = (
                   <>
-                    <div className="relative mb-3 flex h-14 w-14 items-center justify-center transition-all duration-300 md:mb-5 md:h-20 md:w-20">
+                    <div className="relative mb-4 flex h-20 w-20 items-center justify-center md:mb-5 md:h-24 md:w-24">
                       <div className="absolute inset-0 rounded-full bg-brand-black/5 opacity-0 blur-xl transition-opacity duration-300 md:group-hover:opacity-50" />
                       {club.logo && (
                         <img
                           src={club.logo}
                           alt={club.name}
-                          className="relative z-10 max-h-full max-w-full object-contain drop-shadow-md transition-all duration-500 md:grayscale-[30%] md:group-hover:grayscale-0"
+                          className="relative z-10 max-h-full max-w-full object-contain"
                         />
                       )}
                     </div>
                     <div className="w-full min-w-0 px-1 text-center">
                       <AutoFitText
                         text={club.shortName}
-                        minFontSize={6}
+                        minFontSize={11}
                         lineHeight={1.15}
-                        className="text-center text-[10px] font-bold uppercase tracking-widest text-brand-black transition-colors md:text-sm md:text-neutral-500 md:group-hover:text-brand-black"
+                        className="text-center text-[13px] font-bold leading-snug text-brand-black transition-colors md:text-sm"
                       />
                     </div>
-                    <span className="mt-1 text-[9px] font-black uppercase tracking-widest text-brand-blue">
+                    <span className="mt-3 text-[11px] font-bold tracking-wide text-brand-blue">
                       {club.leagueId}
                     </span>
                     <div className="mt-2 h-1 w-0 bg-brand-blue transition-all duration-300 md:mt-3 md:group-hover:w-12" />

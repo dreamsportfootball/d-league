@@ -71,21 +71,14 @@ const PhotoCarousel: React.FC = () => {
   };
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-gradient-to-b from-white via-neutral-50 to-white py-12 md:py-20">
-      <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 select-none whitespace-nowrap font-display text-[10rem] font-black uppercase text-neutral-100 opacity-40">
-        MOMENTS
-      </div>
+    <section ref={sectionRef} className="dl-photo-section relative overflow-hidden bg-white py-14 md:py-24">
 
       <div className="container relative z-10 mx-auto px-4 md:px-6">
-        <div className="mb-8 flex flex-col items-center md:mb-12">
-          <div className="mb-2 flex items-center space-x-2">
-            <Camera className="h-4 w-4 text-brand-blue" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-blue">Official Gallery</span>
-          </div>
-          <h2 className="text-center font-display text-3xl font-black uppercase tracking-tight text-brand-black md:text-4xl">
-            賽事 <span className="bg-gradient-to-r from-brand-blue to-cyan-500 bg-clip-text text-transparent">精選圖集</span>
+        <div className="mb-10 flex flex-col items-start md:mb-14">
+          <h2 className="dl-gallery-title font-display text-4xl font-black tracking-tight text-brand-black md:text-6xl">
+            賽事 <span className="text-brand-blue">精選圖集</span>
           </h2>
-          <div className="mt-4 h-1 w-12 rounded-full bg-brand-blue" />
+          <p className="mt-3 text-sm text-neutral-600">真實比賽，真實瞬間。</p>
         </div>
 
         <div
@@ -100,7 +93,7 @@ const PhotoCarousel: React.FC = () => {
           }}
         >
           <div
-            className="group relative aspect-[16/10] overflow-hidden rounded-lg bg-neutral-950 shadow-2xl md:aspect-[16/7]"
+            className="group relative aspect-[16/10] overflow-hidden bg-neutral-950 md:aspect-[16/7]"
             onTouchStart={(event) => setTouchStartX(event.touches[0].clientX)}
             onTouchEnd={handleTouchEnd}
           >

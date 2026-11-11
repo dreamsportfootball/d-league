@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
   const entesLogoUrl = `${import.meta.env.BASE_URL}assets/partners/partner-entes.png`;
 
   return (
-    <footer className="relative border-t border-neutral-900 bg-neutral-950 pb-6 pt-10 text-white md:pb-5 md:pt-20">
+    <footer className="dl-site-footer relative border-t border-neutral-800 bg-neutral-950 pb-8 pt-12 text-white md:pb-8 md:pt-24">
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         <div className="mb-6 grid grid-cols-1 gap-8 md:mb-20 md:grid-cols-12 md:gap-10 lg:gap-16">
           <div className="flex flex-col items-start md:col-span-5">

@@ -53,14 +53,14 @@ const Hero: React.FC = () => {
         <div className="dl-poster-frame container mx-auto px-4 md:px-6">
           <div className="dl-poster-masthead">
             <div className="dl-poster-headline">
-              <p className="dl-poster-overline">TAIWAN · TAINAN / ${activeSeason.shortName}</p>
+              <p className="dl-poster-overline">TAIWAN · TAINAN / {activeSeason.shortName}</p>
               <h1 id="season-hero-title">D LEAGUE</h1>
               <p className="dl-poster-subtitle">台南夢達七人足球聯賽</p>
             </div>
             <div className="dl-poster-summary">
               <span>THE GAME BELONGS TO EVERYONE.</span>
               <p>球隊、賽程、比分與球員紀錄。<br />屬於台南足球的每一場比賽，都在這裡。</p>
-              <p className="dl-poster-levels">${activeSeason.enabledLeagues.join(' / ')} <span>·</span> ${activeSeason.shortName}</p>
+              <p className="dl-poster-levels">{activeSeason.enabledLeagues.join(' / ')} <span>·</span> {activeSeason.shortName}</p>
             </div>
           </div>
           <div className="dl-poster-picture">

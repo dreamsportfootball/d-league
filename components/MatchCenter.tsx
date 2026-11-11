@@ -68,7 +68,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
       onClick={() => onOpenMatch(match.id)}
       data-analytics-event="match_open"
       data-analytics-label={match.id}
-      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
+      className="dl-match-card group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
     >
       <div className="flex w-full min-w-0 shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">
@@ -218,14 +218,14 @@ const MatchCenter: React.FC = () => {
 
   return (
     <>
-      <div className="bg-white py-6 md:py-8">
+      <div className="bg-white py-7 md:py-10">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-4 flex flex-col items-end justify-between md:mb-6 md:flex-row">
             <div className="w-full md:w-auto">
-              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.18em] text-neutral-600 md:text-[10px] md:text-neutral-400">
+              <p className="mb-2 text-xs font-semibold tracking-[0.05em] text-neutral-500">
                 {activeSeason.shortName} · MATCH CENTRE
               </p>
-              <h2 className="mb-2 font-display text-3xl font-black uppercase tracking-tighter text-brand-black">
+              <h2 className="dl-match-center-title mb-2 font-display text-3xl font-black tracking-tight text-brand-black">
                 賽事 <span className="text-brand-blue">中心</span>
               </h2>
               <div className="w-full border-b border-neutral-200 md:w-auto md:rounded-full md:border-0 md:bg-neutral-100 md:p-1 [&_[role=tablist]]:w-full [&_[role=tablist]]:gap-0 md:[&_[role=tablist]]:gap-2 [&_[role=tab]]:min-h-11 [&_[role=tab]]:flex-1 [&_[role=tab]]:rounded-none [&_[role=tab]]:border-b-2 [&_[role=tab]]:border-transparent [&_[role=tab]]:px-2 [&_[role=tab]]:py-2.5 [&_[role=tab]]:text-sm [&_[role=tab][aria-selected=true]]:font-black [&_[role=tab][aria-selected=false]]:font-medium [&_[aria-selected=true]]:border-brand-blue [&_[aria-selected=true]]:bg-transparent [&_[aria-selected=true]]:shadow-none md:[&_[role=tab]]:min-h-0 md:[&_[role=tab]]:flex-none md:[&_[role=tab]]:rounded-full md:[&_[role=tab]]:border-b-0 md:[&_[role=tab]]:px-4 md:[&_[role=tab]]:py-1.5 md:[&_[role=tab]]:text-xs md:[&_[role=tab]]:font-bold md:[&_[aria-selected=true]]:bg-white md:[&_[aria-selected=true]]:shadow-sm">

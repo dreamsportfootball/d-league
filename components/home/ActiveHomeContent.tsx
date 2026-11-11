@@ -66,21 +66,18 @@ const ActiveHomeContent: React.FC = () => {
 
   return (
     <>
-      <div id="match-center" className="container relative z-20 mx-auto -mt-5 px-0 pb-12 md:px-6">
-        <div className="overflow-hidden rounded-t-xl border-neutral-100 bg-white shadow-2xl ring-1 ring-black/5 md:border">
+      <div id="match-center" className="dl-home-match-center container relative z-20 mx-auto px-0 md:px-6">
+        <div className="dl-home-match-panel overflow-hidden bg-white">
           <MatchCenter />
         </div>
       </div>
 
-      <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-6 md:px-6 md:py-8">
+      <section id="standings-and-news" className="dl-home-overview container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">
           <div className="order-2 lg:order-1 lg:col-span-4">
             <div className="mb-4 flex items-end justify-between gap-4 border-b border-neutral-100 pb-2">
               <div>
-                <span className="mb-1 block font-sans text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-400">
-                  {activeSeason.status === 'completed' ? 'Final Ranking' : 'Ranking'}
-                </span>
-                <h3 className="flex items-center font-display text-3xl font-bold tracking-wide text-brand-black">
+                <h3 className="dl-rank-heading flex items-center font-display text-3xl font-bold tracking-tight text-brand-black">
                   <Trophy className="mr-2 h-6 w-6 translate-y-[2px] text-brand-blue" />
                   {activeSeason.status === 'completed' ? '最終排名' : '積分榜'}
                 </h3>
@@ -127,7 +124,7 @@ const ActiveHomeContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="order-1 lg:order-2 lg:col-span-8">
+          <div className="dl-overview-news order-1 lg:order-2 lg:col-span-8">
             <NewsSection />
           </div>
         </div>

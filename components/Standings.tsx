@@ -145,7 +145,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
 
       {!mobileExpanded && (
         <div className="md:hidden">
-          <table className="w-full table-fixed border-collapse">
+          <table className="dl-standings-table w-full table-fixed border-collapse">
             <thead className="border-b border-neutral-200 text-[11px] font-bold tracking-wider text-neutral-500">
               <tr>
                 <th className="w-9 px-1 py-3 text-left">名次</th>
@@ -176,7 +176,7 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                       aria-label={`查看 ${team.name} 球隊頁`}
                     >
                       <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" />
-                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black" /></div>
+                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={10} className="font-bold text-brand-black" /></div>
                       <TieLabel row={row} compact />
                     </Link>
                   </td>

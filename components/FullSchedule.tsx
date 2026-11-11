@@ -38,7 +38,7 @@ const renderScore = (match: Match, compact = false) => {
   return (
     <span
       className={compact
-        ? 'font-display text-[10px] font-medium uppercase tracking-widest text-neutral-300'
+        ? 'font-display text-[11px] font-medium uppercase tracking-widest text-neutral-300'
         : 'font-display text-xs font-medium uppercase tracking-widest text-neutral-300'}
     >
       VS
@@ -121,7 +121,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
                 >
                   <div className="mb-2 flex min-w-0 items-center gap-2 leading-none">
-                    <span className="whitespace-nowrap font-display text-[10px] font-semibold tracking-[0.02em] text-neutral-500">
+                    <span className="whitespace-nowrap font-display text-[11px] font-semibold tracking-[0.02em] text-neutral-500">
                       {mobileDateHeader}
                     </span>
                     <span className="whitespace-nowrap text-[11px] font-medium tracking-wide text-neutral-600">
@@ -135,7 +135,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={14}
-                          minFontSize={11}
+                          minFontSize={12}
                           fitPadding={1}
                           className="font-bold text-brand-black"
                         />
@@ -151,9 +151,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
 
                     <div className="flex min-w-[40px] items-center justify-center text-center">
                       {hasScore ? (
-                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[15px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
+                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[18px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
                       ) : (
-                        <span className="font-display text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">
+                        <span className="font-display text-[11px] font-semibold tracking-wide text-neutral-600">
                           VS
                         </span>
                       )}
@@ -171,7 +171,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={14}
-                          minFontSize={11}
+                          minFontSize={12}
                           fitPadding={1}
                           className="font-bold text-brand-black"
                         />
@@ -283,7 +283,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={homeTeam.name}
                           maxFontSize={16}
-                          minFontSize={11}
+                          minFontSize={12}
                           fitPadding={1}
                           className="font-bold text-brand-black"
                         />
@@ -301,7 +301,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       {hasScore ? (
                         <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[17px] font-black tracking-tight text-brand-black tabular-nums" />
                       ) : (
-                        <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">
+                        <span className="font-display text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-300">
                           VS
                         </span>
                       )}
@@ -319,7 +319,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                         <AutoFitText
                           text={awayTeam.name}
                           maxFontSize={16}
-                          minFontSize={11}
+                          minFontSize={12}
                           fitPadding={1}
                           className="font-bold text-brand-black"
                         />

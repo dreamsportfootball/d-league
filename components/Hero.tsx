@@ -49,38 +49,49 @@ const Hero: React.FC = () => {
 
   if (showSeasonPoster) {
     return (
-      <section className="bg-brand-black" aria-labelledby="season-hero-title">
-        <h1 id="season-hero-title" className="sr-only">
-          {activeSeason.registrationMessage ?? `${activeSeason.displayName} 賽季資訊`}
-        </h1>
-
-        <picture className="block w-full">
-          {activeSeason.heroImageMobile && (
-            <source media="(max-width: 767px)" srcSet={heroImages.mobile} width={960} height={1200} />
-          )}
-          <img
-            src={heroImages.desktop}
-            onError={() => setImageFailed(true)}
-            alt={participantsPublished
-              ? `${activeSeason.displayName} 正式參賽隊伍及分級已公布`
-              : resultsPublished
-                ? `${activeSeason.displayName} 錄取名單已公布`
-                : `${activeSeason.displayName} 正式報名開放，設有 ${activeSeason.enabledLeagues.join('、')} 三個級別`}
-            width={1920}
-            height={800}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            data-image-priority="true"
-            className="block h-auto w-full"
-          />
-        </picture>
-
-        <OpeningCountdown />
+      <section className="dl-poster-hero" aria-labelledby="season-hero-title">
+        <div className="dl-poster-frame container mx-auto px-4 md:px-6">
+          <div className="dl-poster-masthead">
+            <div className="dl-poster-headline">
+              <p className="dl-poster-overline">TAIWAN · TAINAN / ${activeSeason.shortName}</p>
+              <h1 id="season-hero-title">D LEAGUE</h1>
+              <p className="dl-poster-subtitle">台南夢達七人足球聯賽</p>
+            </div>
+            <div className="dl-poster-summary">
+              <span>THE GAME BELONGS TO EVERYONE.</span>
+              <p>球隊、賽程、比分與球員紀錄。<br />屬於台南足球的每一場比賽，都在這裡。</p>
+              <p className="dl-poster-levels">${activeSeason.enabledLeagues.join(' / ')} <span>·</span> ${activeSeason.shortName}</p>
+            </div>
+          </div>
+          <div className="dl-poster-picture">
+            <picture className="block w-full">
+              {activeSeason.heroImageMobile && (
+                <source media="(max-width: 767px)" srcSet={heroImages.mobile} width={960} height={1200} />
+              )}
+              <img
+                src={heroImages.desktop}
+                onError={() => setImageFailed(true)}
+                alt={participantsPublished
+                  ? `${activeSeason.displayName} 正式參賽隊伍及分級已公布`
+                  : resultsPublished
+                    ? `${activeSeason.displayName} 錄取名單已公布`
+                    : `${activeSeason.displayName} 賽季主視覺`}
+                width={1920}
+                height={800}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                data-image-priority="true"
+                className="block h-auto w-full"
+              />
+            </picture>
+          </div>
+          <OpeningCountdown />
+        </div>
 
         {showSeasonPosterActions && (
-          <div className="border-t border-white/10 bg-brand-black">
-            <div className="container mx-auto grid grid-cols-1 gap-3 px-4 py-4 sm:flex sm:items-center sm:justify-center md:px-6 md:py-5">
+          <div className="dl-poster-actions border-t border-white/10 bg-brand-black">
+            <div className="container mx-auto grid grid-cols-1 gap-3 px-4 py-5 sm:flex sm:items-center sm:justify-start md:px-6 md:py-6">
               {!announcementPublished && activeSeason.registrationFormUrl && (
                 <a href={activeSeason.registrationFormUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 w-full items-center justify-center bg-brand-accent px-7 py-3 text-sm font-black uppercase tracking-widest text-brand-black transition-colors hover:bg-white focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-brand-black sm:w-auto">
                   立即報名 <ArrowRight className="ml-2 h-5 w-5" />

@@ -122,7 +122,7 @@ const Header: React.FC = () => {
   return (
     <header
       ref={headerRef}
-      className="fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm"
+      className="dl-site-header fixed top-0 z-[999] h-16 w-full overflow-x-visible border-b border-neutral-200 bg-white shadow-sm"
     >
       <div className="container relative mx-auto flex h-full max-w-full items-center px-4 md:px-6">
         <div className="flex shrink-0 items-center">

@@ -468,7 +468,7 @@ const ScrollMemory: React.FC = () => {
 
 const App: React.FC = () => (
   <SeasonProvider>
-    <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
+    <div className="dl-editorial-v2 flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <a
         href="#main-content"
         className="fixed left-4 top-2 z-[2000] -translate-y-20 bg-brand-black px-4 py-3 text-sm font-black text-white transition-transform focus:translate-y-0"

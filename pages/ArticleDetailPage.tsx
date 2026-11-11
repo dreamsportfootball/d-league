@@ -403,7 +403,7 @@ const ArticleDetailPage: React.FC = () => {
       : null;
 
   return (
-    <article className="min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
+    <article className="dl-page-shell min-h-screen bg-white pb-24 pt-8 md:pb-32 md:pt-20">
       <div className="mx-auto max-w-6xl px-5 md:px-10 lg:px-12">
         <nav className="mb-8 md:mb-12" aria-label="文章導覽">
           <BackButton

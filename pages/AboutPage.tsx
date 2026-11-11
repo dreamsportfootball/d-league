@@ -77,7 +77,7 @@ const VenueSection: React.FC = () => {
   };
 
   return (
-    <section className="relative overflow-hidden border-b border-white/10 bg-neutral-950 py-20 text-white md:py-32">
+    <section className="dl-about-hero relative overflow-hidden border-b border-white/10 bg-neutral-950 py-20 text-white md:py-32">
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1459865264687-595d652de67e?q=80&w=2000&auto=format&fit=crop"

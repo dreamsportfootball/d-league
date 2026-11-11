@@ -84,7 +84,7 @@ const RegistrationPage: React.FC = () => {
   const playerCountLabel = registrationContent.minimumPlayers > 0 ? `每隊 ${registrationContent.minimumPlayers}-${registrationContent.maximumPlayers} 人` : '依競賽規程公告';
 
   return (
-    <div className="min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
+    <div className="dl-page-shell min-h-[80vh] bg-white pb-28 pt-8 md:pt-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="pb-4 md:pb-5">
           <span className="mb-3 block text-xs font-bold uppercase tracking-[0.3em] text-brand-blue">{participantsPublished ? '參賽隊伍公告' : resultsPublished ? '錄取公告' : '賽季報名'}</span>

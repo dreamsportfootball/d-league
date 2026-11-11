@@ -163,7 +163,7 @@ const StandingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
+    <div className="dl-page-shell min-h-[85vh] bg-white pb-24 pt-6 md:pt-24">
       <div className="container mx-auto max-w-7xl px-4 md:px-12">
         <SeasonPageHeader
           title="積分"

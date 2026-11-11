@@ -316,7 +316,7 @@ const CupPage: React.FC = () => {
   if (plateThird) placementLabels[plateThird.id] = '盤賽季軍';
 
   return (
-    <div className="min-h-screen bg-[#f7f3ee] text-brand-black">
+    <div className="dl-cup-page min-h-screen bg-[#f7f3ee] text-brand-black">
       <section className="relative overflow-hidden bg-[#240b0b] text-white">
         <div
           className="pointer-events-none absolute inset-0 opacity-30"

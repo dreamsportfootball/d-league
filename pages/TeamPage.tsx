@@ -488,7 +488,7 @@ const TeamPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="dl-page-shell min-h-screen bg-white pb-24">
       <section className="relative overflow-hidden border-b border-neutral-200 bg-neutral-50 px-4 py-10 md:px-12 md:py-12">
         <div className="pointer-events-none absolute -right-20 top-8 h-72 w-72 rounded-full opacity-[0.08] blur-3xl" style={{ backgroundColor: team.primaryColor }} />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-1" aria-hidden="true">

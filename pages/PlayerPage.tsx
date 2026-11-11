@@ -235,7 +235,7 @@ const PlayerPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white pb-24">
+    <div className="dl-page-shell min-h-screen bg-white pb-24">
       <section className="border-b border-neutral-200 bg-neutral-50 px-4 py-8 md:px-12 md:py-10 lg:py-12">
         <div className="mx-auto max-w-6xl">
           <BackButton

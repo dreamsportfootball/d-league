@@ -380,3 +380,22 @@ section[aria-label="店家餐點照片"] > .grid > div {
   .dl-editorial-v2 .dl-home-match-center { padding-top: 24px; padding-bottom: 30px; }
   .dl-editorial-v2 .dl-club-item { min-height: 156px; }
 }
+
+/* Hallmark trial · shared editorial pages, without altering their data logic. */
+.dl-editorial-v2 .dl-home-overview .dl-overview-news { background: #fff; }
+.dl-editorial-v2 .dl-brand-story span.text-brand-accent { color: var(--dl-accent); }
+.dl-editorial-v2 .dl-brand-story .text-neutral-200 { color: #dce1df; }
+.dl-editorial-v2 .dl-site-footer { border-top: 1px solid #333b40; }
+.dl-editorial-v2 .dl-about-hero { border-bottom-color: rgba(255,255,255,.22); }
+.dl-editorial-v2 .dl-page-shell section.bg-neutral-50,
+.dl-editorial-v2 .dl-page-shell .bg-neutral-50 { background-color: #eef1ed; }
+.dl-editorial-v2 .dl-page-shell .rounded-xl:not([role="dialog"]) { border-radius: 2px; }
+.dl-editorial-v2 .dl-page-shell .shadow-2xl:not([role="dialog"]),
+.dl-editorial-v2 .dl-page-shell .shadow-xl:not([role="dialog"]) { box-shadow: 0 8px 36px rgba(16,23,28,.08); }
+.dl-editorial-v2 .dl-page-shell .border-neutral-100 { border-color: var(--dl-rule); }
+.dl-editorial-v2 .dl-page-shell .text-neutral-400 { color: #687177; }
+.dl-editorial-v2 .dl-page-shell .text-neutral-500 { color: #525b61; }
+.dl-editorial-v2 .dl-clubs-section .dl-club-item { text-align: center; }
+@media (min-width:768px) {
+  .dl-editorial-v2 .dl-home-overview { padding-inline: 24px; }
+}

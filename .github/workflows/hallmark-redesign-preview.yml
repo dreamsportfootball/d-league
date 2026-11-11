@@ -1,0 +1,51 @@
+name: Hallmark redesign isolated preview
+on:
+  push:
+    branches:
+      - design/hallmark-full-site-preview-20261111
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hallmark-redesign-preview
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    concurrency:
+      group: d-league-gh-pages-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: |
+          npm ci --silent
+          npm install --no-save sharp
+      - name: Check source
+        run: |
+          npm run typecheck
+          npm run validate:data
+      - name: Prepare images
+        run: npm run optimize:images
+      - name: Build preview
+        env:
+          VITE_ROUTER_MODE: hash
+          VITE_ANALYTICS_DISABLED: "true"
+          VITE_USE_OPTIMIZED_IMAGES: "true"
+        run: npx vite build --base=/d-league/preview/hallmark-20261111/
+      - name: Publish only the independent preview directory
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          destination_dir: preview/hallmark-20261111
+          keep_files: true
+          force_orphan: false
+          commit_message: "preview: isolated Hallmark redesign"

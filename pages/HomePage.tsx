@@ -11,7 +11,7 @@ const RegistrationHomeContent = lazy(() => import('../components/home/Registrati
 const StatusHomeContent = lazy(() => import('../components/home/StatusHomeContent'));
 
 const HomeContentFallback: React.FC = () => (
-  <div className="min-h-[520px] animate-pulse bg-gradient-to-b from-neutral-50 to-white" aria-hidden="true" />
+  <div className="min-h-[520px] animate-pulse bg-neutral-100" aria-hidden="true" />
 );
 
 const HomePage: React.FC = () => {

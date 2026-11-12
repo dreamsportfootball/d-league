@@ -1,0 +1,117 @@
+name: Capture genuine D LEAGUE matchday 2026-11-15
+
+on:
+  push:
+    branches:
+      - ops/matchday-2026-11-15-authentic-screenshots
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install tools and Chromium
+        run: |
+          npm ci --silent
+          npm install --no-save playwright sharp
+          npx playwright install --with-deps chromium
+      - name: Capture actual deployed match detail headers
+        run: |
+          mkdir -p artifacts
+          cat > ./capture-1115-tmp.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import sharp from 'sharp';
+          import fs from 'node:fs/promises';
+
+          const BASE='https://dreamsportfootball.github.io/d-league';
+          const fixtures=[
+            {id:'m2627-010',time:'09:00',home:'屏東野猿',away:'高雄香港人',league:'L2'},
+            {id:'m2627-011',time:'10:00',home:'高雄業餘',away:'SOUTHBOYS',league:'L2'},
+            {id:'m2627-012',time:'11:00',home:'黑狼',away:'銅雀',league:'L2'},
+            {id:'m2627-013',time:'13:15',home:'高雄黑騎士',away:'阿蓮',league:'L1'},
+            {id:'m2627-014',time:'14:15',home:'嘉義',away:'陳公舘',league:'L1'},
+            {id:'m2627-015',time:'15:15',home:'台南長青',away:'KUROMI',league:'L1'}
+          ];
+          const browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
+          const shots=[],report=[];
+          try{
+            for(const f of fixtures){
+              const page=await browser.newPage({
+                viewport:{width:1280,height:900},
+                deviceScaleFactor:2,locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'
+              });
+              const url=BASE+'/matches/'+f.id+'?notice=20261115';
+              await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
+              await page.locator('[role="dialog"] #match-dialog-title').waitFor({state:'visible',timeout:45000});
+              const header=page.locator('[role="dialog"] > div.relative.shrink-0.bg-white').first();
+              await header.waitFor({state:'visible',timeout:15000});
+              await page.waitForTimeout(500);
+              const t=await header.innerText();
+              for(const expected of [f.league,f.time,f.home,f.away]){
+                if(!t.includes(expected))throw Error('Unexpected '+f.id+' header, missing '+expected+' : '+t.slice(0,250));
+              }
+              const jerseys=header.locator('img[title*="球衣"]');
+              const logos=header.locator('a img[alt]');
+              if(await jerseys.count()!==2)throw Error('Not exactly 2 jerseys: '+f.id);
+              if(await logos.count()!==2)throw Error('Not exactly 2 logos: '+f.id+' count='+(await logos.count()));
+              const captureInfo=async locator=>locator.evaluateAll(async ims=>{
+                await Promise.all(ims.map(im=>new Promise(done=>{
+                  if(im.complete)return done();
+                  im.addEventListener('load',done,{once:true});
+                  im.addEventListener('error',done,{once:true});
+                  setTimeout(done,12000);
+                })));
+                return ims.map(im=>({
+                  src:im.currentSrc||im.src,
+                  title:im.title,alt:im.alt,loaded:im.complete&&im.naturalWidth>0,width:im.naturalWidth
+                }));
+              });
+              const [jerseyData,logoData]=await Promise.all([captureInfo(jerseys),captureInfo(logos)]);
+              if([...jerseyData,...logoData].some(x=>!x.loaded))throw Error('Broken original website image '+f.id+': '+JSON.stringify({jerseyData,logoData}));
+              if(f.id==='m2627-010'&&!(jerseyData[1].title.includes('高雄香港人')&&jerseyData[1].title.includes('主場')&&jerseyData[1].src.includes('kaohsiung-hongkongers-fc-home')))
+                throw Error('11/15 09:00 approved Hongkongers yellow-black home jersey not deployed: '+JSON.stringify(jerseyData[1]));
+              const raw=await header.screenshot({animations:'disabled'});
+              await fs.writeFile('artifacts/'+f.id+'-original-header.png',raw);
+              const resized=await sharp(raw).resize({width:1592}).png().toBuffer();
+              const md=await sharp(resized).metadata();
+              shots.push({image:resized,height:md.height});
+              report.push({id:f.id,time:f.time,league:f.league,url,header:t.slice(0,500),jerseys:jerseyData,logos:logoData});
+              await page.close();
+            }
+            const separation=9;
+            const width=1592,height=shots.reduce((acc,s)=>acc+s.height,0)+separation*(shots.length-1);
+            let y=0;
+            const comps=shots.map((s,i)=>{
+              const o={input:s.image,top:y,left:0};
+              y+=s.height+separation;return o;
+            });
+            const out='artifacts/D_LEAGUE_2026-11-15_六場球衣安排_官網實際截圖長圖.png';
+            await sharp({create:{width,height,channels:3,background:'#ececec'}}).composite(comps).png().toFile(out);
+            await fs.writeFile('artifacts/verification.json',JSON.stringify({
+              description:'Direct browser screenshots of the real deployed D LEAGUE site, no AI-rendered teams or kit images',
+              date:'2026-11-15',count:shots.length,
+              generated:out,dimensions:{width,height},report
+            },null,2));
+            console.log('VERIFIED '+shots.length+' genuine 11/15 match screenshots, '+width+'x'+height+', file '+out);
+          }finally{await browser.close();}
+          EOF
+          node ./capture-1115-tmp.mjs
+      - name: Upload screenshot image and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: D_LEAGUE_2026-11-15_genuine_screenshots
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 7

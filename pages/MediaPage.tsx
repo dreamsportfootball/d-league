@@ -80,7 +80,7 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`查看 ${group.title} 相簿，${group.albums.length} 場比賽`}
+      aria-label={`查看 ${group.title} 相簿，${group.albums.some((album) => album.scope === 'MATCH_DAY') ? '全日照片' : `${group.albums.length} 場比賽`}`}
       className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
       aria-haspopup="dialog"
     >
@@ -393,8 +393,8 @@ const MediaPage: React.FC = () => {
                 </h2>
                 <p className="mt-2 text-sm text-neutral-500">
                   {selectedGroup.albums.length > 1
-                    ? '選擇比賽，查看 Google Drive 照片'
-                    : '查看此比賽日的 Google Drive 相簿'}
+                    ? '選擇比賽，查看照片'
+                    : '查看此比賽日的照片相簿'}
                 </p>
                 <PhotographerCredits photographers={selectedGroup.photographers} className="mt-1" />
               </div>

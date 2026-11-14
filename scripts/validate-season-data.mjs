@@ -466,7 +466,8 @@ for (const album of read(CURRENT_SEASON_ID, 'albums.json')) {
   if (album.seasonId !== CURRENT_SEASON_ID ||
       typeof album.title !== 'string' || !album.title.trim() ||
       typeof album.date !== 'string' || !/^\d{4}\/\d{2}\/\d{2}$/.test(album.date) ||
-      !validExternalUrl(album.link)) {
+      !validExternalUrl(album.link) ||
+      (album.scope !== undefined && album.scope !== 'MATCH_DAY')) {
     fail(`${CURRENT_SEASON_ID} album ${album.id}: incomplete official album metadata`);
   }
 }
@@ -482,7 +483,7 @@ for (const match of currentMatches) {
   if (album.date.replaceAll('/', '-') !== match.timestamp.slice(0, 10)) {
     fail(`${CURRENT_SEASON_ID} match ${match.id}: album date mismatch ${album.id}`);
   }
-  if (assignedAlbumIds.has(album.id)) {
+  if (assignedAlbumIds.has(album.id) && album.scope !== 'MATCH_DAY') {
     fail(`${CURRENT_SEASON_ID}: album ${album.id} assigned to multiple matches`);
   }
   assignedAlbumIds.add(album.id);
@@ -490,6 +491,14 @@ for (const match of currentMatches) {
 for (const album of currentAlbumById.values()) {
   if (!assignedAlbumIds.has(album.id)) {
     fail(`${CURRENT_SEASON_ID}: published album ${album.id} has no linked match`);
+  }
+  if (album.scope === 'MATCH_DAY') {
+    const albumDay = album.date.replaceAll('/', '-');
+    const allMatchesOnDay = currentMatches.filter((match) => match.timestamp.slice(0, 10) === albumDay);
+    const matchesWithAlbum = allMatchesOnDay.filter((match) => match.albumId === album.id);
+    if (matchesWithAlbum.length !== allMatchesOnDay.length) {
+      fail(`${CURRENT_SEASON_ID}: shared match-day album ${album.id} must be linked to all fixtures on that date`);
+    }
   }
 }
 

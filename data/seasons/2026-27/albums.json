@@ -46,5 +46,14 @@
     "date": "2026/11/01",
     "cover": "assets/media/2026-27/m2627-006.jpg",
     "link": "https://drive.google.com/drive/folders/1fTPrDe5_qMarJbYzeYVOn-BN5i-tvkjf"
+  },
+  {
+    "id": "album-2026-11-08-matchday",
+    "seasonId": "2026-27",
+    "scope": "MATCH_DAY",
+    "title": "L3 第 1 輪",
+    "date": "2026/11/08",
+    "cover": "assets/media/2026-27/matchday-2026-11-08-v2.jpg",
+    "link": "https://eu.zonerama.com/Link/Album/17302213"
   }
 ]

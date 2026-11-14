@@ -9,7 +9,7 @@ import { useSeason } from '../hooks/useSeason';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { getSeasonData } from '../services/seasonDataJson';
 import { getMatchDayPhotoCredits, type PhotographerCredit } from '../services/photoCredits';
-import { D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
+import { CURRENT_SEASON_ID, D_LEAGUE_YOUTUBE_URL } from '../config/siteConfig';
 import type { MediaAlbum } from '../types/media';
 import type { SeasonId } from '../types/season';
 
@@ -24,6 +24,19 @@ interface GalleryGroup {
   albums: MediaAlbum[];
   photographers: PhotographerCredit[];
 }
+
+// Use the published league and round labels for current-season match days.
+// Historical seasons retain their existing match-day numbering.
+const getCurrentMatchDayTitle = (albums: MediaAlbum[]): string | undefined => {
+  const headings = albums.map((album) => /^L(\d+)\s+第\s+(\d+)\s+輪/.exec(album.title));
+  if (headings.some((heading) => heading === null)) return undefined;
+  const rounds = [...new Set(headings.map((heading) => heading?.[2]))];
+  if (rounds.length !== 1) return undefined;
+  const leagues = [...new Set(headings.map((heading) => Number(heading?.[1])))]
+    .sort((a, b) => a - b)
+    .map((league) => `L${league}`);
+  return `${leagues.join('／')} 第 ${rounds[0]} 輪`;
+};
 
 // The same match-day card and gallery chooser serve every season.
 // Older seasons may have one shared folder per day rather than per-match folders.
@@ -41,7 +54,8 @@ const buildGalleryGroups = (albums: MediaAlbum[], seasonId: SeasonId): GalleryGr
       id: `day-${date}`,
       date,
       title: dailyAlbums.length > 1
-        ? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1}`
+        ? (seasonId === CURRENT_SEASON_ID ? getCurrentMatchDayTitle(dailyAlbums) : undefined)
+          ?? `比賽日 ${dailyAlbums[0].matchDay ?? index + 1}`
         : dailyAlbums[0].title,
       cover: dailyAlbums[0].cover,
       albums: dailyAlbums,
@@ -80,7 +94,7 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`查看 ${group.title} 相簿，${group.albums.length} 場比賽`}
+      aria-label={`查看 ${group.title} 相簿，${group.albums.some((album) => album.scope === 'MATCH_DAY') ? '全日照片' : `${group.albums.length} 場比賽`}`}
       className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-4"
       aria-haspopup="dialog"
     >
@@ -393,8 +407,8 @@ const MediaPage: React.FC = () => {
                 </h2>
                 <p className="mt-2 text-sm text-neutral-500">
                   {selectedGroup.albums.length > 1
-                    ? '選擇比賽，查看 Google Drive 照片'
-                    : '查看此比賽日的 Google Drive 相簿'}
+                    ? '選擇比賽，查看照片'
+                    : '查看此比賽日的照片相簿'}
                 </p>
                 <PhotographerCredits photographers={selectedGroup.photographers} className="mt-1" />
               </div>

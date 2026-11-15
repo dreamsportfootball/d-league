@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigationType } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
@@ -54,6 +54,8 @@ const suspensionReasonLabel: Record<SuspensionReason, string> = {
 const formatMatchLabel = (timestamp: string) => formatTaipeiDate(timestamp);
 
 const StatsPage: React.FC = () => {
+  const location = useLocation();
+  const navigationType = useNavigationType();
   const {
     activeSeasonId,
     activeSeason,
@@ -70,6 +72,7 @@ const StatsPage: React.FC = () => {
     }
   });
   const [activeTab, setActiveTab] = useState<StatsTab>(() => {
+    if (navigationType !== 'POP') return 'SCORERS';
     try {
       const saved = window.sessionStorage.getItem('statsActiveTab');
       return saved === 'SCORERS' || saved === 'CARDS' || saved === 'SUSPENSIONS'
@@ -79,6 +82,16 @@ const StatsPage: React.FC = () => {
       return 'SCORERS';
     }
   });
+  // A fresh navigation to Data Center opens the scorers tab; browser Back restores the previous tab.
+  useEffect(() => {
+    if (navigationType !== 'PUSH') return;
+    setActiveTab('SCORERS');
+    try {
+      window.sessionStorage.setItem('statsActiveTab', 'SCORERS');
+    } catch {
+      // Session storage may be unavailable.
+    }
+  }, [location.key, navigationType]);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftSeasonId, setDraftSeasonId] = useState<SeasonId>(activeSeasonId);
   const [draftLeague, setDraftLeague] = useState<LeagueId>(activeLeague);

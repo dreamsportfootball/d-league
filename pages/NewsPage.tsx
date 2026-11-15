@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, ChevronDown, Newspaper } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigationType } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import { getAllNews } from '../services/seasonDataJson';
 import type { NewsArticle } from '../types';
@@ -85,7 +85,10 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
 };
 
 const NewsPage: React.FC = () => {
+  const location = useLocation();
+  const navigationType = useNavigationType();
   const [activeFilter, setActiveFilter] = useState<NewsFilter>(() => {
+    if (navigationType !== 'POP') return 'ALL';
     try {
       const saved = window.sessionStorage.getItem('newsActiveFilter');
       return saved === 'ALL' || saved === 'Match Report' || saved === 'Official'
@@ -96,6 +99,7 @@ const NewsPage: React.FC = () => {
     }
   });
   const [visibleCount, setVisibleCount] = useState(() => {
+    if (navigationType !== 'POP') return NEWS_BATCH_SIZE;
     try {
       const saved = Number.parseInt(window.sessionStorage.getItem('newsVisibleCount') ?? '', 10);
       return Number.isFinite(saved) && saved >= NEWS_BATCH_SIZE ? saved : NEWS_BATCH_SIZE;
@@ -103,6 +107,19 @@ const NewsPage: React.FC = () => {
       return NEWS_BATCH_SIZE;
     }
   });
+
+  // A fresh navigation to News opens all articles; browser Back restores the prior filter.
+  useEffect(() => {
+    if (navigationType !== 'PUSH') return;
+    setActiveFilter('ALL');
+    setVisibleCount(NEWS_BATCH_SIZE);
+    try {
+      window.sessionStorage.setItem('newsActiveFilter', 'ALL');
+      window.sessionStorage.setItem('newsVisibleCount', String(NEWS_BATCH_SIZE));
+    } catch {
+      // Session storage may be unavailable.
+    }
+  }, [location.key, navigationType]);
 
   const sortedNews = useMemo(
     () =>

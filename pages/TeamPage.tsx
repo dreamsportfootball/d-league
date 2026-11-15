@@ -19,6 +19,7 @@ import StaffAvatar from '../components/StaffAvatar';
 import MatchDialog from '../components/MatchDialog';
 import TeamRankChart, { type TeamRankPoint } from '../components/TeamRankChart';
 import { isSeasonId } from '../config/seasons';
+import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { getTeamKitAssets } from '../config/teamKitAssets';
 import { SeasonContext } from '../contexts/SeasonContext';
 import {
@@ -367,7 +368,9 @@ const TeamPage: React.FC = () => {
   const cupMatches = cupTeam ? getCupMatchesForTeam(cupTeam.id) : [];
   const cupPlacement = cupTeam ? getCupTeamPlacementLabel(cupTeam.id) : null;
   const competitionHistory: TeamCompetitionHistoryRow[] = (() => {
-    const leagueRows: TeamCompetitionHistoryRow[] = history.map((record) => {
+    const leagueRows: TeamCompetitionHistoryRow[] = history
+      .filter((record) => record.seasonId !== CURRENT_SEASON_ID)
+      .map((record) => {
       const row = calculateLeagueTable({
         league: record.team.leagueId,
         teams: record.data.teams,
@@ -615,6 +618,7 @@ const TeamPage: React.FC = () => {
           ) : <p className="py-10 text-sm text-neutral-400">球員名單尚未公布</p>}
         </section>
 
+        {competitionHistory.length > 0 && (
         <section>
           <div className="mb-5 flex items-center border-b border-neutral-200 pb-3"><History className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">歷年賽事</h2></div>
           <div role="table" aria-label="歷年賽事">
@@ -644,6 +648,7 @@ const TeamPage: React.FC = () => {
             </div>
           </div>
         </section>
+        )}
       </main>
 
       {selectedMatchId && (

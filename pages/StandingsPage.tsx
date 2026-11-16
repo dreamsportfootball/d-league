@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import DataContentTransition from '../components/DataContentTransition';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
+import LeagueTabs from '../components/LeagueTabs';
 import PreSeasonStandings from '../components/PreSeasonStandings';
 import ResponsiveFilterDrawer, { type FilterDrawerField } from '../components/ResponsiveFilterDrawer';
 import SeasonPageHeader from '../components/SeasonPageHeader';
@@ -76,12 +77,16 @@ const StandingsPage: React.FC = () => {
   }, [activeLeague, activeSeason.enabledLeagues, activeSeason.id]);
 
   const updateLeague = (league: LeagueId) => {
+    if (league === activeLeague) return;
     setActiveLeague(league);
     try {
       window.sessionStorage.setItem('standingsActiveLeague', league);
     } catch {
       // Session storage may be unavailable.
     }
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('league', league);
+    setSearchParams(nextParams, { replace: true });
   };
 
   const leagueConfig = activeSeason.leagues[activeLeague];
@@ -180,6 +185,13 @@ const StandingsPage: React.FC = () => {
           activeFilterCount={activeFilterCount}
           buttonLabel="篩選"
           ariaLabel="篩選積分榜"
+        />
+
+        <LeagueTabs
+          options={activeSeason.enabledLeagues}
+          active={activeLeague}
+          onChange={updateLeague}
+          getLabel={(league) => league}
         />
 
         <DataContentTransition contentKey={`${activeSeasonId}:${activeLeague}`}>

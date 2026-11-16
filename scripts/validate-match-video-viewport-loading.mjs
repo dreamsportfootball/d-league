@@ -101,8 +101,12 @@ for (const viewport of viewports) {
     // Changing match must not retain the previous match's loaded embeds.
     await dialog.getByRole('button', { name: '下一場' }).click();
     await page.waitForFunction(() => window.location.hash.includes('match=m2627-012'));
-    await dialog.locator('iframe[src*="FoaBl60_aqg"], iframe[src*="xsDp4TjSso0"]')
-      .waitFor({ state: 'detached', timeout: 10000 });
+    // Both previous embeds can be present together. A multi-match locator
+    // cannot use waitFor() in strict mode; require the whole set to disappear.
+    await page.waitForFunction(() => {
+      const activeDialog = document.querySelector('[role="dialog"][aria-labelledby="match-dialog-title"]');
+      return activeDialog?.querySelectorAll('iframe[src*="FoaBl60_aqg"], iframe[src*="xsDp4TjSso0"]').length === 0;
+    }, null, { timeout: 10000 });
     if (errors.length) throw new Error('page errors: ' + errors.join(' | '));
 
     console.log('[video-viewport-loading] ' + viewport.name + 'px: passed' + (belowFold ? ' offscreen delay, ' : ' ') + 'both halves and match switch');

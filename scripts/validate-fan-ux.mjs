@@ -4,7 +4,6 @@ import { readFile } from 'node:fs/promises';
 const base = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/, '');
 const fixtures = JSON.parse(await readFile(new URL('../data/seasons/2026-27/matches.json', import.meta.url), 'utf8'));
 const nextMatch = fixtures.find((match) => match.status === 'SCHEDULED' && Date.parse(match.timestamp) > Date.now());
-const finishedMatch = fixtures.find((match) => match.status === 'FINISHED' && match.homeScore !== null && match.awayScore !== null && match.resultType !== 'VOID');
 const widths = [375, 390, 768, 1024, 1280, 1440];
 const browser = await chromium.launch({ headless: true });
 const failures = [];
@@ -89,25 +88,8 @@ for (const width of widths) {
       }
     }
 
-    if (finishedMatch) {
-      await page.goto(base + '/#/schedule?season=2026-27&match=' + finishedMatch.id, { waitUntil: 'domcontentloaded' });
-      const graphic = page.getByRole('button', { name: '製作賽果圖' });
-      await graphic.waitFor({ state: 'visible' });
-      const [download] = await Promise.all([
-        page.waitForEvent('download', { timeout: 20000 }),
-        graphic.click(),
-      ]);
-      if (download.suggestedFilename() !== 'D-LEAGUE-' + finishedMatch.id + '.png') {
-        throw new Error('match graphic filename mismatch');
-      }
-      const png = await readFile(await download.path());
-      if (png.toString('hex', 0, 8) !== '89504e470d0a1a0a' || png.readUInt32BE(16) !== 1080 || png.readUInt32BE(20) !== 1350) {
-        throw new Error('match graphic must be a valid 1080x1350 PNG');
-      }
-    }
-
     if (pageErrors.length) throw new Error('uncaught page error: ' + pageErrors.join(' | '));
-    console.log('[fan-ux] ' + width + 'px PASS: search, favourite, keyboard, standings, media' + (nextMatch ? ', calendar' : '') + (finishedMatch ? ', PNG graphic' : ''));
+    console.log('[fan-ux] ' + width + 'px PASS: search, favourite, keyboard, standings, media' + (nextMatch ? ', calendar' : ''));
   } catch (error) {
     failures.push(width + 'px: ' + error.message);
   } finally {

@@ -101,6 +101,6 @@ try {
 mkdirSync('audit', { recursive: true });
 writeFileSync(join('audit','player-honours-runtime-audit.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report,null,2));
-if (report.anomalies?.length || report.fatal || report.seasonPlayerRecords !== 507) {
+if (report.anomalies?.length || report.fatal || report.seasonPlayerRecords !== 508) {
   process.exitCode = 1;
 }

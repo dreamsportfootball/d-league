@@ -168,7 +168,7 @@ try {
       assert(await upcoming.getAttribute('aria-selected') === 'true',
         viewport.name + ': upcoming tab did not activate');
       await cards.first().waitFor({ state: 'visible' });
-      assert(await cards.count() === 6, viewport.name + ': expected 6 upcoming fixtures on December 6');
+      assert(await cards.count() === 3, viewport.name + ': expected 3 upcoming L3 fixtures on November 22');
       await carousel.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }));
       await page.waitForTimeout(100);
       await centering(cards.first(), 'first upcoming card');

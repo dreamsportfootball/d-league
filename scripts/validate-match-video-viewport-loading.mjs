@@ -35,6 +35,15 @@ for (const viewport of viewports) {
     });
     const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
     await dialog.waitFor({ state: 'visible' });
+
+    // Full-screen backdrop blur was measured as the dominant scroll
+    // bottleneck on desktop; keep the dark overlay but never reintroduce blur.
+    const blur = await page.locator('[data-match-dialog-backdrop]')
+      .evaluate((element) => getComputedStyle(element).backdropFilter);
+    if (blur !== 'none') {
+      throw new Error('match dialog backdrop blur must be disabled: ' + blur);
+    }
+
     const scroller = dialog.locator('[data-match-dialog-scroller]');
     const first = dialog.locator('[data-match-video-entry="上半場"]');
     const second = dialog.locator('[data-match-video-entry="下半場"]');
@@ -58,6 +67,23 @@ for (const viewport of viewports) {
 
     await first.scrollIntoViewIfNeeded();
     const firstFrame = dialog.locator('iframe[title="上半場比賽影片"]');
+
+    // Continuous scrolling must postpone iframe initialization, rather than
+    // spawning a heavyweight YouTube player in the middle of a gesture.
+    if (await firstFrame.count() === 0) {
+      await page.evaluate(async () => {
+        const root = document.querySelector('[data-match-dialog-scroller]');
+        if (!root) throw new Error('missing dialog scroll area');
+        for (let i = 0; i < 9; i++) {
+          root.dispatchEvent(new Event('scroll'));
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+      });
+      if (await firstFrame.count() !== 0) {
+        throw new Error('YouTube iframe mounted during continuous scrolling');
+      }
+    }
+
     await firstFrame.waitFor({ state: 'attached', timeout: 10000 });
     const firstSrc = await firstFrame.getAttribute('src');
     if (!firstSrc?.includes('/embed/FoaBl60_aqg')) {
@@ -74,11 +100,9 @@ for (const viewport of viewports) {
 
     // Changing match must not retain the previous match's loaded embeds.
     await dialog.getByRole('button', { name: '下一場' }).click();
-    await page.waitForTimeout(150);
-    const staleFrames = await dialog.locator('iframe[src*="FoaBl60_aqg"], iframe[src*="xsDp4TjSso0"]').count();
-    if (staleFrames !== 0) {
-      throw new Error('previous match player persisted after switching match');
-    }
+    await page.waitForFunction(() => window.location.hash.includes('match=m2627-012'));
+    await dialog.locator('iframe[src*="FoaBl60_aqg"], iframe[src*="xsDp4TjSso0"]')
+      .waitFor({ state: 'detached', timeout: 10000 });
     if (errors.length) throw new Error('page errors: ' + errors.join(' | '));
 
     console.log('[video-viewport-loading] ' + viewport.name + 'px: passed' + (belowFold ? ' offscreen delay, ' : ' ') + 'both halves and match switch');

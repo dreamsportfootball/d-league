@@ -36,20 +36,69 @@ for (const width of widths) {
       throw new Error('search dialog remained open after result navigation');
     }
 
+    // Multi-team follow: migrate old favourites, retain more than one team,
+    // open each upcoming match as a homepage modal, and remove one at a time.
     await page.goto(base + '/#/teams/black-wolf-fc?season=2026-27', { waitUntil: 'domcontentloaded' });
-    const followButton = page.getByRole('button', { name: '追蹤這支球隊' });
-    await followButton.click();
-    const following = page.getByRole('button', { name: '已追蹤 · 點擊取消' });
-    await following.waitFor({ state: 'visible' });
-    const saved = await page.evaluate(() => window.localStorage.getItem('dleague:followed-team:v1'));
-    if (!saved) throw new Error('followed club was not saved');
+    await page.getByRole('button', { name: /^追蹤/ }).click();
+    await page.getByRole('button', { name: /^取消追蹤/ }).waitFor({ state: 'visible' });
+
+    await page.goto(base + '/#/teams/t_chen?season=2026-27', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: /^追蹤/ }).click();
+    await page.getByRole('button', { name: /^取消追蹤/ }).waitFor({ state: 'visible' });
+
+    const storedTeams = await page.evaluate(() => {
+      const raw = window.localStorage.getItem('dleague:followed-teams:v2');
+      return raw ? JSON.parse(raw) : null;
+    });
+    if (!Array.isArray(storedTeams) || storedTeams.length !== 2 || new Set(storedTeams).size !== 2) {
+      throw new Error('following two teams did not persist two distinct IDs');
+    }
+
     await page.goto(base + '/#/', { waitUntil: 'domcontentloaded' });
-    const spotlight = page.getByRole('region', { name: '我追蹤的球隊' });
+    const spotlight = page.getByRole('region', { name: '追蹤球隊' });
     await spotlight.waitFor({ state: 'visible' });
+    if (await spotlight.getByRole('button', { name: /^取消追蹤/ }).count() !== 2) {
+      throw new Error('homepage must show both followed teams');
+    }
+    const matchLink = spotlight.locator('a[href*="?match="]').first();
+    await matchLink.waitFor({ state: 'visible' });
+    const scrollBeforeMatch = await page.evaluate(() => window.scrollY);
+    await matchLink.click();
+    const homeDialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
+    await homeDialog.waitFor({ state: 'visible' });
+    if (!new URL(page.url()).hash.startsWith('#/?match=')) {
+      throw new Error('followed team match unexpectedly navigated away from homepage');
+    }
+    await homeDialog.getByRole('button', { name: '關閉', exact: true }).click();
+    await homeDialog.waitFor({ state: 'hidden' });
+    if (new URL(page.url()).hash !== '#/' ||
+        Math.abs(await page.evaluate(() => window.scrollY) - scrollBeforeMatch) > 3) {
+      throw new Error('closing followed match did not restore homepage and scroll');
+    }
+    if (await page.evaluate(() => document.body.style.overflow) === 'hidden') {
+      throw new Error('closing followed match left background locked');
+    }
+
+    await spotlight.getByRole('button', { name: /^取消追蹤/ }).first().click();
+    if (await spotlight.getByRole('button', { name: /^取消追蹤/ }).count() !== 1) {
+      throw new Error('removing a followed team removed more than one team');
+    }
     await page.reload({ waitUntil: 'domcontentloaded' });
     await spotlight.waitFor({ state: 'visible' });
-    await spotlight.getByRole('button', { name: '取消追蹤' }).click();
+    if (await spotlight.getByRole('button', { name: /^取消追蹤/ }).count() !== 1) {
+      throw new Error('remaining followed team was not restored after reload');
+    }
+    await spotlight.getByRole('button', { name: /^取消追蹤/ }).click();
     await spotlight.waitFor({ state: 'detached' });
+
+    // Standalone shared match links have no previous in-app route and should
+    // close to the appropriate season's schedule, not to an empty page.
+    await page.goto(base + '/#/matches/m2627-019?season=2026-27', { waitUntil: 'domcontentloaded' });
+    const standaloneMatch = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
+    await standaloneMatch.waitFor({ state: 'visible' });
+    await standaloneMatch.getByRole('button', { name: '關閉', exact: true }).click();
+    await page.waitForURL((url) => url.hash.startsWith('#/schedule?season=2026-27'));
+    await page.goto(base + '/#/', { waitUntil: 'domcontentloaded' });
 
     await searchButton.click();
     await search.waitFor({ state: 'visible' });
@@ -93,7 +142,7 @@ for (const width of widths) {
     }
 
     if (pageErrors.length) throw new Error('uncaught page error: ' + pageErrors.join(' | '));
-    console.log('[fan-ux] ' + width + 'px PASS: search, favourite, keyboard, standings, media' + (nextMatch ? ', calendar' : ''));
+    console.log('[fan-ux] ' + width + 'px PASS: search, multiple favourites, homepage match return, direct link fallback, keyboard, standings, media' + (nextMatch ? ', calendar' : ''));
   } catch (error) {
     failures.push(width + 'px: ' + error.message);
   } finally {

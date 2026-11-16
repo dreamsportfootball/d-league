@@ -307,7 +307,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
         type="button"
         aria-label="關閉比賽詳情"
         data-match-dialog-backdrop
-        className="absolute inset-0 bg-black/60 backdrop-blur-[3px]"
+        className="absolute inset-0 bg-black/60"
         onClick={onClose}
       />
 

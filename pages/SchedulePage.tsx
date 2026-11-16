@@ -11,6 +11,7 @@ import { useSearchParams } from 'react-router-dom';
 import DataContentTransition from '../components/DataContentTransition';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import LeagueTabs from '../components/LeagueTabs';
 import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
 import { useSeason } from '../hooks/useSeason';
@@ -335,6 +336,13 @@ const SchedulePage: React.FC = () => {
     setFilters(nextFilters);
   };
 
+  const setQuickLeague = (league: LeagueFilter) => {
+    if (filters.league === league) return;
+    const nextFilters = reconcileFilters({ ...filters, league }, 'league', seasonData.matches);
+    writeScheduleFilters(activeSeasonId, nextFilters);
+    setFilters(nextFilters);
+  };
+
   const leagueSummary = filters.league === 'ALL' ? '全部級別' : filters.league;
   const desktopLeagueSummary = filters.league === 'ALL'
     ? '全部級別'
@@ -568,6 +576,13 @@ const SchedulePage: React.FC = () => {
             />
           </button>
         </div>
+
+        <LeagueTabs
+          options={['ALL' as const, ...activeSeason.enabledLeagues]}
+          active={filters.league}
+          onChange={setQuickLeague}
+          getLabel={(league) => league === 'ALL' ? '全部' : league}
+        />
 
         <DataContentTransition contentKey={activeSeasonId} className="mb-20">
           {seasonData.matches.length === 0 ? (

@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - season/2026-27
   push:
     branches:
       - season/2026-27
@@ -136,6 +137,16 @@ jobs:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-fan-ux.mjs
 
+      - name: Diagnose match dialog scrolling and YouTube rendering
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/diagnose-match-dialog-performance.mjs
+
+      - name: Verify viewport-gated YouTube playback
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-match-video-viewport-loading.mjs
+
       - name: Start isolated source server for full-player honours audit
         run: |
           nohup npx vite --host 127.0.0.1 --port 4174 > /tmp/d-league-source.log 2>&1 &
@@ -180,6 +191,12 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-shared-match-dialog-return.mjs
+
+      - name: Validate all 2026/27 team rosters and their portraits
+        if: always()
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-team-roster-ui.mjs
 
       - name: Validate return-state persistence
         env:

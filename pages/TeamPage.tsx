@@ -327,7 +327,7 @@ const TeamPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const { availableSeasons } = useSeason();
-  const { followedTeamId, toggleFollowedTeam } = useFollowedTeam();
+  const { followedTeamIds, toggleFollowedTeam } = useFollowedTeam();
   const [failedTeamLogo, setFailedTeamLogo] = useState<string | null>(null);
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getTeamHistory(id), [id]);
@@ -554,12 +554,13 @@ const TeamPage: React.FC = () => {
               {seasonId === CURRENT_SEASON_ID && (
                 <button
                   type="button"
-                  aria-pressed={followedTeamId === getTeamIdentity(team)}
+                  aria-pressed={followedTeamIds.includes(getTeamIdentity(team))}
                   onClick={() => toggleFollowedTeam(getTeamIdentity(team))}
-                  className="mt-4 inline-flex min-h-11 items-center gap-2 border border-neutral-300 px-4 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue"
+                  aria-label={followedTeamIds.includes(getTeamIdentity(team)) ? `取消追蹤${team.name}` : `追蹤${team.name}`}
+                  className={`group mt-3 inline-flex min-h-11 max-w-full items-center gap-2 border-b-2 px-0.5 py-2 text-[13px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue ${followedTeamIds.includes(getTeamIdentity(team)) ? 'border-brand-blue text-brand-blue' : 'border-transparent text-neutral-600 hover:border-brand-blue hover:text-brand-blue'}`}
                 >
-                  <Star className={followedTeamId === getTeamIdentity(team) ? 'h-4 w-4 fill-brand-blue text-brand-blue' : 'h-4 w-4'} aria-hidden="true" />
-                  {followedTeamId === getTeamIdentity(team) ? '已追蹤 · 點擊取消' : '追蹤這支球隊'}
+                  <Star className={`h-4 w-4 shrink-0 transition-colors ${followedTeamIds.includes(getTeamIdentity(team)) ? 'fill-brand-blue text-brand-blue' : 'text-neutral-500 group-hover:text-brand-blue'}`} aria-hidden="true" />
+                  <span>{followedTeamIds.includes(getTeamIdentity(team)) ? '已追蹤' : '追蹤球隊'}</span>
                 </button>
               )}
             </div>

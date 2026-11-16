@@ -206,14 +206,16 @@ const auditViewport = async (viewport) => {
         const filterControlVisible = await page.getByRole('button', { name: '篩選積分榜' }).isVisible();
         assert('standings-shows-season-league-summary', diagnostics.bodyText.includes(expectedStatusLabel), `Expected ${expectedStatusLabel}`);
         assert('standings-shows-filter-control', filterControlVisible, 'Expected visible standings filter control');
-        assert('standings-hides-inline-league-tabs', visibleLeagueTabs === 0, `Found ${visibleLeagueTabs} visible tab(s)`);
+        assert('standings-shows-inline-league-tabs', visibleLeagueTabs === 3, `Expected L1/L2/L3; found ${visibleLeagueTabs} visible tab(s)`);
         assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }
 
       if (route.name === 'stats-2026') {
         const expectedStatsLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         assert('stats-summary-has-season-league', diagnostics.bodyText.includes(expectedStatsLabel), `Expected ${expectedStatsLabel}`);
-        assert('stats-inline-league-row-removed', !diagnostics.bodyText.includes('選擇聯賽'), 'League selector must stay inside drawer');
+        const visibleStatsLeagueTabs = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').count();
+        assert('stats-shows-inline-league-tabs', visibleStatsLeagueTabs === 3,
+          `Expected L1/L2/L3; found ${visibleStatsLeagueTabs} visible tab(s)`);
       }
 
       if (route.name === 'stats-2025') {

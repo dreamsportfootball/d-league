@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 interface MatchVideoPlayerProps {
@@ -44,21 +44,81 @@ const isDirectVideoUrl = (value: string): boolean => {
 
 const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, sourceNote }) => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
+  const loadDelayMs = label === '上半場' ? 500 : 1200;
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!youtubeEmbedUrl || loadedUrl === url) return;
+
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    // Observe the actual dialog scroll area, rather than the window.
+    // Loading the YouTube iframe only after it remains visible avoids
+    // starting heavyweight player scripts while someone scrolls down.
+    if (typeof IntersectionObserver === 'undefined') {
+      setLoadedUrl(url);
+      return;
+    }
+
+    const scrollRoot = container.closest<HTMLElement>('[data-match-dialog-scroller]');
+    let isVisible = false;
+    let pendingLoad: number | null = null;
+
+    const scheduleWhenIdle = () => {
+      if (pendingLoad !== null) {
+        window.clearTimeout(pendingLoad);
+        pendingLoad = null;
+      }
+      if (!isVisible) return;
+
+      // A video entering the viewport is not enough: postpone heavy YouTube
+      // initialization until the user has stopped scrolling inside the dialog.
+      pendingLoad = window.setTimeout(() => {
+        pendingLoad = null;
+        setLoadedUrl(url);
+        observer.disconnect();
+      }, loadDelayMs);
+    };
+
+    const handleScroll = () => {
+      if (isVisible) scheduleWhenIdle();
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = Boolean(entry && entry.intersectionRatio >= 0.35);
+        scheduleWhenIdle();
+      },
+      { root: scrollRoot, rootMargin: '0px', threshold: 0.35 },
+    );
+
+    scrollRoot?.addEventListener('scroll', handleScroll, { passive: true });
+    observer.observe(container);
+    return () => {
+      scrollRoot?.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+      if (pendingLoad !== null) window.clearTimeout(pendingLoad);
+    };
+  }, [youtubeEmbedUrl, url, loadedUrl, loadDelayMs]);
 
   if (youtubeEmbedUrl) {
     return (
-      <div className="py-4">
+      <div className="py-4" data-match-video-entry={label}>
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
         {sourceNote && <p className="mb-3 text-xs leading-relaxed text-neutral-500" role="note">{sourceNote}</p>}
-        <div className="aspect-video overflow-hidden bg-black">
-          <iframe
-            src={youtubeEmbedUrl}
-            title={`${label}比賽影片`}
-            className="h-full w-full border-0"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
+        <div ref={videoContainerRef} className="aspect-video overflow-hidden bg-black">
+          {loadedUrl === url && (
+            <iframe
+              src={youtubeEmbedUrl}
+              title={`${label}比賽影片`}
+              className="h-full w-full border-0"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          )}
         </div>
       </div>
     );

@@ -44,13 +44,24 @@ const MatchPage: React.FC = () => {
     setActiveSeason: () => {},
   };
   const scheduleRoute = `/schedule?season=${seasonId}`;
+  const closeMatch = () => {
+    // Return to the actual source when opened through in-app navigation.
+    // A directly opened or shared match URL has no reliable source, so use
+    // the matching season's schedule rather than navigating off-site.
+    const routerHistoryIndex: unknown = window.history.state?.idx;
+    if (typeof routerHistoryIndex === 'number' && routerHistoryIndex > 0) {
+      navigate(-1);
+    } else {
+      navigate(scheduleRoute, { replace: true });
+    }
+  };
 
   return (
     <SeasonContext.Provider value={matchSeasonContext}>
       <div className="min-h-[75vh] bg-neutral-50" aria-hidden="true" />
       <MatchDialog
         matchId={match.id}
-        onClose={() => navigate(scheduleRoute)}
+        onClose={closeMatch}
         onSelectMatch={(nextMatchId) => navigate(getMatchRoute(nextMatchId), { replace: true })}
       />
     </SeasonContext.Provider>

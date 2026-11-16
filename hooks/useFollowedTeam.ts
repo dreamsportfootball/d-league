@@ -1,22 +1,46 @@
 import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'dleague:followed-team:v1';
+const STORAGE_KEY = 'dleague:followed-teams:v2';
+const LEGACY_STORAGE_KEY = 'dleague:followed-team:v1';
 const CHANGE_EVENT = 'dleague:followed-team-change';
 
-const readFollowedTeam = (): string | null => {
-  try { return window.localStorage.getItem(STORAGE_KEY); }
-  catch { return null; }
+const readFollowedTeams = (): string[] => {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved !== null) {
+      const parsed: unknown = JSON.parse(saved);
+      return Array.isArray(parsed)
+        ? [...new Set(parsed.filter((id): id is string => typeof id === 'string' && id.trim().length > 0))]
+        : [];
+    }
+
+    // Keep the previously followed team when upgrading from single-team storage.
+    const legacyTeamId = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    return legacyTeamId ? [legacyTeamId] : [];
+  } catch {
+    return [];
+  }
 };
 
 export const useFollowedTeam = (): {
-  followedTeamId: string | null;
+  followedTeamIds: string[];
   toggleFollowedTeam: (teamId: string) => void;
-  clearFollowedTeam: () => void;
+  removeFollowedTeam: (teamId: string) => void;
+  clearFollowedTeams: () => void;
 } => {
-  const [followedTeamId, setTeamId] = useState<string | null>(readFollowedTeam);
+  const [followedTeamIds, setTeamIds] = useState<string[]>(readFollowedTeams);
 
   useEffect(() => {
-    const sync = () => setTeamId(readFollowedTeam());
+    const sync = () => {
+      try {
+        // If storage is blocked, a same-tab update is already reflected in state.
+        if (window.localStorage.getItem(STORAGE_KEY) === null
+            && window.localStorage.getItem(LEGACY_STORAGE_KEY) === null) return;
+      } catch {
+        return;
+      }
+      setTeamIds(readFollowedTeams());
+    };
     window.addEventListener('storage', sync);
     window.addEventListener(CHANGE_EVENT, sync);
     return () => {
@@ -25,19 +49,24 @@ export const useFollowedTeam = (): {
     };
   }, []);
 
-  const update = (teamId: string | null): void => {
+  const update = (teamIds: string[]): void => {
+    setTeamIds(teamIds);
     try {
-      if (teamId) window.localStorage.setItem(STORAGE_KEY, teamId);
-      else window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(teamIds));
+      window.dispatchEvent(new Event(CHANGE_EVENT));
     } catch {
-      // Private browsing may disable persistence; still update this view.
+      // Private browsing may disable persistence; the current view still updates.
     }
-    setTeamId(teamId);
-    window.dispatchEvent(new Event(CHANGE_EVENT));
   };
+
   return {
-    followedTeamId,
-    toggleFollowedTeam: (teamId) => update(followedTeamId === teamId ? null : teamId),
-    clearFollowedTeam: () => update(null),
+    followedTeamIds,
+    toggleFollowedTeam: (teamId) => update(
+      followedTeamIds.includes(teamId)
+        ? followedTeamIds.filter((id) => id !== teamId)
+        : [...followedTeamIds, teamId],
+    ),
+    removeFollowedTeam: (teamId) => update(followedTeamIds.filter((id) => id !== teamId)),
+    clearFollowedTeams: () => update([]),
   };
 };

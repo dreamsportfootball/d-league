@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { SEASON_IDS } from '../config/siteManifest.js';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { getPlayerIdentity, getTeamIdentity } from '../services/entityData';
-import { getSeasonData } from '../services/seasonDataJson';
+import { getLatestPlayerImageUrl, getSeasonData } from '../services/seasonDataJson';
+import PortraitPhoto from './PortraitPhoto';
 
 interface SearchEntry {
   id: string;
@@ -14,6 +15,8 @@ interface SearchEntry {
   href: string;
   searchable: string;
   seasonPriority: number;
+  identityKey?: string;
+  imageUrl?: string;
 }
 
 interface GlobalSearchProps {
@@ -33,6 +36,7 @@ const SEARCH_ENTRIES: SearchEntry[] = [...SEASON_IDS].reverse().flatMap((seasonI
     href: '/teams/' + getTeamIdentity(team) + '?season=' + seasonId,
     searchable: normalize([team.name, team.shortName, team.leagueId, seasonId].join(' ')),
     seasonPriority,
+    imageUrl: team.logo,
   }));
   const players: SearchEntry[] = data.players
     .filter((player) => player.rosterStatus !== 'INACTIVE_REPLACED' && player.hideFromTeamRoster !== true)
@@ -49,6 +53,8 @@ const SEARCH_ENTRIES: SearchEntry[] = [...SEASON_IDS].reverse().flatMap((seasonI
           '#' + (player.number ?? ''), team?.name ?? '', team?.shortName ?? '', seasonId,
         ].join(' ')),
         seasonPriority,
+        identityKey: 'player:' + getPlayerIdentity(player),
+        imageUrl: getLatestPlayerImageUrl(player),
       };
     });
   const matches: SearchEntry[] = data.matches.flatMap((match) => {
@@ -74,7 +80,7 @@ const SEARCH_ENTRIES: SearchEntry[] = [...SEASON_IDS].reverse().flatMap((seasonI
 const searchEntries = (query: string): SearchEntry[] => {
   const tokens = query.trim().split(/\s+/).filter(Boolean).map(normalize);
   if (!tokens.length) return [];
-  return SEARCH_ENTRIES.flatMap((entry) => {
+  const ranked = SEARCH_ENTRIES.flatMap((entry) => {
     if (!tokens.every((token) => entry.searchable.includes(token))) return [];
     const name = normalize(entry.title);
     const score = tokens.reduce((value, token) => value + (
@@ -83,8 +89,17 @@ const searchEntries = (query: string): SearchEntry[] => {
     return [{ entry, score }];
   })
     .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title, 'zh-TW'))
-    .slice(0, 12)
-    .map(({ entry }) => entry);
+;
+  const seen = new Set<string>();
+  const results: SearchEntry[] = [];
+  for (const { entry } of ranked) {
+    const key = entry.identityKey ?? entry.id;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    results.push(entry);
+    if (results.length === 12) break;
+  }
+  return results;
 };
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ open, onClose }) => {
@@ -144,7 +159,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ open, onClose }) => {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="搜尋球隊、球員、背號或比賽"
             autoComplete="off"
-            className="h-16 w-full min-w-0 bg-transparent text-base font-medium text-brand-black outline-none placeholder:text-neutral-400"
+            className="h-16 w-full min-w-0 appearance-none bg-transparent text-base font-medium text-brand-black outline-none placeholder:text-neutral-400 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
           />
           <button type="button" onClick={onClose} className="flex h-11 w-11 shrink-0 items-center justify-center text-neutral-500 hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue" aria-label="關閉搜尋">
             <X className="h-5 w-5" aria-hidden="true" />
@@ -159,8 +174,14 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ open, onClose }) => {
             results.map((item) => (
               <Link key={item.id} to={item.href} onClick={() => { setQuery(''); onClose(); }}
                 className="group flex min-h-14 items-center gap-3 px-5 py-3 transition-colors hover:bg-neutral-100 active:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-neutral-100 text-brand-blue group-hover:bg-white" aria-hidden="true">
-                  {item.group === '球員' ? <UserRound className="h-4 w-4" /> : item.group === '球隊' ? <ShieldCheck className="h-4 w-4" /> : <CalendarDays className="h-4 w-4" />}
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-neutral-100 text-brand-blue group-hover:bg-white" aria-hidden="true">
+                  {item.imageUrl ? (
+                    item.group === '球員' ? (
+                      <PortraitPhoto src={item.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover object-top" />
+                    ) : (
+                      <img src={item.imageUrl} alt="" loading="lazy" className="h-full w-full object-contain p-1" />
+                    )
+                  ) : item.group === '球員' ? <UserRound className="h-4 w-4" /> : item.group === '球隊' ? <ShieldCheck className="h-4 w-4" /> : <CalendarDays className="h-4 w-4" />}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-bold text-brand-black group-hover:text-brand-blue">{item.title}</span>

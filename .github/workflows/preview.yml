@@ -67,6 +67,32 @@ jobs:
           npm run enrich:seo
           npm run validate:seo
 
+      # Deploy only after the same interactive flows users will exercise have passed.
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Serve the built preview for release checks
+        run: |
+          nohup npx vite preview --base=/d-league/preview/season-2026-27/ --host 127.0.0.1 --port 4173 > /tmp/d-league-release-gate.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:4173/d-league/preview/season-2026-27/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/d-league-release-gate.log
+          exit 1
+
+      - name: Gate preview release on real UI checks
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league/preview/season-2026-27
+        run: |
+          node scripts/validate-fan-ux.mjs
+          node scripts/validate-home-match-dialog-return.mjs
+          node scripts/validate-team-roster-ui.mjs
+
       - name: Publish preview without replacing production
         uses: peaceiris/actions-gh-pages@v4
         with:

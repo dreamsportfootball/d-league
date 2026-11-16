@@ -35,6 +35,15 @@ for (const viewport of viewports) {
     });
     const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
     await dialog.waitFor({ state: 'visible' });
+
+    // Full-screen backdrop blur was measured as the dominant scroll
+    // bottleneck on desktop; keep the dark overlay but never reintroduce blur.
+    const blur = await page.locator('[data-match-dialog-backdrop]')
+      .evaluate((element) => getComputedStyle(element).backdropFilter);
+    if (blur !== 'none') {
+      throw new Error('match dialog backdrop blur must be disabled: ' + blur);
+    }
+
     const scroller = dialog.locator('[data-match-dialog-scroller]');
     const first = dialog.locator('[data-match-video-entry="上半場"]');
     const second = dialog.locator('[data-match-video-entry="下半場"]');

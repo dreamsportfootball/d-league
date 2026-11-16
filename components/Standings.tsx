@@ -114,10 +114,10 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
               <Link
                 to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
                 data-scroll-anchor-id={`standings-team-widget-${activeSeason.id}-${league}-${team.id}`}
-                className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue"
+                className="group flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue"
                 aria-label={`查看 ${team.name} 球隊頁`}
               >
-                <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain" />
+                <img src={team.logo} alt={team.name} className="h-5 w-5 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04]" />
                 <div className="min-w-0 flex-1 text-[13px] font-bold leading-[1.25] break-words text-brand-black">{team.name}</div>
                 <TieLabel row={row} compact />
               </Link>
@@ -189,11 +189,11 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                     <Link
                       to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
                       data-scroll-anchor-id={`standings-team-mobile-compact-${activeSeason.id}-${league}-${team.id}`}
-                      className="flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue"
+                      className="group flex min-h-11 min-w-0 items-center space-x-2 rounded-sm outline-none hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue"
                       aria-label={`查看 ${team.name} 球隊頁`}
                     >
-                      <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" />
-                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black" /></div>
+                      <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04]" />
+                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={13} minFontSize={7} className="font-bold text-brand-black transition-colors group-hover:text-brand-blue group-focus-visible:text-brand-blue" /></div>
                       <TieLabel row={row} compact />
                     </Link>
                   </td>
@@ -232,11 +232,11 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                     <Link
                       to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
                       data-scroll-anchor-id={`standings-team-mobile-expanded-${activeSeason.id}-${league}-${team.id}`}
-                      className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue"
+                      className="group flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue"
                       aria-label={`查看 ${team.name} 球隊頁`}
                     >
-                      <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain" />
-                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div>
+                      <img src={team.logo} alt={team.name} className="h-7 w-7 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04]" />
+                      <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black transition-colors group-hover:text-brand-blue group-focus-visible:text-brand-blue" /></div>
                       <TieLabel row={row} />
                     </Link>
                   </td>
@@ -280,11 +280,11 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
                   <Link
                     to={`/teams/${getTeamIdentity(team)}?season=${activeSeason.id}`}
                     data-scroll-anchor-id={`standings-team-desktop-${activeSeason.id}-${league}-${team.id}`}
-                    className="flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue"
+                    className="group flex min-h-11 min-w-0 items-center space-x-3 rounded-sm outline-none hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue"
                     aria-label={`查看 ${team.name} 球隊頁`}
                   >
-                    <img src={team.logo} alt={team.name} className="h-8 w-8 shrink-0 object-contain" />
-                    <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black" /></div>
+                    <img src={team.logo} alt={team.name} className="h-8 w-8 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04]" />
+                    <div className="min-w-0 flex-1"><AutoFitText text={team.name} maxFontSize={14} minFontSize={7} className="font-bold text-brand-black transition-colors group-hover:text-brand-blue group-focus-visible:text-brand-blue" /></div>
                     <TieLabel row={row} />
                   </Link>
                 </td>

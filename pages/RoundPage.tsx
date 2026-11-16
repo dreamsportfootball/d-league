@@ -78,7 +78,7 @@ const RoundPage: React.FC = () => {
           <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-400">
             D LEAGUE ROUND
           </p>
-          <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight text-brand-black md:text-6xl">
+          <h1 className="mt-2 font-display text-[32px] font-extrabold leading-none tracking-tight text-brand-black md:text-6xl">
             {season.shortName} {league} 第 {round} 輪
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-7 text-neutral-500">

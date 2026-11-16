@@ -103,8 +103,12 @@ const ZenAlbum: React.FC<{ group: GalleryGroup; onOpen: () => void }> = ({ group
           src={group.cover}
           alt={group.title}
           loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 ease-out md:group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-300 ease-out motion-safe:md:group-hover:scale-[1.035]"
         />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/65 to-transparent px-4 pb-4 pt-12 text-white" aria-hidden="true">
+          <span className="text-xs font-bold tracking-wide">{group.albums.some((album) => album.scope === 'MATCH_DAY') ? '比賽日相簿' : group.albums.length + ' 場比賽相簿'}</span>
+          <span className="text-xs font-bold">查看相簿 ↗</span>
+        </div>
       </div>
       <p className="mb-1 mt-3 text-[11px] font-semibold tracking-[0.08em] text-neutral-500">
         {formatMediaDate(group.date)}
@@ -428,7 +432,7 @@ const MediaPage: React.FC = () => {
                   href={album.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex min-h-24 items-center gap-4 border-b border-neutral-100 py-3 text-left last:border-b-0 hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue sm:gap-5"
+                  className="group flex min-h-24 items-center gap-4 border-b border-neutral-100 py-3 text-left transition-colors last:border-b-0 hover:bg-neutral-50 hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue sm:gap-5"
                 >
                   <img src={album.thumbnail ?? album.cover} alt="" loading="lazy" className="h-16 w-24 shrink-0 object-cover sm:h-20 sm:w-32" />
                   <div className="min-w-0 flex-1">

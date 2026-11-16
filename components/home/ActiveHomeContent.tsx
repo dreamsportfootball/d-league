@@ -5,6 +5,7 @@ import { useSeason } from '../../hooks/useSeason';
 import { MatchStatus } from '../../types';
 import type { LeagueId } from '../../types/season';
 import BrandStory from '../BrandStory';
+import FollowedTeamSpotlight from '../FollowedTeamSpotlight';
 import ClubGrid from '../ClubGrid';
 import MatchCenter from '../MatchCenter';
 import NewsSection from '../NewsSection';
@@ -71,6 +72,8 @@ const ActiveHomeContent: React.FC = () => {
           <MatchCenter />
         </div>
       </div>
+
+      <FollowedTeamSpotlight />
 
       <section id="standings-and-news" className="container mx-auto mb-16 px-4 py-6 md:px-6 md:py-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start">

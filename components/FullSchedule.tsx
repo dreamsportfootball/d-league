@@ -86,6 +86,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
         const isFinished = match.status === MatchStatus.FINISHED;
         const hasScore = isFinished && match.homeScore !== null && match.awayScore !== null;
         const statusLabel = getMatchStatusLabel(match);
+        const accessibilityLabel = hasScore
+          ? homeTeam.name + ' ' + match.homeScore + ' 比 ' + match.awayScore + ' ' + awayTeam.name + '，' + statusLabel
+          : homeTeam.name + ' 對 ' + awayTeam.name + '，' + statusLabel + '，' + mobileDateHeader + ' ' + timeStr;
         const administrativeNote = match.administrativeNote?.trim();
         const teamRowBackground = matchIndex % 2 === 0 ? 'bg-white' : 'bg-neutral-50';
 
@@ -117,8 +120,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 md:hidden ${teamRowBackground}`}
+                  aria-label={accessibilityLabel}
+                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden ${teamRowBackground}`}
                 >
                   <div className="mb-2 flex min-w-0 items-center gap-2 leading-none">
                     <span className="whitespace-nowrap font-display text-[10px] font-semibold tracking-[0.02em] text-neutral-500">
@@ -129,7 +132,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </span>
                   </div>
 
-                  <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] items-center gap-1">
+                  <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_50px_minmax(0,1fr)] items-center gap-1">
                     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_24px] items-center gap-1 overflow-hidden">
                       <div className="min-w-0 overflow-hidden text-right">
                         <AutoFitText
@@ -149,9 +152,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       />
                     </div>
 
-                    <div className="flex min-w-[40px] items-center justify-center text-center">
+                    <div className="flex min-w-[50px] items-center justify-center text-center">
                       {hasScore ? (
-                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[15px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
+                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[17px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
                       ) : (
                         <span className="font-display text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-300">
                           VS
@@ -190,7 +193,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
+                  aria-label={accessibilityLabel}
                   className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-3.5 text-left transition-colors md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
@@ -263,8 +266,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className="w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 md:hidden"
+                  aria-label={accessibilityLabel}
+                  className="dleague-touch-target w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden"
                 >
                   <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
                     <div className="flex shrink-0 items-center gap-2.5">
@@ -277,7 +280,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] items-center gap-1">
+                  <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_50px_minmax(0,1fr)] items-center gap-1">
                     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_24px] items-center gap-1 overflow-hidden">
                       <div className="min-w-0 overflow-hidden text-right">
                         <AutoFitText
@@ -297,9 +300,9 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       />
                     </div>
 
-                    <div className="flex min-w-[40px] items-center justify-center text-center">
+                    <div className="flex min-w-[50px] items-center justify-center text-center">
                       {hasScore ? (
-                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[17px] font-black tracking-tight text-brand-black tabular-nums" />
+                        <AnimatedScore identity={match.id} value={`${match.homeScore} - ${match.awayScore}`} className="font-display text-[19px] font-black leading-none tracking-tight text-brand-black tabular-nums" />
                       ) : (
                         <span className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-neutral-300">
                           VS
@@ -333,8 +336,8 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   onClick={() => onMatchClick(match.id)}
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
-                  aria-label={`${homeTeam.name} 對 ${awayTeam.name}，${statusLabel}`}
-                  className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-all duration-300 md:flex md:flex-row md:hover:bg-neutral-50"
+                  aria-label={accessibilityLabel}
+                  className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:flex md:flex-row md:hover:bg-neutral-50"
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 
@@ -363,7 +366,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                           alt={homeTeam.name}
                           loading="lazy"
                           decoding="async"
-                          className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
+                          className="h-8 w-8 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04] md:h-10 md:w-10"
                         />
                       </div>
 
@@ -377,7 +380,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                           alt={awayTeam.name}
                           loading="lazy"
                           decoding="async"
-                          className="h-8 w-8 shrink-0 object-contain md:h-10 md:w-10"
+                          className="h-8 w-8 shrink-0 object-contain transition-transform duration-150 motion-safe:group-hover:scale-[1.04] md:h-10 md:w-10"
                         />
                         <div className="min-w-0 flex-1 text-left">
                           <AutoFitText

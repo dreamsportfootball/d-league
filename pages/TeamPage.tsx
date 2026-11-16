@@ -8,6 +8,7 @@ import {
   Instagram,
   TrendingUp,
   UserRound,
+  Star,
   Youtube,
 } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
@@ -29,6 +30,7 @@ import {
   getCupTeamPlacementLabel,
 } from '../cupData';
 import { useSeason } from '../hooks/useSeason';
+import { useFollowedTeam } from '../hooks/useFollowedTeam';
 import { useMatchDialogQuery } from '../hooks/useMatchDialogQuery';
 import { calculateLeagueTable } from '../services/competitionEngine';
 import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/entityData';
@@ -325,6 +327,7 @@ const TeamPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const { availableSeasons } = useSeason();
+  const { followedTeamId, toggleFollowedTeam } = useFollowedTeam();
   const [failedTeamLogo, setFailedTeamLogo] = useState<string | null>(null);
   const requestedSeason = searchParams.get('season');
   const history = useMemo(() => getTeamHistory(id), [id]);
@@ -548,6 +551,17 @@ const TeamPage: React.FC = () => {
               </p>
               <h1 className="min-w-0"><AutoFitText text={team.name} minFontSize={16} lineHeight={0.98} className="font-display text-4xl font-extrabold tracking-tight text-brand-black sm:text-5xl xl:text-6xl" /></h1>
               {socialLinks.length > 0 && renderSocialLinks()}
+              {seasonId === CURRENT_SEASON_ID && (
+                <button
+                  type="button"
+                  aria-pressed={followedTeamId === getTeamIdentity(team)}
+                  onClick={() => toggleFollowedTeam(getTeamIdentity(team))}
+                  className="mt-4 inline-flex min-h-11 items-center gap-2 border border-neutral-300 px-4 text-xs font-bold text-brand-black transition-colors hover:border-brand-blue hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue"
+                >
+                  <Star className={followedTeamId === getTeamIdentity(team) ? 'h-4 w-4 fill-brand-blue text-brand-blue' : 'h-4 w-4'} aria-hidden="true" />
+                  {followedTeamId === getTeamIdentity(team) ? '已追蹤 · 點擊取消' : '追蹤這支球隊'}
+                </button>
+              )}
             </div>
           </div>
 

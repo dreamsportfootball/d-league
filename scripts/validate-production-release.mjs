@@ -62,10 +62,12 @@ try {
       await page.goto(base + '/standings?season=2026-27', {
         waitUntil: 'domcontentloaded', timeout: 25000,
       });
-      await page.locator('main').first().waitFor({ state: 'visible' });
-      assert((await page.locator('main').first().textContent())?.includes('積分') ||
-        (await page.locator('main').first().textContent())?.includes('排名'),
-      'standings page did not render standings content');
+      // The route is lazy-loaded: wait for its own confirmed controls, not
+      // the already-visible shell <main> (which can still be empty).
+      await page.getByRole('button', { name: '篩選積分榜' })
+        .waitFor({ state: 'visible', timeout: 25000 });
+      await page.getByText('排名與積分', { exact: true }).first()
+        .waitFor({ state: 'visible' });
 
       // Open a genuinely standalone match link without prior in-app history.
       const directPage = await context.newPage();

@@ -70,7 +70,7 @@ const allTeams = SEASON_IDS.map(seasonId => {
   const data=seasons[seasonId];
   const rosterByTeam=Object.fromEntries(data.teams.map(team => [team.id,0]));
   for(const player of data.players) {
-    if(player.hideFromTeamRoster === true)continue;
+    if(player.hideFromTeamRoster === true || player.rosterStatus === 'INACTIVE_REPLACED')continue;
     rosterByTeam[player.teamId]++;
   }
   return {

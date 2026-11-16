@@ -5,6 +5,7 @@ interface MatchVideoPlayerProps {
   label: string;
   url: string;
   loadDelayMs?: number;
+  sourceNote?: string;
 }
 
 const getYouTubeEmbedUrl = (value: string): string | null => {
@@ -42,7 +43,7 @@ const isDirectVideoUrl = (value: string): boolean => {
   }
 };
 
-const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDelayMs = 500 }) => {
+const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDelayMs = 500, sourceNote }) => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
@@ -106,6 +107,7 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDel
     return (
       <div className="py-4" data-match-video-entry={label}>
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
+        {sourceNote && <p className="mb-3 text-xs leading-relaxed text-neutral-500" role="note">{sourceNote}</p>}
         <div ref={videoContainerRef} className="aspect-video overflow-hidden bg-black">
           {loadedUrl === url && (
             <iframe
@@ -126,6 +128,7 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDel
     return (
       <div className="py-4">
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
+        {sourceNote && <p className="mb-3 text-xs leading-relaxed text-neutral-500" role="note">{sourceNote}</p>}
         <video
           controls
           playsInline

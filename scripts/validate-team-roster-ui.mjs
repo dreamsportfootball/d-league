@@ -9,6 +9,7 @@ const [teams, players, photoMap] = await Promise.all([
   readJson('players.json'),
   readJson('playerImages.json'),
 ]);
+const identityAliases = JSON.parse(await readFile(new URL('../data/playerIdentityAliases.json', import.meta.url), 'utf8'))['2026-27'] ?? {};
 const visiblePlayers = (teamId) => players.filter(
   (player) => player.teamId === teamId &&
     player.hideFromTeamRoster !== true &&
@@ -65,7 +66,7 @@ try {
           const displayedIds = new Set(hrefs.map((href) =>
             decodeURIComponent((href.match(/\/players\/([^?&#]+)/) ?? [])[1] ?? ''),
           ));
-          const expectedIds = new Set(expected.map((player) => player.identityId ?? player.id));
+          const expectedIds = new Set(expected.map((player) => identityAliases[player.id] ?? player.identityId ?? player.id));
           if (displayedIds.size !== expectedIds.size ||
               [...expectedIds].some((id) => !displayedIds.has(id))) {
             throw new Error('displayed player identities do not match the approved roster');

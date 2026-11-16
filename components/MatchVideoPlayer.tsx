@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { ExternalLink, Play } from 'lucide-react';
+import React from 'react';
+import { ExternalLink } from 'lucide-react';
 
 interface MatchVideoPlayerProps {
   label: string;
   url: string;
 }
 
-const getYouTubeVideoId = (value: string): string | null => {
+const getYouTubeEmbedUrl = (value: string): string | null => {
   try {
     const url = new URL(value);
     const host = url.hostname.replace(/^www\./, '');
@@ -26,7 +26,7 @@ const getYouTubeVideoId = (value: string): string | null => {
     }
 
     if (!videoId || !/^[A-Za-z0-9_-]{6,}$/.test(videoId)) return null;
-    return videoId;
+    return `https://www.youtube-nocookie.com/embed/${videoId}`;
   } catch {
     return null;
   }
@@ -42,49 +42,21 @@ const isDirectVideoUrl = (value: string): boolean => {
 };
 
 const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
-  const youtubeVideoId = getYouTubeVideoId(url);
-  // Keep YouTube's heavy player scripts out of the scroll path. The iframe is
-  // mounted only after a person chooses to play this particular half.
-  const [activatedUrl, setActivatedUrl] = useState<string | null>(null);
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
 
-  if (youtubeVideoId) {
-    const isActivated = activatedUrl === url;
-
+  if (youtubeEmbedUrl) {
     return (
       <div className="py-4">
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
-        <div className="relative aspect-video overflow-hidden bg-black">
-          {isActivated ? (
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${youtubeVideoId}?autoplay=1&playsinline=1`}
-              title={`${label}比賽影片`}
-              className="h-full w-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setActivatedUrl(url)}
-              aria-label={`播放${label}比賽影片`}
-              className="group relative block h-full w-full cursor-pointer overflow-hidden bg-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
-            >
-              <img
-                src={`https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg`}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <span className="absolute inset-0 bg-black/35 transition-colors group-hover:bg-black/25" aria-hidden="true" />
-              <span className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-md transition-transform group-hover:scale-105">
-                  <Play className="ml-0.5 h-6 w-6 fill-current" />
-                </span>
-              </span>
-              <span className="absolute bottom-3 left-3 text-xs font-bold text-white" aria-hidden="true">點擊播放</span>
-            </button>
-          )}
+        <div className="aspect-video overflow-hidden bg-black">
+          <iframe
+            src={youtubeEmbedUrl}
+            title={`${label}比賽影片`}
+            className="h-full w-full border-0"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
         </div>
       </div>
     );

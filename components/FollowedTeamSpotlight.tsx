@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, Star, X } from 'lucide-react';
+import { ArrowUpRight, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CURRENT_SEASON_ID } from '../config/siteConfig';
 import { useFollowedTeam } from '../hooks/useFollowedTeam';

@@ -1,0 +1,99 @@
+import { chromium } from 'playwright';
+
+const baseUrl = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/, '');
+const viewports = [
+  { name: '375', width: 375, height: 812 },
+  { name: '390', width: 390, height: 844 },
+  { name: '768', width: 768, height: 1024 },
+  { name: '1024', width: 1024, height: 900 },
+  { name: '1280', width: 1280, height: 900 },
+  { name: '1440', width: 1440, height: 1000 },
+];
+
+const browser = await chromium.launch({ headless: true });
+const failures = [];
+
+for (const viewport of viewports) {
+  const context = await browser.newContext({
+    viewport: { width: viewport.width, height: viewport.height },
+    deviceScaleFactor: 1,
+    locale: 'zh-TW',
+    timezoneId: 'Asia/Taipei',
+    serviceWorkers: 'block',
+    reducedMotion: 'reduce',
+  });
+  const page = await context.newPage();
+  page.setDefaultTimeout(12000);
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  try {
+    // The 7–4 match contains enough event rows to keep videos below the fold.
+    await page.goto(baseUrl + '/#/schedule?season=2026-27&match=m2627-011', {
+      waitUntil: 'domcontentloaded',
+      timeout: 20000,
+    });
+    const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
+    await dialog.waitFor({ state: 'visible' });
+    const scroller = dialog.locator('[data-match-dialog-scroller]');
+    const first = dialog.locator('[data-match-video-entry="上半場"]');
+    const second = dialog.locator('[data-match-video-entry="下半場"]');
+    await first.waitFor({ state: 'attached' });
+    await second.waitFor({ state: 'attached' });
+    await scroller.evaluate((element) => { element.scrollTop = 0; });
+
+    const belowFold = await first.evaluate((element) => {
+      const root = element.closest('[data-match-dialog-scroller]');
+      if (!root) return false;
+      return element.getBoundingClientRect().top > root.getBoundingClientRect().bottom + 25;
+    });
+
+    if (belowFold) {
+      // Native loading="lazy" could fetch early; this change must not.
+      await page.waitForTimeout(1500);
+      if (await dialog.locator('iframe[title$="比賽影片"]').count() !== 0) {
+        throw new Error('offscreen YouTube iframe mounted before the video is visible');
+      }
+    }
+
+    await first.scrollIntoViewIfNeeded();
+    const firstFrame = dialog.locator('iframe[title="上半場比賽影片"]');
+    await firstFrame.waitFor({ state: 'attached', timeout: 10000 });
+    const firstSrc = await firstFrame.getAttribute('src');
+    if (!firstSrc?.includes('/embed/FoaBl60_aqg')) {
+      throw new Error('unexpected first-half URL: ' + firstSrc);
+    }
+
+    await second.scrollIntoViewIfNeeded();
+    const secondFrame = dialog.locator('iframe[title="下半場比賽影片"]');
+    await secondFrame.waitFor({ state: 'attached', timeout: 10000 });
+    const secondSrc = await secondFrame.getAttribute('src');
+    if (!secondSrc?.includes('/embed/xsDp4TjSso0')) {
+      throw new Error('unexpected second-half URL: ' + secondSrc);
+    }
+
+    // Changing match must not retain the previous match's loaded embeds.
+    await dialog.getByRole('button', { name: '下一場' }).click();
+    await page.waitForTimeout(150);
+    const staleFrames = await dialog.locator('iframe[src*="FoaBl60_aqg"], iframe[src*="xsDp4TjSso0"]').count();
+    if (staleFrames !== 0) {
+      throw new Error('previous match player persisted after switching match');
+    }
+    if (errors.length) throw new Error('page errors: ' + errors.join(' | '));
+
+    console.log('[video-viewport-loading] ' + viewport.name + 'px: passed' + (belowFold ? ' offscreen delay, ' : ' ') + 'both halves and match switch');
+  } catch (error) {
+    failures.push(viewport.name + 'px: ' + error.message);
+  } finally {
+    await page.close();
+    await context.close();
+  }
+}
+
+await browser.close();
+if (failures.length) {
+  failures.forEach((failure) => console.error('[video-viewport-loading] FAIL ' + failure));
+  process.exitCode = 1;
+} else {
+  console.log('[video-viewport-loading] PASS: ' + viewports.length + ' viewports');
+}

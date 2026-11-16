@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   CalendarPlus,
   ChevronLeft,
@@ -23,6 +23,7 @@ import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
 import { downloadMatchCalendarEvent } from '../utils/matchCalendar';
+import { createMatchShareGraphic, shareMatchGraphic } from '../utils/matchShareImage';
 import { useActionFeedback } from '../hooks/useActionFeedback';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { buildMatchPermalink } from '../utils/matchPermalink';
@@ -69,6 +70,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [shareStatus, setShareStatus] = useActionFeedback();
   const [copyStatus, setCopyStatus] = useActionFeedback();
+  const [graphicState, setGraphicState] = useState<'IDLE' | 'LOADING' | 'SHARED' | 'DOWNLOADED' | 'FAILED'>('IDLE');
 
   const match = useMemo(
     () => seasonData.matches.find((item) => item.id === matchId) ?? null,
@@ -273,6 +275,21 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
     }
   };
 
+  const handleExportGraphic = async () => {
+    if (!isFinished || match.homeScore === null || match.awayScore === null) return;
+    setGraphicState('LOADING');
+    try {
+      const blob = await createMatchShareGraphic(
+        match, homeTeam.name, awayTeam.name, homeTeam.logo, awayTeam.logo,
+        activeSeason.shortName, matchPermalink,
+      );
+      const outcome = await shareMatchGraphic(blob, match.id);
+      setGraphicState(outcome === 'CANCELLED' ? 'IDLE' : outcome);
+    } catch {
+      setGraphicState('FAILED');
+    }
+  };
+
   const renderTeamIdentity = (team: SeasonTeam) => {
     const content = (
       <>
@@ -417,6 +434,20 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               <ActionFeedbackLabel status={shareStatus} icon={<Share2 className="h-3.5 w-3.5" />}
                 idleText="分享比賽" copiedText="連結已複製" sharedText="已分享" failedText="無法分享" />
             </button>
+            {isFinished && match.homeScore !== null && match.awayScore !== null && match.resultType !== 'VOID' && (
+              <button
+                type="button"
+                onClick={handleExportGraphic}
+                disabled={graphicState === 'LOADING'}
+                data-analytics-event="match_graphic_export"
+                data-analytics-label={match.id}
+                className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 transition-colors hover:border-brand-blue hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue disabled:cursor-wait disabled:opacity-60 sm:min-h-9 sm:text-xs"
+                aria-live="polite"
+              >
+                <ImageIcon className="h-4 w-4" aria-hidden="true" />
+                {graphicState === 'LOADING' ? '正在產生圖片' : graphicState === 'DOWNLOADED' ? '已下載賽果圖' : graphicState === 'SHARED' ? '已分享賽果圖' : graphicState === 'FAILED' ? '失敗，重新製作' : '製作賽果圖'}
+              </button>
+            )}
             {!isFinished && !hasStarted && (
               <button
                 type="button"

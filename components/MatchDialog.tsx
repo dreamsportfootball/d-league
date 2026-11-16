@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
   Copy,
@@ -21,6 +22,7 @@ import { MatchStatus } from '../types';
 import type { SeasonTeam } from '../types/team';
 import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import { buildMatchInfoText } from '../utils/matchInfoText';
+import { downloadMatchCalendarEvent } from '../utils/matchCalendar';
 import { useActionFeedback } from '../hooks/useActionFeedback';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
 import { buildMatchPermalink } from '../utils/matchPermalink';
@@ -415,6 +417,19 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               <ActionFeedbackLabel status={shareStatus} icon={<Share2 className="h-3.5 w-3.5" />}
                 idleText="分享比賽" copiedText="連結已複製" sharedText="已分享" failedText="無法分享" />
             </button>
+            {!isFinished && !hasStarted && (
+              <button
+                type="button"
+                onClick={() => downloadMatchCalendarEvent(match, homeTeam.name, awayTeam.name, matchPermalink)}
+                data-analytics-event="match_calendar_export"
+                data-analytics-label={match.id}
+                className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-[13px] font-bold text-neutral-600 transition-colors hover:border-brand-blue hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue sm:min-h-9 sm:text-xs"
+                aria-label="下載這場比賽的行事曆檔案"
+              >
+                <CalendarPlus className="h-4 w-4" aria-hidden="true" />
+                加入行事曆
+              </button>
+            )}
           </div>
 
           {match.administrativeNote && (

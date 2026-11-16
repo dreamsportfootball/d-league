@@ -55,7 +55,7 @@ try {
     }
     return {count:rows.length,newerPortraits,earlierFallbacks,failures};
   });
-  if(runtime.count!==507||runtime.failures.length)errors.push('All-player image runtime: '+JSON.stringify(runtime));
+  if(runtime.count!==508||runtime.failures.length)errors.push('All-player image runtime: '+JSON.stringify(runtime));
   console.log('[historical-portraits] all-player source audit '+JSON.stringify(runtime));
 
   for(const width of [390,1280]){

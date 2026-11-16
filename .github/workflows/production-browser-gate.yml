@@ -1,0 +1,72 @@
+name: Production browser release gate
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  browser-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies and test browser
+        run: |
+          npm ci --silent
+          npm install --no-save sharp playwright
+          npx playwright install --with-deps chromium
+
+      - name: Check data and TypeScript
+        run: |
+          npm run typecheck
+          npm run validate:data
+
+      - name: Optimize images
+        run: npm run optimize:images
+
+      - name: Build production-mode site
+        env:
+          VITE_USE_OPTIMIZED_IMAGES: 'true'
+          VITE_ANALYTICS_DISABLED: 'true'
+        run: npm run build:site
+
+      - name: Serve production-mode site
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/d-league-production-smoke.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --silent --fail http://127.0.0.1:4173/d-league/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/d-league-production-smoke.log
+          exit 1
+
+      - name: Check production browser journeys
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-production-release.mjs
+
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-release-smoke-failures
+          path: audit/production-release-*.png
+          if-no-files-found: ignore
+          retention-days: 14

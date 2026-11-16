@@ -62,26 +62,41 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDel
     }
 
     const scrollRoot = container.closest<HTMLElement>('[data-match-dialog-scroller]');
+    let isVisible = false;
     let pendingLoad: number | null = null;
+
+    const scheduleWhenIdle = () => {
+      if (pendingLoad !== null) {
+        window.clearTimeout(pendingLoad);
+        pendingLoad = null;
+      }
+      if (!isVisible) return;
+
+      // A video entering the viewport is not enough: postpone heavy YouTube
+      // initialization until the user has stopped scrolling inside the dialog.
+      pendingLoad = window.setTimeout(() => {
+        pendingLoad = null;
+        setLoadedUrl(url);
+        observer.disconnect();
+      }, loadDelayMs);
+    };
+
+    const handleScroll = () => {
+      if (isVisible) scheduleWhenIdle();
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
-          if (pendingLoad === null) {
-            pendingLoad = window.setTimeout(() => {
-              setLoadedUrl(url);
-              observer.disconnect();
-            }, loadDelayMs);
-          }
-        } else if (pendingLoad !== null) {
-          window.clearTimeout(pendingLoad);
-          pendingLoad = null;
-        }
+        isVisible = Boolean(entry && entry.intersectionRatio >= 0.35);
+        scheduleWhenIdle();
       },
-      { root: scrollRoot, rootMargin: '0px 0px 24px 0px', threshold: 0.01 },
+      { root: scrollRoot, rootMargin: '0px', threshold: 0.35 },
     );
 
+    scrollRoot?.addEventListener('scroll', handleScroll, { passive: true });
     observer.observe(container);
     return () => {
+      scrollRoot?.removeEventListener('scroll', handleScroll);
       observer.disconnect();
       if (pendingLoad !== null) window.clearTimeout(pendingLoad);
     };

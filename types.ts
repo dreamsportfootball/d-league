@@ -45,6 +45,8 @@ export interface Match {
   unattributedGoals?: Partial<Record<'HOME' | 'AWAY', number>>;
   videoUrls?: MatchVideoUrls;
   videoUrl?: string;
+  /** Source and context for footage credited in the match media section. */
+  videoSourceNote?: string;
   albumId?: string;
   reportArticleId?: string;
 }

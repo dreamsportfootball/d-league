@@ -159,7 +159,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ open, onClose }) => {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="搜尋球隊、球員、背號或比賽"
             autoComplete="off"
-            className="h-16 w-full min-w-0 bg-transparent text-base font-medium text-brand-black outline-none placeholder:text-neutral-400"
+            className="h-16 w-full min-w-0 appearance-none bg-transparent text-base font-medium text-brand-black outline-none placeholder:text-neutral-400 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
           />
           <button type="button" onClick={onClose} className="flex h-11 w-11 shrink-0 items-center justify-center text-neutral-500 hover:text-brand-blue focus-visible:outline-2 focus-visible:outline-brand-blue" aria-label="關閉搜尋">
             <X className="h-5 w-5" aria-hidden="true" />

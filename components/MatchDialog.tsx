@@ -462,8 +462,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               </div>
 
               <div className="divide-y divide-neutral-100 border-y border-neutral-100">
-                {halfVideos.map(({ label, url }, index) => url ? (
-                  <MatchVideoPlayer key={label} label={label} url={url} loadDelayMs={index === 0 ? 500 : 1200} sourceNote={label === '上半場' ? match.videoSourceNote : undefined} />
+                {halfVideos.map(({ label, url }) => url ? (
+                  <MatchVideoPlayer key={label} label={label} url={url} sourceNote={label === '上半場' ? match.videoSourceNote : undefined} />
                 ) : (
                   <div key={label} className="flex min-h-12 items-center justify-between gap-4 py-3 text-sm font-bold text-neutral-500">
                     <span>{label}</span>

@@ -4,6 +4,7 @@ import { ExternalLink } from 'lucide-react';
 interface MatchVideoPlayerProps {
   label: string;
   url: string;
+  sourceNote?: string;
 }
 
 const getYouTubeEmbedUrl = (value: string): string | null => {
@@ -41,13 +42,14 @@ const isDirectVideoUrl = (value: string): boolean => {
   }
 };
 
-const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
+const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, sourceNote }) => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
 
   if (youtubeEmbedUrl) {
     return (
       <div className="py-4">
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
+        {sourceNote && <p className="mb-3 text-xs leading-relaxed text-neutral-500" role="note">{sourceNote}</p>}
         <div className="aspect-video overflow-hidden bg-black">
           <iframe
             src={youtubeEmbedUrl}
@@ -66,6 +68,7 @@ const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
     return (
       <div className="py-4">
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
+        {sourceNote && <p className="mb-3 text-xs leading-relaxed text-neutral-500" role="note">{sourceNote}</p>}
         <video
           controls
           playsInline

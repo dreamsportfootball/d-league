@@ -152,6 +152,11 @@ for (const season of seasons) {
         (!Number.isInteger(player.age) || player.age < 0 || player.age > 100)) {
       fail(`${season} player ${player.id}: invalid age`);
     }
+    if (player.rosterStatus !== undefined) {
+      if (season !== CURRENT_SEASON_ID || player.rosterStatus !== 'INACTIVE_REPLACED') {
+        fail(`${season} player ${player.id}: invalid rosterStatus`);
+      }
+    }
     if (player.hideFromTeamRoster !== undefined) {
       if (player.hideFromTeamRoster !== true || season === CURRENT_SEASON_ID) {
         fail(`${season} player ${player.id}: roster-hidden flag is only valid for confirmed legacy records`);
@@ -523,7 +528,7 @@ for (const team of currentTeams) {
   const participantLeague = participantLeagueByName.get(team.name);
   if (!participantLeague) fail(`${CURRENT_SEASON_ID} team ${team.id}: not found in confirmed participants`);
   if (team.leagueId !== participantLeague) fail(`${CURRENT_SEASON_ID} team ${team.id}: league does not match confirmed participants`);
-  const roster = currentPlayers.filter((player) => player.teamId === team.id);
+  const roster = currentPlayers.filter((player) => player.teamId === team.id && player.rosterStatus !== 'INACTIVE_REPLACED');
   if (roster.length !== 0 && (roster.length < 12 || roster.length > 20)) {
     fail(`${CURRENT_SEASON_ID} team ${team.id}: published roster must contain 12-20 players`);
   }

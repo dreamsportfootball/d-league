@@ -7,6 +7,21 @@ const nextMatch = fixtures.find((match) => match.status === 'SCHEDULED' && Date.
 const widths = [375, 390, 768, 1024, 1280, 1440];
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+const assertLeagueTabsWork = async (page, label) => {
+  // At every viewport the user should switch L1/L2/L3 without opening a filter drawer.
+  const tabs = page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible');
+  await tabs.first().waitFor({ state: 'visible' });
+  if (await tabs.count() !== 3) throw new Error(label + ': expected three visible league tabs');
+  for (const index of [1, 2, 0]) {
+    await tabs.nth(index).click();
+    await page.waitForFunction((targetIndex) => {
+      const visible = [...document.querySelectorAll('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]')]
+        .filter((element) => element.getClientRects().length > 0);
+      return visible[targetIndex]?.getAttribute('aria-selected') === 'true';
+    }, index);
+  }
+};
+
 
 for (const width of widths) {
   const context = await browser.newContext({
@@ -116,6 +131,10 @@ for (const width of widths) {
     if (!((await legend.textContent()) ?? '').includes('暫定降級區')) {
       throw new Error('league 1 provisional relegation legend absent');
     }
+    await assertLeagueTabsWork(page, 'standings');
+
+    await page.goto(base + '/#/stats?season=2026-27', { waitUntil: 'domcontentloaded' });
+    await assertLeagueTabsWork(page, 'stats');
 
     await page.goto(base + '/#/media?season=2026-27', { waitUntil: 'domcontentloaded' });
     // The first image in the document is the always-visible header logo.

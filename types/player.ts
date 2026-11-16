@@ -24,5 +24,7 @@ export interface PlayerProfile {
   participationPeriod?: 'FIRST_HALF_ONLY';
   /** Hide a retained historical player from the team's published roster only. */
   hideFromTeamRoster?: boolean;
+  /** Current-season withdrawn player is retained for match and identity history. */
+  rosterStatus?: 'INACTIVE_REPLACED';
   registrations?: PlayerRegistration[];
 }

@@ -66,8 +66,12 @@ for (const width of widths) {
     }
 
     await page.goto(base + '/#/media?season=2026-27', { waitUntil: 'domcontentloaded' });
-    await page.locator('img[alt]').first().waitFor({ state: 'visible' });
-    if (await page.getByText(/比賽日相簿|場比賽相簿/, { exact: false }).count() === 0) {
+    // The first image in the document is the always-visible header logo.
+    // Wait for the lazy-loaded media route and its real gallery, not the logo.
+    const gallery = page.getByRole('region', { name: '賽事相簿，可左右滑動瀏覽' });
+    await gallery.waitFor({ state: 'visible' });
+    await gallery.getByRole('button', { name: /查看.*相簿/ }).first().waitFor({ state: 'visible' });
+    if (await gallery.getByText(/比賽日相簿|場比賽相簿/, { exact: false }).count() === 0) {
       throw new Error('editorial album cover label absent');
     }
 

@@ -4,7 +4,6 @@ import { ExternalLink } from 'lucide-react';
 interface MatchVideoPlayerProps {
   label: string;
   url: string;
-  loadDelayMs?: number;
   sourceNote?: string;
 }
 
@@ -43,8 +42,9 @@ const isDirectVideoUrl = (value: string): boolean => {
   }
 };
 
-const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDelayMs = 500, sourceNote }) => {
+const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, sourceNote }) => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
+  const loadDelayMs = label === '上半場' ? 500 : 1200;
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
 

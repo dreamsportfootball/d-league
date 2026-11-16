@@ -1396,7 +1396,8 @@
     "englishName": "CHEN,JIA-HSIANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 28
+    "age": 28,
+    "rosterStatus": "INACTIVE_REPLACED"
   },
   {
     "id": "bw26-05",
@@ -1529,6 +1530,18 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 25
+  },
+  {
+    "id": "bw26-17",
+    "identityId": "lin-hao-yu-2007",
+    "teamId": "t_black_wolf_2026",
+    "number": 43,
+    "name": "林皓宇",
+    "englishName": "Linhaoyu",
+    "gender": "男",
+    "nationality": "台灣",
+    "birthDate": "2007-06-10",
+    "age": 19
   },
   {
     "id": "ch26-01",

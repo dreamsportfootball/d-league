@@ -126,7 +126,7 @@ report.summary={
   totalUnresolvedProvenance:report.outstandingLegacyEvidence.length,
   verifiedScoreboardMatches:report.seasons.reduce((n,s)=>n+s.finishedMatches-s.scoreboardMismatches.length,0),
 };
-if(totalPlayers!==507) errors.push(`roster count changed: expected 507, actual ${totalPlayers}; rebaseline intentionally`);
+if(totalPlayers!==508) errors.push(`roster count changed: expected 508, actual ${totalPlayers}; rebaseline intentionally`);
 if(totalOwnGoals!==5) errors.push(`own-goal count changed: expected 5, actual ${totalOwnGoals}; audit new goals`);
 mkdirSync(join(root,'audit'),{recursive:true});
 writeFileSync(join(root,'audit/player-history-integrity-report.json'),JSON.stringify(report,null,2)+'\n');

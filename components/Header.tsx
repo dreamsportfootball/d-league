@@ -1,8 +1,9 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, Search, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { SHOW_REGISTRATION_NAV } from '../config/siteConfig';
 import { useModalScrollLock } from '../hooks/useModalScrollLock';
+import GlobalSearch from './GlobalSearch';
 
 interface NavItem {
   name: string;
@@ -13,6 +14,7 @@ interface NavItem {
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   useModalScrollLock(mobileMenuOpen);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState<string | null>(null);
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState<string | null>(null);
@@ -37,6 +39,7 @@ const Header: React.FC = () => {
   ], []);
 
   useEffect(() => {
+    setSearchOpen(false);
     setMobileMenuOpen(false);
     setMobileDropdownOpen(null);
     setDesktopDropdownOpen(null);
@@ -58,6 +61,20 @@ const Header: React.FC = () => {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      const typing = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || (target instanceof HTMLElement && target.isContentEditable);
+      if ((event.key === '/' && !typing) || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k')) {
+        event.preventDefault();
+        setMobileMenuOpen(false);
+        setSearchOpen(true);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
 
   const isPathActive = (href: string) => {
@@ -260,7 +277,16 @@ const Header: React.FC = () => {
 
         <button
           type="button"
-          className="ml-auto flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 xl:hidden"
+          onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }}
+          aria-label="搜尋球隊、球員與比賽"
+          aria-keyshortcuts="Control+K"
+          className="ml-auto flex h-11 w-11 shrink-0 items-center justify-center text-brand-black transition-colors hover:text-brand-blue active:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-brand-blue xl:absolute xl:right-6 xl:top-2.5 xl:ml-0"
+        >
+          <Search className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="ml-1 flex h-11 w-11 items-center justify-center rounded-lg transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 xl:hidden"
           onClick={() => setMobileMenuOpen((open) => !open)}
           aria-label={mobileMenuOpen ? '關閉選單' : '開啟選單'}
           aria-expanded={mobileMenuOpen}
@@ -344,6 +370,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 };

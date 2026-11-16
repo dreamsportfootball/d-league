@@ -3,6 +3,7 @@ import { AlertTriangle, ShieldAlert, User } from 'lucide-react';
 import { Link, useLocation, useNavigationType } from 'react-router-dom';
 import AutoFitText from '../components/AutoFitText';
 import DataContentTransition from '../components/DataContentTransition';
+import LeagueTabs from '../components/LeagueTabs';
 import DataFilterToolbar from '../components/DataFilterToolbar';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
@@ -337,6 +338,20 @@ const StatsPage: React.FC = () => {
           activeFilterCount={activeFilterCount}
           buttonLabel="篩選"
           ariaLabel="開啟數據中心賽季與級別篩選"
+        />
+
+        <LeagueTabs
+          options={activeSeason.enabledLeagues}
+          active={activeLeague}
+          onChange={(league) => {
+            setActiveLeague(league);
+            try {
+              window.sessionStorage.setItem('statsActiveLeague', league);
+            } catch {
+              // Session storage may be unavailable.
+            }
+          }}
+          getLabel={(league) => league}
         />
 
         <div className="mb-8 border-b border-neutral-100">

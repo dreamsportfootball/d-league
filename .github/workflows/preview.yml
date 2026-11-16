@@ -75,7 +75,7 @@ jobs:
 
       - name: Serve the built preview for release checks
         run: |
-          nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/d-league-release-gate.log 2>&1 &
+          nohup npx vite preview --base=/d-league/preview/season-2026-27/ --host 127.0.0.1 --port 4173 > /tmp/d-league-release-gate.log 2>&1 &
           for attempt in {1..30}; do
             if curl --silent --fail http://127.0.0.1:4173/d-league/preview/season-2026-27/ > /dev/null; then
               exit 0

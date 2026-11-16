@@ -11,7 +11,7 @@ const scenarios = [
   { name: 'southboys-regular-green-home-kit', path: '/schedule?season=2026-27&match=m2627-024', start: 'm2627-024', next: 'm2627-025' },
   { name: 'pingtung-regular-white-away-kit', path: '/schedule?season=2026-27&match=m2627-028', start: 'm2627-028', next: 'm2627-029' },
   { name: 'historical-cross-league', path: '/schedule?season=2025-26&match=m2', start: 'm2', next: 'm3' },
-  { name: 'home-cross-matchday', path: '/', start: 'm2627-006', next: 'm2627-007', home: true },
+  { name: 'home-cross-matchday', path: '/?match=m2627-006', start: 'm2627-006', next: 'm2627-007', home: true },
 ];
 const matchKitExpectations = {
   'm2627-003': { title: '高雄黑騎士足球隊 主場球衣', filename: 'kaohsiung-black-knights-home' },
@@ -62,15 +62,13 @@ try {
         page.setDefaultTimeout(20000);
         await page.goto(baseUrl + '/#' + scenario.path, { waitUntil: 'domcontentloaded', timeout: 30000 });
         if (scenario.home) {
-          // This match moves from upcoming fixtures to results once its score is entered.
-          // Locate it in the appropriate tab without assuming the result's publication state.
-          const card = page.locator('[data-analytics-event="match_open"][data-analytics-label="' + scenario.start + '"]');
-          await page.getByRole('tab', { name: '最新賽果' }).click();
-          if (!(await card.isVisible())) {
-            await page.getByRole('tab', { name: /今日賽程|即將開賽/ }).click();
+          // The homepage intentionally shows ONLY the newest matchday. To test
+          // cross-matchday navigation, deep-link the historical match into the
+          // homepage modal instead of searching for a card that is not displayed.
+          await page.locator('#match-center').waitFor({ state: 'visible' });
+          if (!new URL(page.url()).hash.includes('match=' + scenario.start)) {
+            throw new Error('homepage deep link did not retain the selected match');
           }
-          await card.waitFor({ state: 'visible' });
-          await card.click();
         }
         const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');
         await dialog.waitFor({ state: 'visible' });

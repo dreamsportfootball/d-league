@@ -249,7 +249,7 @@ for (const [identity, recordsInput] of teamGroups) {
 
   const seasonBody = records.map(({ seasonId, team, payload }) => {
     const players = payload.players
-      .filter((player) => player.teamId === team.id)
+      .filter((player) => player.teamId === team.id && player.hideFromTeamRoster !== true && player.rosterStatus !== 'INACTIVE_REPLACED')
       .sort((a, b) => (a.number ?? 999) - (b.number ?? 999));
     const matches = payload.matches.filter(
       (match) => match.homeTeamId === team.id || match.awayTeamId === team.id,

@@ -13,8 +13,8 @@ const StaffAvatar: React.FC<StaffAvatarProps> = ({ src, name, large = false }) =
   const showImage = Boolean(src && src !== failedSrc);
   return (
     <div className={large
-      ? 'flex h-[104px] w-[104px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 sm:h-32 sm:w-32 lg:h-40 lg:w-40'
-      : 'flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100 ring-1 ring-neutral-200'
+      ? 'flex h-[104px] w-[104px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-neutral-200 transition-[box-shadow] duration-150 group-hover:ring-brand-blue/40 group-focus-visible:ring-brand-blue sm:h-32 sm:w-32 lg:h-40 lg:w-40'
+      : 'flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-100 ring-1 ring-neutral-200 transition-[box-shadow] duration-150 group-hover:ring-brand-blue/40 group-focus-visible:ring-brand-blue'
     }>
       {showImage ? (
         <PortraitPhoto

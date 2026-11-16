@@ -125,7 +125,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ open, onClose }) => {
         className="relative flex max-h-[75dvh] w-full max-w-[680px] flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl"
         onKeyDown={(event) => {
           if (event.key !== 'Tab') return;
-          const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('input, button, a[href]')).filter((el) => !el.hasAttribute('disabled'));
+          const items = (Array.from(event.currentTarget.querySelectorAll('input, button, a[href]')) as HTMLElement[]).filter((el) => !el.hasAttribute('disabled'));
           if (items.length === 0) return;
           const first = items[0];
           const last = items[items.length - 1];

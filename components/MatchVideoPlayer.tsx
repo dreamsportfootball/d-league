@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 
 interface MatchVideoPlayerProps {
   label: string;
   url: string;
+  loadDelayMs?: number;
 }
 
 const getYouTubeEmbedUrl = (value: string): string | null => {
@@ -41,22 +42,66 @@ const isDirectVideoUrl = (value: string): boolean => {
   }
 };
 
-const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url }) => {
+const MatchVideoPlayer: React.FC<MatchVideoPlayerProps> = ({ label, url, loadDelayMs = 500 }) => {
   const youtubeEmbedUrl = getYouTubeEmbedUrl(url);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!youtubeEmbedUrl || loadedUrl === url) return;
+
+    const container = videoContainerRef.current;
+    if (!container) return;
+
+    // Observe the actual dialog scroll area, rather than the window.
+    // Loading the YouTube iframe only after it remains visible avoids
+    // starting heavyweight player scripts while someone scrolls down.
+    if (typeof IntersectionObserver === 'undefined') {
+      setLoadedUrl(url);
+      return;
+    }
+
+    const scrollRoot = container.closest<HTMLElement>('[data-match-dialog-scroller]');
+    let pendingLoad: number | null = null;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          if (pendingLoad === null) {
+            pendingLoad = window.setTimeout(() => {
+              setLoadedUrl(url);
+              observer.disconnect();
+            }, loadDelayMs);
+          }
+        } else if (pendingLoad !== null) {
+          window.clearTimeout(pendingLoad);
+          pendingLoad = null;
+        }
+      },
+      { root: scrollRoot, rootMargin: '0px 0px 24px 0px', threshold: 0.01 },
+    );
+
+    observer.observe(container);
+    return () => {
+      observer.disconnect();
+      if (pendingLoad !== null) window.clearTimeout(pendingLoad);
+    };
+  }, [youtubeEmbedUrl, url, loadedUrl, loadDelayMs]);
 
   if (youtubeEmbedUrl) {
     return (
-      <div className="py-4">
+      <div className="py-4" data-match-video-entry={label}>
         <p className="mb-3 text-sm font-bold text-brand-black">{label}</p>
-        <div className="aspect-video overflow-hidden bg-black">
-          <iframe
-            src={youtubeEmbedUrl}
-            title={`${label}比賽影片`}
-            className="h-full w-full border-0"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
+        <div ref={videoContainerRef} className="aspect-video overflow-hidden bg-black">
+          {loadedUrl === url && (
+            <iframe
+              src={youtubeEmbedUrl}
+              title={`${label}比賽影片`}
+              className="h-full w-full border-0"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          )}
         </div>
       </div>
     );

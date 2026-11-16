@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - season/2026-27
   push:
     branches:
       - season/2026-27
@@ -190,6 +191,12 @@ jobs:
         env:
           AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
         run: node scripts/validate-shared-match-dialog-return.mjs
+
+      - name: Validate all 2026/27 team rosters and their portraits
+        if: always()
+        env:
+          AUDIT_BASE_URL: http://127.0.0.1:4173/d-league
+        run: node scripts/validate-team-roster-ui.mjs
 
       - name: Validate return-state persistence
         env:

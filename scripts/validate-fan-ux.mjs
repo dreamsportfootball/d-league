@@ -62,6 +62,9 @@ for (const width of widths) {
     }
     const matchLink = spotlight.locator('a[href*="?match="]').first();
     await matchLink.waitFor({ state: 'visible' });
+    // Playwright click() scrolls off-screen elements into view. Capture the
+    // position after that scroll, otherwise the test reports a false failure.
+    await matchLink.scrollIntoViewIfNeeded();
     const scrollBeforeMatch = await page.evaluate(() => window.scrollY);
     await matchLink.click();
     const homeDialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');

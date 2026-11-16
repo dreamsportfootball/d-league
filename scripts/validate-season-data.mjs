@@ -260,6 +260,14 @@ for (const season of seasons) {
     if (match.resultType === 'DOUBLE_FORFEIT' && (match.homeScore !== null || match.awayScore !== null)) {
       fail(`${season} match ${match.id}: double forfeit must use null scores`);
     }
+    if (match.videoSourceNote !== undefined) {
+      if (typeof match.videoSourceNote !== 'string' || !match.videoSourceNote.trim()) {
+        fail(`${season} match ${match.id}: videoSourceNote must be a non-empty string`);
+      }
+      if (!match.videoUrl && !match.videoUrls?.firstHalf && !match.videoUrls?.secondHalf) {
+        fail(`${season} match ${match.id}: videoSourceNote requires a match video`);
+      }
+    }
     if (match.videoUrl !== undefined && !validExternalUrl(match.videoUrl)) {
       fail(`${season} match ${match.id}: invalid videoUrl`);
     }

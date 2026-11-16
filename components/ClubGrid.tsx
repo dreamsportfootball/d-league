@@ -107,13 +107,13 @@ const ClubGrid: React.FC = () => {
                 const className = "group flex w-[24vw] shrink-0 snap-center flex-col items-center transition-transform md:w-full";
                 const content = (
                   <>
-                    <div className="relative mb-3 flex h-14 w-14 items-center justify-center transition-all duration-300 md:mb-5 md:h-20 md:w-20">
-                      <div className="absolute inset-0 rounded-full bg-brand-black/5 opacity-0 blur-xl transition-opacity duration-300 md:group-hover:opacity-50" />
+                    <div className="relative mb-3 flex h-14 w-14 items-center justify-center md:mb-5 md:h-20 md:w-20">
+                      <div className="absolute inset-0 rounded-full bg-brand-blue/5 opacity-0 transition-opacity duration-150 md:group-hover:opacity-100" />
                       {club.logo && (
                         <img
                           src={club.logo}
                           alt={club.name}
-                          className="relative z-10 max-h-full max-w-full object-contain drop-shadow-md transition-all duration-500 md:grayscale-[30%] md:group-hover:grayscale-0"
+                          className="relative z-10 max-h-full max-w-full object-contain transition-transform duration-150 motion-safe:md:group-hover:scale-[1.04]"
                         />
                       )}
                     </div>
@@ -144,7 +144,7 @@ const ClubGrid: React.FC = () => {
                   <Link
                     key={club.key}
                     to={`/teams/${getTeamIdentity(club.team)}?season=${activeSeason.id}`}
-                    className={`${className} hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2`}
+                    className={`${className} active:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2`}
                     aria-label={`查看 ${club.name} 球隊頁`}
                     data-scroll-anchor-id={`home-club-grid:${club.key}`}
                   >

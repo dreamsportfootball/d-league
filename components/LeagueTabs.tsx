@@ -27,7 +27,7 @@ function LeagueTabs<T extends string>({
   };
 
   return (
-    <div className="mb-6 flex min-w-0 flex-wrap items-center justify-start gap-x-3 gap-y-2 border-b border-neutral-200 pb-3 md:mb-8 md:gap-x-4 md:pb-4">
+    <div className="mb-6 flex min-w-0 flex-wrap items-center justify-start gap-x-2.5 gap-y-2 border-b border-neutral-200 pb-3 md:mb-8 md:gap-x-3 md:pb-4">
       <h2 className="flex shrink-0 items-center font-display text-xs font-bold uppercase tracking-wider text-neutral-900 md:text-sm">
         <Trophy className="mr-1.5 h-4 w-4 text-brand-blue md:mr-2 md:h-5 md:w-5" aria-hidden="true" />
         選擇聯賽
@@ -36,7 +36,7 @@ function LeagueTabs<T extends string>({
       <div
         role="tablist"
         aria-label="選擇聯賽"
-        className="inline-flex max-w-full min-w-0 items-center gap-0.5 rounded-full border border-neutral-200 bg-white p-1 md:gap-1"
+        className="inline-flex max-w-full min-w-0 items-center gap-0.5 rounded-full border border-neutral-200 bg-white p-0.5 md:gap-0.5"
       >
         {options.map((option) => {
           const isActive = active === option;
@@ -48,7 +48,7 @@ function LeagueTabs<T extends string>({
               aria-selected={isActive}
               aria-label={desktopLabel(option)}
               onClick={() => onChange(option)}
-              className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-2 text-xs font-bold transition-[color,background-color] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-10 md:px-3 md:font-display md:text-[13px] md:tracking-wider lg:px-4 ${
+              className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-2 text-[11px] font-semibold transition-[color,background-color] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-0 md:px-3 md:font-display md:text-[11px] md:tracking-wide lg:px-3 ${
                 isActive
                   ? 'bg-brand-blue/10 text-brand-blue'
                   : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-blue'

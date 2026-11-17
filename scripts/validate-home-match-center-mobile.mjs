@@ -109,8 +109,8 @@ try {
         viewport.name + ': m2627-010 kit colors should be Wild Ape purple and Hongkongers black: ' + firstCardLayout.stripeColors.join(' | '));
       const lastCardStripeColors = await cards.last().evaluate((card) =>
         [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
-      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(192, 16, 16)', 'rgb(0, 43, 78)']),
-        viewport.name + ': m2627-015 must use Tainan Evergreen red home and KUROMI navy away: ' + lastCardStripeColors.join(' | '));
+      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(192, 16, 16)', 'rgb(255, 255, 255)']),
+        viewport.name + ': m2627-015 must use Tainan Evergreen red home and KUROMI white away: ' + lastCardStripeColors.join(' | '));
 
       assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
       for (const row of firstCardGeometry) {

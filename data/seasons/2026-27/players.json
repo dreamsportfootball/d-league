@@ -393,8 +393,7 @@
     "gender": "男",
     "nationality": "台灣",
     "age": 36,
-    "teamId": "t_kaohsiung_amateur_2026",
-    "birthDate": "1990-07-29"
+    "teamId": "t_kaohsiung_amateur_2026"
   },
   {
     "id": "ka26-02",
@@ -570,8 +569,7 @@
     "gender": "男",
     "nationality": "日本",
     "age": 41,
-    "teamId": "t_kaohsiung_amateur_2026",
-    "birthDate": "1985-09-15"
+    "teamId": "t_kaohsiung_amateur_2026"
   },
   {
     "id": "tq26-01",
@@ -1540,7 +1538,6 @@
     "englishName": "LIN HAO YU",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2007-06-10",
     "age": 19
   },
   {
@@ -2575,8 +2572,7 @@
     "englishName": "L. JOEL VEGA V",
     "gender": "男",
     "nationality": "尼加拉瓜",
-    "age": 37,
-    "birthDate": "1989-10-30"
+    "age": 37
   },
   {
     "id": "kbk26-02",
@@ -2587,8 +2583,7 @@
     "englishName": "WANG JIA WEI",
     "gender": "男",
     "nationality": "台灣",
-    "age": 34,
-    "birthDate": "1991-12-24"
+    "age": 34
   },
   {
     "id": "kbk26-03",
@@ -2599,8 +2594,7 @@
     "englishName": "MICHAEL STEIN LENIHAN",
     "gender": "男",
     "nationality": "愛爾蘭",
-    "age": 39,
-    "birthDate": "1987-03-31"
+    "age": 39
   },
   {
     "id": "kbk26-04",
@@ -2611,8 +2605,7 @@
     "englishName": "PATRICK BRYAN HAINES",
     "gender": "男",
     "nationality": "美國",
-    "age": 38,
-    "birthDate": "1988-03-02"
+    "age": 38
   },
   {
     "id": "kbk26-05",
@@ -2623,8 +2616,7 @@
     "englishName": "CHARLES NWANGI NJOROGE",
     "gender": "男",
     "nationality": "肯亞",
-    "age": 37,
-    "birthDate": "1989-08-02"
+    "age": 37
   },
   {
     "id": "kbk26-06",
@@ -2635,8 +2627,7 @@
     "englishName": "HLANDZE LIKHWA LETHU",
     "gender": "男",
     "nationality": "史瓦帝尼",
-    "age": 27,
-    "birthDate": "1999-08-12"
+    "age": 27
   },
   {
     "id": "kbk26-07",
@@ -2647,8 +2638,7 @@
     "englishName": "AHMED NADEEM KHALEEL KANDOURI",
     "gender": "男",
     "nationality": "伊拉克",
-    "age": 37,
-    "birthDate": "1989-02-05"
+    "age": 37
   },
   {
     "id": "kbk26-08",
@@ -2659,8 +2649,7 @@
     "englishName": "Lucas Matias Roa Espinola",
     "gender": "男",
     "nationality": "巴拉圭",
-    "age": 23,
-    "birthDate": "2002-11-07"
+    "age": 23
   },
   {
     "id": "kbk26-13",
@@ -2671,8 +2660,7 @@
     "englishName": "DOUGLAS ALEXANDER ALFARO",
     "gender": "男",
     "nationality": "薩爾瓦多",
-    "age": 32,
-    "birthDate": "1994-10-17"
+    "age": 32
   },
   {
     "id": "kbk26-09",
@@ -2683,8 +2671,7 @@
     "englishName": "LIAN YU XIANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 16,
-    "birthDate": "2010-04-09"
+    "age": 16
   },
   {
     "id": "kbk26-10",
@@ -2695,8 +2682,7 @@
     "englishName": "HUANG YEN PU",
     "gender": "男",
     "nationality": "台灣",
-    "age": 16,
-    "birthDate": "2009-11-06"
+    "age": 16
   },
   {
     "id": "kbk26-11",
@@ -2707,8 +2693,7 @@
     "englishName": "MANONGI DICKSON",
     "gender": "男",
     "nationality": "索羅門群島",
-    "age": 33,
-    "birthDate": "1993-07-10"
+    "age": 33
   },
   {
     "id": "kbk26-12",
@@ -2719,8 +2704,7 @@
     "englishName": "CHIANG PIN",
     "gender": "男",
     "nationality": "台灣",
-    "age": 21,
-    "birthDate": "2005-02-16"
+    "age": 21
   },
   {
     "id": "holy26-01",
@@ -3083,8 +3067,7 @@
     "englishName": "LIU JI LIANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 23,
-    "birthDate": "2002-11-09"
+    "age": 23
   },
   {
     "id": "ku26-02",
@@ -3095,8 +3078,7 @@
     "englishName": "LIN PO YU",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26,
-    "birthDate": "2000-09-23"
+    "age": 26
   },
   {
     "id": "ku26-03",
@@ -3107,8 +3089,7 @@
     "englishName": "HSIEH PO HSIANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26,
-    "birthDate": "2000-09-27"
+    "age": 26
   },
   {
     "id": "ku26-04",
@@ -3119,8 +3100,7 @@
     "englishName": "Lin Jin Wei",
     "gender": "男",
     "nationality": "台灣",
-    "age": 24,
-    "birthDate": "2001-11-02"
+    "age": 24
   },
   {
     "id": "ku26-05",
@@ -3131,8 +3111,7 @@
     "englishName": "Wang Po-Yuan",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26,
-    "birthDate": "2000-07-28"
+    "age": 26
   },
   {
     "id": "ku26-06",
@@ -3143,8 +3122,7 @@
     "englishName": "CHAO HSUEH PANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26,
-    "birthDate": "2000-08-01"
+    "age": 26
   },
   {
     "id": "ku26-07",
@@ -3155,8 +3133,7 @@
     "englishName": "Lu Kuan Yu",
     "gender": "男",
     "nationality": "台灣",
-    "age": 26,
-    "birthDate": "1999-12-19"
+    "age": 26
   },
   {
     "id": "ku26-08",
@@ -3167,8 +3144,7 @@
     "englishName": "YEN SHIH-TSUNG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 41,
-    "birthDate": "1985-10-12"
+    "age": 41
   },
   {
     "id": "ku26-09",
@@ -3179,8 +3155,7 @@
     "englishName": "CHAO HSUEH KE",
     "gender": "男",
     "nationality": "台灣",
-    "age": 28,
-    "birthDate": "1998-07-20"
+    "age": 28
   },
   {
     "id": "ku26-10",
@@ -3191,8 +3166,7 @@
     "englishName": "Chen Meng Zong",
     "gender": "男",
     "nationality": "台灣",
-    "age": 39,
-    "birthDate": "1987-10-27"
+    "age": 39
   },
   {
     "id": "ku26-11",
@@ -3203,8 +3177,7 @@
     "englishName": "David Chiu Li",
     "gender": "男",
     "nationality": "宏都拉斯",
-    "age": 30,
-    "birthDate": "1996-01-19"
+    "age": 30
   },
   {
     "id": "ku26-12",
@@ -3215,8 +3188,7 @@
     "englishName": "HSUEH CHIEN HUANG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 37,
-    "birthDate": "1988-12-26"
+    "age": 37
   },
   {
     "id": "ku26-13",
@@ -3227,8 +3199,7 @@
     "englishName": "Daniel Alonso Leon Ugalde",
     "gender": "男",
     "nationality": "哥斯大黎加",
-    "age": 25,
-    "birthDate": "2001-02-08"
+    "age": 25
   },
   {
     "id": "ku26-14",
@@ -3239,8 +3210,7 @@
     "englishName": "WENG Ji Wi",
     "gender": "男",
     "nationality": "台灣",
-    "age": 24,
-    "birthDate": "2002-04-30"
+    "age": 24
   },
   {
     "id": "ku26-15",
@@ -3251,8 +3221,7 @@
     "englishName": "CHEN GUANG CHAN",
     "gender": "男",
     "nationality": "台灣",
-    "age": 38,
-    "birthDate": "1988-03-23"
+    "age": 38
   },
   {
     "id": "ku26-16",
@@ -3263,8 +3232,7 @@
     "englishName": "YEN TING HAN",
     "gender": "男",
     "nationality": "台灣",
-    "age": 30,
-    "birthDate": "1996-04-19"
+    "age": 30
   },
   {
     "id": "ku26-17",
@@ -3275,8 +3243,7 @@
     "englishName": "LAM YIU KEUNG",
     "gender": "男",
     "nationality": "台灣",
-    "age": 43,
-    "birthDate": "1983-04-29"
+    "age": 43
   },
   {
     "id": "ku26-18",
@@ -3287,8 +3254,7 @@
     "englishName": "Fang Jian Ping",
     "gender": "男",
     "nationality": "台灣",
-    "age": 36,
-    "birthDate": "1990-04-22"
+    "age": 36
   },
   {
     "id": "ku26-19",
@@ -3299,8 +3265,7 @@
     "englishName": "LIU CHIA HSING",
     "gender": "男",
     "nationality": "台灣",
-    "age": 33,
-    "birthDate": "1992-12-10"
+    "age": 33
   },
   {
     "id": "ku26-20",
@@ -3311,8 +3276,7 @@
     "englishName": "WU JIAHUA",
     "gender": "男",
     "nationality": "台灣",
-    "age": 28,
-    "birthDate": "1998-09-17"
+    "age": 28
   },
   {
     "id": "ns26-01",
@@ -3323,7 +3287,6 @@
     "englishName": "WONG CHI SHING",
     "gender": "男",
     "nationality": "香港",
-    "birthDate": "1993-10-10",
     "age": 33
   },
   {
@@ -3335,7 +3298,6 @@
     "englishName": "SHU YU LI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1984-09-07",
     "age": 42
   },
   {
@@ -3347,7 +3309,6 @@
     "englishName": "WANG JUN HONG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2001-06-25",
     "age": 25
   },
   {
@@ -3359,7 +3320,6 @@
     "englishName": "YU KE YUAN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1995-02-12",
     "age": 31
   },
   {
@@ -3371,7 +3331,6 @@
     "englishName": "YU KE WEI",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1989-06-12",
     "age": 37
   },
   {
@@ -3383,7 +3342,6 @@
     "englishName": "WU YU SHENG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2003-05-13",
     "age": 23
   },
   {
@@ -3395,7 +3353,6 @@
     "englishName": "CHENG CHO HANG",
     "gender": "男",
     "nationality": "香港",
-    "birthDate": "2000-06-12",
     "age": 26
   },
   {
@@ -3407,7 +3364,6 @@
     "englishName": "KUO I CHEN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2004-12-22",
     "age": 21
   },
   {
@@ -3419,7 +3375,6 @@
     "englishName": "YANG CHIEH JUH",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2007-08-07",
     "age": 19
   },
   {
@@ -3431,7 +3386,6 @@
     "englishName": "SO JHIH LONG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2004-01-26",
     "age": 22
   },
   {
@@ -3443,7 +3397,6 @@
     "englishName": "XUE YI YUN",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2003-05-22",
     "age": 23
   },
   {
@@ -3455,7 +3408,6 @@
     "englishName": "LIN HUNG MAO",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1986-06-19",
     "age": 40
   },
   {
@@ -3467,7 +3419,6 @@
     "englishName": "HUI HON KUEN",
     "gender": "男",
     "nationality": "香港",
-    "birthDate": "2000-05-02",
     "age": 26
   },
   {
@@ -3479,7 +3430,6 @@
     "englishName": "WONG SAU CHUN",
     "gender": "男",
     "nationality": "香港",
-    "birthDate": "1995-08-25",
     "age": 31
   },
   {
@@ -3491,7 +3441,6 @@
     "englishName": "CHEN HSUEH CHANG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "1992-11-28",
     "age": 33
   },
   {
@@ -3503,7 +3452,6 @@
     "englishName": "WEI CHIA CHENG",
     "gender": "男",
     "nationality": "台灣",
-    "birthDate": "2002-04-28",
     "age": 24
   },
   {
@@ -3515,7 +3463,6 @@
     "englishName": "TAM WANG CHI",
     "gender": "男",
     "nationality": "香港",
-    "birthDate": "2001-09-12",
-    "age": 24
+    "age": 25
   }
 ]

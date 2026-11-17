@@ -7,12 +7,24 @@ const nextMatch = fixtures.find((match) => match.status === 'SCHEDULED' && Date.
 const widths = [375, 390, 768, 1024, 1280, 1440];
 const browser = await chromium.launch({ headless: true });
 const failures = [];
-const assertLeagueTabsWork = async (page, label) => {
-  // At every viewport the user should switch L1/L2/L3 without opening a filter drawer.
+const assertLeagueTabsWork = async (page, label, width, leagueCount = 3, hasAll = false) => {
   const tabs = page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible');
+  const expectedLabels = Array.from({ length: leagueCount }, (_, i) =>
+    width < 768 ? `L${i + 1}` : `LEAGUE ${i + 1}`);
+  if (hasAll) expectedLabels.unshift('全部');
   await tabs.first().waitFor({ state: 'visible' });
-  if (await tabs.count() !== 3) throw new Error(label + ': expected three visible league tabs');
-  for (const index of [1, 2, 0]) {
+  if (await tabs.count() !== expectedLabels.length) {
+    throw new Error(label + ': expected ' + expectedLabels.length + ' visible league tabs');
+  }
+  for (const [index, expected] of expectedLabels.entries()) {
+    const actual = (await tabs.nth(index).innerText()).trim();
+    if (actual !== expected) {
+      throw new Error(label + ': expected "' + expected + '", received "' + actual + '" at ' + width + 'px');
+    }
+    const height = await tabs.nth(index).evaluate((button) => button.getBoundingClientRect().height);
+    if (height < 44 && width < 768) throw new Error(label + ': league tab hit area below 44px');
+  }
+  for (const index of [expectedLabels.length - 1, 1, 0]) {
     await tabs.nth(index).click();
     await page.waitForFunction((targetIndex) => {
       const visible = [...document.querySelectorAll('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]')]
@@ -126,15 +138,23 @@ for (const width of widths) {
     if (overflow > 3) throw new Error('homepage horizontal overflow ' + overflow + ' px');
 
     await page.goto(base + '/#/standings?season=2026-27', { waitUntil: 'domcontentloaded' });
-    const legend = page.getByLabel('升降級順位說明');
-    await legend.waitFor({ state: 'visible' });
-    if (!((await legend.textContent()) ?? '').includes('暫定降級區')) {
-      throw new Error('league 1 provisional relegation legend absent');
+    if (await page.getByLabel('升降級順位說明').count()) {
+      throw new Error('standings still renders the removed provisional promotion/relegation explanation');
     }
-    await assertLeagueTabsWork(page, 'standings');
+    const standingsText = await page.locator('main').innerText();
+    if (standingsText.includes('暫定升級區 · 前') || standingsText.includes('最終順位依賽季結算及競賽規程認定')) {
+      throw new Error('standings still contains removed explanatory copy');
+    }
+    await assertLeagueTabsWork(page, 'standings', width);
 
     await page.goto(base + '/#/stats?season=2026-27', { waitUntil: 'domcontentloaded' });
-    await assertLeagueTabsWork(page, 'stats');
+    await assertLeagueTabsWork(page, 'stats', width);
+
+    await page.goto(base + '/#/schedule?season=2026-27', { waitUntil: 'domcontentloaded' });
+    await assertLeagueTabsWork(page, 'schedule', width, 3, true);
+
+    await page.goto(base + '/#/standings?season=2025-26', { waitUntil: 'domcontentloaded' });
+    await assertLeagueTabsWork(page, 'historical standings', width, 2);
 
     await page.goto(base + '/#/media?season=2026-27', { waitUntil: 'domcontentloaded' });
     // The first image in the document is the always-visible header logo.

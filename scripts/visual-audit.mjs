@@ -200,22 +200,33 @@ const auditViewport = async (viewport) => {
 
       if (route.name === 'standings-2026') {
         const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
-        const visibleLeagueTabs = await page.locator('[role="tab"]:visible').evaluateAll((elements) =>
-          elements.filter((element) => /^L[123]$/.test(element.textContent?.trim() ?? '')).length,
-        );
+        const visibleLeagueLabels = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').allInnerTexts();
+        const expectedLeagueLabels = viewport.width < 768
+          ? ['L1', 'L2', 'L3']
+          : ['LEAGUE 1', 'LEAGUE 2', 'LEAGUE 3'];
         const filterControlVisible = await page.getByRole('button', { name: '篩選積分榜' }).isVisible();
         assert('standings-shows-season-league-summary', diagnostics.bodyText.includes(expectedStatusLabel), `Expected ${expectedStatusLabel}`);
         assert('standings-shows-filter-control', filterControlVisible, 'Expected visible standings filter control');
-        assert('standings-shows-inline-league-tabs', visibleLeagueTabs === 3, `Expected L1/L2/L3; found ${visibleLeagueTabs} visible tab(s)`);
+        assert('standings-shows-inline-league-tabs',
+          JSON.stringify(visibleLeagueLabels.map((label) => label.trim())) === JSON.stringify(expectedLeagueLabels),
+          `Expected ${expectedLeagueLabels.join('/')}; found ${visibleLeagueLabels.join('/')}`);
+        assert('standings-removes-provisional-disclaimer',
+          !diagnostics.bodyText.includes('暫定升級區 · 前') &&
+          !diagnostics.bodyText.includes('最終順位依賽季結算及競賽規程認定'),
+          'Provisional promotion disclaimer should not be displayed');
         assert('standings-summary-hides-team-count', !diagnostics.bodyText.includes('支球隊'), 'Team count must not appear');
       }
 
       if (route.name === 'stats-2026') {
         const expectedStatsLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         assert('stats-summary-has-season-league', diagnostics.bodyText.includes(expectedStatsLabel), `Expected ${expectedStatsLabel}`);
-        const visibleStatsLeagueTabs = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').count();
-        assert('stats-shows-inline-league-tabs', visibleStatsLeagueTabs === 3,
-          `Expected L1/L2/L3; found ${visibleStatsLeagueTabs} visible tab(s)`);
+        const visibleStatsLeagueLabels = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').allInnerTexts();
+        const expectedStatsLeagueLabels = viewport.width < 768
+          ? ['L1', 'L2', 'L3']
+          : ['LEAGUE 1', 'LEAGUE 2', 'LEAGUE 3'];
+        assert('stats-shows-inline-league-tabs',
+          JSON.stringify(visibleStatsLeagueLabels.map((label) => label.trim())) === JSON.stringify(expectedStatsLeagueLabels),
+          `Expected ${expectedStatsLeagueLabels.join('/')}; found ${visibleStatsLeagueLabels.join('/')}`);
       }
 
       if (route.name === 'stats-2025') {

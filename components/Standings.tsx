@@ -132,23 +132,6 @@ const Standings: React.FC<StandingsProps> = ({ league, variant = 'page', seasonI
 
   return (
     <div ref={standingsContainerRef} className="w-full">
-      {leagueConfig && (leagueConfig.promotionPlaces > 0 || leagueConfig.relegationPlaces > 0) && standings.some((row) => row.played > 0) && (
-        <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-neutral-100 pb-4 text-xs font-semibold text-neutral-600" aria-label="升降級順位說明">
-          {leagueConfig.promotionPlaces > 0 && (
-            <span className="inline-flex items-center gap-2">
-              <span className="h-4 w-1 bg-green-500" aria-hidden="true" />
-              {activeSeason.status === 'completed' ? '升級區' : '暫定升級區'} · 前 {leagueConfig.promotionPlaces} 名
-            </span>
-          )}
-          {leagueConfig.relegationPlaces > 0 && (
-            <span className="inline-flex items-center gap-2">
-              <span className="h-4 w-1 bg-red-500" aria-hidden="true" />
-              {activeSeason.status === 'completed' ? '降級區' : '暫定降級區'} · 後 {leagueConfig.relegationPlaces} 名
-            </span>
-          )}
-          {activeSeason.status !== 'completed' && <span className="text-[11px] font-normal text-neutral-500">最終順位依賽季結算及競賽規程認定</span>}
-        </div>
-      )}
       <div className="mb-2 flex justify-end md:hidden">
         <button
           type="button"

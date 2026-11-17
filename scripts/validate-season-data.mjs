@@ -70,6 +70,18 @@ if (existsSync(importDirectory)) {
   }
 }
 
+// Audit notes are tracked in a public repository. Do not publish source
+// roster spreadsheets or private workspace links in diagnostic documents.
+const auditDirectory = join(root, 'audit');
+if (existsSync(auditDirectory)) {
+  for (const filename of readdirSync(auditDirectory).filter((name) => name.endsWith('.md'))) {
+    const notes = readFileSync(join(auditDirectory, filename), 'utf8');
+    if (/https?:\/\/(?:docs\.google\.com\/spreadsheets\/d\/|(?:www\.)?notion\.so\/|app\.notion\.com\/)/i.test(notes)) {
+      fail('public audit note leaks an internal source link: ' + filename);
+    }
+  }
+}
+
 for (const season of seasons) {
   const teams = read(season, 'teams.json');
   const players = read(season, 'players.json');

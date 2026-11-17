@@ -4,7 +4,7 @@
 
 ## 來源與驗收依據
 
-- Google Drive 球隊 Excel：[銅雀.xls](https://docs.google.com/spreadsheets/d/1GM2dL8fiaNihOH81ba6ZZPdwXKTycfD0/edit)
+- Google Drive 球隊 Excel：[銅雀.xls]([內部來源連結已隱去])
 - Google Drive 同隊相片：[銅雀足球俱樂部](https://drive.google.com/drive/folders/13z6Hyrf73mk5TVRyqAOecuSghwkaLKx5)
 - GitHub 當季球員索引：`data/seasons/2026-27/players.json`、`playerImages.json`
 - 現用照片：`public/assets/seasons/2026-27/players/tq26-*.png`

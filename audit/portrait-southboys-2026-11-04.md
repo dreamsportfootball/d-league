@@ -1,7 +1,7 @@
 # SOUTHBOYS FC｜2026/27 人物頭像原圖及二次裁切（2026-11-04）
 
 ## Owner 標準與來源
-- 原始登錄資料：Google Drive [south.xlsx](https://docs.google.com/spreadsheets/d/1YYn2C4GPk0J4dFfu0HGUf2HOnZ2bROZX/edit)，從 `xl/media` 提取完整內嵌照片，使用 `xl/drawings/drawing1.xml` 圖像錨點和原始球員登錄列核實名字。不是使用 Excel 預覽縮圖。
+- 原始登錄資料：Google Drive [south.xlsx]([內部來源連結已隱去])，從 `xl/media` 提取完整內嵌照片，使用 `xl/drawings/drawing1.xml` 圖像錨點和原始球員登錄列核實名字。不是使用 Excel 預覽縮圖。
 - 15 位登錄球員，2 筆隊職員（領隊劉駿輝也是 #15 球員、管理陳美玲另外登錄），實際 **16 位不同人物**。姓名、球隊、級別、賽果及歷史賽季完全不變。
 - 使用 Notion 正式規範、`docs/portrait-avatar-framing-standard.md`；KUROMI #16 巫嘉德及台南長青 #21 吳進偉為取景比較基準。應在 48／104／160px 圓形內保留完整髮頂、下巴及面部，不能以「圖片解碼成功」代表視覺合格。
 - 全隊逐張對比 Excel 內嵌原圖和本季網站映射，現有頭像均與同隊姓名對應。對長方形或全身照另製 720×720 WebP，只裁切／有限延伸原照背景，不修改五官或任意拉伸面部，避免在 CSS 中以過大倍率和位移截掉頭部。

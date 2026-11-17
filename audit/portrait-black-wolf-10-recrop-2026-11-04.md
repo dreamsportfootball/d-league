@@ -4,7 +4,7 @@
 Owner 明確判定 #10 王廷夫的大頭照不合格。原本本季網站使用 `bw26-16.png`（214×285），是低解析度直式縮圖，在 48／104／160px 圓形中人物比例過大，會切去髮頂和下巴；先前影像已解碼和圓形遮罩通過並不等於 Owner 驗收通過。
 
 ## 原始來源
-[黑狼 FC 2026/27 登錄 Excel](https://docs.google.com/spreadsheets/d/138qYWAFXyJ9Y8YNM2RTbTX02iZWSs6gc/edit)，工作表球員 #10 對應第 29 列、`xl/media/` JPEG 內嵌原圖 1108×1477。同人原圖比現有網站 214×285 缩圖清晰，使用 Excel 嵌入 JPEG，不是儲存格預覽截圖。
+[黑狼 FC 2026/27 登錄 Excel]([內部來源連結已隱去])，工作表球員 #10 對應第 29 列、`xl/media/` JPEG 內嵌原圖 1108×1477。同人原圖比現有網站 214×285 缩圖清晰，使用 Excel 嵌入 JPEG，不是儲存格預覽截圖。
 
 ## 實際修改
 - 新增 `public/assets/seasons/2026-27/players/bw26-16-excel-portrait-20261104.webp`（720×720 WebP；59,300 bytes）。

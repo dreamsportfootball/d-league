@@ -36,7 +36,7 @@ function LeagueTabs<T extends string>({
       <div
         role="tablist"
         aria-label="選擇聯賽"
-        className="flex min-w-0 max-w-full flex-wrap items-center justify-start gap-1.5 md:gap-2"
+        className="inline-flex max-w-full min-w-0 items-center gap-0.5 rounded-full border border-neutral-200 bg-white p-1 md:gap-1"
       >
         {options.map((option) => {
           const isActive = active === option;
@@ -48,10 +48,10 @@ function LeagueTabs<T extends string>({
               aria-selected={isActive}
               aria-label={desktopLabel(option)}
               onClick={() => onChange(option)}
-              className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border bg-white px-2.5 text-xs font-bold transition-[border-color,color,background-color] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-11 md:px-4 md:font-display md:text-[13px] md:tracking-wider ${
+              className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-2 text-xs font-bold transition-[color,background-color] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-10 md:px-3 md:font-display md:text-[13px] md:tracking-wider lg:px-4 ${
                 isActive
-                  ? 'border-brand-blue text-brand-blue'
-                  : 'border-neutral-300 text-neutral-700 hover:border-brand-blue hover:text-brand-blue'
+                  ? 'bg-brand-blue/10 text-brand-blue'
+                  : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-blue'
               }`}
             >
               <span className="md:hidden">{mobileLabel(option)}</span>

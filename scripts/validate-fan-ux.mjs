@@ -19,11 +19,12 @@ const assertLeagueTabsWork = async (page, label, width, leagueCount = 3, hasAll 
   // The league controls must match the approved white pill reference,
   // and sit directly beside "選擇聯賽" instead of floating at the far right.
   const pillLayout = await tabs.first().evaluate((button) => {
-    const heading = button.closest('[role="tablist"]')?.parentElement?.querySelector('h2');
-    if (!heading) return null;
+    const capsule = button.closest('[role="tablist"]');
+    const heading = capsule?.parentElement?.querySelector('h2');
+    if (!heading || !capsule) return null;
     const headingBounds = heading.getBoundingClientRect();
-    const pillBounds = button.getBoundingClientRect();
-    const style = getComputedStyle(button);
+    const pillBounds = capsule.getBoundingClientRect();
+    const style = getComputedStyle(capsule);
     return {
       gap: pillBounds.left - headingBounds.right,
       centerOffset: Math.abs((pillBounds.top + pillBounds.height / 2) - (headingBounds.top + headingBounds.height / 2)),
@@ -38,7 +39,7 @@ const assertLeagueTabsWork = async (page, label, width, leagueCount = 3, hasAll 
   }
   if (pillLayout.background !== 'rgb(255, 255, 255)' ||
       pillLayout.radius < pillLayout.height * 0.4 || pillLayout.borderWidth !== '1px') {
-    throw new Error(label + ': league controls must be white outlined capsules: ' + JSON.stringify(pillLayout));
+    throw new Error(label + ': league switcher must use one white outlined capsule: ' + JSON.stringify(pillLayout));
   }
 
   for (const [index, expected] of expectedLabels.entries()) {

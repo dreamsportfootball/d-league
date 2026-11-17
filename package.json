@@ -13,7 +13,7 @@
     "enrich:seo": "node scripts/enrich-static-data-pages.mjs && node scripts/fix-legacy-static-entities.mjs && node scripts/finalize-static-seo.mjs && node scripts/normalize-static-shirt-numbers.mjs",
     "validate:seo": "node scripts/validate-static-seo.mjs && node scripts/validate-round-static-seo.mjs && node scripts/validate-data-static-seo.mjs",
     "optimize:images": "node scripts/optimize-images.mjs",
-    "build:site": "vite build && node scripts/validate-public-build-security.mjs && npm run generate:seo && npm run enrich:seo && npm run validate:seo",
+    "build:site": "vite build && npm run generate:seo && npm run enrich:seo && npm run validate:seo && node scripts/validate-public-build-security.mjs",
     "build": "npm run typecheck && npm run validate:data && npm run build:site",
     "preview": "vite preview",
     "predeploy": "npm run build",

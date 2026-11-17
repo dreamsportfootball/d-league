@@ -1,7 +1,7 @@
 # SF 足球俱樂部｜2026/27 全隊頭像第二輪逐人驗收（2026-11-04）
 
 ## 驗收來源及基準
-- 原始球隊登錄：[SF 足球俱樂部.xlsx](https://docs.google.com/spreadsheets/d/1AbNhjfgtDhz_aGRLWTlTpMTNLT5QUVTa/edit)，直接讀取 `xl/media/` 內嵌圖片，依 `xl/drawings/drawing1.xml` 的儲存格錨點核對本人，不使用 Excel 預覽縮圖。
+- 原始球隊登錄：[SF 足球俱樂部.xlsx]([內部來源連結已隱去])，直接讀取 `xl/media/` 內嵌圖片，依 `xl/drawings/drawing1.xml` 的儲存格錨點核對本人，不使用 Excel 預覽縮圖。
 - 20 名球員、3 筆隊職員；管理許凱昱為 #6、教練鄭詠翰為 #12，領隊吳孟容另外登錄，**21 位不同人物**。
 - 核對 2026/27 `players.json`、`teams.json`、`playerImages.json` 與網站 2026-10-30／31 實際 390px、1280px 人像稽核截圖，依 Notion 人物頭像 SOP、`docs/portrait-avatar-framing-standard.md` 與 Owner 已核准的 KUROMI #16 巫嘉德／台南長青 #21 吳進偉構圖標準，髮頂與下巴優先。
 - 本批照片只做裁切、單純旋轉或等比例縮放，**不生成或改變五官**。沒有更換球員身份、球衣背號、賽事數據，保護已核准其他球隊與 2025/26 歷史資料。

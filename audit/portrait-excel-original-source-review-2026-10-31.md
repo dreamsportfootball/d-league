@@ -5,12 +5,12 @@
 使用 Google Drive 中各球隊提交的**原始 .xlsx**，直接從 `xl/media/` 圖片封裝擷取原始位元資料，比對 2026/27 網站圖片的像素尺寸、內容和實際 48px／104px／160px 圓形裁切。**不是**以 Excel 預覽或截圖代替原圖。圖片品質判斷同時考慮是否正面、臉部在原圖中所佔比例、光線／對焦／遮擋，而不只比較像素數字。
 
 來源：
-- [黑狼FC.xlsx](https://docs.google.com/spreadsheets/d/138qYWAFXyJ9Y8YNM2RTbTX02iZWSs6gc/edit)
-- [高雄香港人足球俱樂部.xlsx](https://docs.google.com/spreadsheets/d/1LN4iKHQKCEA8rD7xbjz2clk-CMhnTL1F/edit)
-- [陳公.xlsx](https://docs.google.com/spreadsheets/d/1zvy-DZHKxnKe2HS_C1ELsID9JOcxQfcf/edit)
-- [阿蓮.xlsx](https://docs.google.com/spreadsheets/d/1Mk-7sz7EejcARl5ICuDariN_iXBWmeZL/edit)
-- [黑騎士.xlsx](https://docs.google.com/spreadsheets/d/1h9gWPDX_SKfqf5l7PtB7bL-KSjkiCciM/edit)
-- [嘉義235 FC.xlsx](https://docs.google.com/spreadsheets/d/1vqPmAAb1l-THPRg3Qu6DHe5d9BEgmccC/edit)
+- [黑狼FC.xlsx]([內部來源連結已隱去])
+- [高雄香港人足球俱樂部.xlsx]([內部來源連結已隱去])
+- [陳公.xlsx]([內部來源連結已隱去])
+- [阿蓮.xlsx]([內部來源連結已隱去])
+- [黑騎士.xlsx]([內部來源連結已隱去])
+- [嘉義235 FC.xlsx]([內部來源連結已隱去])
 
 ## 已可從 Excel 取得較清晰原圖，已替換
 

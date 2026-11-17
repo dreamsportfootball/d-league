@@ -1,4 +1,3 @@
-import { getSeasonConfig } from '../config/seasons';
 import { MATCH_VENUE_NAME } from '../config/siteConfig';
 import { SEASON_IDS } from '../config/siteManifest.js';
 import playerIdentityAliases from '../data/playerIdentityAliases.json';

@@ -16,6 +16,31 @@ const assertLeagueTabsWork = async (page, label, width, leagueCount = 3, hasAll 
   if (await tabs.count() !== expectedLabels.length) {
     throw new Error(label + ': expected ' + expectedLabels.length + ' visible league tabs');
   }
+  // The league controls must match the approved white pill reference,
+  // and sit directly beside "選擇聯賽" instead of floating at the far right.
+  const pillLayout = await tabs.first().evaluate((button) => {
+    const heading = button.closest('[role="tablist"]')?.parentElement?.querySelector('h2');
+    if (!heading) return null;
+    const headingBounds = heading.getBoundingClientRect();
+    const pillBounds = button.getBoundingClientRect();
+    const style = getComputedStyle(button);
+    return {
+      gap: pillBounds.left - headingBounds.right,
+      centerOffset: Math.abs((pillBounds.top + pillBounds.height / 2) - (headingBounds.top + headingBounds.height / 2)),
+      radius: Number.parseFloat(style.borderTopLeftRadius),
+      height: pillBounds.height,
+      background: style.backgroundColor,
+      borderWidth: style.borderTopWidth,
+    };
+  });
+  if (!pillLayout || pillLayout.gap < 0 || pillLayout.gap > 24 || pillLayout.centerOffset > 8) {
+    throw new Error(label + ': league pills must align immediately beside the heading: ' + JSON.stringify(pillLayout));
+  }
+  if (pillLayout.background !== 'rgb(255, 255, 255)' ||
+      pillLayout.radius < pillLayout.height * 0.4 || pillLayout.borderWidth !== '1px') {
+    throw new Error(label + ': league controls must be white outlined capsules: ' + JSON.stringify(pillLayout));
+  }
+
   for (const [index, expected] of expectedLabels.entries()) {
     const actual = (await tabs.nth(index).innerText()).trim();
     if (actual !== expected) {

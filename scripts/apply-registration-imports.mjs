@@ -7,6 +7,11 @@ const importsDir = join(dir, 'registrationImports');
 const teamsPath = join(dir, 'teams.json');
 const playersPath = join(dir, 'players.json');
 const fail = (reason) => { throw new Error('registration imports: ' + reason); };
+const FORBIDDEN_PUBLIC_FIELDS = /^(?:birthDate|dateOfBirth|birthday|nationalId|identityNumber|idNumber|passportNumber|phone|phoneNumber|mobile|email|address|homeAddress|emergencyContact|medicalInformation|medicalHistory|insuranceNumber)$/i;
+const rejectPrivateFields = (record, label) => {
+  const privateFields = Object.keys(record).filter((key) => FORBIDDEN_PUBLIC_FIELDS.test(key));
+  if (privateFields.length) fail(label + ': private fields cannot be imported into the public roster: ' + privateFields.join(', '));
+};
 const args = process.argv.slice(2);
 if (args.some((arg) => arg !== '--replace-existing')) fail('unsupported argument (only --replace-existing allowed)');
 const replace = args.includes('--replace-existing');
@@ -29,6 +34,7 @@ const importedTeamIds = new Set();
 for (const fileName of files) {
   const payload = JSON.parse(readFileSync(join(importsDir, fileName), 'utf8'));
   const team = payload?.team;
+  for (const staffMember of team?.staff ?? []) rejectPrivateFields(staffMember, fileName + ' staff');
   if (!team || typeof team !== 'object' || Array.isArray(team)) fail(fileName + ': missing team');
   if (!Array.isArray(payload.players)) fail(fileName + ': missing players');
   if (team.seasonId !== CURRENT_SEASON_ID) fail(fileName + ': wrong season');
@@ -43,6 +49,7 @@ for (const fileName of files) {
   const incoming = payload.players.map((p, index) => {
     const label = fileName + ' player ' + (index + 1);
     if (!p || typeof p !== 'object' || Array.isArray(p)) fail(label + ': invalid player');
+    rejectPrivateFields(p, label);
     if (p.teamId !== team.id) fail(label + ': teamId mismatch');
     if (typeof p.id !== 'string' || !p.id.trim() || ids.has(p.id)) fail(label + ': invalid/duplicate player id');
     ids.add(p.id);

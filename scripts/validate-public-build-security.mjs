@@ -5,7 +5,7 @@ const distDir = join(process.cwd(), 'dist');
 const forbiddenExtensions = new Set(['.map', '.env', '.pem', '.key', '.p12', '.pfx']);
 const textExtensions = new Set(['.js', '.html', '.json', '.txt', '.xml', '.css']);
 const forbiddenContents = [
-  { label: 'unpublished player birth date', pattern: /\\bbirthDate\\b/ },
+  { label: 'unpublished player birth date', pattern: /\bbirthDate\b/ },
   { label: 'private service-account credentials', pattern: /(?:GA4_SERVICE_ACCOUNT_JSON|GEMINI_API_KEY|BEGIN (?:RSA |EC )?PRIVATE KEY|private_key|client_secret)/ },
   { label: 'embedded provider key/token', pattern: /(?:AIza[0-9A-Za-z_-]{35}|gh[pousr]_[A-Za-z0-9_]{30,}|sk_(?:live|test)_[A-Za-z0-9]{20,})/ },
 ];
@@ -23,7 +23,7 @@ const visit = async (directory) => {
     if (!entry.isFile()) continue;
     const path = relative(distDir, fullPath);
     const ext = extname(path).toLowerCase();
-    if (forbiddenExtensions.has(ext) || /(?:^|\\/)\\.env(?:\\.|$)/.test(path)) {
+    if (forbiddenExtensions.has(ext) || /(?:^|\/)\.env(?:\.|$)/.test(path)) {
       failures.push(path + ': secret, environment or source-map file included in public build');
       continue;
     }

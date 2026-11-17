@@ -45,7 +45,6 @@
       "englishName": "WONG CHI SHING",
       "gender": "男",
       "nationality": "香港",
-      "birthDate": "1993-10-10",
       "age": 33
     },
     {
@@ -57,7 +56,6 @@
       "englishName": "SHU YU LI",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "1984-09-07",
       "age": 42
     },
     {
@@ -69,7 +67,6 @@
       "englishName": "WANG JUN HONG",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2001-06-25",
       "age": 25
     },
     {
@@ -81,7 +78,6 @@
       "englishName": "YU KE YUAN",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "1995-02-12",
       "age": 31
     },
     {
@@ -93,7 +89,6 @@
       "englishName": "YU KE WEI",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "1989-06-12",
       "age": 37
     },
     {
@@ -105,7 +100,6 @@
       "englishName": "WU YU SHENG",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2003-05-13",
       "age": 23
     },
     {
@@ -117,7 +111,6 @@
       "englishName": "CHENG CHO HANG",
       "gender": "男",
       "nationality": "香港",
-      "birthDate": "2000-06-12",
       "age": 26
     },
     {
@@ -129,7 +122,6 @@
       "englishName": "KUO I CHEN",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2004-12-22",
       "age": 21
     },
     {
@@ -141,7 +133,6 @@
       "englishName": "YANG CHIEH JUH",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2007-08-07",
       "age": 19
     },
     {
@@ -153,7 +144,6 @@
       "englishName": "SO JHIH LONG",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2004-01-26",
       "age": 22
     },
     {
@@ -165,7 +155,6 @@
       "englishName": "XUE YI YUN",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2003-05-22",
       "age": 23
     },
     {
@@ -177,7 +166,6 @@
       "englishName": "LIN HUNG MAO",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "1986-06-19",
       "age": 40
     },
     {
@@ -189,7 +177,6 @@
       "englishName": "HUI HON KUEN",
       "gender": "男",
       "nationality": "香港",
-      "birthDate": "2000-05-02",
       "age": 26
     },
     {
@@ -201,7 +188,6 @@
       "englishName": "WONG SAU CHUN",
       "gender": "男",
       "nationality": "香港",
-      "birthDate": "1995-08-25",
       "age": 31
     },
     {
@@ -213,7 +199,6 @@
       "englishName": "CHEN HSUEH CHANG",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "1992-11-28",
       "age": 33
     },
     {
@@ -225,7 +210,6 @@
       "englishName": "WEI CHIA CHENG",
       "gender": "男",
       "nationality": "台灣",
-      "birthDate": "2002-04-28",
       "age": 24
     },
     {
@@ -237,8 +221,7 @@
       "englishName": "TAM WANG CHI",
       "gender": "男",
       "nationality": "香港",
-      "birthDate": "2001-09-12",
-      "age": 24
+      "age": 25
     }
   ]
 }

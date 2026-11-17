@@ -4,7 +4,7 @@
 Owner 明確否決先前對 **#9 王瑞淯、#12 張閎凱、#22 楊仁勛、#18 吳志華、#67 王浩誠** 的「合格」判定。舊 QA 的圖片解碼、圓形遮罩幾何通過只代表程式條件過關，**不代表視覺已獲 Owner 接受**。
 
 ## 來源與方法
-- Google Drive 原始球隊登錄 [黑狼FC.xlsx](https://docs.google.com/spreadsheets/d/138qYWAFXyJ9Y8YNM2RTbTX02iZWSs6gc/edit)，直接從 `xl/media/` 對照照片；照片與背號映射由球隊原始登錄及本季 `players.json` 確認。**不使用 Excel 預覽縮圖或證件資料。**
+- Google Drive 原始球隊登錄 [黑狼FC.xlsx]([內部來源連結已隱去])，直接從 `xl/media/` 對照照片；照片與背號映射由球隊原始登錄及本季 `players.json` 確認。**不使用 Excel 預覽縮圖或證件資料。**
 - 只替換指定五位本季照片，其他 11 位球員照片、角色、賽果、舊賽季資料完全保留。
 - 從 Excel 原始 JPEG 製作 720×720 WebP，統一圓形取景，不拉寬人臉、不生成或美化五官。原照若靠近矩形邊界，只於背景邊緣作有限的柔焦補邊，讓完整髮頂與下巴可以出現在圓形內；人物五官本身不修圖。
 - 依 Notion 人物頭像二次驗收規則，與 KUROMI #16 巫嘉德、台南長青 #21 吳進偉的構圖原則對照。先檢查 48／104／160px 模擬圓形，再由 CI 真實 TeamPage／PlayerPage／StaffPage 在 390px／1280px 驗證。

@@ -1,9 +1,9 @@
 # 高雄香港人足球俱樂部｜2026/27 全隊頭像第二輪檢查（2026-11-04）
 
 ## 權威與範圍
-- 原始來源：[高雄香港人足球俱樂部.xlsx](https://docs.google.com/spreadsheets/d/1LN4iKHQKCEA8rD7xbjz2clk-CMhnTL1F/edit)，原始嵌入圖片從 `xl/media/` 解出，再用 `xl/drawings/drawing1.xml` 的圖片錨點及關聯檔確認對應行號。**不是從 Excel 預覽截圖抓圖**。
+- 原始來源：[高雄香港人足球俱樂部.xlsx]([內部來源連結已隱去])，原始嵌入圖片從 `xl/media/` 解出，再用 `xl/drawings/drawing1.xml` 的圖片錨點及關聯檔確認對應行號。**不是從 Excel 預覽截圖抓圖**。
 - 2026/27 共 15 名球員、1 名隊職員。領隊謝俊杰兼任 #31，總共 **15 位不同人物**。本次不更動姓名、背號、球隊、身份 ID、賽事或歷史成績。
-- 依 [Notion SOP](https://www.notion.so/4060783da78e8158b220d0fc20597366) 與 `docs/portrait-avatar-framing-standard.md`；比較基準 KUROMI #16 巫嘉德、台南長青 #21 吳進偉。每張均目視核對原始照片與 160px 模擬圓形裁切；48/104/160px 網頁真實路由尚須獨立驗證。
+- 依 [Notion SOP]([內部來源連結已隱去]) 與 `docs/portrait-avatar-framing-standard.md`；比較基準 KUROMI #16 巫嘉德、台南長青 #21 吳進偉。每張均目視核對原始照片與 160px 模擬圓形裁切；48/104/160px 網頁真實路由尚須獨立驗證。
 - 既有 PNG 大多是 Excel 同一張圖片的縮放／壓縮版，沒有證據顯示另有比 Excel 更高畫質的人像。僅在構圖確有改善時變更，不批次套相同縮放，也不以圖片寬度冒充清晰度。
 - 原始 Excel 其他資料可能包含個資，**只取球員／領隊已授權的照片**，不將證件號碼、日期、聯絡方式寫入本報告或新資產。
 

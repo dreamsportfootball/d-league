@@ -3,7 +3,7 @@
 ## 權威來源與範圍
 
 - Notion《OPERATING RULES｜Leo × Notion 工作系統》2026-10-31 頭像 Owner Standard、D LEAGUE Excel 上傳 SOP；KUROMI #16 巫嘉德為構圖參考，不能盲用共同倍率。
-- Google Drive 最新正式《鹿逐俱樂部.xlsx》（檔案 ID 1vnJaKphHNOp85D4t1vB9jLADVBdj4yKd，最後修改 2026-09-08）。本次實際解壓 19 張 `xl/media` 圖片並比對 `xl/drawings/drawing1.xml` 的錨點、球員姓名／背號與現有網站照片；沒有以 Excel CSV 文字或縮圖判斷照片來源。
+- Google Drive 最新正式《鹿逐俱樂部.xlsx》（檔案 ID [已隱去]，最後修改 2026-09-08）。本次實際解壓 19 張 `xl/media` 圖片並比對 `xl/drawings/drawing1.xml` 的錨點、球員姓名／背號與現有網站照片；沒有以 Excel CSV 文字或縮圖判斷照片來源。
 - 當季 18 名球員、3 筆隊職員資料，3 筆隊職員均由同隊球員兼任（陳麒竣／陳泰盛／宋映德），需核對人物同一來源及所有相關頁面；不更動跨賽季人物身份及統計。
 - GitHub 初步基準：`audit/next-luzhu-actual-mobile-390.jpg`、`audit/next-luzhu-actual-desktop-1280.jpg`、`audit/next-luzhu-actual-route-review.json`，為 378ae60 時產出的真實路由截圖（42 個球員／隊職員頁面），不是本次新圖片的完成證據。
 

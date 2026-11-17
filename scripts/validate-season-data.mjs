@@ -5,6 +5,12 @@ import { CURRENT_SEASON_ID, SEASON_IDS } from '../config/siteManifest.js';
 const seasons = [...SEASON_IDS];
 const root = process.cwd();
 const seasonsRoot = join(root, 'data', 'seasons');
+const PRIVATE_PERSON_FIELDS = /^(?:birthDate|dateOfBirth|birthday|nationalId|identityNumber|idNumber|passportNumber|phone|phoneNumber|mobile|email|address|homeAddress|emergencyContact|medicalInformation|medicalHistory|insuranceNumber)$/i;
+const assertPublicPersonPrivacy = (record, label) => {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) return;
+  const forbidden = Object.keys(record).filter((key) => PRIVATE_PERSON_FIELDS.test(key));
+  if (forbidden.length > 0) fail(label + ': private personal fields must not appear in public repository or frontend: ' + forbidden.join(', '));
+};
 const read = (season, file) => JSON.parse(readFileSync(join(seasonsRoot, season, file), 'utf8'));
 const fail = (message) => { throw new Error(message); };
 const unique = (items, label) => {
@@ -47,6 +53,33 @@ const seasonDirectories = readdirSync(seasonsRoot, { withFileTypes: true })
 const manifestDirectories = [...seasons].sort();
 if (JSON.stringify(seasonDirectories) !== JSON.stringify(manifestDirectories)) {
   fail(`Season manifest mismatch: directories=${seasonDirectories.join(',')} manifest=${manifestDirectories.join(',')}`);
+}
+
+// Imported registration packages also live in the public repository.
+// Verify them before any future import can reintroduce private birth dates.
+const importDirectory = join(seasonsRoot, CURRENT_SEASON_ID, 'registrationImports');
+if (existsSync(importDirectory)) {
+  for (const filename of readdirSync(importDirectory).filter((name) => name.endsWith('.json'))) {
+    const payload = JSON.parse(readFileSync(join(importDirectory, filename), 'utf8'));
+    for (const [index, player] of (payload.players ?? []).entries()) {
+      assertPublicPersonPrivacy(player, filename + ' player ' + (index + 1));
+    }
+    for (const [index, staff] of (payload.team?.staff ?? []).entries()) {
+      assertPublicPersonPrivacy(staff, filename + ' staff ' + (index + 1));
+    }
+  }
+}
+
+// Audit notes are tracked in a public repository. Do not publish source
+// roster spreadsheets or private workspace links in diagnostic documents.
+const auditDirectory = join(root, 'audit');
+if (existsSync(auditDirectory)) {
+  for (const filename of readdirSync(auditDirectory).filter((name) => name.endsWith('.md'))) {
+    const notes = readFileSync(join(auditDirectory, filename), 'utf8');
+    if (/https?:\/\/(?:docs\.google\.com\/spreadsheets\/d\/|(?:www\.)?notion\.so\/|app\.notion\.com\/)/i.test(notes)) {
+      fail('public audit note leaks an internal source link: ' + filename);
+    }
+  }
 }
 
 for (const season of seasons) {
@@ -140,6 +173,7 @@ for (const season of seasons) {
   const playerIdentityIds = new Set();
   const teamNumbers = new Set();
   for (const player of players) {
+    assertPublicPersonPrivacy(player, `${season} player ${player.id}`);
     if (!teamIds.has(player.teamId)) fail(`${season} player ${player.id}: unknown team`);
     if (!player.name?.trim()) fail(`${season} player ${player.id}: missing name`);
     if (!Number.isInteger(player.number) || player.number < 0 || player.number > 99) {

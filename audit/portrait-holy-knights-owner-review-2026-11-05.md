@@ -1,7 +1,7 @@
 # 聖騎士足球俱樂部｜2026/27 人物原圖與構圖驗收（2026-11-05）
 
 ## 來源與已核准規則
-- 最新正式 Excel：Google Drive《聖騎士.xlsx》，檔案 ID `14LQVbaKrIJnxJRf11d3oJynD8yS3nXq_`，最後修改 2026-09-01。
+- 最新正式 Excel：Google Drive《聖騎士.xlsx》，檔案 ID `[已隱去]，最後修改 2026-09-01。
 - 直接抽取 XLSX 內 `xl/media` 21 張圖（球員17＋職員2＋球衣2），以 `xl/drawings/drawing1.xml` 圖片錨點對應序號、姓名及背號；沒有僅依試算表文字推測照片存在。
 - 實際比較 `public/assets/seasons/2026-27/players/holy26-01.png`～`holy26-17.png`、2 張隊職員 JPG：均屬 Excel 原圖的同一人、同一照片，保留來源，不要求補照。
 - Notion AI Office Operating Rules、D LEAGUE Excel SOP、`docs/portrait-avatar-framing-standard.md`。以 KUROMI #16 巫嘉德為視覺目標，嚴守真實照片、不造假五官、髮頂、下巴、48／104／160px 圓框不露白。

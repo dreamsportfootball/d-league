@@ -14,9 +14,7 @@ export interface PlayerProfile {
   number: number | null;
   gender: string;
   nationality: string;
-  /** ISO date (YYYY-MM-DD). When present, age is resolved at the season age reference date. */
-  birthDate?: string;
-  /** Legacy/reference-date age retained for records that do not yet have a verified birth date. */
+  /** Published age (full birth date must never be included in client-side data). */
   age: number | null;
   /** Confirmed former teams in the same season; transfer dates are not recorded. */
   previousTeamIds?: string[];

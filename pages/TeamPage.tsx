@@ -37,6 +37,7 @@ import { getPlayerIdentity, getTeamHistory, getTeamIdentity } from '../services/
 import { getLatestPlayerImageUrl } from '../services/seasonDataJson';
 import { getTeamStaffProfiles } from '../services/staffData';
 import { MatchStatus, type Match } from '../types';
+import { formatTaipeiMonthDayWeekday, formatTaipeiTime } from '../utils/dateFormat';
 import type { SeasonTeam, TeamKitPattern, TeamSocialLinks } from '../types/team';
 
 interface RoundBucket {
@@ -367,6 +368,17 @@ const TeamPage: React.FC = () => {
   const teamMatches = data.matches
     .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  // Keep the complete schedule below; highlight only verified actionable information.
+  const nextTeamMatch = teamMatches.find(
+    (match) => match.status === MatchStatus.SCHEDULED && Date.parse(match.timestamp) >= Date.now(),
+  );
+  const latestTeamResult = teamMatches.filter(
+    (match) => match.status === MatchStatus.FINISHED
+      && match.homeScore !== null && match.awayScore !== null && match.resultType !== 'VOID',
+  ).slice(-1)[0];
+  const opponentFor = (match: Match) => data.teamMap[
+    match.homeTeamId === team.id ? match.awayTeamId : match.homeTeamId
+  ];
   const cupTeam = getCupTeamByIdentity(getTeamIdentity(team));
   const cupMatches = cupTeam ? getCupMatchesForTeam(cupTeam.id) : [];
   const cupPlacement = cupTeam ? getCupTeamPlacementLabel(cupTeam.id) : null;
@@ -585,6 +597,49 @@ const TeamPage: React.FC = () => {
 
         <section>
           <div className="mb-5 flex items-center justify-between border-b border-neutral-200 pb-3"><div className="flex items-center"><CalendarDays className="mr-2 h-5 w-5 text-brand-blue" /><h2 className="font-display text-2xl font-extrabold text-brand-black">賽程與賽果</h2></div><span className="text-[11px] font-semibold text-neutral-500">共 {teamMatches.length} 場</span></div>
+          {(nextTeamMatch || latestTeamResult) && (
+            <div className="mb-5 grid gap-3 sm:grid-cols-2" aria-label="球隊賽事摘要">
+              {nextTeamMatch && (
+                <button
+                  type="button"
+                  data-team-next-match={nextTeamMatch.id}
+                  onClick={() => selectMatch(nextTeamMatch.id)}
+                  aria-label={`查看下一場：${team.name} 對 ${opponentFor(nextTeamMatch)?.name ?? '對手'}，${formatTaipeiMonthDayWeekday(nextTeamMatch.timestamp)} ${formatTaipeiTime(nextTeamMatch.timestamp)}`}
+                  className="group min-w-0 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-left transition-colors hover:border-brand-blue/40 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
+                >
+                  <span className="text-[10px] font-bold tracking-wider text-brand-blue">下一場比賽</span>
+                  <span className="mt-2 flex min-w-0 items-center gap-3">
+                    {opponentFor(nextTeamMatch)?.logo && (
+                      <img src={opponentFor(nextTeamMatch)?.logo} alt="" loading="lazy" className="h-8 w-8 shrink-0 object-contain" />
+                    )}
+                    <strong className="min-w-0 flex-1 break-words text-sm text-brand-black">對 {opponentFor(nextTeamMatch)?.name ?? '對手待定'}</strong>
+                  </span>
+                  <span className="mt-2 block text-[11px] font-medium tabular-nums text-neutral-600">
+                    {formatTaipeiMonthDayWeekday(nextTeamMatch.timestamp)} · {formatTaipeiTime(nextTeamMatch.timestamp)}
+                  </span>
+                </button>
+              )}
+              {latestTeamResult && (
+                <button
+                  type="button"
+                  data-team-last-result={latestTeamResult.id}
+                  onClick={() => selectMatch(latestTeamResult.id)}
+                  aria-label={`查看最近賽果：${data.teamMap[latestTeamResult.homeTeamId]?.name} ${latestTeamResult.homeScore} 比 ${latestTeamResult.awayScore} ${data.teamMap[latestTeamResult.awayTeamId]?.name}`}
+                  className="group min-w-0 rounded-lg border border-neutral-200 bg-white p-4 text-left transition-colors hover:border-brand-blue/40 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
+                >
+                  <span className="text-[10px] font-bold tracking-wider text-neutral-500">最近一場賽果</span>
+                  <strong className="mt-2 block break-words text-sm leading-relaxed text-brand-black">
+                    {data.teamMap[latestTeamResult.homeTeamId]?.shortName ?? '主隊'}
+                    {' '}{latestTeamResult.homeScore} : {latestTeamResult.awayScore}{' '}
+                    {data.teamMap[latestTeamResult.awayTeamId]?.shortName ?? '客隊'}
+                  </strong>
+                  <span className="mt-2 block text-[11px] font-medium text-neutral-600">
+                    {formatTaipeiMonthDayWeekday(latestTeamResult.timestamp)}
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
           {teamMatches.length > 0 ? <FullSchedule matches={teamMatches} teamMap={data.teamMap} leagueFilter="ALL" variant="team" onMatchClick={selectMatch} /> : <p className="py-10 text-sm text-neutral-400">此賽季尚未公布賽程</p>}
         </section>
 

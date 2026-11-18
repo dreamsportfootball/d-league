@@ -200,16 +200,16 @@ const auditViewport = async (viewport) => {
 
       if (route.name === 'standings-2026') {
         const expectedStatusLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
-        const visibleLeagueLabels = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').allInnerTexts();
-        const expectedLeagueLabels = viewport.width < 768
-          ? ['L1', 'L2', 'L3']
-          : ['LEAGUE 1', 'LEAGUE 2', 'LEAGUE 3'];
+        const leagueTrigger = page.locator('[data-league-selector] button[aria-haspopup="menu"]');
+        const selectedLeague = await leagueTrigger.locator('[data-league-selected]').innerText();
+        const expectedLeague = viewport.width < 768 ? 'L1' : 'LEAGUE 1';
         const filterControlVisible = await page.getByRole('button', { name: '篩選積分榜' }).isVisible();
         assert('standings-shows-season-league-summary', diagnostics.bodyText.includes(expectedStatusLabel), `Expected ${expectedStatusLabel}`);
         assert('standings-shows-filter-control', filterControlVisible, 'Expected visible standings filter control');
-        assert('standings-shows-inline-league-tabs',
-          JSON.stringify(visibleLeagueLabels.map((label) => label.trim())) === JSON.stringify(expectedLeagueLabels),
-          `Expected ${expectedLeagueLabels.join('/')}; found ${visibleLeagueLabels.join('/')}`);
+        assert('standings-shows-league-dropdown',
+          await leagueTrigger.count() === 1 && selectedLeague.trim() === expectedLeague &&
+            await leagueTrigger.getAttribute('aria-haspopup') === 'menu',
+          'Expected compact league dropdown showing ' + expectedLeague);
         assert('standings-removes-provisional-disclaimer',
           !diagnostics.bodyText.includes('暫定升級區 · 前') &&
           !diagnostics.bodyText.includes('最終順位依賽季結算及競賽規程認定'),
@@ -220,13 +220,13 @@ const auditViewport = async (viewport) => {
       if (route.name === 'stats-2026') {
         const expectedStatsLabel = viewport.width < 768 ? '2026/27 · L1' : '2026/27 · LEAGUE 1';
         assert('stats-summary-has-season-league', diagnostics.bodyText.includes(expectedStatsLabel), `Expected ${expectedStatsLabel}`);
-        const visibleStatsLeagueLabels = await page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible').allInnerTexts();
-        const expectedStatsLeagueLabels = viewport.width < 768
-          ? ['L1', 'L2', 'L3']
-          : ['LEAGUE 1', 'LEAGUE 2', 'LEAGUE 3'];
-        assert('stats-shows-inline-league-tabs',
-          JSON.stringify(visibleStatsLeagueLabels.map((label) => label.trim())) === JSON.stringify(expectedStatsLeagueLabels),
-          `Expected ${expectedStatsLeagueLabels.join('/')}; found ${visibleStatsLeagueLabels.join('/')}`);
+        const statsLeagueTrigger = page.locator('[data-league-selector] button[aria-haspopup="menu"]');
+        const selectedStatsLeague = await statsLeagueTrigger.locator('[data-league-selected]').innerText();
+        const expectedStatsLeague = viewport.width < 768 ? 'L1' : 'LEAGUE 1';
+        assert('stats-shows-league-dropdown',
+          await statsLeagueTrigger.count() === 1 && selectedStatsLeague.trim() === expectedStatsLeague &&
+            await statsLeagueTrigger.getAttribute('aria-haspopup') === 'menu',
+          'Expected compact league dropdown showing ' + expectedStatsLeague);
       }
 
       if (route.name === 'stats-2025') {

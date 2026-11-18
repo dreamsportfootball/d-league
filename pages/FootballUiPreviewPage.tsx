@@ -21,6 +21,7 @@ const FootballUiPreviewPage: React.FC = () => {
   const [view, setView] = useState<View>('matches');
   const [expanded, setExpanded] = useState(false);
   const [resultsOnly, setResultsOnly] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const selectedLeague: LeagueId = activeSeason.enabledLeagues.includes(league)
     ? league : activeSeason.enabledLeagues[0] ?? 'L1';
   const teams = useMemo(() => new Map(seasonData.teams.map((team) => [team.id, team])), [seasonData.teams]);
@@ -50,7 +51,7 @@ const FootballUiPreviewPage: React.FC = () => {
     <div className="mx-auto max-w-6xl px-4 pb-7 pt-8 md:px-8 md:pt-14">
       <div className="mb-5 flex flex-wrap items-center gap-2 text-xs font-bold text-neutral-500">
         <span className="rounded-full bg-[#e7effc] px-3 py-1 text-[#0047ab]">DESIGN PREVIEW</span>
-        <span>獨立預覽 · 非正式競賽積分認定</span>
+        <span>獨立預覽 · 官方資料 · 未部署設計預覽</span>
       </div>
       <div className="flex items-end justify-between gap-4">
         <div><p className="mb-1 font-sans text-xs font-semibold tracking-wide text-neutral-500">D LEAGUE · FOOTBALL CENTER</p>
@@ -66,12 +67,12 @@ const FootballUiPreviewPage: React.FC = () => {
             <Trophy aria-hidden="true" className="h-4 w-4 text-[#0047ab]" />
             <span className="font-display text-xs font-bold uppercase tracking-wider md:text-sm">選擇聯賽</span>
             <div className="relative">
-              <button aria-label={'選擇聯賽：' + selectedLeague} aria-haspopup="menu" aria-expanded={undefined} onClick={(e) => { const n=e.currentTarget.nextElementSibling as HTMLElement|null; if(n) n.hidden=!n.hidden; }} className="flex min-h-11 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 text-[11px] font-semibold focus-visible:outline-2 focus-visible:outline-[#0047ab] md:min-h-9 md:font-display md:text-xs">
+              <button aria-label={'選擇聯賽：' + selectedLeague} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="flex min-h-11 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 text-[11px] font-semibold focus-visible:outline-2 focus-visible:outline-[#0047ab] md:min-h-9 md:font-display md:text-xs">
                 <span className="md:hidden">{selectedLeague}</span><span className="hidden md:inline">LEAGUE {selectedLeague.replace('L','')}</span><ChevronDown className="h-3 w-3" />
               </button>
-              <div hidden className="absolute left-0 top-full z-20 mt-1 min-w-full rounded-xl border border-neutral-200 bg-white p-1 shadow-lg">
-                {activeSeason.enabledLeagues.map((id) => <button key={id} onClick={(e)=>{ setLeague(id);setExpanded(false);(e.currentTarget.parentElement as HTMLElement).hidden=true; }} className="block min-h-11 w-full whitespace-nowrap rounded-lg px-3 text-left text-xs font-semibold hover:bg-[#e7effc] focus-visible:bg-[#e7effc]">{id}</button>)}
-              </div>
+              {menuOpen && <div role="menu" aria-label="聯賽選單" className="absolute left-0 top-full z-20 mt-1 min-w-full rounded-xl border border-neutral-200 bg-white p-1 shadow-lg">
+                {activeSeason.enabledLeagues.map((id) => <button key={id} role="menuitemradio" aria-checked={selectedLeague === id} onClick={()=>{ setLeague(id); setExpanded(false); setMenuOpen(false); }} className="block min-h-11 w-full whitespace-nowrap rounded-lg px-3 text-left text-xs font-semibold hover:bg-[#e7effc] focus-visible:bg-[#e7effc]">{id}</button>)}
+              </div>}
             </div>
           </div><span className="text-[11px] text-neutral-400">資料來源：現有賽季</span>
         </div>
@@ -92,7 +93,7 @@ const FootballUiPreviewPage: React.FC = () => {
           </div>
           {!expanded&&matches.length>8&&<button onClick={()=>setExpanded(true)} className="mt-4 min-h-11 w-full rounded-lg border border-neutral-200 text-sm font-semibold hover:bg-neutral-50">顯示全部 {matches.length} 場</button>}
         </div>}
-        {view==='standings'&&<div className="p-4 md:p-6"><div className="mb-2 flex items-center gap-2"><h2 className="font-display text-xl font-bold">積分預覽</h2><span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] text-amber-800">正式規則計算 · 預覽版</span></div><p className="mb-4 text-xs leading-5 text-neutral-500">此表使用官網既有競賽計算程式；展示方式仍屬設計預覽，正式認定請以官方積分榜與競賽規程為準。</p><div className="overflow-x-auto rounded-xl border border-neutral-200"><table className="w-full min-w-[360px] border-collapse text-left text-xs md:text-sm"><thead className="bg-neutral-50 text-[11px] text-neutral-500"><tr><th className="p-3">#</th><th className="p-3">球隊</th><th className="p-3 text-center">賽</th><th className="p-3 text-center">勝</th><th className="p-3 text-center">和</th><th className="p-3 text-center">敗</th><th className="p-3 text-center">得失</th><th className="p-3 text-center">分</th></tr></thead><tbody>{tableTeams.map((team,i)=><tr key={team.id} className="border-t border-neutral-100"><td className="p-3 font-display font-bold text-[#0047ab]">{team.rank}</td><td className="p-3 font-semibold">{team.name}</td><td className="p-3 text-center tabular-nums">{team.p}</td><td className="p-3 text-center tabular-nums">{team.w}</td><td className="p-3 text-center tabular-nums">{team.d}</td><td className="p-3 text-center tabular-nums">{team.l}</td><td className="p-3 text-center tabular-nums">{team.gf-team.ga}</td><td className="p-3 text-center font-bold tabular-nums">{team.pts}</td></tr>)}</tbody></table></div><Link to="/standings" className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-[#0047ab]">前往正式積分榜 <ArrowRight className="h-4 w-4"/></Link></div>}
+        {view==='standings'&&<div className="p-4 md:p-6"><div className="mb-2 flex items-center gap-2"><h2 className="font-display text-xl font-bold">積分預覽</h2><span className="rounded-full bg-amber-50 px-2 py-1 text-[10px] text-amber-800">正式規則計算 · 預覽版</span></div><p className="mb-4 text-xs leading-5 text-neutral-500">此表使用官網既有競賽計算程式；展示方式仍屬設計預覽，正式認定請以官方積分榜與競賽規程為準。</p><div className="overflow-x-auto rounded-xl border border-neutral-200"><table className="w-full min-w-[360px] border-collapse text-left text-xs md:text-sm"><thead className="bg-neutral-50 text-[11px] text-neutral-500"><tr><th className="p-3">#</th><th className="p-3">球隊</th><th className="p-3 text-center">賽</th><th className="p-3 text-center">勝</th><th className="p-3 text-center">和</th><th className="p-3 text-center">敗</th><th className="p-3 text-center">得失</th><th className="p-3 text-center">分</th></tr></thead><tbody>{tableTeams.map((team)=><tr key={team.id} className="border-t border-neutral-100"><td className="p-3 font-display font-bold text-[#0047ab]">{team.rank}</td><td className="p-3 font-semibold">{team.name}</td><td className="p-3 text-center tabular-nums">{team.p}</td><td className="p-3 text-center tabular-nums">{team.w}</td><td className="p-3 text-center tabular-nums">{team.d}</td><td className="p-3 text-center tabular-nums">{team.l}</td><td className="p-3 text-center tabular-nums">{team.gf-team.ga}</td><td className="p-3 text-center font-bold tabular-nums">{team.pts}</td></tr>)}</tbody></table></div><Link to="/standings" className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-[#0047ab]">前往正式積分榜 <ArrowRight className="h-4 w-4"/></Link></div>}
         {view==='teams'&&<div className="p-4 md:p-6"><h2 className="mb-4 font-display text-xl font-bold">參賽球隊</h2><div className="grid gap-2 sm:grid-cols-2">{tableTeams.map(team=><div key={team.id} className="flex min-h-16 items-center gap-3 rounded-lg border border-neutral-200 px-4"><ShieldCheck className="h-5 w-5 text-[#0047ab]"/><span className="min-w-0 flex-1 truncate text-sm font-semibold">{team.name}</span><span className="text-xs text-neutral-500">{team.p} 場</span></div>)}</div></div>}
       </div>
       <div className="mt-4 flex items-start gap-2 rounded-xl border border-neutral-200 bg-white p-4 text-xs leading-5 text-neutral-500"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#0047ab]"/><p>這是依現有資料製作的獨立 UI Preview；正式網站、賽果、資料來源與升降級規則均未修改。設計參考 FotMob 的比分層級、Sofascore 的資料導覽與 60fps 的輕量互動。</p></div>

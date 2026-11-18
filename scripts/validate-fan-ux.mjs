@@ -26,6 +26,7 @@ const assertLeagueDropdownWorks = async (page, label, width, leagueCount = 3, ha
   const layout = await trigger.evaluate((button) => {
     const heading = button.closest('[data-league-selector]')?.parentElement?.querySelector('h2');
     const selected = button.querySelector('[data-league-selected]');
+    const mobilePill = button.querySelector('[data-league-pill]');
     if (!heading || !selected) return null;
     const headingBounds = heading.getBoundingClientRect();
     const triggerBounds = button.getBoundingClientRect();
@@ -35,6 +36,8 @@ const assertLeagueDropdownWorks = async (page, label, width, leagueCount = 3, ha
       centerOffset: Math.abs((triggerBounds.top + triggerBounds.height / 2) - (headingBounds.top + headingBounds.height / 2)),
       height: triggerBounds.height,
       background: style.backgroundColor,
+      mobilePillHeight: mobilePill?.getBoundingClientRect().height ?? 0,
+      mobilePillBackground: mobilePill ? getComputedStyle(mobilePill).backgroundColor : null,
       headingFontSize: parseFloat(getComputedStyle(heading).fontSize),
       selectedFontSize: parseFloat(getComputedStyle(selected).fontSize),
       right: triggerBounds.right,
@@ -42,14 +45,20 @@ const assertLeagueDropdownWorks = async (page, label, width, leagueCount = 3, ha
   });
 
   if (!layout || layout.gap < 0 || layout.gap > 24 || layout.centerOffset > 8 ||
-      layout.right > width || layout.background !== 'rgb(255, 255, 255)') {
+      layout.right > width || (width >= 768 && layout.background !== 'rgb(255, 255, 255)')) {
     throw new Error(label + ': dropdown must align beside heading and fit viewport: ' + JSON.stringify(layout));
   }
   if (layout.selectedFontSize >= layout.headingFontSize) {
     throw new Error(label + ': dropdown text must be smaller than 選擇聯賽: ' + JSON.stringify(layout));
   }
-  if (width < 768 && layout.height < 44) {
-    throw new Error(label + ': mobile dropdown touch target must be at least 44px tall');
+  if (width < 768) {
+    if (layout.height < 44) {
+      throw new Error(label + ': mobile dropdown touch target must be at least 44px tall');
+    }
+    if (layout.mobilePillHeight < 30 || layout.mobilePillHeight > 34 ||
+        layout.mobilePillBackground !== 'rgb(255, 255, 255)') {
+      throw new Error(label + ': mobile dropdown visual must be a compact 32px white pill: ' + JSON.stringify(layout));
+    }
   }
 
   await trigger.click();

@@ -72,16 +72,35 @@ const assertLeagueDropdownWorks = async (page, label, width, leagueCount = 3, ha
     throw new Error(label + ': expected ' + expectedLabels.join('/') + ', received ' + actualLabels.join('/'));
   }
   const menuLayout = await menu.evaluate((element) => {
-    const triggerBounds = element.previousElementSibling?.getBoundingClientRect();
+    const trigger = element.previousElementSibling;
+    const triggerBounds = trigger?.getBoundingClientRect();
+    const triggerLabelBounds = trigger?.querySelector('[data-league-selected]')?.getBoundingClientRect();
     const menuBounds = element.getBoundingClientRect();
+    const firstOption = element.querySelector('[role="menuitemradio"]');
+    const firstLabelBounds = firstOption?.querySelector('[data-league-item-label]')?.getBoundingClientRect();
+    const activeOption = element.querySelector('[aria-checked="true"]');
+    const activeBounds = activeOption?.getBoundingClientRect();
+    const checkBounds = activeOption?.querySelector('svg')?.getBoundingClientRect();
     return {
       widthDifference: triggerBounds ? Math.abs(triggerBounds.width - menuBounds.width) : Infinity,
       left: menuBounds.left,
       right: menuBounds.right,
+      borderRadius: parseFloat(getComputedStyle(element).borderTopLeftRadius),
+      itemRadius: activeOption ? parseFloat(getComputedStyle(activeOption).borderTopLeftRadius) : 0,
+      labelOffset: triggerLabelBounds && firstLabelBounds
+        ? Math.abs(firstLabelBounds.left - triggerLabelBounds.left) : Infinity,
+      checkCenterOffset: activeBounds && checkBounds
+        ? Math.abs((checkBounds.top + checkBounds.height / 2) - (activeBounds.top + activeBounds.height / 2)) : Infinity,
     };
   });
   if (menuLayout.widthDifference > 2 || menuLayout.left < 0 || menuLayout.right > width) {
     throw new Error(label + ': dropdown menu must fit and match button width: ' + JSON.stringify(menuLayout));
+  }
+  if (width < 768 &&
+      (menuLayout.borderRadius < 16 || menuLayout.itemRadius < 12 ||
+       menuLayout.labelOffset > 3 || menuLayout.checkCenterOffset > 2)) {
+    throw new Error(label + ': mobile dropdown corners, label alignment or checkmark are incorrect: ' +
+      JSON.stringify(menuLayout));
   }
   if (width < 768) {
     for (const option of await options.all()) {

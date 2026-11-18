@@ -7,30 +7,129 @@ const nextMatch = fixtures.find((match) => match.status === 'SCHEDULED' && Date.
 const widths = [375, 390, 768, 1024, 1280, 1440];
 const browser = await chromium.launch({ headless: true });
 const failures = [];
-const assertLeagueTabsWork = async (page, label, width, leagueCount = 3, hasAll = false) => {
-  const tabs = page.locator('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]:visible');
+const assertLeagueDropdownWorks = async (page, label, width, leagueCount = 3, hasAll = false) => {
+  const selector = page.locator('[data-league-selector]');
+  const trigger = selector.locator('button[aria-haspopup="menu"]');
+  const menu = selector.getByRole('menu', { name: '聯賽選項' });
   const expectedLabels = Array.from({ length: leagueCount }, (_, i) =>
-    width < 768 ? `L${i + 1}` : `LEAGUE ${i + 1}`);
+    width < 768 ? 'L' + (i + 1) : 'LEAGUE ' + (i + 1));
   if (hasAll) expectedLabels.unshift('全部');
-  await tabs.first().waitFor({ state: 'visible' });
-  if (await tabs.count() !== expectedLabels.length) {
-    throw new Error(label + ': expected ' + expectedLabels.length + ' visible league tabs');
+
+  await trigger.waitFor({ state: 'visible' });
+  if (await selector.count() !== 1 || await trigger.count() !== 1) {
+    throw new Error(label + ': expected exactly one league dropdown');
   }
-  for (const [index, expected] of expectedLabels.entries()) {
-    const actual = (await tabs.nth(index).innerText()).trim();
-    if (actual !== expected) {
-      throw new Error(label + ': expected "' + expected + '", received "' + actual + '" at ' + width + 'px');
+  if (await page.locator('[role="tablist"][aria-label="選擇聯賽"]').count() > 0) {
+    throw new Error(label + ': old inline league tabs remain');
+  }
+
+  const layout = await trigger.evaluate((button) => {
+    const heading = button.closest('[data-league-selector]')?.parentElement?.querySelector('h2');
+    const selected = button.querySelector('[data-league-selected]');
+    const mobilePill = button.querySelector('[data-league-pill]');
+    if (!heading || !selected) return null;
+    const headingBounds = heading.getBoundingClientRect();
+    const triggerBounds = button.getBoundingClientRect();
+    const style = getComputedStyle(button);
+    return {
+      gap: triggerBounds.left - headingBounds.right,
+      centerOffset: Math.abs((triggerBounds.top + triggerBounds.height / 2) - (headingBounds.top + headingBounds.height / 2)),
+      height: triggerBounds.height,
+      background: style.backgroundColor,
+      mobilePillHeight: mobilePill?.getBoundingClientRect().height ?? 0,
+      mobilePillBackground: mobilePill ? getComputedStyle(mobilePill).backgroundColor : null,
+      headingFontSize: parseFloat(getComputedStyle(heading).fontSize),
+      selectedFontSize: parseFloat(getComputedStyle(selected).fontSize),
+      right: triggerBounds.right,
+    };
+  });
+
+  if (!layout || layout.gap < 0 || layout.gap > 24 || layout.centerOffset > 8 ||
+      layout.right > width || (width >= 768 && layout.background !== 'rgb(255, 255, 255)')) {
+    throw new Error(label + ': dropdown must align beside heading and fit viewport: ' + JSON.stringify(layout));
+  }
+  if (layout.selectedFontSize >= layout.headingFontSize) {
+    throw new Error(label + ': dropdown text must be smaller than 選擇聯賽: ' + JSON.stringify(layout));
+  }
+  if (width < 768) {
+    if (layout.height < 44) {
+      throw new Error(label + ': mobile dropdown touch target must be at least 44px tall');
     }
-    const height = await tabs.nth(index).evaluate((button) => button.getBoundingClientRect().height);
-    if (height < 44 && width < 768) throw new Error(label + ': league tab hit area below 44px');
+    if (layout.mobilePillHeight < 30 || layout.mobilePillHeight > 34 ||
+        layout.mobilePillBackground !== 'rgb(255, 255, 255)') {
+      throw new Error(label + ': mobile dropdown visual must be a compact 32px white pill: ' + JSON.stringify(layout));
+    }
   }
+
+  await trigger.click();
+  await menu.waitFor({ state: 'visible' });
+  const options = menu.getByRole('menuitemradio');
+  if (await options.count() !== expectedLabels.length) {
+    throw new Error(label + ': expected ' + expectedLabels.length + ' dropdown options');
+  }
+  const actualLabels = (await options.allInnerTexts()).map((value) => value.trim());
+  if (JSON.stringify(actualLabels) !== JSON.stringify(expectedLabels)) {
+    throw new Error(label + ': expected ' + expectedLabels.join('/') + ', received ' + actualLabels.join('/'));
+  }
+  const menuLayout = await menu.evaluate((element) => {
+    const trigger = element.previousElementSibling;
+    const triggerBounds = trigger?.getBoundingClientRect();
+    const triggerLabelBounds = trigger?.querySelector('[data-league-selected]')?.getBoundingClientRect();
+    const menuBounds = element.getBoundingClientRect();
+    const firstOption = element.querySelector('[role="menuitemradio"]');
+    const firstLabelBounds = firstOption?.querySelector('[data-league-item-label]')?.getBoundingClientRect();
+    const activeOption = element.querySelector('[aria-checked="true"]');
+    const activeBounds = activeOption?.getBoundingClientRect();
+    const checkBounds = activeOption?.querySelector('svg')?.getBoundingClientRect();
+    return {
+      widthDifference: triggerBounds ? Math.abs(triggerBounds.width - menuBounds.width) : Infinity,
+      left: menuBounds.left,
+      right: menuBounds.right,
+      borderRadius: parseFloat(getComputedStyle(element).borderTopLeftRadius),
+      itemRadius: activeOption ? parseFloat(getComputedStyle(activeOption).borderTopLeftRadius) : 0,
+      labelOffset: triggerLabelBounds && firstLabelBounds
+        ? Math.abs(firstLabelBounds.left - triggerLabelBounds.left) : Infinity,
+      checkCenterOffset: activeBounds && checkBounds
+        ? Math.abs((checkBounds.top + checkBounds.height / 2) - (activeBounds.top + activeBounds.height / 2)) : Infinity,
+    };
+  });
+  if (menuLayout.widthDifference > 2 || menuLayout.left < 0 || menuLayout.right > width) {
+    throw new Error(label + ': dropdown menu must fit and match button width: ' + JSON.stringify(menuLayout));
+  }
+  if (width < 768 &&
+      (menuLayout.borderRadius < 16 || menuLayout.itemRadius < 12 ||
+       menuLayout.labelOffset > 3 || menuLayout.checkCenterOffset > 2)) {
+    throw new Error(label + ': mobile dropdown corners, label alignment or checkmark are incorrect: ' +
+      JSON.stringify(menuLayout));
+  }
+  if (width < 768) {
+    for (const option of await options.all()) {
+      const height = await option.evaluate((button) => button.getBoundingClientRect().height);
+      if (height < 44) throw new Error(label + ': mobile dropdown option below 44px');
+    }
+  }
+  await page.keyboard.press('Escape');
+  await menu.waitFor({ state: 'hidden' });
+  if (await trigger.getAttribute('aria-expanded') !== 'false') {
+    throw new Error(label + ': Escape did not close dropdown');
+  }
+
+  await trigger.click();
+  await menu.waitFor({ state: 'visible' });
+  await page.locator('h2').filter({ hasText: '選擇聯賽' }).click();
+  await menu.waitFor({ state: 'hidden' });
+
   for (const index of [expectedLabels.length - 1, 1, 0]) {
-    await tabs.nth(index).click();
-    await page.waitForFunction((targetIndex) => {
-      const visible = [...document.querySelectorAll('[role="tablist"][aria-label="選擇聯賽"] [role="tab"]')]
-        .filter((element) => element.getClientRects().length > 0);
-      return visible[targetIndex]?.getAttribute('aria-selected') === 'true';
-    }, index);
+    await trigger.click();
+    await menu.waitFor({ state: 'visible' });
+    const items = menu.getByRole('menuitemradio');
+    await items.nth(index).click();
+    await page.waitForFunction((expected) => {
+      const element = document.querySelector('[data-league-selected]');
+      return element?.textContent && element.getBoundingClientRect().width > 0 &&
+        element.innerText.trim() === expected;
+    }, expectedLabels[index]);
+    await menu.waitFor({ state: 'hidden' });
   }
 };
 
@@ -145,16 +244,16 @@ for (const width of widths) {
     if (standingsText.includes('暫定升級區 · 前') || standingsText.includes('最終順位依賽季結算及競賽規程認定')) {
       throw new Error('standings still contains removed explanatory copy');
     }
-    await assertLeagueTabsWork(page, 'standings', width);
+    await assertLeagueDropdownWorks(page, 'standings', width);
 
     await page.goto(base + '/#/stats?season=2026-27', { waitUntil: 'domcontentloaded' });
-    await assertLeagueTabsWork(page, 'stats', width);
+    await assertLeagueDropdownWorks(page, 'stats', width);
 
     await page.goto(base + '/#/schedule?season=2026-27', { waitUntil: 'domcontentloaded' });
-    await assertLeagueTabsWork(page, 'schedule', width, 3, true);
+    await assertLeagueDropdownWorks(page, 'schedule', width, 3, true);
 
     await page.goto(base + '/#/standings?season=2025-26', { waitUntil: 'domcontentloaded' });
-    await assertLeagueTabsWork(page, 'historical standings', width, 2);
+    await assertLeagueDropdownWorks(page, 'historical standings', width, 2);
 
     await page.goto(base + '/#/media?season=2026-27', { waitUntil: 'domcontentloaded' });
     // The first image in the document is the always-visible header logo.

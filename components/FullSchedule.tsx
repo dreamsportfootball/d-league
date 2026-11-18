@@ -269,15 +269,21 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   aria-label={accessibilityLabel}
                   className="dleague-touch-target w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden"
                 >
-                  <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
-                    <div className="flex shrink-0 items-center gap-2.5">
-                      <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
+                  <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
+                    <div className="flex min-w-0 shrink items-center gap-2.5">
+                      <span className="shrink-0 font-display text-[12px] font-bold tabular-nums text-neutral-500">
                         {timeStr}
                       </span>
-                      <span className="text-[11px] font-bold tracking-[0.05em] text-neutral-600">
+                      <span className="min-w-0 truncate text-[11px] font-bold tracking-[0.05em] text-neutral-600">
                         {match.league} 第{match.round}輪
                       </span>
                     </div>
+                    <span
+                      data-match-status={isFinished ? 'finished' : 'scheduled'}
+                      className={`shrink-0 text-[10px] font-semibold ${isFinished ? 'text-brand-blue' : 'text-neutral-400'}`}
+                    >
+                      {isFinished ? '完賽' : '未開賽'}
+                    </span>
                   </div>
 
                   <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_50px_minmax(0,1fr)] items-center gap-1">
@@ -329,6 +335,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       </div>
                     </div>
                   </div>
+                  {administrativeNote && (
+                    <p className="mt-2 break-words text-[11px] font-semibold text-amber-700">
+                      {administrativeNote}
+                    </p>
+                  )}
                 </button>
 
                 <button

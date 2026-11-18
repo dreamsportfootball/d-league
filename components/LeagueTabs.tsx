@@ -1,5 +1,5 @@
-import React from 'react';
-import { Trophy } from 'lucide-react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { Check, ChevronDown, Trophy } from 'lucide-react';
 
 interface LeagueTabsProps<T extends string> {
   options: readonly T[];
@@ -16,14 +16,59 @@ function LeagueTabs<T extends string>({
   getLabel,
   getMobileLabel,
 }: LeagueTabsProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
   const desktopLabel = (option: T): string => {
     const leagueNumber = /^L(\d+)$/.exec(option)?.[1];
-    return leagueNumber ? `LEAGUE ${leagueNumber}` : getLabel(option);
+    return leagueNumber ? 'LEAGUE ' + leagueNumber : getLabel(option);
   };
 
   const mobileLabel = (option: T): string => {
     if (getMobileLabel) return getMobileLabel(option);
     return /^L\d+$/.test(option) ? option : getLabel(option);
+  };
+
+  const selectedIndex = Math.max(0, options.indexOf(active));
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    optionRefs.current[selectedIndex]?.focus();
+
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isOpen, selectedIndex]);
+
+  const handleOptionKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const direction = event.key === 'ArrowDown' ? 1 : -1;
+      const nextIndex = (index + direction + options.length) % options.length;
+      optionRefs.current[nextIndex]?.focus();
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+      optionRefs.current[event.key === 'Home' ? 0 : options.length - 1]?.focus();
+    }
   };
 
   return (
@@ -33,32 +78,65 @@ function LeagueTabs<T extends string>({
         選擇聯賽
       </h2>
 
-      <div
-        role="tablist"
-        aria-label="選擇聯賽"
-        className="inline-flex max-w-full min-w-0 items-center gap-0.5 rounded-full border border-neutral-200 bg-white p-0.5 md:gap-0.5"
-      >
-        {options.map((option) => {
-          const isActive = active === option;
-          return (
-            <button
-              key={option}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-label={desktopLabel(option)}
-              onClick={() => onChange(option)}
-              className={`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-2 text-[11px] font-semibold transition-[color,background-color] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-0 md:px-3 md:font-display md:text-[11px] md:tracking-wide lg:px-3 ${
-                isActive
-                  ? 'bg-brand-blue/10 text-brand-blue'
-                  : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-blue'
-              }`}
-            >
-              <span className="md:hidden">{mobileLabel(option)}</span>
-              <span className="hidden md:inline">{desktopLabel(option)}</span>
-            </button>
-          );
-        })}
+      <div ref={containerRef} data-league-selector className="relative inline-flex shrink-0">
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded={isOpen}
+          aria-controls={menuId}
+          aria-label={'選擇聯賽：' + desktopLabel(active)}
+          onClick={() => setIsOpen((previous) => !previous)}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault();
+              setIsOpen(true);
+            }
+          }}
+          className="inline-flex min-h-11 min-w-[88px] items-center justify-between gap-2 whitespace-nowrap rounded-full border border-neutral-200 bg-white px-3 font-display text-[11px] font-semibold tracking-wide text-neutral-900 transition-colors hover:border-neutral-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-[116px]"
+        >
+          <span data-league-selected>
+            <span className="md:hidden">{mobileLabel(active)}</span>
+            <span className="hidden md:inline">{desktopLabel(active)}</span>
+          </span>
+          <ChevronDown className={'h-3.5 w-3.5 shrink-0 transition-transform ' + (isOpen ? 'rotate-180' : '')} aria-hidden="true" />
+        </button>
+
+        {isOpen && (
+          <div
+            id={menuId}
+            role="menu"
+            aria-label="聯賽選項"
+            className="absolute left-0 top-full z-40 mt-1 w-full rounded-lg border border-neutral-200 bg-white p-1 shadow-md"
+          >
+            {options.map((option, index) => {
+              const isActive = active === option;
+              return (
+                <button
+                  key={option}
+                  ref={(element) => { optionRefs.current[index] = element; }}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={isActive}
+                  onKeyDown={(event) => handleOptionKeyDown(event, index)}
+                  onClick={() => {
+                    onChange(option);
+                    setIsOpen(false);
+                    triggerRef.current?.focus();
+                  }}
+                  className={
+                    'flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-2 text-left font-display text-[11px] font-semibold tracking-wide focus-visible:outline-2 focus-visible:outline-brand-blue md:min-h-9 ' +
+                    (isActive ? 'bg-brand-blue/10 text-brand-blue' : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-blue')
+                  }
+                >
+                  <span className="md:hidden">{mobileLabel(option)}</span>
+                  <span className="hidden md:inline">{desktopLabel(option)}</span>
+                  {isActive && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

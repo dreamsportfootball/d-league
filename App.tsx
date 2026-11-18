@@ -13,6 +13,7 @@ import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
+const EditorialPreview = lazy(() => import('./pages/EditorialPreview'));
 const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
@@ -492,6 +493,7 @@ const App: React.FC = () => (
                 path="/registration"
                 element={SHOW_REGISTRATION_NAV ? <RegistrationPage /> : <Navigate to="/" replace />}
               />
+              <Route path="/design-preview/editorial" element={<EditorialPreview />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/news" element={<NewsPage />} />

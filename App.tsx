@@ -13,6 +13,7 @@ import { SeasonProvider } from './contexts/SeasonContext';
 import HomePage from './pages/HomePage';
 
 const SchedulePage = lazy(() => import('./pages/SchedulePage'));
+const FootballUiPreviewPage = lazy(() => import('./pages/FootballUiPreviewPage'));
 const StandingsPage = lazy(() => import('./pages/StandingsPage'));
 const NewsPage = lazy(() => import('./pages/NewsPage'));
 const StatsPage = lazy(() => import('./pages/StatsPage'));
@@ -492,6 +493,7 @@ const App: React.FC = () => (
                 path="/registration"
                 element={SHOW_REGISTRATION_NAV ? <RegistrationPage /> : <Navigate to="/" replace />}
               />
+              <Route path="/design-preview/football-center" element={<FootballUiPreviewPage />} />
               <Route path="/schedule" element={<SchedulePage />} />
               <Route path="/standings" element={<StandingsPage />} />
               <Route path="/news" element={<NewsPage />} />

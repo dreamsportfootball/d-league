@@ -467,8 +467,12 @@ const ScrollMemory: React.FC = () => {
   return null;
 };
 
-const App: React.FC = () => (
-  <SeasonProvider>
+const AppContent: React.FC = () => {
+  const { pathname } = useLocation();
+  if (pathname === '/design-preview/football-app') {
+    return <AppErrorBoundary><Suspense fallback={<PageSkeleton />}><FootballAppPreview /></Suspense></AppErrorBoundary>;
+  }
+  return (
     <div className="flex min-h-screen w-full flex-col overflow-x-hidden bg-neutral-50 font-sans text-brand-black">
       <a
         href="#main-content"
@@ -524,7 +528,9 @@ const App: React.FC = () => (
       </section>
       <Footer />
     </div>
-  </SeasonProvider>
-);
+  );
+};
+
+const App: React.FC = () => <SeasonProvider><AppContent /></SeasonProvider>;
 
 export default App;

@@ -93,7 +93,7 @@ function LeagueTabs<T extends string>({
               setIsOpen(true);
             }
           }}
-          className="group relative inline-flex min-h-11 min-w-[84px] items-center justify-between gap-1.5 whitespace-nowrap rounded-full bg-transparent px-2.5 font-display text-[11px] font-semibold leading-none tracking-normal text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-[116px] md:gap-2 md:border md:border-neutral-200 md:bg-white md:px-3 md:tracking-wide md:transition-colors md:hover:border-neutral-400"
+          className="group relative inline-flex min-h-11 min-w-[84px] items-center justify-between gap-1.5 whitespace-nowrap rounded-full bg-transparent px-2.5 font-sans text-[11px] font-semibold leading-none tracking-normal text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-[116px] md:gap-2 md:border md:border-neutral-200 md:bg-white md:px-3 md:font-display md:tracking-wide md:transition-colors md:hover:border-neutral-400"
         >
           <span data-league-pill aria-hidden="true" className="pointer-events-none absolute inset-x-0 inset-y-1.5 rounded-full border border-neutral-200 bg-white transition-colors group-hover:border-neutral-400 md:hidden" />
           <span data-league-selected className="relative z-10">
@@ -108,7 +108,7 @@ function LeagueTabs<T extends string>({
             id={menuId}
             role="menu"
             aria-label="聯賽選項"
-            className="absolute left-0 top-full z-40 mt-0 w-full rounded-lg border border-neutral-200 bg-white p-1 shadow-md md:mt-1"
+            className="absolute left-0 top-full z-40 mt-0 w-full rounded-[18px] border border-neutral-200 bg-white p-1 shadow-[0_8px_22px_rgba(0,0,0,0.10)] md:mt-1 md:rounded-lg md:shadow-md"
           >
             {options.map((option, index) => {
               const isActive = active === option;
@@ -126,13 +126,15 @@ function LeagueTabs<T extends string>({
                     triggerRef.current?.focus();
                   }}
                   className={
-                    'flex min-h-11 w-full items-center justify-between gap-2 rounded-md px-2 text-left font-display text-[11px] font-semibold tracking-wide focus-visible:outline-2 focus-visible:outline-brand-blue md:min-h-9 ' +
+                    'flex min-h-11 w-full items-center justify-between gap-2 rounded-[14px] px-1.5 text-left font-sans text-[11px] font-semibold leading-none tracking-normal focus-visible:outline-2 focus-visible:outline-brand-blue md:min-h-9 md:rounded-md md:px-2 md:font-display md:tracking-wide ' +
                     (isActive ? 'bg-brand-blue/10 text-brand-blue' : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-blue')
                   }
                 >
-                  <span className="md:hidden">{mobileLabel(option)}</span>
-                  <span className="hidden md:inline">{desktopLabel(option)}</span>
-                  {isActive && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                  <span data-league-item-label className="inline-flex min-w-0 flex-1 items-center">
+                    <span className="md:hidden">{mobileLabel(option)}</span>
+                    <span className="hidden md:inline">{desktopLabel(option)}</span>
+                  </span>
+                  {isActive && <Check className="h-3 w-3 shrink-0 md:h-3.5 md:w-3.5" aria-hidden="true" />}
                 </button>
               );
             })}

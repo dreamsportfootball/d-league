@@ -62,8 +62,10 @@ try {
               match.homeScore !== null && match.awayScore !== null &&
               match.resultType !== 'VOID',
           ).slice(-1)[0];
-          const actualNext = await page.locator('[data-team-next-match]').first().getAttribute('data-team-next-match');
-          const actualLast = await page.locator('[data-team-last-result]').first().getAttribute('data-team-last-result');
+          const nextButton = page.locator('[data-team-next-match]');
+          const lastButton = page.locator('[data-team-last-result]');
+          const actualNext = await nextButton.count() ? await nextButton.first().getAttribute('data-team-next-match') : null;
+          const actualLast = await lastButton.count() ? await lastButton.first().getAttribute('data-team-last-result') : null;
           if (actualNext !== (expectedNext?.id ?? null) || actualLast !== (expectedLast?.id ?? null)) {
             throw new Error('team next/last summary differs from confirmed fixtures: ' +
               JSON.stringify({ actualNext, expectedNext: expectedNext?.id, actualLast, expectedLast: expectedLast?.id }));

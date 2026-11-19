@@ -11,6 +11,7 @@ import { useSearchParams } from 'react-router-dom';
 import DataContentTransition from '../components/DataContentTransition';
 import EmptyState from '../components/EmptyState';
 import FullSchedule from '../components/FullSchedule';
+import MatchdayNavigator from '../components/MatchdayNavigator';
 import LeagueTabs from '../components/LeagueTabs';
 import MatchDialog from '../components/MatchDialog';
 import SeasonPageHeader from '../components/SeasonPageHeader';
@@ -583,6 +584,14 @@ const SchedulePage: React.FC = () => {
           onChange={setQuickLeague}
           getLabel={(league) => league === 'ALL' ? '全部' : league}
         />
+
+        {filteredMatches.length > 0 && (
+          <MatchdayNavigator
+            matches={filteredMatches}
+            teamMap={seasonData.teamMap}
+            onMatchClick={selectMatch}
+          />
+        )}
 
         <DataContentTransition contentKey={activeSeasonId} className="mb-20">
           {seasonData.matches.length === 0 ? (

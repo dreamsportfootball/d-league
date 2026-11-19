@@ -307,7 +307,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
         type="button"
         aria-label="關閉比賽詳情"
         data-match-dialog-backdrop
-        className="absolute inset-0 bg-black/60"
+        className="dleague-motion-backdrop-enter absolute inset-0 bg-black/60"
         onClick={onClose}
       />
 
@@ -316,7 +316,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="match-dialog-title"
-        className="relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[860px] flex-col overflow-hidden rounded-[24px] bg-white shadow-[0_28px_80px_rgba(0,0,0,0.28)] ring-1 ring-black/5 sm:max-h-[92dvh] sm:rounded-[30px]"
+        className="dleague-motion-dialog-enter relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[860px] flex-col overflow-hidden rounded-[24px] bg-white shadow-[0_28px_80px_rgba(0,0,0,0.28)] ring-1 ring-black/5 sm:max-h-[92dvh] sm:rounded-[30px]"
       >
         <div className="relative shrink-0 bg-white px-5 pb-5 pt-6 sm:px-12 sm:pb-7 sm:pt-9">
           <button

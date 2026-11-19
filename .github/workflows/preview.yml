@@ -92,6 +92,7 @@ jobs:
           node scripts/validate-fan-ux.mjs
           node scripts/validate-home-match-dialog-return.mjs
           node scripts/validate-team-roster-ui.mjs
+          node scripts/validate-preview-micro-motion.mjs
 
       - name: Publish preview without replacing production
         uses: peaceiris/actions-gh-pages@v4

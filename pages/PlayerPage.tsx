@@ -5,6 +5,7 @@ import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
 import MatchDialog from '../components/MatchDialog';
 import PlayerHonours from '../components/PlayerHonours';
+import PlayerSeasonTrend from '../components/PlayerSeasonTrend';
 import PortraitPhoto from '../components/PortraitPhoto';
 import { getSeasonConfig, isSeasonId } from '../config/seasons';
 import { SeasonContext } from '../contexts/SeasonContext';
@@ -109,6 +110,7 @@ const formatPlayerMatchDate = (timestamp: string): string => {
 };
 
 type EventSeasonFilter = SeasonId | 'ALL';
+type PlayerEventTypeFilter = 'ALL' | 'GOALS' | 'CARDS';
 
 interface SelectedMatchState {
   matchId: string;
@@ -139,6 +141,14 @@ const PlayerPage: React.FC = () => {
   const setEventSeason = (season: EventSeasonFilter) => {
     setEventSeasonByPlayer({ key: eventSeasonStateKey, season });
   };
+  const [eventTypeByPlayer, setEventTypeByPlayer] = useState<{
+    key: string;
+    type: PlayerEventTypeFilter;
+  }>(() => ({ key: id, type: 'ALL' }));
+  const eventType = eventTypeByPlayer.key === id ? eventTypeByPlayer.type : 'ALL';
+  const setEventType = (type: PlayerEventTypeFilter) => {
+    setEventTypeByPlayer({ key: id, type });
+  };
   const validMatchIds = useMemo(
     () => new Set(history.flatMap((record) => record.data.matches.map((match) => match.id))),
     [history],
@@ -151,13 +161,24 @@ const PlayerPage: React.FC = () => {
     return record ? { matchId: selectedMatchId, seasonId: record.seasonId } : null;
   }, [history, selectedMatchId]);
 
-  const filteredMatchRecords = useMemo(
-    () =>
-      eventSeason === 'ALL'
-        ? matchRecords
-        : matchRecords.filter((record) => record.seasonId === eventSeason),
-    [eventSeason, matchRecords],
-  );
+  const filteredMatchRecords = useMemo(() => {
+    const seasonMatches = eventSeason === 'ALL'
+      ? matchRecords
+      : matchRecords.filter((record) => record.seasonId === eventSeason);
+    if (eventType === 'ALL') return seasonMatches;
+    return seasonMatches.filter((record) => {
+      const registeredPlayer = history.find((item) => item.seasonId === record.seasonId)?.player;
+      if (!registeredPlayer) return false;
+      return record.events.some((event) => {
+        if (resolveMatchEventPlayer(record.data, record.match, event)?.id !== registeredPlayer.id) return false;
+        if (eventType === 'GOALS') {
+          return event.type === 'GOAL' && !event.isOwnGoal &&
+            record.match.resultType !== 'VOID' && record.match.countsForPlayerStats !== false;
+        }
+        return event.type === 'YELLOW_CARD' || event.type === 'SECOND_YELLOW' || event.type === 'RED_CARD';
+      });
+    });
+  }, [eventSeason, eventType, history, matchRecords]);
 
   const dialogSeasonContext = useMemo(() => {
     if (!selectedMatch) return null;
@@ -216,6 +237,23 @@ const PlayerPage: React.FC = () => {
   const preferredSeasonStats = getPlayerSeasonStats(preferredRecord);
   const preferredSeasonRedCards =
     preferredSeasonStats.directRedCards + preferredSeasonStats.secondYellowDismissals;
+  const seasonTrendPoints = history.map((record) => {
+    const stats = getPlayerSeasonStats(record);
+    return {
+      seasonId: record.seasonId,
+      label: record.season.shortName,
+      goals: stats.goals,
+      yellowCards: stats.yellowCards,
+      redCards: stats.directRedCards + stats.secondYellowDismissals,
+    };
+  });
+  const jumpToPlayerEvents = (seasonId: SeasonId) => {
+    setEventSeason(seasonId);
+    document.getElementById('player-event-history')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'start',
+    });
+  };
   const seasonRows = history.flatMap((record) => {
     const seasonTeams = getPlayerSeasonTeams(record);
     const rows: Array<SeasonTeam | undefined> = seasonTeams.length > 0
@@ -329,6 +367,11 @@ const PlayerPage: React.FC = () => {
       </section>
 
       <main className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-10 md:gap-14 md:px-12 md:py-14">
+        <PlayerSeasonTrend
+          points={seasonTrendPoints}
+          selectedSeason={eventSeason}
+          onSeasonSelect={jumpToPlayerEvents}
+        />
         <section className="order-3">
           <div className="flex items-center border-b border-neutral-200 pb-3">
             <Target className="mr-2 h-5 w-5 text-brand-blue" />
@@ -416,7 +459,7 @@ const PlayerPage: React.FC = () => {
 
         <PlayerHonours playerId={id} className="order-2" />
 
-        <section className="order-1">
+        <section id="player-event-history" className="order-1 scroll-mt-24">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3">
             <div className="flex items-center">
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
@@ -438,6 +481,27 @@ const PlayerPage: React.FC = () => {
                 ))}
               </select>
             </label>
+          </div>
+          <div className="mt-4 mb-2 flex flex-wrap gap-2" aria-label="篩選球員事件類型">
+            {([
+              { type: 'ALL' as const, label: '全部事件' },
+              { type: 'GOALS' as const, label: '進球' },
+              { type: 'CARDS' as const, label: '紅黃牌' },
+            ]).map(({ type, label }) => (
+              <button
+                key={type}
+                type="button"
+                data-player-event-filter={type}
+                aria-pressed={eventType === type}
+                onClick={() => setEventType(type)}
+                className={`inline-flex min-h-11 items-center rounded-full border px-4 text-xs font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue ${eventType === type ? 'border-brand-blue bg-brand-blue text-white' : 'border-neutral-200 bg-white text-neutral-600 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+              >
+                {label}
+              </button>
+            ))}
+            <span data-player-event-result-count className="ml-auto inline-flex min-h-11 items-center text-[11px] font-semibold text-neutral-500">
+              共 {filteredMatchRecords.length} 場有事件紀錄
+            </span>
           </div>
 
           {filteredMatchRecords.length > 0 ? (
@@ -562,7 +626,9 @@ const PlayerPage: React.FC = () => {
             </>
           ) : (
             <p className="py-10 text-sm text-neutral-400">
-              {eventSeason === 'ALL' ? '目前沒有可連結的比賽事件' : '此賽季沒有比賽事件'}
+              {eventType === 'ALL'
+                ? (eventSeason === 'ALL' ? '目前沒有可連結的比賽事件' : '此賽季沒有比賽事件')
+                : '目前篩選條件下沒有符合的已確認事件'}
             </p>
           )}
         </section>

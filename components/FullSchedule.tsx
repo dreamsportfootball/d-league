@@ -121,7 +121,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={accessibilityLabel}
-                  className={`w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden ${teamRowBackground}`}
+                  className={`dleague-motion-match-row w-full max-w-full overflow-hidden border-b border-neutral-100 px-1 py-2.5 text-left transition-colors active:bg-neutral-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden ${teamRowBackground}`}
                 >
                   <div className="mb-2 flex min-w-0 items-center gap-2 leading-none">
                     <span className="whitespace-nowrap font-display text-[10px] font-semibold tracking-[0.02em] text-neutral-500">
@@ -194,7 +194,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={accessibilityLabel}
-                  className={`group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-3.5 text-left transition-colors md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
+                  className={`dleague-motion-match-row group relative hidden w-full cursor-pointer items-center overflow-hidden border-b border-neutral-100 px-4 py-3.5 text-left transition-colors md:grid md:grid-cols-[128px_minmax(0,1fr)_68px_minmax(0,1fr)_88px] md:hover:bg-neutral-100 ${teamRowBackground}`}
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 group-hover:translate-x-0" />
 
@@ -267,17 +267,23 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={accessibilityLabel}
-                  className="dleague-touch-target w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden"
+                  className="dleague-motion-match-row dleague-touch-target w-full max-w-full overflow-hidden border-b border-neutral-100 bg-white px-1 py-4 text-left transition-colors active:bg-neutral-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:hidden"
                 >
-                  <div className="mb-2 flex min-w-0 items-center justify-between gap-3">
-                    <div className="flex shrink-0 items-center gap-2.5">
-                      <span className="font-display text-[12px] font-bold tabular-nums text-neutral-500">
+                  <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
+                    <div className="flex min-w-0 shrink items-center gap-2.5">
+                      <span className="shrink-0 font-display text-[12px] font-bold tabular-nums text-neutral-500">
                         {timeStr}
                       </span>
-                      <span className="text-[11px] font-bold tracking-[0.05em] text-neutral-600">
+                      <span className="min-w-0 truncate text-[11px] font-bold tracking-[0.05em] text-neutral-600">
                         {match.league} 第{match.round}輪
                       </span>
                     </div>
+                    <span
+                      data-match-status={isFinished ? 'finished' : 'scheduled'}
+                      className={`shrink-0 text-[10px] font-semibold ${isFinished ? 'text-brand-blue' : 'text-neutral-400'}`}
+                    >
+                      {isFinished ? '完賽' : '未開賽'}
+                    </span>
                   </div>
 
                   <div className="grid w-full min-w-0 max-w-full grid-cols-[minmax(0,1fr)_50px_minmax(0,1fr)] items-center gap-1">
@@ -329,6 +335,11 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                       </div>
                     </div>
                   </div>
+                  {administrativeNote && (
+                    <p className="mt-2 break-words text-[11px] font-semibold text-amber-700">
+                      {administrativeNote}
+                    </p>
+                  )}
                 </button>
 
                 <button
@@ -337,7 +348,7 @@ const FullSchedule: React.FC<FullScheduleProps> = ({
                   data-analytics-event="match_open"
                   data-analytics-label={match.id}
                   aria-label={accessibilityLabel}
-                  className="group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:flex md:flex-row md:hover:bg-neutral-50"
+                  className="dleague-motion-match-row group relative hidden w-full cursor-pointer flex-col items-center overflow-hidden border-b border-neutral-50 bg-white py-5 text-left transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-blue md:flex md:flex-row md:hover:bg-neutral-50"
                 >
                   <div className="absolute bottom-0 left-0 top-0 w-1 -translate-x-full bg-brand-blue transition-transform duration-300 md:group-hover:translate-x-0" />
 

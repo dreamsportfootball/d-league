@@ -4,10 +4,11 @@ import { readFile } from 'node:fs/promises';
 const base = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/\/$/, '');
 const dataRoot = new URL('../data/seasons/2026-27/', import.meta.url);
 const readJson = async (filename) => JSON.parse(await readFile(new URL(filename, dataRoot), 'utf8'));
-const [teams, players, photoMap] = await Promise.all([
+const [teams, players, photoMap, matches] = await Promise.all([
   readJson('teams.json'),
   readJson('players.json'),
   readJson('playerImages.json'),
+  readJson('matches.json'),
 ]);
 const identityAliases = JSON.parse(await readFile(new URL('../data/playerIdentityAliases.json', import.meta.url), 'utf8'))['2026-27'] ?? {};
 const visiblePlayers = (teamId) => players.filter(
@@ -47,6 +48,31 @@ try {
           const roster = page.getByRole('heading', { name: '球員名單', exact: true })
             .locator('xpath=ancestor::section[1]');
           await roster.waitFor({ state: 'visible' });
+
+          // Preserve the existing team page and verify the two new football-info
+          // summaries are derived from confirmed season data, never made up.
+          const teamMatches = matches
+            .filter((match) => match.homeTeamId === team.id || match.awayTeamId === team.id)
+            .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+          const expectedNext = teamMatches.find(
+            (match) => match.status === 'SCHEDULED' && Date.parse(match.timestamp) >= Date.now(),
+          );
+          const expectedLast = teamMatches.filter(
+            (match) => match.status === 'FINISHED' &&
+              match.homeScore !== null && match.awayScore !== null &&
+              match.resultType !== 'VOID',
+          ).slice(-1)[0];
+          const nextButton = page.locator('[data-team-next-match]');
+          const lastButton = page.locator('[data-team-last-result]');
+          const actualNext = await nextButton.count() ? await nextButton.first().getAttribute('data-team-next-match') : null;
+          const actualLast = await lastButton.count() ? await lastButton.first().getAttribute('data-team-last-result') : null;
+          if (actualNext !== (expectedNext?.id ?? null) || actualLast !== (expectedLast?.id ?? null)) {
+            throw new Error('team next/last summary differs from confirmed fixtures: ' +
+              JSON.stringify({ actualNext, expectedNext: expectedNext?.id, actualLast, expectedLast: expectedLast?.id }));
+          }
+          if ((expectedNext || expectedLast) && await page.getByLabel('球隊賽事摘要').count() !== 1) {
+            throw new Error('team summary missing');
+          }
 
           const actual = await roster.locator('a[href*="/players/"]').evaluateAll((links) =>
             links.map((link) => ({

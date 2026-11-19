@@ -18,7 +18,7 @@ interface MatchdayGroup {
 }
 
 /**
- * A matchday-first exploration experiment, inside the EXISTING schedule page.
+ * Homepage matchday-first exploration experiment, using the existing match center.
  * Reads approved competition records; does not derive speculative live scores.
  */
 const MatchdayNavigator: React.FC<MatchdayNavigatorProps> = ({ matches, teamMap, onMatchClick }) => {

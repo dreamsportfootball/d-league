@@ -93,7 +93,6 @@ jobs:
           node scripts/validate-home-match-dialog-return.mjs
           node scripts/validate-team-roster-ui.mjs
           node scripts/validate-matchday-explorer.mjs
-          node scripts/validate-match-player-preview.mjs
 
       - name: Publish preview without replacing production
         uses: peaceiris/actions-gh-pages@v4

@@ -31,6 +31,7 @@ import ActionFeedbackLabel from './ActionFeedbackLabel';
 import AnimatedScore from './AnimatedScore';
 import HeadToHead from './HeadToHead';
 import MatchEvents from './MatchEvents';
+import MatchFlow from './MatchFlow';
 import MatchVideoPlayer from './MatchVideoPlayer';
 
 interface MatchDialogProps {
@@ -440,6 +441,9 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
         </div>
 
         <div data-match-dialog-scroller className="flex-1 overflow-y-auto overscroll-contain bg-white">
+          {isFinished && (
+            <MatchFlow match={match} events={matchEvents} homeTeam={homeTeam} awayTeam={awayTeam} />
+          )}
           <section className="border-b border-neutral-100 px-5 pb-8 pt-2 sm:px-12 sm:pb-10 sm:pt-3">
             <div className="flex items-center justify-center gap-4" aria-hidden="true">
               <span className="h-px w-9 bg-neutral-200 sm:w-12" />
@@ -451,6 +455,8 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
               D LEAGUE 官方賽事紀錄
             </p>
           </section>
+
+          <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
 
           {usesCurrentSeasonMedia && hasStarted ? (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-12 sm:py-9" aria-labelledby="match-media-title">
@@ -512,9 +518,7 @@ const MatchDialog: React.FC<MatchDialogProps> = ({
                 )}
               </div>
             </section>
-          ) : (
-            <HeadToHead homeTeam={homeTeam} awayTeam={awayTeam} />
-          )}
+          ) : null}
 
           {lineup && (
             <section className="border-b border-neutral-100 px-5 py-7 sm:px-8">

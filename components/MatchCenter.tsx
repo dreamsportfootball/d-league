@@ -11,7 +11,6 @@ import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } fr
 import { getDefaultHomeMatchCenterFilter } from '../utils/homeMatchCenterDefault.mjs';
 import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
-import MatchdayNavigator from './MatchdayNavigator';
 import Tabs from './Tabs';
 
 type MatchCenterFilter = 'Upcoming' | 'Results';
@@ -69,7 +68,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, teamMap, onOpenMatch }) =>
       onClick={() => onOpenMatch(match.id)}
       data-analytics-event="match_open"
       data-analytics-label={match.id}
-      className="group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
+      className="dleague-motion-match-card group relative mr-3 flex w-[85vw] shrink-0 snap-center cursor-pointer select-none flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white text-left shadow-sm transition-[border-color,box-shadow,background-color] duration-200 last:mr-0 hover:border-neutral-300 hover:shadow-md active:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 md:mr-4 md:w-80"
     >
       <div className="flex w-full min-w-0 shrink-0 items-center justify-between border-b border-neutral-100 bg-neutral-50 px-4 py-2">
         <div className="flex min-w-0 items-center">
@@ -326,15 +325,6 @@ const MatchCenter: React.FC = () => {
               <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
-          {seasonData.matches.length > 0 && (
-            <div data-home-matchday-explorer className="mt-7 border-t border-neutral-100 pt-7 md:mt-9 md:pt-9">
-              <MatchdayNavigator
-                matches={seasonData.matches}
-                teamMap={seasonData.teamMap}
-                onMatchClick={selectMatch}
-              />
-            </div>
-          )}
         </div>
       </div>
 

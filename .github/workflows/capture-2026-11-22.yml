@@ -1,0 +1,147 @@
+name: Capture original D LEAGUE 2026-11-22 match screenshots
+
+on:
+  push:
+    branches:
+      - ops/matchday-2026-11-22-authentic-screenshots
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node and Chromium
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install screenshot tools
+        run: |
+          npm ci --silent
+          npm install --no-save playwright sharp
+          npx playwright install --with-deps chromium
+
+      - name: Capture genuine website match dialog headers and merge image
+        run: |
+          mkdir -p artifacts
+          cat > ./capture-1122-tmp.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import sharp from 'sharp';
+          import fs from 'node:fs/promises';
+
+          const BASE = 'https://dreamsportfootball.github.io/d-league';
+          const fixtures = [
+            { id:'m2627-016', time:'09:00', home:'鹿逐', away:'WANDERERS' },
+            { id:'m2627-017', time:'10:00', home:'聖騎士', away:'鳥仕' },
+            { id:'m2627-018', time:'11:00', home:'屏東野狼', away:'SF' }
+          ];
+          const browser = await chromium.launch({
+            headless:true,
+            args:['--disable-dev-shm-usage']
+          });
+          const cards=[];
+          const evidence=[];
+          try {
+            for(const fixture of fixtures){
+              const page = await browser.newPage({
+                viewport:{width:1280,height:900},deviceScaleFactor:2,
+                locale:'zh-TW',timezoneId:'Asia/Taipei',serviceWorkers:'block'
+              });
+              const url = BASE + '/matches/' + fixture.id + '?notice=20261122';
+              await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
+              await page.locator('[role="dialog"] #match-dialog-title')
+                .waitFor({state:'visible',timeout:45000});
+              const header = page.locator('[role="dialog"] > div.relative.shrink-0.bg-white').first();
+              await header.waitFor({state:'visible',timeout:15000});
+              const text = await header.innerText();
+              for(const expected of ['L3','第 2 輪','11/22',fixture.time,fixture.home,fixture.away]){
+                if(!text.includes(expected))throw new Error(
+                  fixture.id+' content mismatch (missing '+expected+'): '+text.slice(0,400));
+              }
+
+              const getLoaded = async locator=>locator.evaluateAll(async images=>{
+                await Promise.all(images.map(im=>new Promise(resolve=>{
+                  if(im.complete)return resolve();
+                  im.addEventListener('load',resolve,{once:true});
+                  im.addEventListener('error',resolve,{once:true});
+                  setTimeout(resolve,15000);
+                })));
+                return images.map(im=>({
+                  src:im.currentSrc||im.src,title:im.title,alt:im.alt,
+                  loaded:im.complete&&im.naturalWidth>0,naturalWidth:im.naturalWidth
+                }));
+              });
+              const jerseys=header.locator('img[title*="球衣"]');
+              const logos=header.locator('a img[alt]');
+              if(await jerseys.count()!==2 || await logos.count()!==2){
+                throw new Error(fixture.id+' must have exactly 2 actual jersey images and 2 logos');
+              }
+              const [jerseyData,logoData] = await Promise.all([
+                getLoaded(jerseys),getLoaded(logos)
+              ]);
+              if([...jerseyData,...logoData].some(x=>!x.loaded)){
+                throw new Error(fixture.id+' has unloaded original website imagery: '+
+                  JSON.stringify({jerseyData,logoData}));
+              }
+              const source=await header.screenshot({animations:'disabled'});
+              await fs.writeFile('artifacts/'+fixture.id+'-original-header.png',source);
+              const {width,height}=await sharp(source).metadata();
+              if(width<1550||height<520){
+                throw new Error(fixture.id+' header dimensions changed ('+width+'x'+height+'). Review crop');
+              }
+              // The exact same crop geometry as the accepted 11/15 LINE composite:
+              // crop genuine website pixels only. No redrawing logos, kits or text.
+              const content=await sharp(source)
+                .extract({left:170,top:55,width:1380,height:465}).png().toBuffer();
+              const card=await sharp({
+                create:{width:1592,height:465,channels:3,background:'#ffffff'}
+              }).composite([{input:content,left:106,top:0}]).png().toBuffer();
+              cards.push(card);
+              evidence.push({
+                match_id:fixture.id,time:fixture.time,source:url,
+                displayed_text:text.slice(0,600),
+                real_jerseys:jerseyData,real_logos:logoData,
+                sourceScreenshot:{width,height}
+              });
+              await page.close();
+            }
+            const gap=9,cardHeight=465,outputWidth=1592;
+            const outputHeight=cards.length*cardHeight+(cards.length-1)*gap;
+            const composite=cards.map((input,i)=>({
+              input,left:0,top:i*(cardHeight+gap)
+            }));
+            const output='artifacts/D_LEAGUE_2026-11-22_L3_球衣安排_真實官網截圖合併長圖.png';
+            await sharp({create:{
+              width:outputWidth,height:outputHeight,channels:3,background:'#ececec'
+            }}).composite(composite).png().toFile(output);
+            await fs.writeFile('artifacts/verification.json',JSON.stringify({
+              date:'2026-11-22',count:3,output,
+              dimensions:{width:outputWidth,height:outputHeight},
+              processing:'Crop and vertically stack real official website header screenshots only. No generated graphics.',
+              evidence
+            },null,2));
+            console.log('CAPTURE_OK '+JSON.stringify({
+              output,dimensions:[outputWidth,outputHeight],fixtures:evidence
+            }));
+          }finally{
+            await browser.close();
+          }
+          EOF
+          node ./capture-1122-tmp.mjs
+
+      - name: Upload original screenshots, composite and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: D_LEAGUE_2026-11-22_official_screenshots
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 7

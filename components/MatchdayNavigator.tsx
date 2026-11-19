@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, CalendarDays, ChevronRight, Star, Trophy } from 'lucide-react';
 import { useFollowedTeam } from '../hooks/useFollowedTeam';
 import { getTeamIdentity } from '../services/entityData';
@@ -63,6 +63,17 @@ const MatchdayNavigator: React.FC<MatchdayNavigatorProps> = ({ matches, teamMap,
   const visibleMatches = followedOnly ? dayMatches.filter(isFollowed) : dayMatches;
   const completeCount = dayMatches.filter((match) => match.status === MatchStatus.FINISHED).length;
   const activeDateIndex = groups.findIndex((group) => group.date === selectedDate);
+
+  // Reveal the selected upcoming matchday on mobile without scrolling the page.
+  useEffect(() => {
+    const strip = datesRef.current;
+    const selected = strip?.querySelector<HTMLButtonElement>('[data-matchday-date][aria-pressed="true"]');
+    if (!strip || !selected) return;
+    const stripBounds = strip.getBoundingClientRect();
+    const selectedBounds = selected.getBoundingClientRect();
+    strip.scrollLeft += selectedBounds.left + selectedBounds.width / 2
+      - stripBounds.left - stripBounds.width / 2;
+  }, [selectedDate]);
 
   if (groups.length === 0) return null;
 

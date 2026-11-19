@@ -53,8 +53,8 @@ const MatchdayNavigator: React.FC<MatchdayNavigatorProps> = ({ matches, teamMap,
     ? requestedDate : defaultDate;
   const selectedGroup = groups.find((group) => group.date === selectedDate);
   const followedTeams = useMemo(
-    () => new Set(
-      Object.values(teamMap).filter((team) => followedTeamIds.includes(getTeamIdentity(team))).map((team) => team.id),
+    () => new Set<string>(
+      Object.keys(teamMap).filter((id) => followedTeamIds.includes(getTeamIdentity(teamMap[id]))),
     ),
     [followedTeamIds, teamMap],
   );

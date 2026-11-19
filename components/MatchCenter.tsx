@@ -11,6 +11,7 @@ import { formatTaipeiDateKey, formatTaipeiMonthDayWeekday, formatTaipeiTime } fr
 import { getDefaultHomeMatchCenterFilter } from '../utils/homeMatchCenterDefault.mjs';
 import AnimatedScore from './AnimatedScore';
 import MatchDialog from './MatchDialog';
+import MatchdayNavigator from './MatchdayNavigator';
 import Tabs from './Tabs';
 
 type MatchCenterFilter = 'Upcoming' | 'Results';
@@ -325,6 +326,15 @@ const MatchCenter: React.FC = () => {
               <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
+          {seasonData.matches.length > 0 && (
+            <div data-home-matchday-explorer className="mt-7 border-t border-neutral-100 pt-7 md:mt-9 md:pt-9">
+              <MatchdayNavigator
+                matches={seasonData.matches}
+                teamMap={seasonData.teamMap}
+                onMatchClick={selectMatch}
+              />
+            </div>
+          )}
         </div>
       </div>
 

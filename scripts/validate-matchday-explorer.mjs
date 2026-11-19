@@ -27,11 +27,11 @@ try {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
-      await page.goto(base + '/#/schedule?season=2026-27', { waitUntil: 'domcontentloaded', timeout: 30000 });
-      const hub = page.locator('[data-matchday-navigator]');
+      await page.goto(base + '/#/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      const hub = page.locator('[data-home-matchday-explorer] [data-matchday-navigator]');
       await hub.waitFor({ state: 'visible', timeout: 30000 });
-      const originalSchedule = page.locator('button[data-analytics-event="match_open"]:visible');
-      if (await originalSchedule.count() === 0) throw new Error('Original schedule rows missing');
+      const homeCards = page.locator('[data-home-matchday-explorer]').locator('[data-matchday-match]');
+      if (await homeCards.count() === 0) throw new Error('Homepage matchday fixtures missing');
       const dates = hub.locator('[data-matchday-date]');
       const count = await dates.count();
       if (count < 2) throw new Error('Expected two or more distinct confirmed match days');
@@ -68,15 +68,22 @@ try {
       }
       await dialog.getByRole('button', { name: '關閉', exact: true }).click();
       await dialog.waitFor({ state: 'hidden' });
-      if (await hub.count() !== 1) throw new Error('Explorer disappeared after closing dialog');
+      if (await hub.count() !== 1) throw new Error('Homepage explorer disappeared after closing dialog');
+      if (!new URL(page.url()).hash.startsWith('#/')) throw new Error('Match modal did not return to homepage');
       const layout = await page.evaluate(() => ({
         doc: document.documentElement.scrollWidth,
         body: document.body.scrollWidth,
         viewport: window.innerWidth,
       }));
       if (layout.doc > width + 2 || layout.body > width + 2) {
-        throw new Error('Horizontal overflow ' + JSON.stringify(layout));
+        throw new Error('Homepage horizontal overflow ' + JSON.stringify(layout));
       }
+      await page.goto(base + '/#/schedule?season=2026-27', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      if (await page.locator('[data-matchday-navigator]').count() !== 0) {
+        throw new Error('Explorer duplicated on schedule page');
+      }
+      const originalSchedule = page.locator('button[data-analytics-event="match_open"]:visible');
+      if (await originalSchedule.count() === 0) throw new Error('Original schedule rows missing');
       if (errors.length) throw new Error('Browser JS errors: ' + errors.join(' | '));
       console.log('[matchday-explorer] PASS ' + width + 'px; dates=' + count);
     } catch (error) {

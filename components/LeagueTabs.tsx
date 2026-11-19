@@ -93,7 +93,7 @@ function LeagueTabs<T extends string>({
               setIsOpen(true);
             }
           }}
-          className="group relative inline-flex min-h-11 min-w-[84px] items-center justify-between gap-1.5 whitespace-nowrap rounded-full bg-transparent px-2.5 font-sans text-[11px] font-semibold leading-none tracking-normal text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-[116px] md:gap-2 md:border md:border-neutral-200 md:bg-white md:px-3 md:font-display md:tracking-wide md:transition-colors md:hover:border-neutral-400"
+          className="dleague-motion-control group relative inline-flex min-h-11 min-w-[84px] items-center justify-between gap-1.5 whitespace-nowrap rounded-full bg-transparent px-2.5 font-sans text-[11px] font-semibold leading-none tracking-normal text-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue md:min-h-9 md:min-w-[116px] md:gap-2 md:border md:border-neutral-200 md:bg-white md:px-3 md:font-display md:tracking-wide md:transition-colors md:hover:border-neutral-400"
         >
           <span data-league-pill aria-hidden="true" className="pointer-events-none absolute inset-x-0 inset-y-1.5 rounded-full border border-neutral-200 bg-white transition-colors group-hover:border-neutral-400 md:hidden" />
           <span data-league-selected className="relative z-10">
@@ -108,7 +108,7 @@ function LeagueTabs<T extends string>({
             id={menuId}
             role="menu"
             aria-label="聯賽選項"
-            className="absolute left-0 top-full z-40 mt-0 w-full rounded-[18px] border border-neutral-200 bg-white p-1 shadow-[0_8px_22px_rgba(0,0,0,0.10)] md:mt-1 md:rounded-lg md:shadow-md"
+            className="dleague-motion-menu-enter absolute left-0 top-full z-40 mt-0 w-full rounded-[18px] border border-neutral-200 bg-white p-1 shadow-[0_8px_22px_rgba(0,0,0,0.10)] md:mt-1 md:rounded-lg md:shadow-md"
           >
             {options.map((option, index) => {
               const isActive = active === option;

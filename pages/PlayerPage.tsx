@@ -513,7 +513,7 @@ const PlayerPage: React.FC = () => {
 
           <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[620px] border-collapse">
-              <thead className="border-b border-neutral-100 text-[10px] font-bold tracking-wider text-neutral-500">
+              <thead className="text-[10px] font-bold tracking-wider text-neutral-500">
                 <tr>
                   <th className="py-3 text-left">賽季</th>
                   <th className="py-3 text-left">級別</th>
@@ -525,7 +525,7 @@ const PlayerPage: React.FC = () => {
               </thead>
               <tbody>
                 {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
-                  <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`} className="border-b border-neutral-100">
+                  <tr key={`${record.seasonId}-${team?.id ?? 'unknown'}`}>
                     <td className="py-4 text-sm font-bold text-brand-black">{record.season.shortName}</td>
                     <td className="py-4 text-sm font-bold text-brand-blue">{team?.leagueId ?? '-'}</td>
                     <td className="py-4 text-sm text-brand-black">

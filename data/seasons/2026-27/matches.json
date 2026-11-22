@@ -248,9 +248,9 @@
     "round": 2,
     "homeTeamId": "t_luzhu_2026",
     "awayTeamId": "t_wanderers_2026",
-    "homeScore": null,
-    "awayScore": null,
-    "status": "SCHEDULED",
+    "homeScore": 1,
+    "awayScore": 1,
+    "status": "FINISHED",
     "timestamp": "2026-11-22T09:00:00+08:00",
     "league": "L3"
   },

@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { CalendarDays, Target, UserRound } from 'lucide-react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { CalendarDays, Check, ChevronDown, ChevronRight, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
@@ -97,6 +97,10 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   });
 };
 
+// Only shorten team labels in the narrow player-event list; do not alter team data.
+const compactEventTeamName = (team: SeasonTeam): string =>
+  team.shortName.replace(/(?:足球俱樂部|足球隊|俱樂部)$/u, '').trim() || team.shortName;
+
 const formatPlayerMatchDate = (timestamp: string): string => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Taipei',
@@ -109,6 +113,138 @@ const formatPlayerMatchDate = (timestamp: string): string => {
 };
 
 type EventSeasonFilter = SeasonId | 'ALL';
+
+interface PlayerEventSeasonMenuProps {
+  value: EventSeasonFilter;
+  options: ReadonlyArray<{ value: EventSeasonFilter; label: string }>;
+  onChange: (value: EventSeasonFilter) => void;
+}
+
+// Local event-history filter: changing it must never change the site's operating season.
+const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
+  value, options, onChange,
+}) => {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const listboxId = useId();
+  const selectedIndex = Math.max(0, options.findIndex((option) => option.value === value));
+  const selectedLabel = options[selectedIndex]?.label ?? '全部賽季';
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    const closeOnFocusOutside = (event: FocusEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    document.addEventListener('focusin', closeOnFocusOutside);
+    optionRefs.current[selectedIndex]?.focus();
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+      document.removeEventListener('focusin', closeOnFocusOutside);
+    };
+  }, [open, selectedIndex]);
+
+  const choose = (next: EventSeasonFilter) => {
+    onChange(next);
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  const focusOption = (index: number) => {
+    const normalized = (index + options.length) % options.length;
+    optionRefs.current[normalized]?.focus();
+  };
+
+  return (
+    <div className="flex shrink-0 items-center gap-1.5">
+      <span className="text-xs font-semibold text-neutral-500">賽季</span>
+      <div ref={rootRef} className="relative">
+        <button
+          ref={triggerRef}
+          type="button"
+          data-player-event-season-trigger
+          aria-label="篩選比賽事件賽季"
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-expanded={open}
+          onClick={() => setOpen((previous) => !previous)}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault();
+              if (open) focusOption(selectedIndex + (event.key === 'ArrowDown' ? 1 : -1));
+              else setOpen(true);
+            }
+          }}
+          className="group inline-flex min-h-11 items-center gap-1.5 border-0 bg-transparent px-0 text-left text-[13px] font-semibold text-brand-black shadow-none transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:min-h-10"
+        >
+          <span className="whitespace-nowrap text-[13px] font-semibold">
+            {selectedLabel}
+          </span>
+          <ChevronDown
+            className={`h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform ${open ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+        {open && (
+          <div
+            id={listboxId}
+            role="listbox"
+            aria-label="比賽事件賽季選項"
+            className="absolute right-0 top-full z-50 mt-1.5 w-[136px] rounded-md border border-neutral-200 bg-white p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+          >
+            {options.map((option, index) => {
+              const selected = option.value === value;
+              return (
+                <button
+                  key={option.value}
+                  ref={(element) => { optionRefs.current[index] = element; }}
+                  type="button"
+                  role="option"
+                  data-player-event-season-option={option.value}
+                  aria-selected={selected}
+                  tabIndex={index === selectedIndex ? 0 : -1}
+                  onClick={() => choose(option.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                      event.preventDefault();
+                      focusOption(index + (event.key === 'ArrowDown' ? 1 : -1));
+                    } else if (event.key === 'Home' || event.key === 'End') {
+                      event.preventDefault();
+                      focusOption(event.key === 'Home' ? 0 : options.length - 1);
+                    } else if (event.key === 'Tab') {
+                      setOpen(false);
+                    }
+                  }}
+                  className={`flex min-h-11 w-full items-center justify-between gap-2 rounded px-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${selected ? 'bg-brand-blue/10 text-brand-blue' : 'text-brand-black hover:bg-neutral-100'}`}
+                >
+                  <span>{option.label}</span>
+                  {selected && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 interface SelectedMatchState {
   matchId: string;
@@ -422,27 +558,22 @@ const PlayerPage: React.FC = () => {
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
               <h2 className="font-display text-2xl font-extrabold text-brand-black">比賽事件</h2>
             </div>
-            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
-              <span>賽季</span>
-              <select
-                value={eventSeason}
-                onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
-                className="min-h-11 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
-                aria-label="篩選比賽事件賽季"
-              >
-                <option value="ALL">全部賽季</option>
-                {history.map((record) => (
-                  <option key={record.seasonId} value={record.seasonId}>
-                    {record.season.shortName}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <PlayerEventSeasonMenu
+              value={eventSeason}
+              onChange={setEventSeason}
+              options={[
+                { value: 'ALL', label: '全部賽季' },
+                ...history.map((record) => ({
+                  value: record.seasonId,
+                  label: record.season.shortName,
+                })),
+              ]}
+            />
           </div>
 
           {filteredMatchRecords.length > 0 ? (
             <>
-              <div className="divide-y divide-neutral-100 md:hidden">
+              <div className="md:hidden">
                 {filteredMatchRecords.map((record) => {
                   const home = record.homeTeam;
                   const away = record.awayTeam;
@@ -475,27 +606,31 @@ const PlayerPage: React.FC = () => {
                       onClick={() => selectMatch(record.match.id)}
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
-                      className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
+                      className="w-full min-h-11 py-1.5 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="text-xs font-semibold tabular-nums text-neutral-500">
+                      <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-neutral-500">
+                        <span className="min-w-0 truncate tabular-nums">
                           {formatPlayerMatchDate(record.match.timestamp)}
+                          <span className="ml-2">{record.match.league} · 第 {record.match.round} 輪</span>
                         </span>
-                        <span className="min-w-0 text-right text-sm font-bold text-brand-black">
-                          {home.shortName} vs {away.shortName}
+                        <span aria-hidden="true" className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[10px] font-semibold tracking-wide text-neutral-500">
+                          <span>進球</span>
+                          <span>黃牌</span>
+                          <span>紅牌</span>
                         </span>
                       </div>
-                      <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-100 rounded-xl bg-neutral-50 py-2.5">
-                        {[
-                          ['進球', goals],
-                          ['黃牌', yellowCards],
-                          ['紅牌', redCards],
-                        ].map(([label, value]) => (
-                          <div key={label} className="text-center">
-                            <p className="text-[9px] font-semibold text-neutral-500">{label}</p>
-                            <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
-                          </div>
-                        ))}
+                      <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
+                        <span className="flex min-w-0 flex-1 items-center gap-1 text-[12px] font-bold leading-5 text-brand-black">
+                          <span className="min-w-0 truncate">{compactEventTeamName(home)}</span>
+                          <span className="shrink-0 text-[10px] font-medium text-neutral-400">vs</span>
+                          <span className="min-w-0 truncate">{compactEventTeamName(away)}</span>
+                        </span>
+                        <span className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[12px] font-semibold tabular-nums text-brand-black">
+                          <span>{goals}</span>
+                          <span>{yellowCards}</span>
+                          <span>{redCards}</span>
+                        </span>
                       </div>
                     </button>
                   );

@@ -35,7 +35,7 @@ const getCurrentMatchDayTitle = (albums: MediaAlbum[]): string | undefined => {
   const leagues = [...new Set(headings.map((heading) => Number(heading?.[1])))]
     .sort((a, b) => a - b)
     .map((league) => `L${league}`);
-  return `${leagues.join('／')} 第 ${rounds[0]} 輪`;
+  return `${leagues.join('/')} 第 ${rounds[0]} 輪`;
 };
 
 // The same match-day card and gallery chooser serve every season.

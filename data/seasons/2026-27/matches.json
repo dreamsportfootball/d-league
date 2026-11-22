@@ -259,9 +259,9 @@
     "round": 2,
     "homeTeamId": "t_holy_knights_2026",
     "awayTeamId": "t_niaoshi_2026",
-    "homeScore": null,
-    "awayScore": null,
-    "status": "SCHEDULED",
+    "homeScore": 2,
+    "awayScore": 6,
+    "status": "FINISHED",
     "timestamp": "2026-11-22T10:00:00+08:00",
     "league": "L3"
   },

@@ -476,8 +476,7 @@ const PlayerPage: React.FC = () => {
                     { label: '進球', count: goals },
                     { label: '黃牌', count: yellowCards },
                     { label: '紅牌', count: redCards },
-                    { label: '烏龍', count: events.filter((event) => event.type === 'GOAL' && event.isOwnGoal).length },
-                  ].filter(({ count }) => count > 0);
+                  ] as const;
 
                   return (
                     <button
@@ -499,9 +498,9 @@ const PlayerPage: React.FC = () => {
                           <span className="shrink-0 text-[10px] font-medium text-neutral-400">vs</span>
                           <span className="min-w-0 truncate">{compactEventTeamName(away)}</span>
                         </span>
-                        <span className="flex max-w-[44%] min-w-0 shrink-0 flex-wrap items-center justify-end gap-x-2 gap-y-0.5 text-[11px] font-semibold leading-4">
+                        <span className="flex shrink-0 items-center justify-end gap-1.5 text-[11px] font-semibold leading-4">
                           {eventHighlights.map(({ label, count }) => (
-                            <span key={label} className={label === '進球' ? 'whitespace-nowrap text-brand-blue' : 'whitespace-nowrap text-neutral-700'}>
+                            <span key={label} className={`whitespace-nowrap tabular-nums ${count > 0 ? (label === '進球' ? 'text-brand-blue' : 'text-neutral-700') : 'text-neutral-500'}`}>
                               {label} {count}
                             </span>
                           ))}

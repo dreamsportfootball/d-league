@@ -492,7 +492,8 @@ const auditInteractiveCase = async (testCase) => {
       afterCount = await page.locator('main a[href*="/news/"]').count();
     } else if (testCase.action === 'match-dialog') {
       if (testCase.eventSeason) {
-        await page.getByRole('combobox', { name: '篩選比賽事件賽季' }).selectOption(testCase.eventSeason);
+        await page.locator('[data-player-event-season-trigger]').click();
+        await page.locator(`[data-player-event-season-option="${testCase.eventSeason}"]`).click();
         await page.waitForTimeout(200);
       }
       await page.locator('[data-analytics-event="match_open"]:visible').first().click();

@@ -1,5 +1,6 @@
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const baseUrl = (process.env.AUDIT_BASE_URL ?? 'http://127.0.0.1:4173/d-league').replace(/[/]$/, '');
@@ -9,6 +10,27 @@ const viewports = [
   { name: 'mobile-390', width: 390, height: 844 },
 ];
 const issues = [];
+// Read the current fixture data instead of assuming November 15 remains the
+// latest completed matchday after the organiser posts new L3 results.
+const seasonMatches = JSON.parse(readFileSync(new URL('../data/seasons/2026-27/matches.json', import.meta.url), 'utf8'));
+const dateKey = (match) => match.timestamp.slice(0, 10);
+const finishedMatches = seasonMatches
+  .filter((match) => match.status === 'FINISHED')
+  .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+const scheduledMatches = seasonMatches
+  .filter((match) => match.status === 'SCHEDULED')
+  .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+if (finishedMatches.length === 0 || scheduledMatches.length === 0) {
+  throw new Error('Mobile match centre audit requires completed and upcoming fixtures');
+}
+const latestFinishedDate = dateKey(finishedMatches[0]);
+const nextScheduledDate = dateKey(scheduledMatches[0]);
+const resultMatches = finishedMatches
+  .filter((match) => dateKey(match) === latestFinishedDate)
+  .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+const upcomingMatches = scheduledMatches
+  .filter((match) => dateKey(match) === nextScheduledDate);
+const expectedCardIds = (matches) => JSON.stringify(matches.map((match) => match.id));
 const browser = await chromium.launch({ headless: true });
 
 const assert = (condition, message) => {
@@ -30,14 +52,18 @@ try {
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      await page.clock.setFixedTime(new Date('2026-11-17T13:00:00+08:00'));
+      await page.clock.setFixedTime(new Date(latestFinishedDate + 'T18:00:00+08:00'));
       await page.goto(baseUrl + '/#/', { waitUntil: 'domcontentloaded', timeout: 30000 });
       const matchCenter = page.locator('#match-center');
       await matchCenter.waitFor({ state: 'visible', timeout: 30000 });
       await matchCenter.scrollIntoViewIfNeeded();
       const cards = matchCenter.locator('[data-analytics-event="match_open"]');
       await cards.first().waitFor({ state: 'visible', timeout: 20000 });
-      assert(await cards.count() === 6, viewport.name + ': expected 6 completed L1/L2 matches on November 15');
+      assert(await cards.count() === resultMatches.length,
+        viewport.name + ': latest completed matchday ' + latestFinishedDate + ' should show ' + resultMatches.length + ' matches');
+      const resultCardIds = await cards.evaluateAll((elements) => elements.map((element) => element.dataset.analyticsLabel));
+      assert(JSON.stringify(resultCardIds) === expectedCardIds(resultMatches),
+        viewport.name + ': latest result cards are not in chronological order: ' + JSON.stringify(resultCardIds));
 
       const firstCardGeometry = await cards.first().evaluate(async (card) => {
         const rows = [...card.querySelectorAll('.grid')].filter((node) => node.querySelector('img') && node.querySelector('span'));
@@ -105,12 +131,15 @@ try {
         viewport.name + ': match header is not full-width neutral gray: ' + firstCardLayout.headerBackground);
       assert(firstCardLayout.scoreRightDelta <= 1,
         viewport.name + ': home/away score columns have different right edges: ' + firstCardLayout.scoreRightDelta);
-      assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(86, 62, 146)', 'rgb(17, 17, 17)']),
-        viewport.name + ': m2627-010 kit colors should be Wild Ape purple and Hongkongers black: ' + firstCardLayout.stripeColors.join(' | '));
+      if (resultMatches[0].id === 'm2627-016') {
+        assert(JSON.stringify(firstCardLayout.stripeColors) === JSON.stringify(['rgb(56, 89, 132)', 'rgb(255, 255, 255)']),
+          viewport.name + ': m2627-016 must use Luzhu blue and WANDERERS white: ' + firstCardLayout.stripeColors.join(' | '));
+      }
       const lastCardStripeColors = await cards.last().evaluate((card) =>
         [...card.lastElementChild.children].map((stripe) => getComputedStyle(stripe).backgroundColor));
-      assert(JSON.stringify(lastCardStripeColors) === JSON.stringify(['rgb(192, 16, 16)', 'rgb(255, 255, 255)']),
-        viewport.name + ': m2627-015 must use Tainan Evergreen red home and KUROMI white away: ' + lastCardStripeColors.join(' | '));
+      assert(lastCardStripeColors.length === 2 && lastCardStripeColors.every((color) =>
+        color !== 'rgba(0, 0, 0, 0)' && color !== 'transparent'),
+        viewport.name + ': last result card has a missing kit stripe: ' + lastCardStripeColors.join(' | '));
 
       assert(firstCardGeometry.length === 2, viewport.name + ': expected both team logo images');
       for (const row of firstCardGeometry) {
@@ -126,9 +155,9 @@ try {
       }
 
       const results = matchCenter.getByRole('tab', { name: '最新賽果' });
-      const upcoming = matchCenter.getByRole('tab', { name: '即將開賽' });
+      const upcoming = matchCenter.getByRole('tab', { name: /^(即將開賽|今日賽程)$/ });
       assert(await results.getAttribute('aria-selected') === 'true',
-        viewport.name + ': result tab should be active after November 15');
+        viewport.name + ': result tab should be active on latest completed matchday');
       const tabBounds = await Promise.all([results, upcoming].map((tab) =>
         tab.boundingBox()));
       assert(tabBounds.every((box) => box && box.height >= 44),
@@ -160,7 +189,11 @@ try {
       assert(await upcoming.getAttribute('aria-selected') === 'true',
         viewport.name + ': upcoming tab did not activate');
       await cards.first().waitFor({ state: 'visible' });
-      assert(await cards.count() === 3, viewport.name + ': expected 3 upcoming L3 fixtures on November 22');
+      assert(await cards.count() === upcomingMatches.length,
+        viewport.name + ': expected ' + upcomingMatches.length + ' fixtures on ' + nextScheduledDate);
+      const upcomingCardIds = await cards.evaluateAll((elements) => elements.map((element) => element.dataset.analyticsLabel));
+      assert(JSON.stringify(upcomingCardIds) === expectedCardIds(upcomingMatches),
+        viewport.name + ': upcoming cards are not in chronological order: ' + JSON.stringify(upcomingCardIds));
       await carousel.evaluate((el) => el.scrollTo({ left: 0, behavior: 'instant' }));
       await page.waitForTimeout(100);
       await centering(cards.first(), 'first upcoming card');
@@ -168,7 +201,7 @@ try {
       await results.click();
       assert(await results.getAttribute('aria-selected') === 'true',
         viewport.name + ': result tab did not reactivate');
-      assert(await cards.count() === 6, viewport.name + ': November 15 results not restored');
+      assert(await cards.count() === resultMatches.length, viewport.name + ': latest results not restored');
       const beforeScroll = await page.evaluate(() => window.scrollY);
       await cards.first().click();
       const dialog = page.locator('[role="dialog"][aria-labelledby="match-dialog-title"]');

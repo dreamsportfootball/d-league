@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { CalendarDays, ChevronRight, Target, UserRound } from 'lucide-react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { CalendarDays, Check, ChevronDown, ChevronRight, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
@@ -113,6 +113,138 @@ const formatPlayerMatchDate = (timestamp: string): string => {
 };
 
 type EventSeasonFilter = SeasonId | 'ALL';
+
+interface PlayerEventSeasonMenuProps {
+  value: EventSeasonFilter;
+  options: ReadonlyArray<{ value: EventSeasonFilter; label: string }>;
+  onChange: (value: EventSeasonFilter) => void;
+}
+
+// Local event-history filter: changing it must never change the site's operating season.
+const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
+  value, options, onChange,
+}) => {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const listboxId = useId();
+  const selectedIndex = Math.max(0, options.findIndex((option) => option.value === value));
+  const selectedLabel = options[selectedIndex]?.label ?? '全部賽季';
+
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    const closeOnFocusOutside = (event: FocusEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    document.addEventListener('focusin', closeOnFocusOutside);
+    optionRefs.current[selectedIndex]?.focus();
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+      document.removeEventListener('focusin', closeOnFocusOutside);
+    };
+  }, [open, selectedIndex]);
+
+  const choose = (next: EventSeasonFilter) => {
+    onChange(next);
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
+  const focusOption = (index: number) => {
+    const normalized = (index + options.length) % options.length;
+    optionRefs.current[normalized]?.focus();
+  };
+
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <span className="text-[11px] font-semibold text-neutral-500">賽季</span>
+      <div ref={rootRef} className="relative w-[136px] sm:w-[144px]">
+        <button
+          ref={triggerRef}
+          type="button"
+          data-player-event-season-trigger
+          aria-label="篩選比賽事件賽季"
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-expanded={open}
+          onClick={() => setOpen((previous) => !previous)}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault();
+              if (open) focusOption(selectedIndex + (event.key === 'ArrowDown' ? 1 : -1));
+              else setOpen(true);
+            }
+          }}
+          className="group flex h-11 w-full items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-3 text-left transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:h-10"
+        >
+          <span className="truncate font-display text-[13px] font-bold tracking-wide text-brand-black">
+            {selectedLabel}
+          </span>
+          <ChevronDown
+            className={`h-3.5 w-3.5 shrink-0 text-neutral-500 transition-transform ${open ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+        {open && (
+          <div
+            id={listboxId}
+            role="listbox"
+            aria-label="比賽事件賽季選項"
+            className="absolute right-0 top-full z-50 mt-1.5 w-full rounded-md border border-neutral-200 bg-white p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+          >
+            {options.map((option, index) => {
+              const selected = option.value === value;
+              return (
+                <button
+                  key={option.value}
+                  ref={(element) => { optionRefs.current[index] = element; }}
+                  type="button"
+                  role="option"
+                  data-player-event-season-option={option.value}
+                  aria-selected={selected}
+                  tabIndex={index === selectedIndex ? 0 : -1}
+                  onClick={() => choose(option.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                      event.preventDefault();
+                      focusOption(index + (event.key === 'ArrowDown' ? 1 : -1));
+                    } else if (event.key === 'Home' || event.key === 'End') {
+                      event.preventDefault();
+                      focusOption(event.key === 'Home' ? 0 : options.length - 1);
+                    } else if (event.key === 'Tab') {
+                      setOpen(false);
+                    }
+                  }}
+                  className={`flex min-h-11 w-full items-center justify-between gap-2 rounded px-2.5 text-left text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${selected ? 'bg-brand-blue/10 text-brand-blue' : 'text-brand-black hover:bg-neutral-100'}`}
+                >
+                  <span>{option.label}</span>
+                  {selected && <Check className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 interface SelectedMatchState {
   matchId: string;
@@ -426,22 +558,17 @@ const PlayerPage: React.FC = () => {
               <CalendarDays className="mr-2 h-5 w-5 text-brand-blue" />
               <h2 className="font-display text-2xl font-extrabold text-brand-black">比賽事件</h2>
             </div>
-            <label className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
-              <span>賽季</span>
-              <select
-                value={eventSeason}
-                onChange={(event) => setEventSeason(event.target.value as EventSeasonFilter)}
-                className="min-h-11 rounded-lg border border-neutral-200 bg-white px-3 text-xs font-semibold text-brand-black outline-none transition-colors focus:border-brand-blue"
-                aria-label="篩選比賽事件賽季"
-              >
-                <option value="ALL">全部賽季</option>
-                {history.map((record) => (
-                  <option key={record.seasonId} value={record.seasonId}>
-                    {record.season.shortName}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <PlayerEventSeasonMenu
+              value={eventSeason}
+              onChange={setEventSeason}
+              options={[
+                { value: 'ALL', label: '全部賽季' },
+                ...history.map((record) => ({
+                  value: record.seasonId,
+                  label: record.season.shortName,
+                })),
+              ]}
+            />
           </div>
 
           {filteredMatchRecords.length > 0 ? (

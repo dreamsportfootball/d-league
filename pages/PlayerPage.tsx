@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { CalendarDays, Target, UserRound } from 'lucide-react';
+import { CalendarDays, ChevronRight, Target, UserRound } from 'lucide-react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import EmptyState from '../components/EmptyState';
@@ -475,25 +475,37 @@ const PlayerPage: React.FC = () => {
                       onClick={() => selectMatch(record.match.id)}
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
-                      className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
+                      className="w-full border-b border-neutral-100 py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="text-xs font-semibold tabular-nums text-neutral-500">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-xs font-medium tabular-nums text-neutral-500">
                           {formatPlayerMatchDate(record.match.timestamp)}
                         </span>
-                        <span className="min-w-0 text-right text-sm font-bold text-brand-black">
-                          {home.shortName} vs {away.shortName}
+                        <span className="inline-flex shrink-0 items-center gap-1 text-[11px] font-semibold text-brand-blue">
+                          查看比賽 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
                         </span>
                       </div>
-                      <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-100 rounded-xl bg-neutral-50 py-2.5">
-                        {[
+                      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+                        <span className="min-w-0 break-words text-sm font-bold leading-snug text-brand-black">
+                          {home.shortName}
+                        </span>
+                        <span className="text-xs font-semibold text-neutral-400" aria-hidden="true">vs</span>
+                        <span className="min-w-0 break-words text-right text-sm font-bold leading-snug text-brand-black">
+                          {away.shortName}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-100 pt-3">
+                        {([
                           ['進球', goals],
                           ['黃牌', yellowCards],
                           ['紅牌', redCards],
-                        ].map(([label, value]) => (
-                          <div key={label} className="text-center">
-                            <p className="text-[9px] font-semibold text-neutral-500">{label}</p>
-                            <p className="mt-0.5 text-sm font-bold tabular-nums text-brand-black">{value}</p>
+                        ] as const).map(([label, value]) => (
+                          <div key={label} className="flex min-w-0 items-center justify-center gap-2 px-1">
+                            <span className="text-[11px] font-medium text-neutral-500">{label}</span>
+                            <span className={`text-base font-bold tabular-nums ${value > 0 ? (label === '進球' ? 'text-brand-blue' : 'text-brand-black') : 'text-neutral-400'}`}>
+                              {value}
+                            </span>
                           </div>
                         ))}
                       </div>

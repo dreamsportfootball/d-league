@@ -476,7 +476,7 @@ const PlayerPage: React.FC = () => {
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
                       aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
-                      className="w-full border-b border-neutral-100 py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-medium tabular-nums text-neutral-500">
@@ -490,7 +490,7 @@ const PlayerPage: React.FC = () => {
                         <span className="min-w-0 break-words text-sm font-bold leading-snug text-brand-black">
                           {home.shortName}
                         </span>
-                        <span className="text-xs font-semibold text-neutral-400" aria-hidden="true">vs</span>
+                        <span className="text-xs font-semibold text-neutral-500" aria-hidden="true">vs</span>
                         <span className="min-w-0 break-words text-right text-sm font-bold leading-snug text-brand-black">
                           {away.shortName}
                         </span>
@@ -503,7 +503,7 @@ const PlayerPage: React.FC = () => {
                         ] as const).map(([label, value]) => (
                           <div key={label} className="flex min-w-0 items-center justify-center gap-2 px-1">
                             <span className="text-[11px] font-medium text-neutral-500">{label}</span>
-                            <span className={`text-base font-bold tabular-nums ${value > 0 ? (label === '進球' ? 'text-brand-blue' : 'text-brand-black') : 'text-neutral-400'}`}>
+                            <span className={`text-base font-bold tabular-nums ${value > 0 ? (label === '進球' ? 'text-brand-blue' : 'text-brand-black') : 'text-neutral-500'}`}>
                               {value}
                             </span>
                           </div>

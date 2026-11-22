@@ -442,7 +442,7 @@ const PlayerPage: React.FC = () => {
 
           {filteredMatchRecords.length > 0 ? (
             <>
-              <div className="divide-y divide-neutral-100 md:hidden">
+              <div className="md:hidden">
                 {filteredMatchRecords.map((record) => {
                   const home = record.homeTeam;
                   const away = record.awayTeam;
@@ -476,7 +476,7 @@ const PlayerPage: React.FC = () => {
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
                       aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
-                      className="w-full py-4 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      className="w-full py-2.5 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-medium tabular-nums text-neutral-500">
@@ -486,7 +486,7 @@ const PlayerPage: React.FC = () => {
                           查看比賽 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
                         </span>
                       </div>
-                      <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+                      <div className="mt-1 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                         <span className="min-w-0 break-words text-sm font-bold leading-snug text-brand-black">
                           {home.shortName}
                         </span>
@@ -495,7 +495,7 @@ const PlayerPage: React.FC = () => {
                           {away.shortName}
                         </span>
                       </div>
-                      <div className="mt-3 grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-100 pt-3">
+                      <div className="mt-1.5 grid grid-cols-3">
                         {([
                           ['進球', goals],
                           ['黃牌', yellowCards],

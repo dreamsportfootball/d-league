@@ -97,6 +97,10 @@ const getPlayerSeasonTeams = (record: PlayerSeasonRecord): SeasonTeam[] => {
   });
 };
 
+// Only shorten team labels in the narrow player-event list; do not alter team data.
+const compactEventTeamName = (team: SeasonTeam): string =>
+  team.shortName.replace(/(?:足球俱樂部|足球隊|俱樂部)$/u, '').trim() || team.shortName;
+
 const formatPlayerMatchDate = (timestamp: string): string => {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Asia/Taipei',
@@ -469,16 +473,11 @@ const PlayerPage: React.FC = () => {
                   ).length;
 
                   const eventHighlights = [
-                    { label: '進球', minutes: events.filter((event) => event.type === 'GOAL' && !event.isOwnGoal && !event.isPK).map((event) => event.minute) },
-                    { label: '點球', minutes: events.filter((event) => event.type === 'GOAL' && !event.isOwnGoal && event.isPK).map((event) => event.minute) },
-                    { label: '烏龍球', minutes: events.filter((event) => event.type === 'GOAL' && event.isOwnGoal).map((event) => event.minute) },
-                    { label: '黃牌', minutes: events.filter((event) => event.type === 'YELLOW_CARD').map((event) => event.minute) },
-                    { label: '雙黃離場', minutes: events.filter((event) => event.type === 'SECOND_YELLOW').map((event) => event.minute) },
-                    { label: '紅牌', minutes: events.filter((event) => event.type === 'RED_CARD').map((event) => event.minute) },
-                  ].filter(({ minutes }) => minutes.length > 0);
-                  const hasFinalScore = record.match.homeScore !== null &&
-                    record.match.awayScore !== null &&
-                    record.match.resultType !== 'VOID';
+                    { label: '進球', count: goals },
+                    { label: '黃牌', count: yellowCards },
+                    { label: '紅牌', count: redCards },
+                    { label: '烏龍', count: events.filter((event) => event.type === 'GOAL' && event.isOwnGoal).length },
+                  ].filter(({ count }) => count > 0);
 
                   return (
                     <button
@@ -488,29 +487,27 @@ const PlayerPage: React.FC = () => {
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
                       aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
-                      className="w-full min-h-11 py-2.5 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      className="w-full min-h-11 py-2 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-neutral-500">
                         <span className="tabular-nums">{formatPlayerMatchDate(record.match.timestamp)}</span>
                         <span className="shrink-0">{record.match.league} · 第 {record.match.round} 輪</span>
                       </div>
-                      <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_14px] items-center gap-x-2">
-                        <span className="min-w-0 break-words text-[13px] font-bold leading-snug text-brand-black">{home.shortName}</span>
-                        <span className="whitespace-nowrap font-display text-base font-extrabold tabular-nums text-brand-black">
-                          {hasFinalScore ? `${record.match.homeScore} : ${record.match.awayScore}` : 'vs'}
+                      <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
+                        <span className="flex min-w-0 flex-1 items-center gap-1 text-[12px] font-bold leading-5 text-brand-black">
+                          <span className="min-w-0 truncate">{compactEventTeamName(home)}</span>
+                          <span className="shrink-0 text-[10px] font-medium text-neutral-400">vs</span>
+                          <span className="min-w-0 truncate">{compactEventTeamName(away)}</span>
                         </span>
-                        <span className="min-w-0 break-words text-right text-[13px] font-bold leading-snug text-brand-black">{away.shortName}</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-neutral-400" aria-hidden="true" />
-                      </div>
-                      {eventHighlights.length > 0 && (
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] leading-4">
-                          {eventHighlights.map(({ label, minutes }) => (
-                            <span key={label} className={label === '進球' || label === '點球' ? 'font-semibold text-brand-blue' : 'font-medium text-neutral-600'}>
-                              {label} {minutes.slice().sort((a, b) => a - b).map((minute) => `${minute}′`).join('、')}
+                        <span className="flex max-w-[44%] min-w-0 shrink-0 flex-wrap items-center justify-end gap-x-2 gap-y-0.5 text-[11px] font-semibold leading-4">
+                          {eventHighlights.map(({ label, count }) => (
+                            <span key={label} className={label === '進球' ? 'whitespace-nowrap text-brand-blue' : 'whitespace-nowrap text-neutral-700'}>
+                              {label} {count}
                             </span>
                           ))}
-                        </div>
-                      )}
+                          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-400" aria-hidden="true" />
+                        </span>
+                      </div>
                     </button>
                   );
                 })}

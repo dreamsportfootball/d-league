@@ -175,7 +175,7 @@ const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
   return (
     <div className="flex shrink-0 items-center gap-2">
       <span className="text-[11px] font-semibold text-neutral-500">賽季</span>
-      <div ref={rootRef} className="relative w-[136px] sm:w-[144px]">
+      <div ref={rootRef} className="relative">
         <button
           ref={triggerRef}
           type="button"
@@ -192,9 +192,9 @@ const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
               else setOpen(true);
             }
           }}
-          className="group flex h-11 w-full items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white px-3 text-left transition-colors hover:border-neutral-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:h-10"
+          className="group inline-flex min-h-11 items-center gap-1.5 bg-transparent px-0 text-left text-xs font-semibold text-brand-black transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:min-h-10"
         >
-          <span className="truncate font-display text-[13px] font-bold tracking-wide text-brand-black">
+          <span className="whitespace-nowrap text-xs font-semibold">
             {selectedLabel}
           </span>
           <ChevronDown
@@ -207,7 +207,7 @@ const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
             id={listboxId}
             role="listbox"
             aria-label="比賽事件賽季選項"
-            className="absolute right-0 top-full z-50 mt-1.5 w-full rounded-md border border-neutral-200 bg-white p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+            className="absolute right-0 top-full z-50 mt-1.5 w-[136px] rounded-md border border-neutral-200 bg-white p-1 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
           >
             {options.map((option, index) => {
               const selected = option.value === value;
@@ -599,12 +599,6 @@ const PlayerPage: React.FC = () => {
                     (event) => event.type === 'RED_CARD' || event.type === 'SECOND_YELLOW',
                   ).length;
 
-                  const eventHighlights = [
-                    { label: '進球', count: goals },
-                    { label: '黃牌', count: yellowCards },
-                    { label: '紅牌', count: redCards },
-                  ] as const;
-
                   return (
                     <button
                       key={`${record.seasonId}-${record.match.id}`}
@@ -616,8 +610,15 @@ const PlayerPage: React.FC = () => {
                       className="w-full min-h-11 py-2 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-neutral-500">
-                        <span className="tabular-nums">{formatPlayerMatchDate(record.match.timestamp)}</span>
-                        <span className="shrink-0">{record.match.league} · 第 {record.match.round} 輪</span>
+                        <span className="min-w-0 truncate tabular-nums">
+                          {formatPlayerMatchDate(record.match.timestamp)}
+                          <span className="ml-2">{record.match.league} · 第 {record.match.round} 輪</span>
+                        </span>
+                        <span aria-hidden="true" className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[9px] font-semibold tracking-wide text-neutral-500">
+                          <span>進</span>
+                          <span>黃</span>
+                          <span>紅</span>
+                        </span>
                       </div>
                       <div className="mt-1 flex min-w-0 items-center justify-between gap-2">
                         <span className="flex min-w-0 flex-1 items-center gap-1 text-[12px] font-bold leading-5 text-brand-black">
@@ -625,13 +626,10 @@ const PlayerPage: React.FC = () => {
                           <span className="shrink-0 text-[10px] font-medium text-neutral-400">vs</span>
                           <span className="min-w-0 truncate">{compactEventTeamName(away)}</span>
                         </span>
-                        <span className="flex shrink-0 items-center justify-end gap-1.5 text-[11px] font-semibold leading-4">
-                          {eventHighlights.map(({ label, count }) => (
-                            <span key={label} className={`whitespace-nowrap tabular-nums ${count > 0 ? (label === '進球' ? 'text-brand-blue' : 'text-neutral-700') : 'text-neutral-500'}`}>
-                              {label} {count}
-                            </span>
-                          ))}
-                          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-400" aria-hidden="true" />
+                        <span className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[12px] font-semibold tabular-nums text-brand-black">
+                          <span>{goals}</span>
+                          <span>{yellowCards}</span>
+                          <span>{redCards}</span>
                         </span>
                       </div>
                     </button>

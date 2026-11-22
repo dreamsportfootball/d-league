@@ -173,8 +173,8 @@ const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
   };
 
   return (
-    <div className="flex shrink-0 items-center gap-2">
-      <span className="text-[11px] font-semibold text-neutral-500">賽季</span>
+    <div className="flex shrink-0 items-center gap-1.5">
+      <span className="text-xs font-semibold text-neutral-500">賽季</span>
       <div ref={rootRef} className="relative">
         <button
           ref={triggerRef}
@@ -192,9 +192,9 @@ const PlayerEventSeasonMenu: React.FC<PlayerEventSeasonMenuProps> = ({
               else setOpen(true);
             }
           }}
-          className="group inline-flex min-h-11 items-center gap-1.5 bg-transparent px-0 text-left text-xs font-semibold text-brand-black transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:min-h-10"
+          className="group inline-flex min-h-11 items-center gap-1.5 border-0 bg-transparent px-0 text-left text-[13px] font-semibold text-brand-black shadow-none transition-colors hover:text-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue md:min-h-10"
         >
-          <span className="whitespace-nowrap text-xs font-semibold">
+          <span className="whitespace-nowrap text-[13px] font-semibold">
             {selectedLabel}
           </span>
           <ChevronDown
@@ -607,17 +607,17 @@ const PlayerPage: React.FC = () => {
                       data-analytics-event="match_open"
                       data-analytics-label={record.match.id}
                       aria-label={`查看 ${formatPlayerMatchDate(record.match.timestamp)} ${home.shortName} 對 ${away.shortName} 比賽，進球 ${goals}，黃牌 ${yellowCards}，紅牌 ${redCards}`}
-                      className="w-full min-h-11 py-2 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
+                      className="w-full min-h-11 py-1.5 text-left transition-colors active:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-blue"
                     >
                       <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-neutral-500">
                         <span className="min-w-0 truncate tabular-nums">
                           {formatPlayerMatchDate(record.match.timestamp)}
                           <span className="ml-2">{record.match.league} · 第 {record.match.round} 輪</span>
                         </span>
-                        <span aria-hidden="true" className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[9px] font-semibold tracking-wide text-neutral-500">
-                          <span>進</span>
-                          <span>黃</span>
-                          <span>紅</span>
+                        <span aria-hidden="true" className="grid w-[96px] shrink-0 grid-cols-3 gap-1 text-center text-[10px] font-semibold tracking-wide text-neutral-500">
+                          <span>進球</span>
+                          <span>黃牌</span>
+                          <span>紅牌</span>
                         </span>
                       </div>
                       <div className="mt-1 flex min-w-0 items-center justify-between gap-2">

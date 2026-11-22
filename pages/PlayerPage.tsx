@@ -472,7 +472,7 @@ const PlayerPage: React.FC = () => {
           </div>
 
           <div className="md:hidden" role="table" aria-label="D LEAGUE 生涯">
-            <div role="row" className="grid grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 border-b border-neutral-100 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-500">
+            <div role="row" className="grid grid-cols-[56px_38px_minmax(0,1fr)_30px_30px_30px] items-center gap-1 py-2.5 text-[9px] font-semibold tracking-wide text-neutral-500">
               <span role="columnheader">賽季</span>
               <span role="columnheader">級別</span>
               <span role="columnheader">球隊</span>
@@ -480,7 +480,7 @@ const PlayerPage: React.FC = () => {
               <span role="columnheader" className="text-center">黃</span>
               <span role="columnheader" className="text-center">紅</span>
             </div>
-            <div className="divide-y divide-neutral-100" role="rowgroup">
+            <div role="rowgroup">
               {seasonRows.map(({ record, team, goals, yellowCards, redCards }) => (
                 <div
                   role="row"

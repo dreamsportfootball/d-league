@@ -1,0 +1,43 @@
+name: Temporary 11-22 album thumbnail research
+on:
+  push:
+    branches: [season/2026-27]
+    paths: [.github/workflows/temp-zonerama-cover-research.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe public Zonerama album and photo metadata
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.error, json, re, html
+          urls = [
+            "https://eu.zonerama.com/DLEAGUE/Album/17357836",
+            "https://eu.zonerama.com/JSON/FlowLayout_PhotosInAlbum?albumId=17357836&startIndex=0&count=12",
+            "https://zonerama-proxy.vercel.app/api/fetch?url=https%3A%2F%2Feu.zonerama.com%2FJSON%2FFlowLayout_PhotosInAlbum%3FalbumId%3D17357836%26startIndex%3D0%26count%3D12"
+          ]
+          for u in urls:
+            print("PROBE",u,flush=True)
+            try:
+              req=urllib.request.Request(u,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36","Accept":"text/html,application/json,*/*"})
+              with urllib.request.urlopen(req, timeout=25) as r:
+                raw=r.read(500000)
+                txt=raw.decode("utf-8","replace")
+                print("STATUS",r.status,"FINAL",r.url,"LENGTH",len(raw),"MIME",r.headers.get("Content-Type"))
+                for pattern in [r'<meta[^>]*property="og:title"[^>]*>',r'<meta[^>]*property="og:image"[^>]*>',r'<meta[^>]*property="znrm:public"[^>]*>']:
+                  print("META",re.findall(pattern,txt)[:3])
+                if "FlowLayout" in u:
+                  try:
+                    data=json.loads(txt)
+                    print("JSON_KEYS",list(data.keys()),"ITEMS",len(data.get("items",[])),"FIRST",str(data.get("items",[])[:8])[:6500])
+                  except Exception as e:
+                    print("NOT_JSON",str(e),txt[:1200])
+                else:
+                  i=txt.find("var result = ")
+                  print("RESULT_LOCATION",i,"RESULT_SNIPPET",txt[i:i+5500] if i>=0 else txt[:3000])
+            except Exception as e:
+              print("ERROR",type(e).__name__,str(e)[:400],flush=True)
+          PY

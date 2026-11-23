@@ -252,8 +252,7 @@
     "awayScore": 1,
     "status": "FINISHED",
     "timestamp": "2026-11-22T09:00:00+08:00",
-    "league": "L3",
-    "albumId": "album-2026-11-22-matchday"
+    "league": "L3"
   },
   {
     "id": "m2627-017",
@@ -264,8 +263,7 @@
     "awayScore": 6,
     "status": "FINISHED",
     "timestamp": "2026-11-22T10:00:00+08:00",
-    "league": "L3",
-    "albumId": "album-2026-11-22-matchday"
+    "league": "L3"
   },
   {
     "id": "m2627-018",
@@ -276,8 +274,7 @@
     "awayScore": 11,
     "status": "FINISHED",
     "timestamp": "2026-11-22T11:00:00+08:00",
-    "league": "L3",
-    "albumId": "album-2026-11-22-matchday"
+    "league": "L3"
   },
   {
     "id": "m2627-019",

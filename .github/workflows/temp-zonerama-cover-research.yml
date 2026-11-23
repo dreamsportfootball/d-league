@@ -11,44 +11,36 @@ jobs:
     steps:
       - name: Install Pillow
         run: python3 -m pip install --user Pillow --quiet
-      - name: Read public album and generate sample contact sheet
+      - name: Inspect D LEAGUE official albums and public share cover
         shell: bash
         run: |
           python3 - <<'PY'
-          import urllib.request,urllib.error,json,re,io,base64
-          from PIL import Image,ImageOps,ImageDraw
-          url="https://eu.zonerama.com/DLEAGUE/Album/17357836"
+          import urllib.request,urllib.error,io,re,html,base64
+          from PIL import Image,ImageOps
           def get(url):
-              req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36"})
-              with urllib.request.urlopen(req,timeout=30) as r:return r.read()
-          data=get(url).decode("utf-8","replace")
-          title=re.search(r'<meta property="og:title" content="([^"]+)"',data)
-          print("ALBUM_TITLE",title.group(1) if title else "UNKNOWN",flush=True)
-          start=data.index("{",data.index("var result = "))
-          obj,_=json.JSONDecoder().raw_decode(data[start:])
-          items=[i for i in obj["items"] if i.get("photoId")]
-          print("INITIAL_COUNT",len(items),"ISEND",obj.get("isEnd"),flush=True)
-          print("ITEM_IDS",','.join(str(i["photoId"]) for i in items),flush=True)
-          if not items:raise Exception("No photos in album")
-          targets=[items[round(i*(len(items)-1)/11)] for i in range(12)] if len(items)>=12 else items
-          W,H=240,200
-          sheet=Image.new("RGB",(W*4,H*3),"white");d=ImageDraw.Draw(sheet)
-          for n,item in enumerate(targets):
-              pid=item["photoId"]
-              try:
-                  raw=get(item["image"])
-                  im=Image.open(io.BytesIO(raw)).convert("RGB")
-                  print("IMG",n,pid,im.size,len(raw),flush=True)
-                  thumb=ImageOps.contain(im,(W-8,H-36))
-                  x=(n%4)*W+(W-thumb.width)//2
-                  y=(n//4)*H+4+(H-36-thumb.height)//2
-                  sheet.paste(thumb,(x,y))
-                  d.text(((n%4)*W+6,(n//4)*H+H-27),f"{n+1} | {pid}",fill="black")
-              except Exception as e: print("IMGERROR",n,pid,type(e).__name__,str(e)[:150],flush=True)
-          buf=io.BytesIO();sheet.save(buf,format="JPEG",quality=55,optimize=True)
-          b64=base64.b64encode(buf.getvalue()).decode()
-          print("SHEET_BYTES",len(buf.getvalue()),"B64",len(b64),flush=True)
-          print("CONTACT_SHEET_BEGIN",flush=True)
-          for i in range(0,len(b64),4000):print("SHEET_CHUNK "+b64[i:i+4000],flush=True)
-          print("CONTACT_SHEET_END",flush=True)
+            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36"})
+            with urllib.request.urlopen(req,timeout=30) as r:return r.read(),r.headers.get("Content-Type"),r.url
+          for url in ["https://eu.zonerama.com/DLEAGUE","https://eu.zonerama.com/DLEAGUE/Albums"]:
+            try:
+              raw,ct,u=get(url)
+              s=raw.decode("utf-8","replace")
+              print("PROFILE",url,len(s),u,ct,flush=True)
+              ptn=r'.{0,190}(?:/DLEAGUE/Album/|26\.11\.22|2026\.11\.22|26\.11\.15).{0,180}'
+              for i,m in enumerate(re.findall(ptn,s,re.I|re.S)):
+                if i>45:break
+                print("ALBUM_SNIPPET",i,html.unescape(re.sub(r'\s+',' ',m))[:350],flush=True)
+            except Exception as e:print("ERROR_PROFILE",str(e)[:200],flush=True)
+          for url in ["https://eu.zonerama.com/social/img/album-cover/17357836","https://eu.zonerama.com/social/img/album-cover/17302213"]:
+            try:
+              raw,ct,u=get(url)
+              print("COVER",url,len(raw),u,ct,flush=True)
+              im=Image.open(io.BytesIO(raw)).convert("RGB")
+              print("COVER_DIMENSIONS",im.size,flush=True)
+              im.thumbnail((640,440))
+              b=io.BytesIO();im.save(b,format="JPEG",quality=60,optimize=True)
+              s64=base64.b64encode(b.getvalue()).decode("ascii")
+              print("COVER_IMAGE_BEGIN "+url,flush=True)
+              for i in range(0,len(s64),4000):print("SHEET_CHUNK "+s64[i:i+4000],flush=True)
+              print("COVER_IMAGE_END",flush=True)
+            except Exception as e:print("ERROR_COVER",url,type(e).__name__,str(e)[:200],flush=True)
           PY

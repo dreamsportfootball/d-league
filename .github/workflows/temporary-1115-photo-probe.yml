@@ -9,36 +9,28 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Pillow
+      - name: Get Pillow
         run: python3 -m pip install pillow --quiet
-      - name: Inspect landscape photos and make contact sheet
+      - name: Produce standalone real match-day cover, original 692541262
         run: |
           python3 - <<'PY'
-          import urllib.request,base64,io,json,re
-          from PIL import Image,ImageDraw,ImageOps
-          def fetch(url):
-            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36'})
-            with urllib.request.urlopen(req,timeout=30) as r:return r.read()
-          raw=fetch("https://eu.zonerama.com/DLEAGUE/Album/17357836").decode("utf8","replace")
-          j,_=json.JSONDecoder().raw_decode(raw[raw.index("{",raw.index("var result = ")):])
-          items=[p for p in j["items"] if p.get("photoId")]
-          land=[p for p in items if p.get('width',0)>p.get('height',0)]
-          print("TOTAL_FIRST_BATCH",len(items),"LANDSCAPE_COUNT",len(land),"LANDSCAPE",[(p['photoId'],p['width'],p['height']) for p in land],flush=True)
-          targets=land[:16] if land else items[:12]
-          w,h=275,215; sheet=Image.new('RGB',(w*4,h*4),'white');d=ImageDraw.Draw(sheet)
-          for k,p in enumerate(targets):
-            pid=p['photoId']
-            try:
-              im=Image.open(io.BytesIO(fetch("https://eu.zonerama.com/social/img/photo/"+str(pid)))).convert('RGB')
-              im.thumbnail((w-10,h-35))
-              x=k%4*w+(w-im.width)//2
-              y=k//4*h+4+(h-35-im.height)//2
-              sheet.paste(im,(x,y))
-              print('PHOTO',k,pid,p['width'],p['height'],flush=True)
-            except Exception as ex:print('ERROR',pid,str(ex),flush=True)
-            d.text((k%4*w+5,k//4*h+h-25),str(pid),fill='black')
-          buf=io.BytesIO();sheet.save(buf,'JPEG',quality=65,optimize=True);b64=base64.b64encode(buf.getvalue()).decode()
-          print('CONTACT_BEGIN',len(b64),flush=True)
-          for q in range(0,len(b64),4000):print('SHEET_CHUNK '+b64[q:q+4000],flush=True)
-          print('CONTACT_END',flush=True)
+          import urllib.request,io,base64
+          from PIL import Image,ImageOps
+          url="https://eu.zonerama.com/social/img/photo/692541262"
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36'})
+          with urllib.request.urlopen(req,timeout=35) as res:
+            raw=res.read()
+            assert res.status==200 and res.headers.get("Content-Type","").startswith("image/")
+          photo=Image.open(io.BytesIO(raw)).convert("RGB")
+          assert photo.width>=1200 and photo.height>=800,(photo.size,len(raw))
+          target=ImageOps.fit(photo,(1200,800),method=Image.Resampling.LANCZOS,centering=(0.5,0.57))
+          output=io.BytesIO()
+          target.save(output,format="JPEG",quality=82,optimize=True,subsampling=0)
+          data=output.getvalue()
+          assert data.startswith(b'\xff\xd8') and len(data)>25000
+          print("PHOTO_SOURCE",url,"ORIGINAL",photo.size,"COVER",target.size,"JPEG_BYTES",len(data),flush=True)
+          encoded=base64.b64encode(data).decode('ascii')
+          print("PHOTO_B64_BEGIN",len(encoded),flush=True)
+          for i in range(0,len(encoded),4000):print("PHOTO_CHUNK "+encoded[i:i+4000],flush=True)
+          print("PHOTO_B64_END",flush=True)
           PY

@@ -630,7 +630,7 @@ const TeamPage: React.FC = () => {
                   <span className="text-[10px] font-bold tracking-wider text-neutral-500">最近一場賽果</span>
                   <strong className="mt-2 block break-words text-sm leading-relaxed text-brand-black">
                     {data.teamMap[latestTeamResult.homeTeamId]?.shortName ?? '主隊'}
-                    {' '}{latestTeamResult.homeScore} : {latestTeamResult.awayScore}{' '}
+                    {' '}{latestTeamResult.homeScore} - {latestTeamResult.awayScore}{' '}
                     {data.teamMap[latestTeamResult.awayTeamId]?.shortName ?? '客隊'}
                   </strong>
                   <span className="mt-2 block text-[11px] font-medium text-neutral-600">

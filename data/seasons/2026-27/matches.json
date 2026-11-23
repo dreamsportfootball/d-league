@@ -165,7 +165,8 @@
     "videoUrls": {
       "secondHalf": "https://youtu.be/ZXde4mBzdS0",
       "firstHalf": "https://youtu.be/Sw7P8yazc1s"
-    }
+    },
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-011",
@@ -180,7 +181,8 @@
     "videoUrls": {
       "secondHalf": "https://youtu.be/xsDp4TjSso0",
       "firstHalf": "https://youtu.be/FoaBl60_aqg"
-    }
+    },
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-012",
@@ -195,7 +197,8 @@
     "videoUrls": {
       "firstHalf": "https://youtu.be/PaHTiLqeXA4",
       "secondHalf": "https://youtu.be/gSrKpMgZBnI"
-    }
+    },
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-013",
@@ -210,7 +213,8 @@
     "videoUrls": {
       "firstHalf": "https://youtu.be/6QNBk6T3Hv0",
       "secondHalf": "https://youtu.be/Z-mnLO6J0D8"
-    }
+    },
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-014",
@@ -226,7 +230,8 @@
       "secondHalf": "https://youtu.be/iq1j6DLuPIo",
       "firstHalf": "https://youtu.be/e33O4YaD0Lo"
     },
-    "videoSourceNote": "因未成功錄影，影片引用嘉義 235 自行錄製的賽事畫面"
+    "videoSourceNote": "因未成功錄影，影片引用嘉義 235 自行錄製的賽事畫面",
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-015",
@@ -241,7 +246,8 @@
     "videoUrls": {
       "secondHalf": "https://youtu.be/VCRtPPjRhkg",
       "firstHalf": "https://youtu.be/pza3uHB8cMw"
-    }
+    },
+    "albumId": "album-2026-11-15-matchday"
   },
   {
     "id": "m2627-016",

@@ -72,9 +72,10 @@ const prepareCase = async (page, testCase) => {
   await closeRecruitmentPopupIfVisible(page);
 
   if (testCase.setup === 'player-season') {
-    const seasonSelect = page.getByRole('combobox', { name: '篩選比賽事件賽季' });
-    if (await seasonSelect.isVisible().catch(() => false)) {
-      await seasonSelect.selectOption('2025-26');
+    const seasonFilter = page.getByRole('button', { name: '篩選比賽事件賽季' });
+    if (await seasonFilter.isVisible().catch(() => false)) {
+      await seasonFilter.click();
+      await page.locator('[data-player-event-season-option="2025-26"]').click();
       await page.waitForTimeout(250);
     }
   }

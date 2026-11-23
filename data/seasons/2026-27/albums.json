@@ -55,5 +55,14 @@
     "date": "2026/11/08",
     "cover": "assets/media/2026-27/matchday-2026-11-08-v2.jpg",
     "link": "https://eu.zonerama.com/Link/Album/17302213"
+  },
+  {
+    "id": "album-2026-11-22-matchday",
+    "seasonId": "2026-27",
+    "scope": "MATCH_DAY",
+    "title": "L3 第 2 輪",
+    "date": "2026/11/22",
+    "cover": "assets/media/2026-27/matchday-2026-11-22.svg",
+    "link": "https://eu.zonerama.com/DLEAGUE/Album/17357836"
   }
 ]

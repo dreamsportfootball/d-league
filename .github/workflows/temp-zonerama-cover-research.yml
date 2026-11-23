@@ -9,35 +9,46 @@ jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe public Zonerama album and photo metadata
+      - name: Install Pillow
+        run: python3 -m pip install --user Pillow --quiet
+      - name: Read public album and generate sample contact sheet
         shell: bash
         run: |
           python3 - <<'PY'
-          import urllib.request, urllib.error, json, re, html
-          urls = [
-            "https://eu.zonerama.com/DLEAGUE/Album/17357836",
-            "https://eu.zonerama.com/JSON/FlowLayout_PhotosInAlbum?albumId=17357836&startIndex=0&count=12",
-            "https://zonerama-proxy.vercel.app/api/fetch?url=https%3A%2F%2Feu.zonerama.com%2FJSON%2FFlowLayout_PhotosInAlbum%3FalbumId%3D17357836%26startIndex%3D0%26count%3D12"
-          ]
-          for u in urls:
-            print("PROBE",u,flush=True)
-            try:
-              req=urllib.request.Request(u,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36","Accept":"text/html,application/json,*/*"})
-              with urllib.request.urlopen(req, timeout=25) as r:
-                raw=r.read(500000)
-                txt=raw.decode("utf-8","replace")
-                print("STATUS",r.status,"FINAL",r.url,"LENGTH",len(raw),"MIME",r.headers.get("Content-Type"))
-                for pattern in [r'<meta[^>]*property="og:title"[^>]*>',r'<meta[^>]*property="og:image"[^>]*>',r'<meta[^>]*property="znrm:public"[^>]*>']:
-                  print("META",re.findall(pattern,txt)[:3])
-                if "FlowLayout" in u:
-                  try:
-                    data=json.loads(txt)
-                    print("JSON_KEYS",list(data.keys()),"ITEMS",len(data.get("items",[])),"FIRST",str(data.get("items",[])[:8])[:6500])
-                  except Exception as e:
-                    print("NOT_JSON",str(e),txt[:1200])
-                else:
-                  i=txt.find("var result = ")
-                  print("RESULT_LOCATION",i,"RESULT_SNIPPET",txt[i:i+5500] if i>=0 else txt[:3000])
-            except Exception as e:
-              print("ERROR",type(e).__name__,str(e)[:400],flush=True)
+          import urllib.request,urllib.error,json,re,io,base64
+          from PIL import Image,ImageOps,ImageDraw
+          url="https://eu.zonerama.com/DLEAGUE/Album/17357836"
+          def get(url):
+              req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36"})
+              with urllib.request.urlopen(req,timeout=30) as r:return r.read()
+          data=get(url).decode("utf-8","replace")
+          title=re.search(r'<meta property="og:title" content="([^"]+)"',data)
+          print("ALBUM_TITLE",title.group(1) if title else "UNKNOWN",flush=True)
+          start=data.index("{",data.index("var result = "))
+          obj,_=json.JSONDecoder().raw_decode(data[start:])
+          items=[i for i in obj["items"] if i.get("photoId")]
+          print("INITIAL_COUNT",len(items),"ISEND",obj.get("isEnd"),flush=True)
+          print("ITEM_IDS",','.join(str(i["photoId"]) for i in items),flush=True)
+          if not items:raise Exception("No photos in album")
+          targets=[items[round(i*(len(items)-1)/11)] for i in range(12)] if len(items)>=12 else items
+          W,H=240,200
+          sheet=Image.new("RGB",(W*4,H*3),"white");d=ImageDraw.Draw(sheet)
+          for n,item in enumerate(targets):
+              pid=item["photoId"]
+              try:
+                  raw=get(item["image"])
+                  im=Image.open(io.BytesIO(raw)).convert("RGB")
+                  print("IMG",n,pid,im.size,len(raw),flush=True)
+                  thumb=ImageOps.contain(im,(W-8,H-36))
+                  x=(n%4)*W+(W-thumb.width)//2
+                  y=(n//4)*H+4+(H-36-thumb.height)//2
+                  sheet.paste(thumb,(x,y))
+                  d.text(((n%4)*W+6,(n//4)*H+H-27),f"{n+1} | {pid}",fill="black")
+              except Exception as e: print("IMGERROR",n,pid,type(e).__name__,str(e)[:150],flush=True)
+          buf=io.BytesIO();sheet.save(buf,format="JPEG",quality=55,optimize=True)
+          b64=base64.b64encode(buf.getvalue()).decode()
+          print("SHEET_BYTES",len(buf.getvalue()),"B64",len(b64),flush=True)
+          print("CONTACT_SHEET_BEGIN",flush=True)
+          for i in range(0,len(b64),4000):print("SHEET_CHUNK "+b64[i:i+4000],flush=True)
+          print("CONTACT_SHEET_END",flush=True)
           PY

@@ -1,0 +1,29 @@
+name: Temporary investigate Zonerama 11-15 real photos
+on:
+  push:
+    branches: [season/2026-27]
+    paths: ['.github/workflows/temporary-1115-photo-probe.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe public photo page Open Graph image URLs
+        run: |
+          python3 - <<'PY'
+          import urllib.request,re,html
+          ids=[692541380,692541377,692541358,692541359,692541362,692541365]
+          for pid in ids:
+            u=f"https://eu.zonerama.com/DLEAGUE/Photo/17357836/{pid}"
+            try:
+              req=urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36'})
+              with urllib.request.urlopen(req,timeout=20) as f:
+                body=f.read(400000).decode('utf8','replace')
+                print('PAGE',pid,'HTTP',f.status,'BODY',len(body))
+                for key in ['og:title','og:image','twitter:image','znrm:public']:
+                  p=re.search(r'<meta[^>]*property=["\']'+key+r'["\'][^>]*content=["\']([^"\']+)',body)
+                  print('META',pid,key,html.unescape(p.group(1))[:600] if p else 'NONE')
+            except Exception as ex:
+              print('ERROR',pid,type(ex).__name__,str(ex)[:300])
+          PY

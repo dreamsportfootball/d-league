@@ -280,7 +280,10 @@
     "awayScore": 11,
     "status": "FINISHED",
     "timestamp": "2026-11-22T11:00:00+08:00",
-    "league": "L3"
+    "league": "L3",
+    "videoUrls": {
+      "firstHalf": "https://youtu.be/NyvMFE905-M"
+    }
   },
   {
     "id": "m2627-019",

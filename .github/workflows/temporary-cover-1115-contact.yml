@@ -10,34 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: python3 -m pip install pillow --quiet
-      - name: Fetch six original Zonerama photos and show 3x2 cover crops
+      - name: Build 11-15 action-photo cover from Zonerama photo 692541082
         shell: bash
         run: |
           python3 - <<'PY'
-          import base64, io, urllib.request
-          from PIL import Image, ImageDraw, ImageOps
-          ids=[692541152,692541333,692541380,692541236,692541318,692541082]
-          cols=3; cw=430; ch=315
-          sheet=Image.new("RGB",(cw*cols,ch*2),"#F5F5F5")
-          pen=ImageDraw.Draw(sheet)
-          for n,pid in enumerate(ids):
-            url="https://eu.zonerama.com/social/img/photo/"+str(pid)
-            req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36"})
-            with urllib.request.urlopen(req,timeout=25) as rsp:
-              data=rsp.read()
-              ct=rsp.headers.get("Content-Type","")
-            if not ct.startswith("image/"): raise Exception("not an image: "+url)
-            original=Image.open(io.BytesIO(data)).convert("RGB")
-            ycent=[.53,.55,.54,.55,.53,.52][n]
-            cropped=ImageOps.fit(original,(1200,800),method=Image.Resampling.LANCZOS,centering=(.5,ycent))
-            thumb=cropped.resize((420,280),Image.Resampling.LANCZOS)
-            sheet.paste(thumb,((n%cols)*cw+5,(n//cols)*ch+4))
-            pen.text(((n%cols)*cw+8,(n//cols)*ch+289),f"{n+1}. {pid}",fill="#171717")
-            print("CANDIDATE",n+1,pid,"ORIGINAL",original.size,"COVER",cropped.size,"BYTES",len(data),flush=True)
-          b=io.BytesIO()
-          sheet.save(b,format="JPEG",quality=63,optimize=True)
-          encoded=base64.b64encode(b.getvalue()).decode("ascii")
-          print("CONTACT_BEGIN",len(encoded),flush=True)
-          for i in range(0,len(encoded),4000):print("IMAGE_CHUNK "+encoded[i:i+4000],flush=True)
-          print("CONTACT_END",flush=True)
+          import urllib.request,io,base64
+          from PIL import Image,ImageOps
+          url="https://eu.zonerama.com/social/img/photo/692541082"
+          req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 Chrome/124 Safari/537.36"})
+          with urllib.request.urlopen(req,timeout=25) as rsp:
+            raw=rsp.read()
+            assert rsp.status==200 and rsp.headers.get("Content-Type","").startswith("image/")
+          source=Image.open(io.BytesIO(raw)).convert("RGB")
+          assert source.width>=1200 and source.height>=1000,source.size
+          cover=ImageOps.fit(source,(1200,800),method=Image.Resampling.LANCZOS,centering=(0.5,0.52))
+          buf=io.BytesIO();cover.save(buf,"JPEG",quality=83,optimize=True,subsampling=0)
+          binary=buf.getvalue()
+          assert binary.startswith(b'\xff\xd8') and len(binary)>35000
+          encoded=base64.b64encode(binary).decode("ascii")
+          print("COVER_META",url,source.size,cover.size,len(binary),len(encoded),flush=True)
+          print("COVER_BEGIN",flush=True)
+          for i in range(0,len(encoded),4000):print("COVER_CHUNK "+encoded[i:i+4000],flush=True)
+          print("COVER_END",flush=True)
           PY

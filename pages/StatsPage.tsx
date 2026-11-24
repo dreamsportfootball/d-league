@@ -403,7 +403,7 @@ const StatsPage: React.FC = () => {
                     return (
                       <div key={suspension.id} className="grid gap-4 py-5 md:grid-cols-[1fr_auto] md:items-center">
                         <div className="flex min-w-0 items-center gap-3">
-                          {team && <img src={team.logo} alt="" className="h-8 w-8 shrink-0 object-contain" />}
+                          {team && <img src={team.logo} alt="" loading="lazy" decoding="async" className="h-8 w-8 shrink-0 object-contain" />}
                           <div className="min-w-0 flex-1">
                             {playerProfile ? (
                               <Link
@@ -496,7 +496,7 @@ const StatsPage: React.FC = () => {
                   <div className="flex min-w-0 flex-1 items-center">
                     {activeTab === 'SCORERS' && (
                       <div className={`relative shrink-0 overflow-hidden rounded-full border border-neutral-100 bg-neutral-100 ${isTopScorer ? 'h-20 w-20 shadow-xl md:h-24 md:w-24' : 'h-10 w-10 md:h-11 md:w-11'}`}>
-                        {playerImage ? <PortraitPhoto src={playerImage} alt={player.name} loading="lazy" className="h-full w-full object-cover" /> : <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />}
+                        {playerImage ? <PortraitPhoto src={playerImage} alt={player.name} thumbnail loading={index === 0 ? 'eager' : 'lazy'} className="h-full w-full object-cover" /> : <User className="h-full w-full p-2 text-neutral-300" aria-hidden="true" />}
                       </div>
                     )}
 
@@ -513,7 +513,7 @@ const StatsPage: React.FC = () => {
                         <span className={nameClass}>{player.name}</span>
                       )}
                       <div className="mt-1 flex min-w-0 items-center">
-                        <img src={team.logo} alt="" className="mr-2 h-4 w-4 shrink-0 object-contain" />
+                        <img src={team.logo} alt="" loading="lazy" decoding="async" className="mr-2 h-4 w-4 shrink-0 object-contain" />
                         <Link
                           to={`/teams/${getTeamIdentity(team)}?season=${activeSeasonId}`}
                           data-scroll-anchor-id={`stats-team-${activeSeasonId}-${activeLeague}-${activeTab}-${player.subjectId}`}

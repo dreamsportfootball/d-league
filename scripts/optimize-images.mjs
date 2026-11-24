@@ -220,22 +220,22 @@ export const optimizeImages = async () => {
     }
     for (const article of articles) {
       const image = article.imageUrl;
-      if (typeof image !== 'string' || /^https?:\\/\\//i.test(image)) continue;
-      const normalized = image.replace(/^\\/+/, '').replace(/^d-league\\//, '');
-      if (/\\/(news|media)\\//i.test(normalized)) {
+      if (typeof image !== 'string' || /^https?:\/\//i.test(image)) continue;
+      const normalized = image.replace(/^\/+/, '').replace(/^d-league\//, '');
+      if (/\/(news|media)\//i.test(normalized)) {
         newsImages.add(normalized.replace(RASTER_PATTERN, '.webp'));
       }
     }
   }
-  const webpFiles = await collectImages(OPTIMIZED_PUBLIC_DIR, /\\.webp$/i);
+  const webpFiles = await collectImages(OPTIMIZED_PUBLIC_DIR, /\.webp$/i);
   const thumbnails = await processWithConcurrency(webpFiles.filter((sourcePath) => {
     const relative = toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, sourcePath));
-    return /\\/players\\//i.test(relative) || newsImages.has(relative);
+    return /\/players\//i.test(relative) || newsImages.has(relative);
   }), 4, async (sourcePath) => {
     const relative = toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, sourcePath));
-    const portrait = /\\/players\\//i.test(relative);
+    const portrait = /\/players\//i.test(relative);
     const width = portrait ? 320 : 768;
-    const output = sourcePath.replace(/\\.webp$/i, `.thumb-${width}.webp`);
+    const output = sourcePath.replace(/\.webp$/i, `.thumb-${width}.webp`);
     const owner = webpOwners.get(sourcePath);
     const original = path.join(PUBLIC_DIR, path.relative(OPTIMIZED_PUBLIC_DIR, owner ?? sourcePath));
     const fullBytes = (await stat(sourcePath)).size;

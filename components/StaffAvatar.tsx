@@ -20,6 +20,7 @@ const StaffAvatar: React.FC<StaffAvatarProps> = ({ src, name, large = false }) =
         <PortraitPhoto
           src={src ?? ''}
           alt={name + ' 大頭貼'}
+          thumbnail={!large}
           loading={large ? 'eager' : 'lazy'}
           decoding="async"
           className="h-full w-full object-cover"

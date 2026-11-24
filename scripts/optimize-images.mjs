@@ -66,15 +66,15 @@ const getProfile = (relativePath) => {
   };
 };
 
-const collectImages = async (directory) => {
+const collectImages = async (directory, pattern = RASTER_PATTERN) => {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = [];
 
   for (const entry of entries) {
     const absolutePath = path.join(directory, entry.name);
     if (entry.isDirectory()) {
-      files.push(...await collectImages(absolutePath));
-    } else if (entry.isFile() && RASTER_PATTERN.test(entry.name)) {
+      files.push(...await collectImages(absolutePath, pattern));
+    } else if (entry.isFile() && pattern.test(entry.name)) {
       files.push(absolutePath);
     }
   }
@@ -206,6 +206,49 @@ export const optimizeImages = async () => {
     };
   });
 
+  // Generate small list-only assets; full-size WebP files remain unchanged.
+  const newsImages = new Set();
+  const seasonDirectories = await readdir(path.join(ROOT_DIR, 'data/seasons'), { withFileTypes: true });
+  for (const season of seasonDirectories.filter((entry) => entry.isDirectory())) {
+    const newsPath = path.join(ROOT_DIR, 'data/seasons', season.name, 'news.json');
+    let articles;
+    try {
+      articles = JSON.parse(await readFile(newsPath, 'utf8'));
+    } catch (error) {
+      if (error.code === 'ENOENT') continue;
+      throw error;
+    }
+    for (const article of articles) {
+      const image = article.imageUrl;
+      if (typeof image !== 'string' || /^https?:\\/\\//i.test(image)) continue;
+      const normalized = image.replace(/^\\/+/, '').replace(/^d-league\\//, '');
+      if (/\\/(news|media)\\//i.test(normalized)) {
+        newsImages.add(normalized.replace(RASTER_PATTERN, '.webp'));
+      }
+    }
+  }
+  const webpFiles = await collectImages(OPTIMIZED_PUBLIC_DIR, /\\.webp$/i);
+  const thumbnails = await processWithConcurrency(webpFiles.filter((sourcePath) => {
+    const relative = toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, sourcePath));
+    return /\\/players\\//i.test(relative) || newsImages.has(relative);
+  }), 4, async (sourcePath) => {
+    const relative = toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, sourcePath));
+    const portrait = /\\/players\\//i.test(relative);
+    const width = portrait ? 320 : 768;
+    const output = sourcePath.replace(/\\.webp$/i, `.thumb-${width}.webp`);
+    const owner = webpOwners.get(sourcePath);
+    const original = path.join(PUBLIC_DIR, path.relative(OPTIMIZED_PUBLIC_DIR, owner ?? sourcePath));
+    const fullBytes = (await stat(sourcePath)).size;
+    await sharp(original, { failOn: 'none', sequentialRead: true })
+      .rotate()
+      .resize({ width, withoutEnlargement: true, fit: 'inside' })
+      .webp({ quality: portrait ? 84 : 82, alphaQuality: 96, effort: 5 })
+      .toFile(output);
+    // Never replace a small existing full-size asset with a larger thumbnail.
+    if ((await stat(output)).size > fullBytes) await cp(sourcePath, output);
+    return { source: relative, thumbnail: toPosixPath(path.relative(OPTIMIZED_PUBLIC_DIR, output)), fullBytes, thumbnailBytes: (await stat(output)).size };
+  });
+
   const originalBytes = results.reduce((sum, item) => sum + item.originalBytes, 0);
   const deployedOriginalBytes = results.reduce((sum, item) => sum + item.deployedOriginalBytes, 0);
   const webpBytes = results.reduce((sum, item) => sum + item.webpBytes, 0);
@@ -216,6 +259,10 @@ export const optimizeImages = async () => {
     publicDirectory: '.optimized-public',
     fileCount: results.length,
     webpFileCount: webpOwners.size,
+    thumbnailCount: thumbnails.length,
+    thumbnailBytes: thumbnails.reduce((sum, item) => sum + item.thumbnailBytes, 0),
+    thumbnailFullBytes: thumbnails.reduce((sum, item) => sum + item.fullBytes, 0),
+    thumbnails,
     originalBytes,
     deployedOriginalBytes,
     webpBytes,

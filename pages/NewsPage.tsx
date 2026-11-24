@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigationType } from 'react-router-dom';
 import { getSeasonConfig } from '../config/seasons';
 import { getAllNews } from '../services/seasonDataJson';
 import type { NewsArticle } from '../types';
+import { getImageThumbnailUrl } from '../utils/imageThumbnail';
 import { formatTaipeiDate } from '../utils/dateFormat';
 
 type NewsFilter = 'ALL' | 'Match Report' | 'Official';
@@ -23,8 +24,9 @@ const TAG_COLOR_MAP: Record<NewsArticle['category'], string> = {
 const getArticleSeasonLabel = (article: NewsArticle): string | null =>
   article.seasonId ? getSeasonConfig(article.seasonId).shortName : null;
 
-const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
+const MinimalNewsCard: React.FC<{ article: NewsArticle; priority: boolean }> = ({ article, priority }) => {
   const seasonLabel = getArticleSeasonLabel(article);
+  const thumbnailUrl = getImageThumbnailUrl(article.imageUrl, 'news');
 
   return (
     <Link
@@ -35,9 +37,17 @@ const MinimalNewsCard: React.FC<{ article: NewsArticle }> = ({ article }) => {
       <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-lg bg-neutral-100">
         {article.imageUrl ? (
           <img
-            src={article.imageUrl}
+            src={thumbnailUrl}
             alt={article.title}
-            loading="lazy"
+            loading={priority ? 'eager' : 'lazy'}
+            fetchPriority={priority ? 'high' : 'auto'}
+            data-image-priority={priority ? 'true' : undefined}
+            decoding="async"
+            onError={(event) => {
+              if (thumbnailUrl !== article.imageUrl && event.currentTarget.getAttribute('src') === thumbnailUrl) {
+                event.currentTarget.src = article.imageUrl;
+              }
+            }}
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
@@ -198,8 +208,8 @@ const NewsPage: React.FC = () => {
         {filteredNews.length > 0 ? (
           <>
             <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3" aria-live="polite">
-              {visibleNews.map((article) => (
-                <MinimalNewsCard key={`${article.seasonId ?? 'global'}-${article.id}`} article={article} />
+              {visibleNews.map((article, index) => (
+                <MinimalNewsCard key={`${article.seasonId ?? 'global'}-${article.id}`} article={article} priority={index === 0} />
               ))}
             </div>
 

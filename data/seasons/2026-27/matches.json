@@ -233,7 +233,8 @@
       "firstHalf": "https://youtu.be/e33O4YaD0Lo"
     },
     "videoSourceNote": "因未成功錄影，影片引用嘉義 235 自行錄製的賽事畫面",
-    "albumId": "album-2026-11-15-matchday"
+    "albumId": "album-2026-11-15-matchday",
+    "reportArticleId": "2026-27-match-report-m2627-014"
   },
   {
     "id": "m2627-015",
@@ -249,7 +250,8 @@
       "secondHalf": "https://youtu.be/VCRtPPjRhkg",
       "firstHalf": "https://youtu.be/pza3uHB8cMw"
     },
-    "albumId": "album-2026-11-15-matchday"
+    "albumId": "album-2026-11-15-matchday",
+    "reportArticleId": "2026-27-match-report-m2627-015"
   },
   {
     "id": "m2627-016",

@@ -258,7 +258,11 @@
     "awayScore": 1,
     "status": "FINISHED",
     "timestamp": "2026-11-22T09:00:00+08:00",
-    "league": "L3"
+    "league": "L3",
+    "videoUrls": {
+      "firstHalf": "https://youtu.be/yMjrL84tuGU",
+      "secondHalf": "https://youtu.be/agBRJAXmoOQ"
+    }
   },
   {
     "id": "m2627-017",
@@ -269,7 +273,11 @@
     "awayScore": 6,
     "status": "FINISHED",
     "timestamp": "2026-11-22T10:00:00+08:00",
-    "league": "L3"
+    "league": "L3",
+    "videoUrls": {
+      "firstHalf": "https://youtu.be/Rxif3olOr8k",
+      "secondHalf": "https://youtu.be/zvRTscybDBU"
+    }
   },
   {
     "id": "m2627-018",
